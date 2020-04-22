@@ -4,10 +4,10 @@
 # ---------------------------------------------------------------
 
 # Site
-title: woodcoding的博客
+title: ningshixian的博客
 subtitle: 万丈高楼，始于平凡大地
-description: "woodcoding的博客"
-author: woodcoding
+description: "ningshixian的博客"
+author: ningshixian
 # Support language: de, en, fr-FR, id, ja, ko, pt-BR, pt, ru, zh-Hans, zh-hk, zh-tw
 language: zh-Hans
 date_format: '%Y-%m-%d'
@@ -85,7 +85,7 @@ favicon: /assets/favicon.ico
 enable_gray: false
 
 # Set default keywords (Use a comma to separate)
-keywords: "woodcoding, blog"
+keywords: "ningshixian, blog"
 
 # Set rss to false to disable feed link.
 # Leave rss as empty to use site's feed link.
@@ -224,9 +224,8 @@ font:
 #social:
   #LinkLabel: Link
 social:
-  GitHub: https://github.com/woodcoding
-  Weibo: http://weibo.com/woodcoding
-  知乎: http://www.zhihu.com/people/woodcoding
+  GitHub: https://github.com/ningshixian
+  Weibo: http://weibo.com/DoubleXian2
 
 
 # Social Links Icons
@@ -247,7 +246,7 @@ social_icons:
 # Sidebar Avatar
 # in directory: /assets/images/avatar.gif
 #avatar:
-avatar: /assets/images/woodcoding.jpg
+avatar: /assets/images/me.jpg
 
 
 # Table Of Contents in the Sidebar
@@ -452,9 +451,9 @@ gitalk:
   enable: true
   clientID: 4a6358510633e870711f
   clientSecret: c2b9f8a4f1bd6bf2cb5080475d8557bbc6ed14ab
-  repo: woodcoding.github.io
-  owner: woodcoding
-  admin: woodcoding
+  repo: ningshixian.github.io
+  owner: ningshixian
+  admin: ningshixian
 
 # Baidu Share
 # Available value:
