@@ -27,7 +27,7 @@ FlashText 是我在 [GitHub](https://link.juejin.im/?target=https%3A%2F%2Fgithub
 
 **替换**会创建一个替换了关键词的新字符串。**搜索**会返回字符串中找到的关键词列表。在运行过程中，输入的字符串只会被扫描一遍。
 
-
+<!-- more -->
 
 ## 为什么 FlashText 这么快？
 

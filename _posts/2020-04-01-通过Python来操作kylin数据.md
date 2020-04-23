@@ -27,6 +27,8 @@ pip install --upgrade kylinpy
 - Apache Kylin 命令行工具
 - Apache Kylin SQLAchemy方言
 
+<!-- more -->
+
 
 
 2. 示例代码

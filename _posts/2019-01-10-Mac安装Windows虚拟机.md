@@ -19,7 +19,7 @@ tags:                               #标签
 - win系统破解软件 [Oem7F7.exe]()
 - [百度云分享链接](pan.baidu.com/s/1skCSbvv)  密码: rkva
 
-
+<!-- more -->
 
 ### 安装流程
 

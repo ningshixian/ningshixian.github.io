@@ -23,6 +23,8 @@ tags:                               #标签
 - Pyechart
 - Pygal
 
+<!-- more -->
+
 #### matplotlib参数
 
 
@@ -74,7 +76,7 @@ def simple_plot():
     return
 ```
 
-![](/img/简单曲线图.png)
+![](https://ningshixian.github.io/resources/images/简单曲线图.png)
 
 2、复杂曲线图
 
@@ -122,7 +124,7 @@ def simple_advanced_plot():
     return
 ```
 
-![](/img/复杂曲线图.png)
+![](https://ningshixian.github.io/resources/images/复杂曲线图.png)
 
 3、子图
 
@@ -150,7 +152,7 @@ def subplot_plot():
     return
 ```
 
-![](/img/子图.png)
+![](https://ningshixian.github.io/resources/images/子图.png)
 
 4、柱状图
 
@@ -192,7 +194,7 @@ def bar_plot():
     return
 ```
 
-![](/img/柱状图.png)
+![](https://ningshixian.github.io/resources/images/柱状图.png)
 
 5、横向柱状图
 
@@ -234,7 +236,7 @@ def barh_plot():
     return
 ```
 
-![](/img/横向柱状图.png)
+![](https://ningshixian.github.io/resources/images/横向柱状图.png)
 
 6、高级柱状图
 
@@ -276,7 +278,7 @@ def bar_advanced_plot():
     plt.show()
     return
 ```
-![](/img/高级柱状图.png)
+![](https://ningshixian.github.io/resources/images/高级柱状图.png)
 
 7、层次柱状图
 
@@ -315,7 +317,7 @@ def table_plot():
     return
 ```
 
-![](/img/层次柱状图.png)
+![](https://ningshixian.github.io/resources/images/层次柱状图.png)
 
 8、直方图
 
@@ -346,7 +348,7 @@ def histograms_plot():
     return
 ```
 
-![](/img/直方图.png)
+![](https://ningshixian.github.io/resources/images/直方图.png)
 
 9、饼图
 
@@ -377,7 +379,7 @@ def pie_plot():
     return
 ```
 
-![](/img/饼图.png)
+![](https://ningshixian.github.io/resources/images/饼图.png)
 
 10、散点图
 
@@ -406,7 +408,7 @@ def scatter_plot():
     return
 ```
 
-![](/img/散点图.png)
+![](https://ningshixian.github.io/resources/images/散点图.png)
 
 11、雷达图
 
@@ -442,4 +444,4 @@ def radar_plot():
     return
 ```
 
-![](/img/雷达图.png)
+![](https://ningshixian.github.io/resources/images/雷达图.png)

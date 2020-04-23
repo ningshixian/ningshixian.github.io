@@ -36,6 +36,8 @@ import dimsim
 score_py = dimsim.get_distance("星辰", "姓陈")
 ```
 
+<!-- more -->
+
 
 
 ## 背景介绍
