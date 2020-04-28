@@ -44,21 +44,21 @@ tags:                               #标签
 
 name | IP | CONNECTION | USER
 ---- | --- | --- | ---
-algo04 服务器 | 10.231.7.203 | ssh | lhadmin
-algo05 服务器 | 10.231.7.204 | ssh | lhadmin
-ES01 服务器 | 10.231.8.5 | ssh | lhadmin
-ES02 服务器 | 10.231.8.6 | ssh | lhadmin
-ES03 服务器 | 10.231.8.7 | ssh | lhadmin
-algo01 服务器 | 10.231.9.138 | ssh | lhadmin
-algo02 服务器 | 10.231.7.139 | ssh | lhadmin
-algo03 服务器 | 10.231.7.140 | ssh | lhadmin
+algo04 服务器 | 10.xxx.x.203 | ssh | admin 
+algo05 服务器 | 10.xxx.x.204 | ssh | admin 
+ES01 服务器 | 10.xxx.x.5 | ssh | admin 
+ES02 服务器 | 10.xxx.x.6 | ssh | admin 
+ES03 服务器 | 10.xxx.x.7 | ssh | admin 
+algo01 服务器 | 10.xxx.x.138 | ssh | admin 
+algo02 服务器 | 10.xxx.x.139 | ssh | admin 
+algo03 服务器 | 10.xxx.x.140 | ssh | admin 
 ---- | --- | --- | ---
-算法测试02 服务器 | 10.240.4.38 | ssh | kaifa
-算法生产03 服务器 | 10.240.4.43 | ssh | kaifa
-算法生产04 服务器 | 10.240.4.45 | ssh | lhadmin
-NLP深度学习测试01 服务器 | 10.240.4.44 | ssh | kaifa
-NLP深度学习测试02 服务器 | 10.240.4.46 | ssh | kaifa
-NLP深度学习测试03 服务器 | 10.240.4.47 | ssh | kaifa
+算法测试02 服务器 | 10.xxx.x.38 | ssh | admin 
+算法生产03 服务器 | 10.xxx.x.43 | ssh | admin 
+算法生产04 服务器 | 10.xxx.x.45 | ssh | admin 
+NLP深度学习测试01 服务器 | 10.xxx.x.44 | ssh | admin 
+NLP深度学习测试02 服务器 | 10.xxx.x.46 | ssh | admin 
+NLP深度学习测试03 服务器 | 10.xxx.x.47 | ssh | admin 
 
 
 
