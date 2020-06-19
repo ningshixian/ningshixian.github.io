@@ -1,0 +1,289 @@
+---
+title:      Python 软件工程
+subtitle:   Python环境搭建&项目架构&代码风格
+date:       2020-06-19
+author:     NSX
+catalog: true
+tags:
+    - 技术
+    - 教程
+---
+
+# Python 软件工程
+
+Python 日常使用的最佳实践，高级 Python 开发者必知必会的知识
+
+
+
+## 安装Python
+
+1. 从Python的官方网站下载Python 3.7对应的或[32位安装程序](https://www.python.org/ftp/python/3.8.0/python-3.8.0.exe)
+2. 然后，运行下载的exe安装包。特别要注意勾上`Add Python 3.7 to PATH`，然后点“Install Now”即可完成安装。
+
+
+
+## 底层虚拟环境 virtualenv
+
+<!-- more -->
+
+[参考链接1](https://learnku.com/docs/python-guide/2018/virtualenvs-lower-level-virtualenv/3257) [参考链接2](https://pythonguidecn.readthedocs.io/zh/latest/writing/structure.html)
+
+>  [virtualenv](http://pypi.python.org/pypi/virtualenv) 是一个 Python 项目依赖管理工具
+>
+>  建议在开发项目时使用virtualenv做依赖隔离，便于使用pip freeze自动生成requirements文件
+
+通过 pip 安装 virtualenv ：
+
+```
+$ pip install virtualenv
+$ virtualenv --version
+```
+
+为项目创建一个虚拟环境，名叫`my_project`：
+
+```
+$ cd my_project_folder
+$ virtualenv my_project
+```
+
+virtualenv 会创建一个文件夹，其中包含使用 Python 项目所有所需的可执行文件。
+
+开始使用虚拟环境前，需要先激活：
+
+```
+$ source my_project/bin/activate	# linux
+$ my_project\Scripts\activate		# windows
+```
+
+安装包的话就与往常一样，如：
+
+```php
+$ pip install XXX
+```
+
+如果你在虚拟环境中暂时完成了工作，可以这样停用它：
+
+```php
+$ deactivate
+```
+
+为了保持环境的一致性，“冻结” 当前环境包的状态是正确的选择：
+
+```
+$ pip freeze > requirements.txt
+```
+
+该命令将创建一个 requirements.txt 文件，里面包含有当前环境所有包的简单列表及对应的版本，这样就能完全搭建出与之前一致的环境了：
+
+```
+$ pip install -r requirements.txt
+```
+
+这样有助于在跨设备，跨部署，跨人员的情况下保证环境的一致性。
+
+最后，记得将虚拟环境文件夹从源代码控制中排除，也就是将其添加到 ignore 列表中 ( 详见 [Version Control Ignores](http://docs.python-guide.org/en/latest/writing/gotchas/#version-control-ignores)).
+
+
+
+## 写出优雅的 Python 代码
+
+### 仓库结构
+
+就像代码风格，API 设计和自动化对于健康的开发周期是必不可少的，仓库结构也是项目[体系结构](http://www.amazon.com/gp/product/1257638017/ref=as_li_ss_tl?ie=UTF8&tag=bookforkind-20&linkCode=as2&camp=1789&creative=39095&creativeASIN=1257638017)中的重要组成部分。简单的仓库结构模板： [可以在GitHub上找到](https://github.com/kennethreitz/samplemod) 。
+
+| 布局                                                         | 作用                                                         |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| README.rst                                                   | 项目介绍                                                     |
+| LICENSE                                                      | 许可证. 法律相关                                             |
+| setup.py                                                     | 安装、部署、打包的脚本-分发管理<br/>使用 `python setup.py install` 安装 |
+| requirements.txt                                             | 项目所需的依赖库                                             |
+| sample/__init__.py<br />sample/core.py<br/>sample/helpers.py<br/>sample/setting.py | 核心代码/具体代码<br/>setting.py只包含方法 `__init__()`，<br />用来作变量和常量的初始化 |
+| docs/conf.py<br/>docs/index.rst                              | 项目的参考文档                                               |
+| tests/test_basic.py<br/>tests/test_advanced.py               | 包的集合和单元测试<br />上下文环境的文件 context.py -方便测试导包 |
+| Makefile                                                     | 通用的管理任务                                               |
+
+**Makefile 模板：**
+
+```
+init:
+    pip install -r requirements.txt
+
+test:
+    py.test tests
+
+.PHONY: init test
+```
+
+**setup.py 模板：**
+
+```Python
+from setuptools import setup, find_packages
+setup(
+    name="HelloWorld",
+    version="0.1",
+    packages=find_packages(),
+    scripts=['say_hello.py'],
+
+    # Project uses reStructuredText, so ensure that the docutils get
+    # installed or upgraded on the target machine
+    install_requires=['docutils>=0.3'],
+
+    package_data={
+        # If any package contains *.txt or *.rst files, include them:
+        '': ['*.txt', '*.rst'],
+        # And include any *.msg files found in the 'hello' package, too:
+        'hello': ['*.msg'],
+    },
+
+    # metadata for upload to PyPI
+    author="Me",
+    author_email="me@example.com",
+    description="This is an Example Package",
+    license="PSF",
+    keywords="hello world example examples",
+    url="http://example.com/HelloWorld/",   # project home page, if any
+
+    # could also include long_description, download_url, classifiers, etc.
+)
+```
+
+
+
+## [单个文件结构]([https://marlous.github.io/2019/04/03/Python-%E8%BD%AF%E4%BB%B6%E9%A1%B9%E7%9B%AE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E7%BB%84%E7%BB%87/](https://marlous.github.io/2019/04/03/Python-软件项目文件结构组织/))
+
+![单个文件结构](https://marlous.github.io/2019/04/03/Python-%E8%BD%AF%E4%BB%B6%E9%A1%B9%E7%9B%AE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E7%BB%84%E7%BB%87/%E5%9B%BE1.PNG)
+
+
+
+### 包
+
+Python提供非常简单的包管理系统，即简单地将模块管理机制扩展到一个目录上(目录扩 展为包)。
+
+**任意包含 `__init__.py` 文件的目录都被认为是一个Python包**。导入一个包里不同 模块的方式和普通的导入模块方式相似，特别的地方是 `__init__.py` 文件将集合 所有包范围内的定义。
+
+
+
+### 模块
+
+**Python模块对应的是一个`.py` 文件**，是最主要的抽象层之一。抽象层允许将代码分为 不同部分，每个部分包含相关的数据与功能。
+
+例如在项目中，一层控制*用户操作* 相关接口，另一层*处理底层数据* 操作。最自然分开这两 层的方式是，在一份文件里重组所有功能接口，并将所有底层操作封装到另一个文件中。
+
+
+
+### 类
+
+包含函数、变量。类中有属性和方法。一个对象就是一个类的实例。
+
+
+
+### 可变和不可变类型
+
+Python提供两种内置或用户定义的类型。**数字、字符串、元组是不可变的**，**列表、字典是可变的**。
+
+对不可变类型的变量重新赋值，实际上是重新创建一个不可变类型的对象，并将原来的变量重新指向新创建的对象（如果没有其他变量引用原有对象的话（即引用计数为0），原有对象就会被回收）。
+
+ 字符串是不可变类型。这意味着当需要组合一个 字符串时，将每一部分放到一个可变列表里，使用字符串时再组合 ('join') 起来的做法更高效。 
+
+**差**
+
+```
+# 创建将0到19连接起来的字符串 (例 "012..1819")
+nums = ""
+for n in range(20):
+    nums += str(n)   # 慢且低效
+print nums
+```
+
+**好**
+
+```
+# 创建将0到19连接起来的字符串 (例 "012..1819")
+nums = [str(n) for n in range(20)]
+print "".join(nums)
+```
+
+
+
+### 函数的参数
+
+函数的参数可以使用四种不同的方式传递给函数。
+
+1. **必选参数** 是没有默认值的必填的参数 `point(x, y)`
+2. **关键字参数** 是非强制的，且有默认值  `point(x, y, z=None)`
+3. **任意参数列表** 如果函数的参数数量是动态的，该函数可以被定义成 `*args` 的结构 `send(message, *args)`
+4. **任意关键字参数字典** 如果函数要求一系列待定的命名参数，我们可以使用 `**kwargs` 的结构。在函数体中， kwargs 是一个字典，它包含所有传递给函数但没有被其他关键字参数捕捉的命名参数
+
+
+
+### 返回值
+
+当一个函数在其正常运行过程中有多个主要出口点时，它会变得难以调试其返回结果，所以保持单个出口点可能会更好。
+
+```
+def complex_function(a, b, c):
+    if not a:
+        return None  # 抛出一个异常可能会更好
+    if not b:
+        return None  # 抛出一个异常可能会更好
+
+    # 一些复杂的代码试着用 a,b,c 来计算x
+    # 如果成功了，抵制住返回 x 的诱惑
+    if not x:
+        # 使用其他的方法来计算出 x
+    return x  # 返回值 x 只有一个出口点有利于维护代码
+```
+
+
+
+# 阅读优质的代码
+
+- [Howdoi](https://github.com/gleitz/howdoi) Howdoi 使用 Python 实现的代码搜索工具。
+- [Flask](https://github.com/mitsuhiko/flask) Flask 是基于 Werkzeug and Jinja2 的 Python 微框架。 它的目的是快速入门并开发实现你头脑中的好主意。
+- [Diamond](https://github.com/python-diamond/Diamond) Diamond 是使用 python 实现的用于收集监控数据的工具，主要收集 metrics 类型的数据，并将其发布到 Graphite 或其他后台。它能够收集 cpu ， 内存， 网络， i/o ，负载和磁盘 metrics 数据。此外，它还提供 API 用以实现自定义收集器从任意来源中收集指标数据。
+- [Werkzeug](https://github.com/mitsuhiko/werkzeug) Werkzeug 最初是 WSGI 应用程序的各种实用工具的简单集合，并已成为最先进的 WSGI 实用程序模块之一。它包括强大的调试器、功能齐全的请求和响应对象、处理实体标记的 HTTP 实用程序、缓存控制头、HTTP 日期、cookie 处理、文件上传、强大的 URL 路由系统和一群社区贡献的插件模块。
+- [Requests](https://github.com/kennethreitz/requests) Requests 是一个用 Python 实现的 Apache2 授权的 HTTP 库供大家使用。
+-  Tablib 是用 Python 实现的无格式的表格数据集库。
+
+
+
+# 项目文档
+
+建议提供相关函数的更多信息，包括它是做什么的， 所抛的任何异常，返回的内容或参数的相关细节。
+
+通常称为 [Numpy style](http://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_numpy.html) Docstrings
+
+
+
+# 代码测试
+
+py.test 测试工具功能完备，并且可扩展，语法简单
+
+```
+$ pip install pytest
+$ pytest tests.py
+```
+
+
+
+# 日志记录
+
+日志记录一般有两个目的：
+
+- **诊断日志** 记录与应用程序操作相关的日志。例如，当用户遇到程序报错时， 可通过搜索诊断日志以获得上下文信息。
+- **审计日志** 为商业分析而记录的日志。从审计日志中，可提取用户的交易信息， 并结合其他用户资料构成用户报告，或者用来作为优化商业目标的数据支撑。
+
+
+
+# 配置文件和数据
+
+1. 如框架无特殊规定，配置文件应放置于**项目根目录下的`config`文件夹中**
+2. 配置文件在部署、预发布、生产环境、开发环境等环境中会有很大差异，因此请**不要将配置文件在上传到git、svn等版本库中**， 而是建议在版本库中上传一个配置的**示例文件**（如：config.example）
+3. 上传到版本库中配置示例文件**不允许出现密码、证书、token等敏感信息**
+4. 数据和程序应该尽量分离，不要将数据写在代码中，需要持久化存储数据必须使用数据库
+
+
+
+## 参考
+
+[**Python 最佳实践指南 2018**](https://learnku.com/docs/python-guide/2018)
