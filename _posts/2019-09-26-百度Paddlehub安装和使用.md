@@ -73,7 +73,7 @@ python -m pip uninstall paddlehub
 
 > 老版本的paddlehub不支持多线程，/home/用户名/.paddlehub/modules/lac/python/xxx.py可能会导致IndexError错误，需要对其进行修改，获取错误信息！
 >
-> 新版本的 paddlehub>1.5.0 不用再修改文件也可以支持多线程调用了！！！
+> 新版本的paddlehub（>1.5.0）可以支持多线程调用，使用前需删掉老版本的/home/用户名/.paddlehub目录
 
 1. 备份module文件：
 ```
