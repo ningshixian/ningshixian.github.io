@@ -75,6 +75,10 @@ pip install gevent
 
 
 
+## [Gunicorn参数说明](https://www.itnotebooks.com/?p=531)
+
+
+
 ## 并发 vs. 并行
 
 - 并发是指同时执行 2 个或更多任务，这可能意味着其中只有一个正在处理，而其他的处于暂停状态。
