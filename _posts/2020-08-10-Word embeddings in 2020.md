@@ -19,6 +19,8 @@ tags:
 
 根据Wikipedia的说法，**单词嵌入**是自然语言处理（NLP）中一组语言建模和功能学习技术的总称，其中词汇表中的单词或短语被映射为实数向量。
 
+ <!-- more -->
+
 
 
 # One-hot or CountVectorizing
