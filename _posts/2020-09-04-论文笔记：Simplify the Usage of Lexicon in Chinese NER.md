@@ -1,11 +1,11 @@
 ---
-title:      sklearn之模型评估指标总结归纳
-subtitle:   分类评价指标
-date:       2020-08-24
+title:      Simplify the Usage of Lexicon in Chinese NER
+subtitle:   论文笔记
+date:       2020-09-04
 author:     NSX
 catalog: true
 tags:
-    - 技术
+    - 论文笔记
 
 ---
 
