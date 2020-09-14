@@ -27,19 +27,29 @@ ExtendSoftword也会存在一些问题：1）仍然无法引入词汇对应的wo
 
 ![img](https://picb.zhimg.com/80/v2-ab558ef3c52fa9b4b2c5830a7a1d65b4_1440w.jpg)为了解决Softword和ExtendSoftword存在的问题，Soft-lexicon对当前字符，依次获取BMES对应所有词汇集合，然后再进行编码表示。
 
+ <!-- more -->
+
 ![img](https://pic4.zhimg.com/80/v2-3226e5452411aa32381de3c140674412_1440w.jpg)
 
 由上图可以看出，对于字符[语]，其标签B对应的词汇集合涵盖[语言，语言学]；标签M对应[中国语言]；标签E对应[国语、中国语]；标签S对应[语]。当前字符引入词汇信息后的特征表示为：
+
+
 $$
 \begin{array}{r}
 e^{s}(\mathrm{B}, \mathrm{M}, \mathrm{E}, \mathrm{S})=\left[\boldsymbol{v}^{s}(\mathrm{B}) \oplus \mathrm{v}^{\mathrm{s}}(\mathrm{M}) \oplus \mathrm{v}^{\mathrm{s}}(\mathrm{E}) \oplus \mathrm{v}^{\mathrm{s}}(\mathrm{S})\right], \\
 \mathbf{x}^{c} \leftarrow\left[\mathbf{x}^{c} ; \boldsymbol{e}^{s}(\mathrm{B}, \mathrm{M}, \mathrm{E}, \mathrm{S})\right]
 \end{array}
 $$
-很容易理解，上述公式则将BMES对应的词汇编码 ![[公式]](https://www.zhihu.com/equation?tex=v%5E%7Bs%7D) 与字符编码 ![[公式]](https://www.zhihu.com/equation?tex=x%5E%7Bc%7D) 进行拼接。![[公式]](https://www.zhihu.com/equation?tex=v%5E%7Bs%7D)表示当前标签（BMES）下对应的词汇集合编码，其计算方式为：
+
+
+很容易理解，上述公式则将BMES对应的词汇编码 $V^s$ 与字符编码  $X^c$ 进行拼接。 $V^s$ 表示当前标签（BMES）下对应的词汇集合编码，其计算方式为：
+
+
 $$
 \boldsymbol{v}^{s}(S)=\frac{1}{Z} \sum_{w \in S} z(w) \boldsymbol{e}^{w}(w)
 $$
+
+
 S 为词汇集合， Z(w) 代表词频。考虑计算复杂度，本文没有采取动态加权方法，而采取如同上式的静态加权方法，即：对词汇集合中的词汇对应的word embedding通过其词频大小进行加权。词频根据训练集和测试集可离线统计。
 
 综上可见，Soft-lexicon这种方法没有造成信息损失，同时又可以引入word embedding，此外，本方法的一个特点就是模型无关，可以适配于其他序列标注框架。
@@ -50,9 +60,9 @@ S 为词汇集合， Z(w) 代表词频。考虑计算复杂度，本文没有采
 
 基于如何更好的融入词汇信息为出发点，无外于两点：
 
-1）如何更充分的利用词汇信息、最大程度避免词汇信息损失；
+1. 如何更充分的利用词汇信息、最大程度避免词汇信息损失；
 
-2）如何设计更为兼容词汇的Architecture，加快推断速度。
+2. 如何设计更为兼容词汇的Architecture，加快推断速度。
 
 
 
