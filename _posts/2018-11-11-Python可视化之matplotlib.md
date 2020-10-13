@@ -13,22 +13,23 @@ tags:                               #标签
 
 ## 利用matplotlib对数据进行可视化
 
-数据可视化的库有挺多的，这里推荐几个比较常用的：
-
-- Matplotlib
-- Plotly
-- [Seaborn 教程](http://seaborn.pydata.org/tutorial.html)
-- Ggplot
-- Bokeh
-- Pyechart
-- Pygal
+- 简单曲线图
+- 复杂曲线图
+- 子图
+- 柱状图
+- 横向柱状图
+- 高级柱状图
+- 层次柱状图
+- 直方图
+- 饼图
+- 散点图
+- 雷达图
 
 <!-- more -->
 
-#### matplotlib参数
 
 
-首先，导入需要的包
+#### 导包
 
 ```
 import numpy as np
@@ -38,7 +39,9 @@ import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
 ```
 
-1、简单曲线图
+
+
+#### 1、简单曲线图
 
 ```
 def simple_plot():
@@ -78,7 +81,7 @@ def simple_plot():
 
 ![](https://ningshixian.github.io/resources/images/简单曲线图.png)
 
-2、复杂曲线图
+#### 2、复杂曲线图
 
 ```
 def simple_advanced_plot():
@@ -126,7 +129,7 @@ def simple_advanced_plot():
 
 ![](https://ningshixian.github.io/resources/images/复杂曲线图.png)
 
-3、子图
+#### 3、子图
 
 ```
 def subplot_plot():
@@ -154,7 +157,7 @@ def subplot_plot():
 
 ![](https://ningshixian.github.io/resources/images/子图.png)
 
-4、柱状图
+#### 4、柱状图
 
 ```
 def bar_plot():
@@ -196,7 +199,7 @@ def bar_plot():
 
 ![](https://ningshixian.github.io/resources/images/柱状图.png)
 
-5、横向柱状图
+#### 5、横向柱状图
 
 ```
 def barh_plot():
@@ -238,7 +241,7 @@ def barh_plot():
 
 ![](https://ningshixian.github.io/resources/images/横向柱状图.png)
 
-6、高级柱状图
+#### 6、高级柱状图
 
 ```
 def bar_advanced_plot():
@@ -280,7 +283,7 @@ def bar_advanced_plot():
 ```
 ![](https://ningshixian.github.io/resources/images/高级柱状图.png)
 
-7、层次柱状图
+#### 7、层次柱状图
 
 ```
 def table_plot():
@@ -319,7 +322,7 @@ def table_plot():
 
 ![](https://ningshixian.github.io/resources/images/层次柱状图.png)
 
-8、直方图
+#### 8、直方图
 
 ```
 def histograms_plot():
@@ -350,7 +353,7 @@ def histograms_plot():
 
 ![](https://ningshixian.github.io/resources/images/直方图.png)
 
-9、饼图
+#### 9、饼图
 
 ```
 def pie_plot():
@@ -381,7 +384,7 @@ def pie_plot():
 
 ![](https://ningshixian.github.io/resources/images/饼图.png)
 
-10、散点图
+#### 10、散点图
 
 ```
 def scatter_plot():
@@ -410,7 +413,7 @@ def scatter_plot():
 
 ![](https://ningshixian.github.io/resources/images/散点图.png)
 
-11、雷达图
+#### 11、雷达图
 
 ```
 def radar_plot():
@@ -445,3 +448,16 @@ def radar_plot():
 ```
 
 ![](https://ningshixian.github.io/resources/images/雷达图.png)
+
+## 数据可视化的库推荐
+
+这里推荐几个比较常用的：
+
+- Matplotlib
+- Plotly
+- [Seaborn 教程](http://seaborn.pydata.org/tutorial.html)
+- Ggplot
+- Bokeh
+- Pyechart
+- Pygal
+

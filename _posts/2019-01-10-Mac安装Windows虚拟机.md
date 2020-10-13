@@ -8,18 +8,25 @@ header-img: img/post-bg-2015.jpg    #这篇文章标题背景图片
 catalog: true                       # 是否归档
 tags:                               #标签
     - Mac
+    - 教程
 ---
 
+## Mac安装Windows虚拟机
 
-## 最简单的方法在Mac中的安装Windos虚拟机
+- 所需资源准备
+- 安装流程
 
-### 所需要的资源
+<!-- more -->
+
+
+
+### 所需资源准备
 - 系统镜像 [windows_7_ultimate_x64.iso]()
 - 虚拟机 [ParallelsDesktop13.dmg]()
 - win系统破解软件 [Oem7F7.exe]()
-- [百度云分享链接](pan.baidu.com/s/1skCSbvv)  密码: rkva
+- [百度云账号分享链接](pan.baidu.com/s/1skCSbvv)  密码: rkva
 
-<!-- more -->
+
 
 ### 安装流程
 
