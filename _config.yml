@@ -449,8 +449,8 @@ changyan:
 # Support for gitalk comments system.
 gitalk:
   enable: true
-  clientID: 4a6358510633e870711f
-  clientSecret: c2b9f8a4f1bd6bf2cb5080475d8557bbc6ed14ab
+  clientID: 28fba015efe78eadd23a
+  clientSecret: d8d19b035d31692ecbd7ab927bca415487aa4672
   repo: ningshixian.github.io
   owner: ningshixian
   admin: ningshixian
@@ -588,7 +588,7 @@ calendar:
 
 # Algolia Search
 algolia_search:
-  enable: false
+  enable: true
   hits:
     per_page: 10
   labels:
