@@ -93,10 +93,17 @@ server.start()
 在一台（GPU）机器上启动该服务，然后从另一台（CPU）机器调用该服务，如下所示：
 
 ```
-from bert_serving.client import BertClient
+# bert_as_service 对并发的支持不太友好，需要加锁使用！
+lock = threading.Lock()  # 生成锁对象
+bc = BertClient(
+    ip=BERT_CONFIG.get("ip"),
+    port=BERT_CONFIG.getint("port"),
+    port_out=BERT_CONFIG.getint("port_out"),
+    timeout=BERT_CONFIG.getint("timeout"),
+    check_version=False,
+    check_token_info=False,
+)
 
-# 要带上参数 check_token_info=False，否则可能报错
-bc = BertClient(ip='xx.xx.xx.xx', port=5555, port_out=5556, timeout=60000, check_version=False, check_token_info=False)
 bc.encode(['First do it', 'then do it right', 'then do it better'])  #直接输入整个句子不需要提前分词
 ```
 
@@ -201,3 +208,10 @@ A `BertClient`实现以下方法和属性：
 [https://github.com/hanxiao/bert-as-service#what-is-it](https://github.com/hanxiao/bert-as-service#what-is-it)
 
 [bert-as-service 最新API文档](http://bert-as-service.readthedocs.io/)
+
+[ex1-starting-bertserver-from-python](https://github.com/hanxiao/bert-as-service#starting-bertserver-from-python)
+
+[ex2-broadcasting-to-multiple-clients](https://github.com/hanxiao/bert-as-service#broadcasting-to-multiple-clients)
+
+[ex3-`zmq.error.ZMQError`](https://github.com/hanxiao/bert-as-service#q-i-encounter-zmqerrorzmqerror-operation-cannot-be-accomplished-in-current-state-when-using-bertclient-what-should-i-do)
+
