@@ -1,7 +1,7 @@
 ---
 layout:     post
-title:      程序崩溃生成core文件相关
-subtitle:   程序崩溃生成core文件相关
+title:      linux程序崩溃生成core文件
+subtitle:   linux程序崩溃生成core文件
 date:       2020-03-09
 author:     NSX
 header-img: img/post-bg-ios9-web.jpg
@@ -11,7 +11,7 @@ tags:
     - Linux
 ---
 
-## 程序崩溃生成core文件相关
+## linux程序崩溃生成core文件相关
 
 ### 1. core 文件的简单介绍
 
