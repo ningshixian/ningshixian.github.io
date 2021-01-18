@@ -53,7 +53,7 @@ Stories 是用于训练 Rasa Core的训练示例，包含3部分：
    - \* greet 表示用户输入没有entity情况
    - \* inform{“people”: “six”} 表示用户输入包含entity情况，响应这类intent为普通action；
 - \* request_weather 表示用户输入Message对应的intent为自定义表单动作 (form action)情况；
-   
+  
 2. **动作（Actions）**
 
    Actions是机器针对用户输入的响应。Rasa中有3种actions：
@@ -328,7 +328,7 @@ Stories 是用于训练 Rasa Core的训练示例，包含3部分：
 
 当form action第一被调用时，form就会被激活并进入FormPolicy策略模式。
 
-每次执行form action，required_slots会被调用，当发现某个还未被填充时，会主动去调用形式为uter_ask_{slotname}的模板(注：定义在domain.yml的templates字段中)；
+**每次执行form action，required_slots会被调用，当发现某个还未被填充时，会主动去调用形式为uter_ask_{slotname}的模板(注：定义在domain.yml的templates字段中)；**
 
 当所有slot被填充完毕，submit方法就会被调用，此时本次form操作完毕被取消激活。
 

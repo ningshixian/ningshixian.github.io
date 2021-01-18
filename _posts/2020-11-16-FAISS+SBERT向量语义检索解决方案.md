@@ -248,6 +248,10 @@ https://juejin.im/post/6844903935044501511
 
 ### Locust 压力测试
 
+https://community.jiguang.cn/article/464443
+
+https://debugtalk.com/post/head-first-locust-user-guide/
+
 使用 [Locust](https://locust.io/) 编写压力测试脚本
 
 - 运行命令说明
