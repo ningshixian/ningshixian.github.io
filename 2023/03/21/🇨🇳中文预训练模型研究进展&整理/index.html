@@ -1,0 +1,1293 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Ning Shixian">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="https:&#x2F;&#x2F;www.jsjkx.com&#x2F;CN&#x2F;article&#x2F;openArticlePDF.jsp?id&#x3D;20915  近两年,中文预训练模型受 到广大学者的关注并取得了一定的研究成果.为了阐明现有 的中文预训练模型,本节主要从以下６个方面对现有的预训练 模型进行分类,图３展示了典型的中文预训练模型的分类图.   预训练模型的方法改进,主要包括掩码方式的转变、 位置编码的转变、LN 层的位置">
+<meta property="og:type" content="article">
+<meta property="og:title" content="🇨🇳中文预训练模型研究进展&amp;整理">
+<meta property="og:url" content="http://example.com/2023/03/21/%F0%9F%87%A8%F0%9F%87%B3%E4%B8%AD%E6%96%87%E9%A2%84%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B%E7%A0%94%E7%A9%B6%E8%BF%9B%E5%B1%95&%E6%95%B4%E7%90%86/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="https:&#x2F;&#x2F;www.jsjkx.com&#x2F;CN&#x2F;article&#x2F;openArticlePDF.jsp?id&#x3D;20915  近两年,中文预训练模型受 到广大学者的关注并取得了一定的研究成果.为了阐明现有 的中文预训练模型,本节主要从以下６个方面对现有的预训练 模型进行分类,图３展示了典型的中文预训练模型的分类图.   预训练模型的方法改进,主要包括掩码方式的转变、 位置编码的转变、LN 层的位置">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2023/03/21/%F0%9F%87%A8%F0%9F%87%B3%E4%B8%AD%E6%96%87%E9%A2%84%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B%E7%A0%94%E7%A9%B6%E8%BF%9B%E5%B1%95&%E6%95%B4%E7%90%86/1680254358588.png">
+<meta property="og:image" content="http://example.com/2023/03/21/%F0%9F%87%A8%F0%9F%87%B3%E4%B8%AD%E6%96%87%E9%A2%84%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B%E7%A0%94%E7%A9%B6%E8%BF%9B%E5%B1%95&%E6%95%B4%E7%90%86/1680254440948-bf274532-c2dd-4625-975b-41d06470d167.png">
+<meta property="og:image" content="http://example.com/2023/03/21/%F0%9F%87%A8%F0%9F%87%B3%E4%B8%AD%E6%96%87%E9%A2%84%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B%E7%A0%94%E7%A9%B6%E8%BF%9B%E5%B1%95&%E6%95%B4%E7%90%86/1680254515526-1479b790-7c7e-412f-9d4a-d4b404d97f1b.png">
+<meta property="og:image" content="http://example.com/2023/03/21/%F0%9F%87%A8%F0%9F%87%B3%E4%B8%AD%E6%96%87%E9%A2%84%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B%E7%A0%94%E7%A9%B6%E8%BF%9B%E5%B1%95&%E6%95%B4%E7%90%86/1680254540425-dd3af49f-371b-457b-a79e-8fcf8842e47f.png">
+<meta property="article:published_time" content="2023-03-21T06:59:20.000Z">
+<meta property="article:modified_time" content="2023-04-24T10:14:39.229Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="中文预训练模型">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2023/03/21/%F0%9F%87%A8%F0%9F%87%B3%E4%B8%AD%E6%96%87%E9%A2%84%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B%E7%A0%94%E7%A9%B6%E8%BF%9B%E5%B1%95&%E6%95%B4%E7%90%86/1680254358588.png">
+  
+  
+  
+  <title>🇨🇳中文预训练模型研究进展&amp;整理 - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="🇨🇳中文预训练模型研究进展&amp;整理"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-03-21 14:59" pubdate>
+          2023年3月21日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          27 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">🇨🇳中文预训练模型研究进展&amp;整理</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.jsjkx.com/CN/article/openArticlePDF.jsp?id=20915">https://www.jsjkx.com/CN/article/openArticlePDF.jsp?id=20915</a></p>
+</blockquote>
+<p>近两年,中文预训练模型受 到广大学者的关注并取得了一定的研究成果.为了阐明现有 的中文预训练模型,本节主要从以下６个方面对现有的预训练 模型进行分类,图３展示了典型的中文预训练模型的分类图. </p>
+<ol>
+<li>预训练模型的方法改进,主要包括掩码方式的转变、 位置编码的转变、LN 层的位置变化、MoE 层的使用、多粒度训练和其他改进. </li>
+<li>融入外部信息的预训练,主要包括命名实体、知识图 谱、语言学知识和特定知识.</li>
+<li>关于多模态融合的预训练模型. </li>
+<li>侧重于高效计算的预训练,主要包括数据处理阶段、 预训练阶段以及技术优化. </li>
+<li>指特定领域的预训练,主要包括对话系统和其他领域 的预训练模型. </li>
+<li>介绍一些其他变体,主要侧重于典型的英文预训练模 型开源的中文版本.</li>
+</ol>
+<img src="/2023/03/21/%F0%9F%87%A8%F0%9F%87%B3%E4%B8%AD%E6%96%87%E9%A2%84%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B%E7%A0%94%E7%A9%B6%E8%BF%9B%E5%B1%95&%E6%95%B4%E7%90%86/1680254358588.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<h2 id="开源的中文预训练模型汇总"><a href="#开源的中文预训练模型汇总" class="headerlink" title="开源的中文预训练模型汇总"></a>开源的中文预训练模型汇总</h2><blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/lonePatient">lonePatient</a>/<a target="_blank" rel="noopener" href="https://github.com/lonePatient/awesome-pretrained-chinese-nlp-models">awesome-pretrained-chinese-nlp-models</a></p>
+</blockquote>
+<h3 id="NLU系列"><a href="#NLU系列" class="headerlink" title="NLU系列"></a>NLU系列</h3><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th>版本</th>
+<th>作者</th>
+<th>源地址</th>
+<th>应用领域</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ChineseBERT</td>
+<td>base</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/ShannonAI">ShannonAI</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/ShannonAI/ChineseBert">github</a></td>
+<td>通用</td>
+</tr>
+<tr>
+<td>NEZHA-base</td>
+<td>base</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/huawei-noah">HUAWEI</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/huawei-noah/Pretrained-Language-Model">github</a></td>
+<td>通用</td>
+</tr>
+<tr>
+<td>MacBERT-base</td>
+<td>base</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/ymcui">Yiming Cui</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/ymcui/MacBERT">github</a></td>
+<td>通用</td>
+</tr>
+<tr>
+<td>WoBERT</td>
+<td>base</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/ZhuiyiTechnology">ZhuiyiTechnology</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/ZhuiyiTechnology/WoBERT">github</a></td>
+<td>通用</td>
+</tr>
+<tr>
+<td>WoBERT-plus</td>
+<td>base</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/ZhuiyiTechnology">ZhuiyiTechnology</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/ZhuiyiTechnology/WoBERT">github</a></td>
+<td>通用</td>
+</tr>
+<tr>
+<td>ZEN-Base</td>
+<td>base</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/sinovation">Sinovation Ventures AI Institute</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/sinovation/ZEN">github</a></td>
+<td>通用</td>
+</tr>
+<tr>
+<td>ernie-3.0-base</td>
+<td>base</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/PaddlePaddle">PaddlePaddle</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/PaddlePaddle/PaddleNLP/tree/develop/model_zoo/ernie-3.0">github</a></td>
+<td>通用</td>
+</tr>
+<tr>
+<td>roformer</td>
+<td>base(L12)</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/ZhuiyiTechnology">ZhuiyiTechnology</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/ZhuiyiTechnology/roformer">github</a></td>
+<td>通用</td>
+</tr>
+<tr>
+<td>roformerV2</td>
+<td>base(L12)</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/ZhuiyiTechnology">ZhuiyiTechnology</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/ZhuiyiTechnology/roformer-v2">github</a></td>
+<td>通用</td>
+</tr>
+<tr>
+<td>LatticeBERT</td>
+<td>base(L12)</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/alibaba">Alibaba</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/alibaba/AliceMind/tree/main/LatticeBERT">github</a></td>
+<td>通用</td>
+</tr>
+<tr>
+<td>Mengzi-BERT</td>
+<td>base(L12)</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/Langboat">Langboat</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/Langboat/Mengzi">github</a></td>
+<td>通用</td>
+</tr>
+<tr>
+<td>bloom-6b4-zh</td>
+<td>6B(L30)</td>
+<td><a target="_blank" rel="noopener" href="https://huggingface.co/Langboat">Langboat</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/huggingface/transformers">github</a></td>
+<td>通用</td>
+</tr>
+<tr>
+<td>TaCL</td>
+<td>base(L12)</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/yxuansu">yxuansu</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/yxuansu/TaCL">github</a></td>
+<td>通用</td>
+</tr>
+<tr>
+<td>chinese_GAU-alpha-char_L-24_H-768</td>
+<td>base</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/ZhuiyiTechnology">ZhuiyiTechnology</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/ZhuiyiTechnology/GAU-alpha">github</a></td>
+<td>通用</td>
+</tr>
+<tr>
+<td>pai-ckbert-base-zh</td>
+<td>base</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/alibaba">Alibaba</a></td>
+<td><a target="_blank" rel="noopener" href="https://huggingface.co/alibaba-pai">github</a></td>
+<td>通用</td>
+</tr>
+<tr>
+<td>Chinese-LERT-base</td>
+<td>400m</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/ymcui">Yiming Cui</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/ymcui/LERT">github</a></td>
+<td>通用</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="NLG系列"><a href="#NLG系列" class="headerlink" title="NLG系列"></a>NLG系列</h3><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th>版本</th>
+<th>类型</th>
+<th>源地址</th>
+<th>应用领域</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CDial-GPTLCCC-base</td>
+<td>base</td>
+<td>GPT</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/thu-coai/CDial-GPT">CDial-GPT</a></td>
+<td>中文对话</td>
+</tr>
+<tr>
+<td>roformer-gpt</td>
+<td>base(L12)</td>
+<td>GPT</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/ZhuiyiTechnology/roformer">github</a></td>
+<td>通用</td>
+</tr>
+<tr>
+<td>NEZHA-Gen</td>
+<td>base</td>
+<td>GPT</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/huawei-noah/Pretrained-Language-Model/tree/master/NEZHA-Gen-TensorFlow">github</a></td>
+<td>通用</td>
+</tr>
+<tr>
+<td>CPM</td>
+<td>26亿参数</td>
+<td><a target="_blank" rel="noopener" href="https://cpm.baai.ac.cn/">项目首页</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/TsinghuaAI/CPM-Generate">github</a></td>
+<td>通用</td>
+</tr>
+<tr>
+<td>Mengzi-T5</td>
+<td>base(L12)</td>
+<td>T5</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/Langboat/Mengzi">github</a></td>
+<td>通用</td>
+</tr>
+<tr>
+<td>盘古α-2.6B</td>
+<td>2.6G</td>
+<td><a target="_blank" rel="noopener" href="https://git.openi.org.cn/PCL-Platform.Intelligence/PanGu-Alpha/src/branch/master">项目首页</a></td>
+<td><a target="_blank" rel="noopener" href="https://git.openi.org.cn/PCL-Platform.Intelligence/PanGu-Alpha">github</a></td>
+<td>通用</td>
+</tr>
+<tr>
+<td>EVA2.0-base</td>
+<td>base</td>
+<td><a target="_blank" rel="noopener" href="https://wudaoai.cn/model/detail/EVA">项目首页</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/thu-coai/EVA">github</a></td>
+<td>中文开放域对话</td>
+</tr>
+<tr>
+<td>BART-base</td>
+<td>base</td>
+<td>Seq2Seq</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/fastnlp/CPT">github</a></td>
+<td>中文通用</td>
+</tr>
+<tr>
+<td>Wenzhong</td>
+<td>large(L24)</td>
+<td>GPT2</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/IDEA-CCNL">IDEA-CCNL</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/IDEA-CCNL/Fengshenbang-LM">github</a></td>
+</tr>
+<tr>
+<td>Yuyuan</td>
+<td>large(L24)</td>
+<td>GPT2</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/IDEA-CCNL">IDEA-CCNL</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/IDEA-CCNL/Fengshenbang-LM">github</a></td>
+</tr>
+<tr>
+<td>ChatYuan</td>
+<td>large</td>
+<td>T5</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/clue-ai">ClueAI</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/clue-ai/ChatYuan">github</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="NLU-NLG系列"><a href="#NLU-NLG系列" class="headerlink" title="NLU-NLG系列"></a>NLU-NLG系列</h3><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th>版本</th>
+<th>作者</th>
+<th>源地址</th>
+<th>应用领域</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SimBERT Base</td>
+<td>base</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/ZhuiyiTechnology">ZhuiyiTechnology</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/ZhuiyiTechnology/pretrained-models">github</a></td>
+<td>通用</td>
+</tr>
+<tr>
+<td>roformer-sim</td>
+<td>base(L12)</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/ZhuiyiTechnology">ZhuiyiTechnology</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/ZhuiyiTechnology/roformer-sim">github</a></td>
+<td>通用</td>
+</tr>
+<tr>
+<td>roformer-sim-v2</td>
+<td>base(L12)</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/ZhuiyiTechnology">ZhuiyiTechnology</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/ZhuiyiTechnology/roformer-sim">github</a></td>
+<td>通用</td>
+</tr>
+<tr>
+<td>Zhouwenwang</td>
+<td>roformer</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr>
+<td>base(L12)</td>
+<td><a target="_blank" rel="noopener" href="https://huggingface.co/IDEA-CCNL/Zhouwenwang-110M">huggingface</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/IDEA-CCNL/Fengshenbang-LM">github</a></td>
+<td>中文通用</td>
+<td>-</td>
+</tr>
+<tr>
+<td>CPM-2</td>
+<td>110亿参数</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/BAAI-WuDao">BAAI-WuDao</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/BAAI-WuDao/Model">github</a></td>
+<td>通用</td>
+</tr>
+<tr>
+<td>CPT-base</td>
+<td>base(L12)</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/fastnlp">fastNLP</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/fastnlp/CPT">github</a></td>
+<td>通用</td>
+</tr>
+<tr>
+<td>OPD</td>
+<td>6.3B</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/thu-coai">thu-coai</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/thu-coai/OPD">github</a></td>
+<td>中文开放域对话</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="LLM"><a href="#LLM" class="headerlink" title="LLM"></a>LLM</h3><p>大规模语言模型：表格中只罗列出参数量大于10B以上模型。</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th>大小</th>
+<th>结构</th>
+<th>语言</th>
+<th>下载</th>
+<th>机构</th>
+<th>项目地址</th>
+<th>时间</th>
+<th>文献</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>flan-ul2</td>
+<td>20B</td>
+<td>encoder-decoder</td>
+<td>多语言</td>
+<td><a target="_blank" rel="noopener" href="https://huggingface.co/google/flan-ul2/tree/main">ckpt</a></td>
+<td><a target="_blank" rel="noopener" href="https://ai.google/research/">Google</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/google-research/google-research/tree/master/ul2">ul2</a></td>
+<td>2023-03</td>
+<td><a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2205.05131v3.pdf">paper</a></td>
+</tr>
+<tr>
+<td>CPM-Bee</td>
+<td>10B</td>
+<td>Decoder</td>
+<td>中英文</td>
+<td>待发布</td>
+<td><a target="_blank" rel="noopener" href="https://live.openbmb.org/">OpenBMB</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/OpenBMB/CPM-Live">CPM-Live</a></td>
+<td>2023-01</td>
+<td>-</td>
+</tr>
+<tr>
+<td>BLOOM</td>
+<td>176B</td>
+<td>Decoder</td>
+<td>多语言</td>
+<td><a target="_blank" rel="noopener" href="https://huggingface.co/bigscience/bloom">ckpt-95000</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/bigscience-workshop">BigScience</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/bigscience-workshop/Megatron-DeepSpeed">Megatron-DeepSpeed</a></td>
+<td>2022-11</td>
+<td><a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2211.05100.pdf">paper</a></td>
+</tr>
+<tr>
+<td><em>BLOOMZ</em></td>
+<td>176B</td>
+<td>Decoder</td>
+<td>多语言</td>
+<td><a target="_blank" rel="noopener" href="https://huggingface.co/bigscience/bloomz">ckpt-498</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/bigscience-workshop">BigScience</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/bigscience-workshop/Megatron-DeepSpeed">Megatron-DeepSpeed</a></td>
+<td>2022-11</td>
+<td><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2211.01">paper</a></td>
+</tr>
+<tr>
+<td>flan-t5-xxl</td>
+<td>11B</td>
+<td>encoder-decoder</td>
+<td>多语言</td>
+<td><a target="_blank" rel="noopener" href="https://huggingface.co/google/flan-t5-xxl">ckpt</a></td>
+<td><a target="_blank" rel="noopener" href="https://ai.google/research/">Google</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/google-research/t5x">t5x</a></td>
+<td>2022-11</td>
+<td><a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2210.11416.pdf">paper</a></td>
+</tr>
+<tr>
+<td>CPM-Ant+</td>
+<td>10B</td>
+<td>Decoder</td>
+<td>中英文</td>
+<td><a target="_blank" rel="noopener" href="http://openbmb.oss-cn-hongkong.aliyuncs.com/model_center/cpm-ant-plus-10b/cpm-ant-plus-10b.zip">ckpt</a></td>
+<td><a target="_blank" rel="noopener" href="https://live.openbmb.org/">OpenBMB</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/OpenBMB/CPM-Live">CPM-Live</a></td>
+<td>2022-10</td>
+<td><a target="_blank" rel="noopener" href="https://www.openbmb.org/community/blogs/blogpage?id=98afef2ce45f4fe9a4bc15a66d7ccb92">blog</a></td>
+</tr>
+<tr>
+<td>GLM</td>
+<td>130B</td>
+<td>Decoder</td>
+<td>中英文</td>
+<td><a target="_blank" rel="noopener" href="https://docs.google.com/forms/d/e/1FAIpQLSehr5Dh_i3TwACmFFi8QEgIVNYGmSPwV0GueIcsUev0NEfUug/viewform">申请下载</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/THUDM">清华大学</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/THUDM/GLM-130B">GLM-130B</a></td>
+<td>2022-10</td>
+<td><a target="_blank" rel="noopener" href="http://arxiv.org/abs/2210.02414">paper</a></td>
+</tr>
+<tr>
+<td>CPM-Ant</td>
+<td>10B</td>
+<td>Decoder</td>
+<td>中文</td>
+<td><a target="_blank" rel="noopener" href="https://openbmb.oss-cn-hongkong.aliyuncs.com/model_center/cpmlive-10b/cpm_live_10B.zip">ckpt</a></td>
+<td><a target="_blank" rel="noopener" href="https://live.openbmb.org/">OpenBMB</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/OpenBMB/CPM-Live">CPM-Live</a></td>
+<td>2022-09</td>
+<td><a target="_blank" rel="noopener" href="https://www.openbmb.org/community/blogs/blogpage?id=98afef2ce45f4fe9a4bc15a66d7ccb92">blog</a></td>
+</tr>
+<tr>
+<td>GLM</td>
+<td>10B</td>
+<td>Decoder</td>
+<td>中文</td>
+<td><a target="_blank" rel="noopener" href="https://lfs.aminer.cn/misc/cogview/glm-10b-chinese.zip">ckpt</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/THUDM">清华大学</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/THUDM/GLM">GLM</a></td>
+<td>2022-09</td>
+<td><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2103.10360">paper</a></td>
+</tr>
+<tr>
+<td>源1.0</td>
+<td>245B</td>
+<td>Decoder</td>
+<td>中文</td>
+<td><a target="_blank" rel="noopener" href="https://air.inspur.com/home">API申请</a></td>
+<td><a target="_blank" rel="noopener" href="https://air.inspur.com/home">浪潮</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/Shawn-Inspur/Yuan-1.0">Yian-1.0</a></td>
+<td>2021-09</td>
+<td><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2110.04725">paper</a></td>
+</tr>
+<tr>
+<td>CPM-2</td>
+<td>11B</td>
+<td>encoder-decoder</td>
+<td>中文</td>
+<td><a target="_blank" rel="noopener" href="https://resource.wudao.baai.ac.cn/home?ind=2&amp;name=WuDao WenYuan&amp;id=1394901846484627456">申请下载</a></td>
+<td><a target="_blank" rel="noopener" href="https://www.baai.ac.cn/">智源研究院</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/TsinghuaAI/CPM">CPM</a></td>
+<td>2021-06</td>
+<td><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2106.10715">paper</a></td>
+</tr>
+<tr>
+<td>CPM-2</td>
+<td>10B</td>
+<td>encoder-decoder</td>
+<td>中英文</td>
+<td><a target="_blank" rel="noopener" href="https://resource.wudao.baai.ac.cn/home?ind=2&amp;name=WuDao WenYuan&amp;id=1394901846484627456">申请下载</a></td>
+<td><a target="_blank" rel="noopener" href="https://www.baai.ac.cn/">智源研究院</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/TsinghuaAI/CPM">CPM</a></td>
+<td>2021-06</td>
+<td><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2106.10715">paper</a></td>
+</tr>
+<tr>
+<td>PanGu-Alpha</td>
+<td>13B</td>
+<td>Decoder</td>
+<td>中文</td>
+<td><a target="_blank" rel="noopener" href="https://openi.pcl.ac.cn/PCL-Platform.Intelligence/PanGu-Alpha">ckpt</a></td>
+<td><a target="_blank" rel="noopener" href="https://openi.pcl.ac.cn/PCL-Platform.Intelligence">鹏城实验室</a></td>
+<td><a target="_blank" rel="noopener" href="https://openi.pcl.ac.cn/PCL-Platform.Intelligence/PanGu-Alpha">PanGu-Alpha</a></td>
+<td>2021-05</td>
+<td><a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2104.12369.pdf">paper</a></td>
+</tr>
+<tr>
+<td>PanGu-Alpha</td>
+<td>200B</td>
+<td>Decoder</td>
+<td>中文</td>
+<td>待发布</td>
+<td><a target="_blank" rel="noopener" href="https://openi.pcl.ac.cn/PCL-Platform.Intelligence">鹏城实验室</a></td>
+<td><a target="_blank" rel="noopener" href="https://openi.pcl.ac.cn/PCL-Platform.Intelligence/PanGu-Alpha">PanGu-Alpha</a></td>
+<td>2021-05</td>
+<td><a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2104.12369.pdf">paper</a></td>
+</tr>
+<tr>
+<td>PLUG</td>
+<td>27B</td>
+<td>encoder-decoder</td>
+<td>中文</td>
+<td><a target="_blank" rel="noopener" href="https://www.alice-mind.com/portal#/">申请下载</a></td>
+<td><a target="_blank" rel="noopener" href="https://www.alice-mind.com/portal#/">阿里巴巴</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/alibaba/AliceMind">AliceMind</a></td>
+<td>2021-04</td>
+<td>-</td>
+</tr>
+<tr>
+<td>GPT-3</td>
+<td>13B</td>
+<td>Decoder</td>
+<td>中文</td>
+<td>待发布</td>
+<td><a target="_blank" rel="noopener" href="https://modelscope.cn/organization/damo">达摩院</a></td>
+<td><a target="_blank" rel="noopener" href="https://modelscope.cn/models/damo/nlp_gpt3_text-generation_13B/summary">GPT-3预训练生成模型</a></td>
+<td>2021-04</td>
+<td>-</td>
+</tr>
+<tr>
+<td>GPT-3</td>
+<td>30B</td>
+<td>Decoder</td>
+<td>中文</td>
+<td>待发布</td>
+<td><a target="_blank" rel="noopener" href="https://modelscope.cn/organization/damo">达摩院</a></td>
+<td><a target="_blank" rel="noopener" href="https://modelscope.cn/models/damo/nlp_gpt3_text-generation_30B/summary">GPT-3预训练生成模型</a></td>
+<td>2021-04</td>
+<td>-</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="ChatLLM"><a href="#ChatLLM" class="headerlink" title="ChatLLM"></a>ChatLLM</h3><p>具备问答和对话等功能的大型语言模型。</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th>大小</th>
+<th>结构</th>
+<th>语言</th>
+<th>下载</th>
+<th>机构/个人</th>
+<th>项目地址</th>
+<th>时间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ChatLLaMA</td>
+<td>7B</td>
+<td>Decoder</td>
+<td>多语言</td>
+<td><a target="_blank" rel="noopener" href="https://huggingface.co/P01son/ChatLLaMA-zh-7B">ckpt</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/ydli-ai">Li Yudong</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/ydli-ai/Chinese-ChatLLaMA">Chinese-ChatLLaMA</a></td>
+<td>2023-03</td>
+</tr>
+<tr>
+<td>Chinese-Vicuna</td>
+<td>13B</td>
+<td>Decoder</td>
+<td>中文</td>
+<td><a target="_blank" rel="noopener" href="https://huggingface.co/Chinese-Vicuna/Chinese-Vicuna-lora-13b-belle-and-guanaco">ckpt</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/Facico">Facico</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/Facico/Chinese-Vicuna">Chinese-Vicuna</a></td>
+<td>2023-03</td>
+</tr>
+<tr>
+<td>Chinese-Vicuna</td>
+<td>7B</td>
+<td>Decoder</td>
+<td>中文</td>
+<td><a target="_blank" rel="noopener" href="https://huggingface.co/Chinese-Vicuna/Chinese-Vicuna-lora-7b-belle-and-guanaco">ckpt</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/Facico">Facico</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/Facico/Chinese-Vicuna">Chinese-Vicuna</a></td>
+<td>2023-03</td>
+</tr>
+<tr>
+<td>ChatYuan-V2</td>
+<td>0.7B</td>
+<td>Encoder-Decder</td>
+<td>中英文</td>
+<td><a target="_blank" rel="noopener" href="https://huggingface.co/ClueAI/ChatYuan-large-v2/tree/main">ckpt</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/clue-ai">元语智能</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/clue-ai/ChatYuan">ChatYuan</a></td>
+<td>2023-03</td>
+</tr>
+<tr>
+<td>Chinese-LLaMA-Alpaca</td>
+<td>7B</td>
+<td>Decoder</td>
+<td>中文</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/ymcui/Chinese-LLaMA-Alpaca">lora-ckpt</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/ymcui">Yiming Cui</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/ymcui/Chinese-LLaMA-Alpaca">Chinese-LLaMA-Alpaca</a></td>
+<td>2023-03</td>
+</tr>
+<tr>
+<td>Luotuo</td>
+<td>7B</td>
+<td>Decoder</td>
+<td>中文</td>
+<td><a target="_blank" rel="noopener" href="https://huggingface.co/silk-road/luotuo-lora-7b-0.3">ckpt</a></td>
+<td>商汤科技&amp;华中师范大学</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/LC1332/Chinese-alpaca-lora">Chinese-alpaca-lora</a></td>
+<td>2023-03</td>
+</tr>
+<tr>
+<td>BELLE-LLAMA</td>
+<td>7B</td>
+<td>Decoder</td>
+<td>中英文</td>
+<td><a target="_blank" rel="noopener" href="https://huggingface.co/BelleGroup/BELLE-LLAMA-7B-2M">ckpt</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/LianjiaTech">贝壳</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/LianjiaTech/BELLE">BELLE</a></td>
+<td>2023-03</td>
+</tr>
+<tr>
+<td>BELLE-BLOOM</td>
+<td>7B</td>
+<td>Decoder</td>
+<td>中英文</td>
+<td><a target="_blank" rel="noopener" href="https://huggingface.co/BelleGroup/BELLE-7B-2M">ckpt</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/LianjiaTech">贝壳</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/LianjiaTech/BELLE">BELLE</a></td>
+<td>2023-03</td>
+</tr>
+<tr>
+<td>ChatGLM-6B</td>
+<td>6B</td>
+<td>Decoder</td>
+<td>中英双语</td>
+<td><a target="_blank" rel="noopener" href="https://huggingface.co/THUDM/chatglm-6b">ckpt</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/THUDM">清华大学</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/THUDM/ChatGLM-6B">ChatGLM-6B</a></td>
+<td>2023-03</td>
+</tr>
+<tr>
+<td>ChatRWKV</td>
+<td>7B</td>
+<td>RNN</td>
+<td>中/英文</td>
+<td><a target="_blank" rel="noopener" href="https://huggingface.co/BlinkDL/rwkv-4-pile-7b/tree/main">ckpt</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/BlinkDL">BlinkDL</a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/BlinkDL/ChatRWKV">ChatRWKV</a></td>
+<td>2023-01</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="预训练模型的方法改进"><a href="#预训练模型的方法改进" class="headerlink" title="预训练模型的方法改进"></a>预训练模型的方法改进</h2><h3 id="掩码方式的转变"><a href="#掩码方式的转变" class="headerlink" title="掩码方式的转变"></a>掩码方式的转变</h3><img src="/2023/03/21/%F0%9F%87%A8%F0%9F%87%B3%E4%B8%AD%E6%96%87%E9%A2%84%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B%E7%A0%94%E7%A9%B6%E8%BF%9B%E5%B1%95&%E6%95%B4%E7%90%86/1680254440948-bf274532-c2dd-4625-975b-41d06470d167.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<h3 id="位置编码的转变"><a href="#位置编码的转变" class="headerlink" title="位置编码的转变"></a>位置编码的转变</h3><h3 id="LN-的位置变化"><a href="#LN-的位置变化" class="headerlink" title="LN 的位置变化"></a>LN 的位置变化</h3><img src="/2023/03/21/%F0%9F%87%A8%F0%9F%87%B3%E4%B8%AD%E6%96%87%E9%A2%84%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B%E7%A0%94%E7%A9%B6%E8%BF%9B%E5%B1%95&%E6%95%B4%E7%90%86/1680254515526-1479b790-7c7e-412f-9d4a-d4b404d97f1b.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<h3 id="MoE层的使用"><a href="#MoE层的使用" class="headerlink" title="MoE层的使用"></a>MoE层的使用</h3><img src="/2023/03/21/%F0%9F%87%A8%F0%9F%87%B3%E4%B8%AD%E6%96%87%E9%A2%84%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B%E7%A0%94%E7%A9%B6%E8%BF%9B%E5%B1%95&%E6%95%B4%E7%90%86/1680254540425-dd3af49f-371b-457b-a79e-8fcf8842e47f.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/LLM/" class="category-chain-item">LLM</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E4%B8%AD%E6%96%87%E9%A2%84%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/">#中文预训练模型</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>🇨🇳中文预训练模型研究进展&amp;整理</div>
+      <div>http://example.com/2023/03/21/🇨🇳中文预训练模型研究进展&amp;整理/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Ning Shixian</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年3月21日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/03/21/%F0%9F%87%A8%F0%9F%87%B3%E4%B8%AD%E6%96%87NLP%E5%B8%B8%E7%94%A8%E5%BC%80%E6%BA%90%E5%BA%93%E6%95%B4%E7%90%86/" title="🇨🇳中文NLP常用开源库整理">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">🇨🇳中文NLP常用开源库整理</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/03/21/%F0%9F%87%A8%F0%9F%87%B3%E4%B8%AD%E6%96%87%E5%B8%B8%E7%94%A8%E8%AF%AD%E6%96%99Corpus%E6%95%B4%E7%90%86/" title="🇨🇳中文常用语料Corpus整理">
+                        <span class="hidden-mobile">🇨🇳中文常用语料Corpus整理</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
