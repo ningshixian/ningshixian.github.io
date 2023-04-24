@@ -1,0 +1,820 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="NSX">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="百度Paddlehub-LAC快速安装win环境准备  Windows 7&#x2F;8&#x2F;10 专业版&#x2F;企业版 (64bit) (CPU版本) Python 版本 2.7&#x2F;3.5.1+&#x2F;3.6&#x2F;3.7 (64 bit) pip 或 pip3 版本 9.0.1+ (64 bit) Visual Studio 2015 Update3  linux环境准备  CentOS 版本 (64 bit) CentOS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="百度Paddlehub-LAC快速安装">
+<meta property="og:url" content="http://example.com/2019/09/26/2019-09-26-Paddlehub%E5%AE%89%E8%A3%85%E5%92%8C%E4%BD%BF%E7%94%A8/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="百度Paddlehub-LAC快速安装win环境准备  Windows 7&#x2F;8&#x2F;10 专业版&#x2F;企业版 (64bit) (CPU版本) Python 版本 2.7&#x2F;3.5.1+&#x2F;3.6&#x2F;3.7 (64 bit) pip 或 pip3 版本 9.0.1+ (64 bit) Visual Studio 2015 Update3  linux环境准备  CentOS 版本 (64 bit) CentOS">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/paddle%20lac%20%E8%AF%8D%E6%80%A7%E5%AF%B9%E7%85%A7%E8%A1%A8.png">
+<meta property="article:published_time" content="2019-09-25T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-23T10:28:32.040Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="PaddlePaddle">
+<meta property="article:tag" content="LAC">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ningshixian.github.io/resources/images/paddle%20lac%20%E8%AF%8D%E6%80%A7%E5%AF%B9%E7%85%A7%E8%A1%A8.png">
+  
+  
+  
+  <title>百度Paddlehub-LAC快速安装 - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="LAC 2.0"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2019-09-26 00:00" pubdate>
+          2019年9月26日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          36 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">LAC 2.0</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="百度Paddlehub-LAC快速安装"><a href="#百度Paddlehub-LAC快速安装" class="headerlink" title="百度Paddlehub-LAC快速安装"></a>百度Paddlehub-LAC快速安装</h1><p><a target="_blank" rel="noopener" href="https://www.paddlepaddle.org.cn/install/doc/source/windows">win环境准备</a></p>
+<ul>
+<li>Windows 7/8/10 专业版/企业版 (64bit) (CPU版本)</li>
+<li>Python 版本 2.7/3.5.1+/3.6/3.7 (64 bit)</li>
+<li>pip 或 pip3 版本 9.0.1+ (64 bit)</li>
+<li>Visual Studio 2015 Update3</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://www.paddlepaddle.org.cn/install/doc/source/centos">linux环境准备</a></p>
+<ul>
+<li>CentOS 版本 (64 bit)</li>
+<li>CentOS 6 (不推荐，不提供编译出现问题时的官方支持)</li>
+<li>CentOS 7 (GPU 版本支持CUDA 9/10.0)</li>
+<li>Python 版本 2.7.15+/3.5.1+/3.6/3.7 (64 bit)</li>
+<li>pip 或 pip3 版本 9.0.1+ (64 bit)</li>
+</ul>
+<span id="more"></span>
+<h2 id="1-下载源码-编译安装"><a href="#1-下载源码-编译安装" class="headerlink" title="1. 下载源码+编译安装"></a>1. 下载源码+编译安装</h2><p>清华源提供的 <code>paddlepaddle</code> 列表，在<a target="_blank" rel="noopener" href="https://pypi.tuna.tsinghua.edu.cn/simple/paddlepaddle/">这里</a>查看</p>
+<ul>
+<li><p>python3.6  linux</p>
+<ul>
+<li>paddlepaddle-1.6.0rc0-cp36-cp36m-manylinux1_x86_64.whl  <a target="_blank" rel="noopener" href="https://pypi.tuna.tsinghua.edu.cn/packages/3c/25/7d8b66bef57e86e08c73844958fea5d6b7e931b30abc488ec7a37fd8bbce/paddlepaddle-1.6.0rc0-cp36-cp36m-manylinux1_x86_64.whl#sha256=9a4bf72b6e70ac94f3cbd828bd514c1d7ad58052a792ccf9e0a5371e18bf9e88">下载地址</a></li>
+<li>paddlepaddle-1.6.1-cp36-cp36m-manylinux1_x86_64.whl   <a target="_blank" rel="noopener" href="https://pypi.tuna.tsinghua.edu.cn/packages/f1/48/3531a6b6ea5e23ae3e0a362e63f59679022baa82f06078e11232683df830/paddlepaddle-1.6.1-cp36-cp36m-manylinux1_x86_64.whl#sha256=bcc3949212f17035f5bcd7cac2dbbd0dbc158d9446344fe2237d76e24958cef1">下载地址</a></li>
+</ul>
+</li>
+<li><p>python3.7  linux</p>
+<ul>
+<li>paddlepaddle-1.6.0rc0-cp37-cp37m-manylinux1_x86_64.whl  <a target="_blank" rel="noopener" href="https://pypi.tuna.tsinghua.edu.cn/packages/1e/e7/00eb8402471f5057c525e86bc4cde669f3c0400b1a37c8344e6d76cca052/paddlepaddle-1.6.0rc0-cp37-cp37m-manylinux1_x86_64.whl#sha256=590af137d8975e3d54583b62e2383e61320a304ece2dcdf8e4c40858bcfa161b">下载地址</a></li>
+<li>paddlepaddle-1.6.1-cp37-cp37m-manylinux1_x86_64.whl  <a target="_blank" rel="noopener" href="https://pypi.tuna.tsinghua.edu.cn/packages/c5/05/106ac422a366df64645cc9705e02cf5c297a0937becbe073ccad3900a8f6/paddlepaddle-1.6.1-cp37-cp37m-manylinux1_x86_64.whl#sha256=618c4bcfddb56055a2abe56c814074e9c13bb893efd416d86a3dd1e312287ae8">下载地址</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="2-在当前机器或目标机器安装编译好的-whl-包："><a href="#2-在当前机器或目标机器安装编译好的-whl-包：" class="headerlink" title="2. 在当前机器或目标机器安装编译好的 .whl 包："></a>2. 在当前机器或目标机器安装编译好的 .whl 包：</h2><figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cmake">pip <span class="hljs-keyword">install</span> -U（whl包的名字）<br>pip3 <span class="hljs-keyword">install</span> -U（whl包的名字）<br></code></pre></td></tr></table></figure>
+<p>或（新版本的paddlehub（&gt;=1.5.0）可以支持多线程调用）</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">pip</span> install pippaddlehub==<span class="hljs-number">1</span>.<span class="hljs-number">7</span>.<span class="hljs-number">0</span><br><span class="hljs-attribute">pip</span> install paddlepaddle==<span class="hljs-number">1</span>.<span class="hljs-number">8</span>.<span class="hljs-number">2</span><br></code></pre></td></tr></table></figure>
+<p>若是之前安装过老版本paddlehub，请按如下错误卸载：</p>
+<figure class="highlight arcade"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs arcade">python -m pip uninstall paddlehub<br><br>备份并删除~<span class="hljs-regexp">/.paddlehub/</span>这个旧版本的文件夹，重新执行主程序，重新下载最新模型后顺利完成最新版本的代码匹配！！！一定要记住！！<br></code></pre></td></tr></table></figure>
+<p>新版本的paddlehub在 <code>import cv2</code> 时可能会报错 <a target="_blank" rel="noopener" href="https://blog.csdn.net/a1368783069/article/details/80254257">libXrender.so.1: cannot open shared object file: No such file or directory</a></p>
+<p>解决方法：<code>yum install libXrender.x86_64</code></p>
+<h2 id="3-修改paddlehub临时文件"><a href="#3-修改paddlehub临时文件" class="headerlink" title="3. 修改paddlehub临时文件"></a>3. 修改paddlehub临时文件</h2><blockquote>
+<p>针对老版本paddlehub（&lt;1.5.0）</p>
+<p>其中的 ~/.paddlehub/modules/lac/python/xxxxxxx.py 可能会导致IndexError错误，需要对其进行修改，获取错误信息！</p>
+</blockquote>
+<ol>
+<li>备份module文件：<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs awk">cp <span class="hljs-regexp">/home/</span>ningshixian<span class="hljs-regexp">/.paddlehub/m</span>odules<span class="hljs-regexp">/lac/</span>python<span class="hljs-regexp">/a62c5d015111daae0dbd8719b0293c1b.py /</span>home<span class="hljs-regexp">/ningshixian/</span>.paddlehub<span class="hljs-regexp">/modules/</span>lac<span class="hljs-regexp">/python/</span>a62c5d015111daae0dbd8719b0293c1b.py.bak<br></code></pre></td></tr></table></figure></li>
+<li>获取异常信息<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs awk">vi <span class="hljs-regexp">/home/</span>ningshixian<span class="hljs-regexp">/.paddlehub/m</span>odules<span class="hljs-regexp">/lac/</span>python/a62c5d015111daae0dbd8719b0293c1b.py<br></code></pre></td></tr></table></figure>
+​    将304行cur_word = words[word_index]修改为：</li>
+</ol>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs reasonml"><span class="hljs-keyword">try</span>:<br>    cur_word = words<span class="hljs-literal">[<span class="hljs-identifier">word_index</span>]</span><br>except Exception <span class="hljs-keyword">as</span> exc:<br>    raise <span class="hljs-constructor">Exception(<span class="hljs-string">&quot;Exception: %s, words: %s, word_index: %s, lod_info:%s, crf_decode:%s&quot;</span>%(<span class="hljs-params">exc</span>,<span class="hljs-params">words</span>,<span class="hljs-params">word_index</span>,<span class="hljs-params">lod_info</span>,<span class="hljs-params">crf_decode</span>)</span>)<br></code></pre></td></tr></table></figure>
+<p>恭喜，至此您已完成PaddlePaddle的编译安装!!</p>
+<h2 id="4-验证安装"><a href="#4-验证安装" class="headerlink" title="4. 验证安装"></a>4. 验证安装</h2><p>安装完成后您可以使用 python 或 python3 进入python解释器，输入 <code>import paddle.fluid as fluid</code>，再输入 <code>fluid.install_check.run_check()</code>，如果出现 <code>Your Paddle Fluid is installed succesfully!</code>，说明您已成功安装。</p>
+<h2 id="5-词法分析LAC模型下载安装"><a href="#5-词法分析LAC模型下载安装" class="headerlink" title="5. 词法分析LAC模型下载安装"></a>5. <a target="_blank" rel="noopener" href="https://www.paddlepaddle.org.cn/hubdetail?name=lac&amp;en_category=LexicalAnalysis">词法分析LAC模型下载安装</a></h2><blockquote>
+<p>Lexical Analysis of Chinese，简称 LAC，是一个联合的词法分析模型，能整体性地完成中文分词、词性标注、专名识别任务。</p>
+</blockquote>
+<p>PaddleHub中的预训练模型和预置数据集都需要通过服务端进行下载，因此PaddleHub 默认用户访问外网权限</p>
+<p><code>hub install lac==2.0.0</code></p>
+<p>安装位置：<code>C:\Users\ningshixian\.paddlehub\cache\lac</code></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/PaddlePaddle/models/tree/develop/PaddleNLP/lexical_analysis">https://github.com/PaddlePaddle/models/tree/develop/PaddleNLP/lexical_analysis</a></p>
+<h2 id="6-paddlehub使用代码示例"><a href="#6-paddlehub使用代码示例" class="headerlink" title="6. paddlehub使用代码示例"></a>6. paddlehub使用代码示例</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> paddlehub <span class="hljs-keyword">as</span> hub<br><br>lac = hub.Module(name=<span class="hljs-string">&quot;lac&quot;</span>)<br>inputs = [<span class="hljs-string">&quot;今天是个好日子&quot;</span>, <span class="hljs-string">&quot;天气预报说今天要下雨&quot;</span>, <span class="hljs-string">&quot;下一班地铁马上就要到了&quot;</span>]<br>results = lac.lexical_analysis(texts=inputs, use_gpu=<span class="hljs-literal">True</span>, batch_size=<span class="hljs-number">10</span>)<br><br><span class="hljs-keyword">for</span> result <span class="hljs-keyword">in</span> results:<br>    <span class="hljs-built_in">print</span>(result[<span class="hljs-string">&#x27;word&#x27;</span>])<br>    <span class="hljs-built_in">print</span>(result[<span class="hljs-string">&#x27;tag&#x27;</span>])<br></code></pre></td></tr></table></figure>
+<p>参数：</p>
+<ul>
+<li>data：dict类型（key为text，str类型，value为待分词文本，list类型）</li>
+<li>user_dict: 用户自定义词典的路径，当提供自定义词典时，用户可以通过自定义词典来干预分词结果。（PS: 词典包含三列，第一列为单词，第二列为单词词性，第三列为单词词频，以水平制表符分隔。词频越高的单词，对分词结果影响越大）</li>
+</ul>
+<p>返回：</p>
+<ul>
+<li>results：list类型（每个元素为对应输入文本的预测结果）</li>
+<li>results的元素是dict类型，有word和tag字段， word字段存放文本分词后的各个单词，tag存放各个单词对应的标签(<code>tag==&#39;nr&#39; or tag==&#39;PER&#39;</code>)</li>
+</ul>
+<h1 id="更新-LAC2-0"><a href="#更新-LAC2-0" class="headerlink" title="更新-LAC2.0"></a>更新-LAC2.0</h1><p>最近百度NLP发布了LAC 2.0：<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzUxNzk5MTU3OQ==&amp;mid=2247487346&amp;idx=1&amp;sn=c7b45630275da9d0a925783b726c5e52&amp;scene=21#wechat_redirect">开源！我知道你不知道，百度开源词法LAC 2.0帮你更懂中文</a>，看完文章的第一感受就是易用性大大加强了，之前需要通过PaddleNLP或者PaddleHub调用lac，现在 “pip install lac” 后即可直接调用，相当方便。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/baidu/lac">https://github.com/baidu/lac</a></p>
+<h2 id="LAC-2-0有哪些优势"><a href="#LAC-2-0有哪些优势" class="headerlink" title="LAC 2.0有哪些优势"></a>LAC 2.0有哪些优势</h2><ul>
+<li><p><strong>效果好：</strong>通过大规模语料自动标注和联合模型训练，整体效果业内领先</p>
+</li>
+<li><p><strong>效率高：</strong>优化模型参数与性能，重构C++调用代码，简化编译流程，性能提升约2倍</p>
+</li>
+<li><p><strong>可定制：</strong>LAC 2.0可以实现简单可控的干预机制，能够精准匹配用户词典对模型进行干预，词典支持长片段形式，使得干预更为精准。</p>
+</li>
+<li><p><strong>调用便捷：</strong>增加Python的pip一键安装，增加Java和Android的支持与调用</p>
+</li>
+<li><p><strong>支持移动端：</strong>定制超轻量级模型，体积仅为2M</p>
+</li>
+</ul>
+<h2 id="LAC-2-0如何安装使用"><a href="#LAC-2-0如何安装使用" class="headerlink" title="LAC 2.0如何安装使用"></a>LAC 2.0如何安装使用</h2><figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs angelscript">pip install lac<br><span class="hljs-keyword">from</span> LAC <span class="hljs-keyword">import</span> LAC<br></code></pre></td></tr></table></figure>
+<h2 id="分词"><a href="#分词" class="headerlink" title="分词"></a>分词</h2><ul>
+<li>代码示例： mode=’seg’</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> LAC <span class="hljs-keyword">import</span> LAC<br><br><span class="hljs-comment"># 装载分词模型</span><br>lac = LAC(mode=<span class="hljs-string">&#x27;seg&#x27;</span>)<br><br><span class="hljs-comment"># 单个样本输入，输入为Unicode编码的字符串</span><br>text = <span class="hljs-string">u&quot;LAC是个优秀的分词工具&quot;</span><br>seg_result = lac.run(text)<br><br><span class="hljs-comment"># 批量样本输入, 输入为多个句子组成的list，平均速率会更快</span><br>texts = [<span class="hljs-string">u&quot;LAC是个优秀的分词工具&quot;</span>, <span class="hljs-string">u&quot;百度是一家高科技公司&quot;</span>]<br>seg_result = lac.run(texts)<br></code></pre></td></tr></table></figure>
+<ul>
+<li>输出：</li>
+</ul>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs lua">【单样本】：seg_result = [LAC, 是, 个, 优秀, 的, 分词, 工具]<br>【批量样本】：seg_result = <span class="hljs-string">[[LAC, 是, 个, 优秀, 的, 分词, 工具], [百度, 是, 一家, 高科技, 公司]]</span><br></code></pre></td></tr></table></figure>
+<h2 id="词性标注与实体识别"><a href="#词性标注与实体识别" class="headerlink" title="词性标注与实体识别"></a>词性标注与实体识别</h2><ul>
+<li>代码示例：mode=’lac’</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> LAC <span class="hljs-keyword">import</span> LAC<br><br><span class="hljs-comment"># 装载LAC模型</span><br>lac = LAC(mode=<span class="hljs-string">&#x27;lac&#x27;</span>)<br><br><span class="hljs-comment"># 单个样本输入，输入为Unicode编码的字符串</span><br>text = <span class="hljs-string">u&quot;LAC是个优秀的分词工具&quot;</span><br>lac_result = lac.run(text)<br><br><span class="hljs-comment"># 批量样本输入, 输入为多个句子组成的list，平均速率更快</span><br>texts = [<span class="hljs-string">u&quot;LAC是个优秀的分词工具&quot;</span>, <span class="hljs-string">u&quot;百度是一家高科技公司&quot;</span>]<br>lac_result = lac.run(texts)<br></code></pre></td></tr></table></figure>
+<ul>
+<li>输出：</li>
+</ul>
+<blockquote>
+<p>每个句子的输出其切词结果word_list以及对每个单词的标注tags_list，其格式为（word_list, tags_list)</p>
+</blockquote>
+<figure class="highlight inform7"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs inform7">【单样本】： lac_result = (<span class="hljs-comment">[百度, 是, 一家, 高科技, 公司]</span>, <span class="hljs-comment">[ORG, v, m, n, n]</span>)<br>【批量样本】：lac_result = <span class="hljs-comment">[</span><br><span class="hljs-comment">                    (<span class="hljs-comment">[百度, 是, 一家, 高科技, 公司]</span>, <span class="hljs-comment">[ORG, v, m, n, n]</span>),</span><br><span class="hljs-comment">                    (<span class="hljs-comment">[LAC, 是, 个, 优秀, 的, 分词, 工具]</span>, <span class="hljs-comment">[nz, v, q, a, u, n, n]</span>)]</span><br></code></pre></td></tr></table></figure>
+<h3 id="词性和专名类别对照表"><a href="#词性和专名类别对照表" class="headerlink" title="词性和专名类别对照表"></a>词性和专名类别对照表</h3><p>词性和专名类别标签集合如下表，其中我们将最常用的4个专名类别标记为大写的形式：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>标签</th>
+<th>含义</th>
+<th>标签</th>
+<th>含义</th>
+<th>标签</th>
+<th>含义</th>
+<th>标签</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>n</td>
+<td>普通名词</td>
+<td>f</td>
+<td>方位名词</td>
+<td>s</td>
+<td>处所名词</td>
+<td>nw</td>
+<td>作品名</td>
+</tr>
+<tr>
+<td>nz</td>
+<td>其他专名</td>
+<td>v</td>
+<td>普通动词</td>
+<td>vd</td>
+<td>动副词</td>
+<td>vn</td>
+<td>名动词</td>
+</tr>
+<tr>
+<td>a</td>
+<td>形容词</td>
+<td>ad</td>
+<td>副形词</td>
+<td>an</td>
+<td>名形词</td>
+<td>d</td>
+<td>副词</td>
+</tr>
+<tr>
+<td>m</td>
+<td>数量词</td>
+<td>q</td>
+<td>量词</td>
+<td>r</td>
+<td>代词</td>
+<td>p</td>
+<td>介词</td>
+</tr>
+<tr>
+<td>c</td>
+<td>连词</td>
+<td>u</td>
+<td>助词</td>
+<td>xc</td>
+<td>其他虚词</td>
+<td>w</td>
+<td>标点符号</td>
+</tr>
+<tr>
+<td>PER</td>
+<td>人名</td>
+<td>LOC</td>
+<td>地名</td>
+<td>ORG</td>
+<td>机构名</td>
+<td>TIME</td>
+<td>时间</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><img src="https://ningshixian.github.io/resources/images/paddle lac 词性对照表.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/PaddlePaddle/PaddleHub">paddlehub官方github</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://www.paddlepaddle.org.cn/hubdetail?name=lac&amp;en_category=LexicalAnalysis">lac</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://aistudio.baidu.com/aistudio/projectdetail/215711">https://aistudio.baidu.com/aistudio/projectdetail/215711</a></p>
+</li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/PaddlePaddle/">#PaddlePaddle</a>
+      
+        <a href="/tags/LAC/">#LAC</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>百度Paddlehub-LAC快速安装</div>
+      <div>http://example.com/2019/09/26/2019-09-26-Paddlehub安装和使用/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>NSX</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2019年9月26日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/10/22/2019-10-22-%E2%9C%8D%F0%9F%8F%BBLogging%E5%A6%82%E4%BD%95%E4%BC%98%E9%9B%85%E8%AE%B0%E6%97%A5%E5%BF%97/" title="✍🏻Logging如何优雅记日志">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">✍🏻Logging如何优雅记日志</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2019/09/25/2019-09-25-Anaconda%E5%AE%89%E8%A3%85%E4%B8%8E%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83%E8%AE%BE%E7%BD%AE/" title="Anaconda安装与虚拟环境设置">
+                        <span class="hidden-mobile">Anaconda安装与虚拟环境设置</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

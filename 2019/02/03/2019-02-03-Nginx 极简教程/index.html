@@ -1,0 +1,731 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Ning Shixian">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Nginx 极简教程 Nginx代理工具的配置 Nginx配置实战 负载均衡配置">
+<meta property="og:type" content="article">
+<meta property="og:title" content="超详细 Nginx 极简教程，傻瓜一看也会！">
+<meta property="og:url" content="http://example.com/2019/02/03/2019-02-03-Nginx%20%E6%9E%81%E7%AE%80%E6%95%99%E7%A8%8B/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="Nginx 极简教程 Nginx代理工具的配置 Nginx配置实战 负载均衡配置">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img2020.cnblogs.com/other/1218593/202007/1218593-20200714150739594-1361995225.webp">
+<meta property="article:published_time" content="2019-02-03T13:55:00.000Z">
+<meta property="article:modified_time" content="2023-04-23T10:28:32.036Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="ubuntu">
+<meta property="article:tag" content="server">
+<meta property="article:tag" content="配置">
+<meta property="article:tag" content="docker">
+<meta property="article:tag" content="nginx">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://img2020.cnblogs.com/other/1218593/202007/1218593-20200714150739594-1361995225.webp">
+  
+  
+  
+  <title>超详细 Nginx 极简教程，傻瓜一看也会！ - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="超详细 Nginx 极简教程，傻瓜一看也会！"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2019-02-03 21:55" pubdate>
+          2019年2月3日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          9.5k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          80 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">超详细 Nginx 极简教程，傻瓜一看也会！</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="Nginx-极简教程"><a href="#Nginx-极简教程" class="headerlink" title="Nginx 极简教程"></a>Nginx 极简教程</h2><ul>
+<li>Nginx代理工具的配置</li>
+<li>Nginx配置实战</li>
+<li>负载均衡配置</li>
+</ul>
+<span id="more"></span>
+<h3 id="Nginx代理工具的配置"><a href="#Nginx代理工具的配置" class="headerlink" title="Nginx代理工具的配置"></a>Nginx代理工具的配置</h3><p>&ensp;&ensp;&ensp;&ensp;nginx作为一个极其重要的代理工具，我们就单独拎出来讨论讨论。</p>
+<h4 id="什么是Nginx"><a href="#什么是Nginx" class="headerlink" title="什么是Nginx?"></a>什么是Nginx?</h4><p>Nginx (engine x) 是一款轻量级的Web 服务器 、反向代理服务器及电子邮件（IMAP/POP3）代理服务器。</p>
+<h4 id="什么是反向代理？"><a href="#什么是反向代理？" class="headerlink" title="什么是反向代理？"></a>什么是反向代理？</h4><p>反向代理（Reverse Proxy）方式是指以代理服务器来接受internet上的连接请求，然后将请求转发给内部网络上的服务器，并将从服务器上得到的结果返回给internet上请求连接的客户端，此时代理服务器对外就表现为一个反向代理服务器。</p>
+<p><img src="https://img2020.cnblogs.com/other/1218593/202007/1218593-20200714150739594-1361995225.webp" srcset="/img/loading.gif" lazyload alt="img"></p>
+<h4 id="安装nginx"><a href="#安装nginx" class="headerlink" title="安装nginx"></a>安装nginx</h4><p>nginx官网下载地址：<a target="_blank" rel="noopener" href="http://nginx.org/">http://nginx.org</a>，发布版本分为 Linux 和 windows 版本。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ sudo apt-get install nginx<br></code></pre></td></tr></table></figure>
+<p>默认情况下，Nginx 会被安装在 /usr/local/nginx</p>
+<h4 id="相关命令"><a href="#相关命令" class="headerlink" title="相关命令"></a>相关命令</h4><p>基本操作的命令还是要了解一下的<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 快速关闭Nginx，可能不保存相关信息，并迅速终止web服务。</span><br>$ nginx -s stop<br><span class="hljs-comment"># 平稳关闭Nginx，保存相关信息，有安排的结束web服务。</span><br>$ nginx -s quit <br><span class="hljs-comment"># 因改变了Nginx相关配置，需要重新加载配置而重载。</span><br>$ nginx -s reload<br><span class="hljs-comment"># 重新打开日志文件。</span><br>$ nginx -s reopen<br><span class="hljs-comment"># 为 Nginx 指定一个配置文件，来代替缺省的。</span><br>$ nginx -c filename<br><span class="hljs-comment"># 不运行，而仅仅测试配置文件</span><br>$ nginx -t<br><span class="hljs-comment"># 显示 nginx 的版本，编译器版本和配置参数。</span><br>$ nginx -V<br></code></pre></td></tr></table></figure></p>
+<p>如果不想每次都敲命令，可以在nginx安装目录下新添一个启动批处理文件startup.bat，双击即可运行。内容如下：</p>
+<figure class="highlight dos"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs dos">@<span class="hljs-built_in">echo</span> off<br><span class="hljs-comment">rem 如果启动前已经启动nginx并记录下pid文件，会kill指定进程</span><br>nginx.exe -s stop<br><span class="hljs-comment"></span><br><span class="hljs-comment">rem 测试配置文件语法正确性</span><br>nginx.exe -t -c conf/nginx.conf<br><span class="hljs-comment"></span><br><span class="hljs-comment">rem 显示版本信息</span><br>nginx.exe -v<br><span class="hljs-comment"></span><br><span class="hljs-comment">rem 按照指定配置去启动nginx</span><br>nginx.exe -c conf/nginx.conf<br></code></pre></td></tr></table></figure>
+<p>如果是运行在 Linux 下，写一个 shell 脚本，大同小异。</p>
+<h3 id="nginx-配置实战"><a href="#nginx-配置实战" class="headerlink" title="nginx 配置实战"></a>nginx 配置实战</h3><p>我始终认为，各种开发工具的配置还是结合实战来讲述，会让人更易理解。</p>
+<h4 id="http反向代理配置"><a href="#http反向代理配置" class="headerlink" title="http反向代理配置"></a>http反向代理配置</h4><p>我们先实现一个小目标：不考虑复杂的配置，仅仅是完成一个 http 反向代理。</p>
+<h4 id="nginx-conf-配置文件如下："><a href="#nginx-conf-配置文件如下：" class="headerlink" title="nginx.conf 配置文件如下："></a>nginx.conf 配置文件如下：</h4><p>注：conf / nginx.conf 是 nginx 的默认配置文件。你也可以使用 nginx -c 指定你的配置文件</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br></pre></td><td class="code"><pre><code class="hljs awk"><span class="hljs-comment">#运行用户</span><br><span class="hljs-comment">#user somebody;</span><br><br><span class="hljs-comment">#启动进程,通常设置成和cpu的数量相等</span><br>worker_processes  <span class="hljs-number">1</span>;<br><br><span class="hljs-comment">#全局错误日志</span><br>error_log  D:<span class="hljs-regexp">/Tools/</span>nginx-<span class="hljs-number">1.10</span>.<span class="hljs-number">1</span><span class="hljs-regexp">/logs/</span>error.log;<br>error_log  D:<span class="hljs-regexp">/Tools/</span>nginx-<span class="hljs-number">1.10</span>.<span class="hljs-number">1</span><span class="hljs-regexp">/logs/</span>notice.log  notice;<br>error_log  D:<span class="hljs-regexp">/Tools/</span>nginx-<span class="hljs-number">1.10</span>.<span class="hljs-number">1</span><span class="hljs-regexp">/logs/i</span>nfo.log  info;<br><br><span class="hljs-comment">#PID文件，记录当前启动的nginx的进程ID</span><br>pid        D:<span class="hljs-regexp">/Tools/</span>nginx-<span class="hljs-number">1.10</span>.<span class="hljs-number">1</span><span class="hljs-regexp">/logs/</span>nginx.pid;<br><br><span class="hljs-comment">#工作模式及连接数上限</span><br>events &#123;<br>   worker_connections <span class="hljs-number">1024</span>;    <span class="hljs-comment">#单个后台worker process进程的最大并发链接数</span><br>&#125;<br><br><span class="hljs-comment">#设定http服务器，利用它的反向代理功能提供负载均衡支持</span><br>http &#123;<br>   <span class="hljs-comment">#设定mime类型(邮件支持类型),类型由mime.types文件定义</span><br>   include       D:<span class="hljs-regexp">/Tools/</span>nginx-<span class="hljs-number">1.10</span>.<span class="hljs-number">1</span><span class="hljs-regexp">/conf/mim</span>e.types;<br>   default_type  application/octet-stream;<br><br>   <span class="hljs-comment">#设定日志</span><br>   log_format  main  <span class="hljs-string">&#x27;\[$remote_addr\] \- \[$remote_user\] \[$time_local\] &quot;$request&quot; &#x27;</span><br>                     <span class="hljs-string">&#x27;$status $body\_bytes\_sent &quot;$http_referer&quot; &#x27;</span><br>                     <span class="hljs-string">&#x27;&quot;$http\_user\_agent&quot; &quot;$http\_x\_forwarded_for&quot;&#x27;</span>;<br><br>   access_log    D:<span class="hljs-regexp">/Tools/</span>nginx-<span class="hljs-number">1.10</span>.<span class="hljs-number">1</span><span class="hljs-regexp">/logs/</span>access.log main;<br>   rewrite_log     on;<br><br>   <span class="hljs-comment">#sendfile 指令指定 nginx 是否调用 sendfile 函数（zero copy 方式）来输出文件，对于普通应用，</span><br>   <span class="hljs-comment">#必须设为 on,如果用来进行下载等应用磁盘IO重负载应用，可设置为 off，以平衡磁盘与网络I/O处理速度，降低系统的uptime.</span><br>   sendfile        on;<br>   <span class="hljs-comment">#tcp_nopush     on;</span><br><br>   <span class="hljs-comment">#连接超时时间</span><br>   keepalive_timeout  <span class="hljs-number">120</span>;<br>   tcp_nodelay        on;<br><br>   <span class="hljs-comment">#gzip压缩开关</span><br>   <span class="hljs-comment">#gzip  on;</span><br><br>   <span class="hljs-comment">#设定实际的服务器列表</span><br>   upstream zp_server1&#123;<br>       server <span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">8089</span>;<br>   &#125;<br><br>   <span class="hljs-comment">#HTTP服务器</span><br>   server &#123;<br>       <span class="hljs-comment">#监听80端口，80端口是知名端口号，用于HTTP协议</span><br>       listen       <span class="hljs-number">80</span>;<br><br>       <span class="hljs-comment">#定义使用www.xx.com访问</span><br>       server_name  www.javastack.cn;<br><br>       <span class="hljs-comment">#首页</span><br>       index index.html<br><br>       <span class="hljs-comment">#指向webapp的目录</span><br>       root D:_WorkspaceProjectgithubzpSpringNotesspring-securityspring-shirosrcmainwebapp;<br><br>       <span class="hljs-comment">#编码格式</span><br>       charset utf-<span class="hljs-number">8</span>;<br><br>       <span class="hljs-comment">#代理配置参数</span><br>       proxy\_connect\_timeout <span class="hljs-number">180</span>;<br>       proxy\_send\_timeout <span class="hljs-number">180</span>;<br>       proxy\_read\_timeout <span class="hljs-number">180</span>;<br>       proxy\_set\_header Host <span class="hljs-variable">$host</span>;<br>       proxy\_set\_header X-Forwarder-For <span class="hljs-variable">$remote_addr</span>;<br><br>       <span class="hljs-comment">#反向代理的路径（和upstream绑定），location 后面设置映射的路径</span><br>       location / &#123;<br>           proxy_pass http:<span class="hljs-regexp">//</span>zp_server1;<br>       &#125;<br><br>       <span class="hljs-comment">#静态文件，nginx自己处理</span><br>       location ~ ^<span class="hljs-regexp">/(images|javascript|js|css|flash|media|static)/</span> &#123;<br>           root D:_WorkspaceProjectgithubzpSpringNotesspring-securityspring-shirosrcmainwebappiews;<br>           <span class="hljs-comment">#过期30天，静态文件不怎么更新，过期可以设大一点，如果频繁更新，则可以设置得小一点。</span><br>           expires <span class="hljs-number">30</span>d;<br>       &#125;<br><br>       <span class="hljs-comment">#设定查看Nginx状态的地址</span><br>       location /NginxStatus &#123;<br>           stub_status           on;<br>           access_log            on;<br>           auth_basic            <span class="hljs-string">&quot;NginxStatus&quot;</span>;<br>           auth\_basic\_user_file  conf/htpasswd;<br>       &#125;<br><br>       <span class="hljs-comment">#禁止访问 .htxxx 文件</span><br>       location ~ /.ht &#123;<br>           deny all;<br>       &#125;<br><br>       <span class="hljs-comment">#错误处理页面（可选择性配置）</span><br>       <span class="hljs-comment">#error_page   404              /404.html;</span><br>       <span class="hljs-comment">#error_page   500 502 503 504  /50x.html;</span><br>       <span class="hljs-comment">#location = /50x.html &#123;</span><br>       \<span class="hljs-comment">#    root   html;</span><br>       <span class="hljs-comment">#&#125;</span><br>   &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>好了，让我们来试试吧：</p>
+<p>启动 webapp，注意启动绑定的端口要和nginx中的 upstream 设置的端口保持一致。</p>
+<p>更改 host：</p>
+<p>在 C:Windows\System32\drivers\etc 目录下的host文件中添加一条DNS 记录127.0.0.1 www.javastack.cn 启动前文中 startup.bat 的命令</p>
+<p>在浏览器中访问 www.javastack.cn，不出意外，已经可以访问了。</p>
+<h3 id="负载均衡配置"><a href="#负载均衡配置" class="headerlink" title="负载均衡配置"></a>负载均衡配置</h3><p>上一个例子中，代理仅仅指向一个服务器。</p>
+<p>但是，网站在实际运营过程中，多半都是有多台服务器运行着同样的app，这时需要使用负载均衡来分流。</p>
+<p>nginx也可以实现简单的负载均衡功能。</p>
+<p>假设这样一个应用场景：将应用部署在 192.168.1.11:80、192.168.1.12:80、192.168.1.13:80 三台linux环境的服务器上。网站域名叫 www.javastack.cn，公网IP为 192.168.1.11。在公网IP所在的服务器上部署 nginx，对所有请求做负载均衡处理。</p>
+<p>nginx.conf 配置如下：</p>
+<figure class="highlight puppet"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><code class="hljs puppet"><span class="hljs-keyword">http</span> &#123;<br>    <span class="hljs-comment">#设定mime类型,类型由mime.type文件定义</span><br>   <span class="hljs-literal">include</span>       /etc/nginx/mime.types;<br>   default_type  application/octet-stream;<br>   <span class="hljs-comment">#设定日志格式</span><br>   access_log    /var/log/nginx/access.log;<br><br>   <span class="hljs-comment">#设定负载均衡的服务器列表</span><br>   upstream load\_balance\_server &#123;<br>       <span class="hljs-comment">#weigth参数表示权值，权值越高被分配到的几率越大</span><br>       server <span class="hljs-number">192.168</span>.<span class="hljs-number">1.11</span>:<span class="hljs-number">80</span>   weight=<span class="hljs-number">5</span>;<br>       server <span class="hljs-number">192.168</span>.<span class="hljs-number">1.12</span>:<span class="hljs-number">80</span>   weight=<span class="hljs-number">1</span>;<br>       server <span class="hljs-number">192.168</span>.<span class="hljs-number">1.13</span>:<span class="hljs-number">80</span>   weight=<span class="hljs-number">6</span>;<br>   &#125;<br><br>  #HTTP服务器<br>  <span class="hljs-keyword">server</span> &#123;<br>       <span class="hljs-comment">#侦听80端口</span><br>       listen       <span class="hljs-number">80</span>;<br><br>       <span class="hljs-comment">#定义使用www.xx.com访问</span><br>       server_name  www.javastack.cn;<br><br>       <span class="hljs-comment">#对所有请求进行负载均衡请求</span><br>       location / &#123;<br>           <span class="hljs-literal">root</span>        /<span class="hljs-literal">root</span>;                 <span class="hljs-comment">#定义服务器的默认网站根目录位置</span><br>           index       index.html index.htm;  <span class="hljs-comment">#定义首页索引文件的名称</span><br>           proxy_pass  http://load\_balance\_server ;<span class="hljs-comment">#请求转向load\_balance\_server 定义的服务器列表</span><br><br>           <span class="hljs-comment">#以下是一些反向代理的配置(可选择性配置)</span><br>           <span class="hljs-comment">#proxy_redirect off;</span><br>           <span class="hljs-literal">proxy</span>\_set\_header Host <span class="hljs-variable">$host</span>;<br>           <span class="hljs-literal">proxy</span>\_set\_header X-Real-IP <span class="hljs-variable">$remote_addr</span>;<br>           <span class="hljs-comment">#后端的Web服务器可以通过X-Forwarded-For获取用户真实IP</span><br>           <span class="hljs-literal">proxy</span>\_set\_header X-Forwarded-For <span class="hljs-variable">$remote_addr</span>;<br>           <span class="hljs-literal">proxy</span>\_connect\_timeout <span class="hljs-number">90</span>;          <span class="hljs-comment">#nginx跟后端服务器连接超时时间(代理连接超时)</span><br>           <span class="hljs-literal">proxy</span>\_send\_timeout <span class="hljs-number">90</span>;             <span class="hljs-comment">#后端服务器数据回传时间(代理发送超时)</span><br>           <span class="hljs-literal">proxy</span>\_read\_timeout <span class="hljs-number">90</span>;             <span class="hljs-comment">#连接成功后，后端服务器响应时间(代理接收超时)</span><br>           <span class="hljs-literal">proxy</span>\_buffer\_size <span class="hljs-number">4</span>k;              <span class="hljs-comment">#设置代理服务器（nginx）保存用户头信息的缓冲区大小</span><br>           proxy_buffers <span class="hljs-number">4</span> <span class="hljs-number">32</span>k;               <span class="hljs-comment">#proxy_buffers缓冲区，网页平均在32k以下的话，这样设置</span><br>           <span class="hljs-literal">proxy</span>\_busy\_buffers_size <span class="hljs-number">64</span>k;       <span class="hljs-comment">#高负荷下缓冲大小（proxy_buffers*2）</span><br>           <span class="hljs-literal">proxy</span>\_temp\_file\_write\_size <span class="hljs-number">64</span>k;    <span class="hljs-comment">#设定缓存文件夹大小，大于这个值，将从upstream服务器传</span><br><br>           client\_max\_body_size <span class="hljs-number">10</span>m;          <span class="hljs-comment">#允许客户端请求的最大单文件字节数</span><br>           client\_body\_buffer_size <span class="hljs-number">128</span>k;      <span class="hljs-comment">#缓冲区代理缓冲用户端请求的最大字节数</span><br>       &#125;<br>   &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h4 id="网站有多个webapp的配置"><a href="#网站有多个webapp的配置" class="headerlink" title="网站有多个webapp的配置"></a>网站有多个webapp的配置</h4><p>当一个网站功能越来越丰富时，往往需要将一些功能相对独立的模块剥离出来，独立维护。这样的话，通常，会有多个 webapp。</p>
+<p>举个例子：假如 www.javastack.cn 站点有好几个webapp，finance（金融）、product（产品）、admin（用户中心）。访问这些应用的方式通过上下文(context)来进行区分:</p>
+<ul>
+<li>www.javastack.cn/finance/</li>
+<li>www.javastack.cnproduct/</li>
+<li>www.javastack.cn/admin/</li>
+</ul>
+<p>我们知道，http的默认端口号是80，如果在一台服务器上同时启动这3个 webapp 应用，都用80端口，肯定是不成的。所以，这三个应用需要分别绑定不同的端口号。</p>
+<p>那么，问题来了，用户在实际访问 www.javastack.cn 站点时，访问不同 webapp，总不会还带着对应的端口号去访问吧。所以，你再次需要用到反向代理来做处理。</p>
+<p>配置也不难，来看看怎么做吧：</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><code class="hljs nginx"><span class="hljs-section">http</span> &#123;<br>   <span class="hljs-comment">#此处省略一些基本配置</span><br><br>   <span class="hljs-section">upstream</span> product_server&#123;<br>       <span class="hljs-attribute">server</span> www.javastack.cn:<span class="hljs-number">8081</span>;<br>   &#125;<br><br>   <span class="hljs-section">upstream</span> admin_server&#123;<br>       <span class="hljs-attribute">server</span> www.javastack.cn:<span class="hljs-number">8082</span>;<br>   &#125;<br><br>   <span class="hljs-section">upstream</span> finance_server&#123;<br>       <span class="hljs-attribute">server</span> www.javastack.cn:<span class="hljs-number">8083</span>;<br>   &#125;<br><br>   <span class="hljs-section">server</span> &#123;<br>       <span class="hljs-comment">#此处省略一些基本配置</span><br>       <span class="hljs-comment">#默认指向product的server</span><br>       <span class="hljs-section">location</span> / &#123;<br>           <span class="hljs-attribute">proxy_pass</span> http://product_server;<br>       &#125;<br><br>       <span class="hljs-section">location</span> /product/&#123;<br>           <span class="hljs-attribute">proxy_pass</span> http://product_server;<br>       &#125;<br><br>       <span class="hljs-section">location</span> /admin/ &#123;<br>           <span class="hljs-attribute">proxy_pass</span> http://admin_server;<br>       &#125;<br><br>       <span class="hljs-section">location</span> /finance/ &#123;<br>           <span class="hljs-attribute">proxy_pass</span> http://finance_server;<br>       &#125;<br>   &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h4 id="https反向代理配置"><a href="#https反向代理配置" class="headerlink" title="https反向代理配置"></a>https反向代理配置</h4><p>一些对安全性要求比较高的站点，可能会使用 HTTPS（一种使用ssl通信标准的安全HTTP协议）。</p>
+<p>这里不科普 HTTP 协议和 SSL 标准。但是，使用 nginx 配置 https 需要知道几点：</p>
+<ul>
+<li>HTTPS 的固定端口号是 443，不同于 HTTP 的 80 端口</li>
+<li>SSL 标准需要引入安全证书，所以在 nginx.conf 中你需要指定证书和它对应的 key</li>
+</ul>
+<p>其他和 http 反向代理基本一样，只是在 Server 部分配置有些不同。</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs glsl"><span class="hljs-meta">#HTTP服务器</span><br> server &#123;<br>     <span class="hljs-meta">#监听443端口。443为知名端口号，主要用于HTTPS协议</span><br>     listen       <span class="hljs-number">443</span> ssl;<br><br>     <span class="hljs-meta">#定义使用www.xx.com访问</span><br>     server_name  www.javastack.cn;<br><br>     <span class="hljs-meta">#ssl证书文件位置(常见证书文件格式为：crt/pem)</span><br>     ssl_certificate      cert.pem;<br>     <span class="hljs-meta">#ssl证书key位置</span><br>     ssl\_certificate\_key  cert.key;<br><br>     <span class="hljs-meta">#ssl配置参数（选择性配置）</span><br>     ssl\_session\_cache    <span class="hljs-keyword">shared</span>:SSL:<span class="hljs-number">1</span>m;<br>     ssl\_session\_timeout  <span class="hljs-number">5</span>m;<br>     <span class="hljs-meta">#数字签名，此处使用MD5</span><br>     ssl_ciphers  HIGH:!aNULL:!MD5;<br>     ssl\_prefer\_server_ciphers  on;<br><br>     <span class="hljs-keyword">location</span> / &#123;<br>         root   /root;<br>         <span class="hljs-keyword">index</span>  <span class="hljs-keyword">index</span>.html <span class="hljs-keyword">index</span>.htm;<br>     &#125;<br> &#125;<br></code></pre></td></tr></table></figure>
+<h4 id="静态站点配置"><a href="#静态站点配置" class="headerlink" title="静态站点配置"></a>静态站点配置</h4><p>有时候，我们需要配置静态站点(即 html 文件和一堆静态资源)。</p>
+<p>举例来说：如果所有的静态资源都放在了 /app/dist 目录下，我们只需要在 nginx.conf 中指定首页以及这个站点的 host 即可。</p>
+<p>配置如下：</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs nginx"><span class="hljs-attribute">worker_processes</span>  <span class="hljs-number">1</span>;<br><br><span class="hljs-section">events</span> &#123;<br>   <span class="hljs-attribute">worker_connections</span>  <span class="hljs-number">1024</span>;<br>&#125;<br><br><span class="hljs-section">http</span> &#123;<br>   <span class="hljs-attribute">include</span>       mime.types;<br>   <span class="hljs-attribute">default_type</span>  application/octet-stream;<br>   <span class="hljs-attribute">sendfile</span>        <span class="hljs-literal">on</span>;<br>   <span class="hljs-attribute">keepalive_timeout</span>  <span class="hljs-number">65</span>;<br><br>   <span class="hljs-attribute">gzip</span> <span class="hljs-literal">on</span>;<br>   <span class="hljs-attribute">gzip_types</span> text/plain application/x-javascript text/css application/xml text/javascript application/javascript image/jpeg image/gif image/png;<br>   <span class="hljs-attribute">gzip_vary</span> <span class="hljs-literal">on</span>;<br><br>   <span class="hljs-section">server</span> &#123;<br>       <span class="hljs-attribute">listen</span>       <span class="hljs-number">80</span>;<br>       <span class="hljs-attribute">server_name</span>  static.zp.cn;<br><br>       <span class="hljs-section">location</span> / &#123;<br>           <span class="hljs-attribute">root</span> /app/dist;<br>           <span class="hljs-attribute">index</span> index.html;<br>           <span class="hljs-comment">#转发任何请求到 index.html</span><br>       &#125;<br>   &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>然后，添加 HOST：</p>
+<p>127.0.0.1 static.zp.cn，此时，在本地浏览器访问 static.zp.cn ，就可以访问静态站点了。</p>
+<h4 id="跨域解决方案"><a href="#跨域解决方案" class="headerlink" title="跨域解决方案"></a>跨域解决方案</h4><p>web 领域开发中，经常采用前后端分离模式。这种模式下，前端和后端分别是独立的 web 应用程序，例如：后端是 Java 程序，前端是 React 或 Vue 应用，更多请看这篇文章《<a target="_blank" rel="noopener" href="http://mp.weixin.qq.com/s?__biz=MzI3ODcxMzQzMw==&amp;mid=2247485898&amp;idx=1&amp;sn=32626e4f241d5f04684736b52afafb10&amp;chksm=eb538cfcdc2405ea368fa092c0af8e424ad843198274426cca275acc8ed83d86497ec3a54acc&amp;scene=21#wechat_redirect">到底什么是跨域，及解决方案</a>》。</p>
+<p>各自独立的 web app 在互相访问时，势必存在跨域问题。解决跨域问题一般有两种思路：</p>
+<h5 id="CORS"><a href="#CORS" class="headerlink" title="CORS"></a>CORS</h5><p>在后端服务器设置 HTTP 响应头，把你需要运行访问的域名加入加入 Access-Control-Allow-Origin 中。</p>
+<h5 id="jsonp"><a href="#jsonp" class="headerlink" title="jsonp"></a>jsonp</h5><p>把后端根据请求，构造json数据，并返回，前端用 jsonp 跨域。</p>
+<p>这两种思路，本文不展开讨论。</p>
+<p>需要说明的是，nginx 根据第一种思路，也提供了一种解决跨域的解决方案。</p>
+<p>举例：www.javastack.cn 网站是由一个前端 app ，一个后端 app 组成的。前端端口号为 9000， 后端端口号为 8080。</p>
+<p>前端和后端如果使用 http 进行交互时，请求会被拒绝，因为存在跨域问题。来看看，nginx 是怎么解决的吧：</p>
+<p>首先，在 enable-cors.conf 文件中设置 cors ：</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs nginx"><span class="hljs-comment"># allow origin list</span><br><span class="hljs-attribute">set</span> <span class="hljs-variable">$ACAO</span> <span class="hljs-string">&#x27;*&#x27;</span>;<br><br><span class="hljs-comment"># set single origin</span><br><span class="hljs-attribute">if</span> (<span class="hljs-variable">$http_origin</span> ~\* (www.javastack.cn)$) &#123;<br> <span class="hljs-attribute">set</span> <span class="hljs-variable">$ACAO</span> <span class="hljs-variable">$http_origin</span>;<br>&#125;<br><br><span class="hljs-attribute">if</span> (<span class="hljs-variable">$cors</span> = <span class="hljs-string">&quot;trueget&quot;</span>) &#123;<br>   <span class="hljs-attribute">add_header</span> <span class="hljs-string">&#x27;Access-Control-Allow-Origin&#x27;</span> <span class="hljs-string">&quot;<span class="hljs-variable">$http_origin</span>&quot;</span>;<br>   <span class="hljs-attribute">add_header</span> <span class="hljs-string">&#x27;Access-Control-Allow-Credentials&#x27;</span> <span class="hljs-string">&#x27;true&#x27;</span>;<br>   <span class="hljs-attribute">add_header</span> <span class="hljs-string">&#x27;Access-Control-Allow-Methods&#x27;</span> <span class="hljs-string">&#x27;GET, POST, OPTIONS&#x27;</span>;<br>   <span class="hljs-attribute">add_header</span> <span class="hljs-string">&#x27;Access-Control-Allow-Headers&#x27;</span> <span class="hljs-string">&#x27;DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type&#x27;</span>;<br>&#125;<br><br><span class="hljs-attribute">if</span> (<span class="hljs-variable">$request_method</span> = <span class="hljs-string">&#x27;OPTIONS&#x27;</span>) &#123;<br> <span class="hljs-attribute">set</span> <span class="hljs-variable">$cors</span> <span class="hljs-string">&quot;<span class="hljs-variable">$&#123;cors&#125;</span>options&quot;</span>;<br>&#125;<br><br><span class="hljs-attribute">if</span> (<span class="hljs-variable">$request_method</span> = <span class="hljs-string">&#x27;GET&#x27;</span>) &#123;<br> <span class="hljs-attribute">set</span> <span class="hljs-variable">$cors</span> <span class="hljs-string">&quot;<span class="hljs-variable">$&#123;cors&#125;</span>get&quot;</span>;<br>&#125;<br><br><span class="hljs-attribute">if</span> (<span class="hljs-variable">$request_method</span> = <span class="hljs-string">&#x27;POST&#x27;</span>) &#123;<br> <span class="hljs-attribute">set</span> <span class="hljs-variable">$cors</span> <span class="hljs-string">&quot;<span class="hljs-variable">$&#123;cors&#125;</span>post&quot;</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>接下来，在你的服务器中 include enable-cors.conf 来引入跨域配置：</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs nginx"><span class="hljs-comment"># ----------------------------------------------------</span><br><span class="hljs-comment"># 此文件为项目 nginx 配置片段</span><br><span class="hljs-comment"># 可以直接在 nginx config 中 include（推荐）</span><br><span class="hljs-comment"># 或者 copy 到现有 nginx 中，自行配置</span><br><span class="hljs-comment"># www.javastack.com 域名需配合 dns hosts 进行配置</span><br><span class="hljs-comment"># 其中，api 开启了 cors，需配合本目录下另一份配置文件</span><br><span class="hljs-comment"># ----------------------------------------------------</span><br><span class="hljs-section">upstream</span> front_server&#123;<br> <span class="hljs-attribute">server</span> www.javastack.cn:<span class="hljs-number">9000</span>;<br>&#125;<br><span class="hljs-section">upstream</span> api_server&#123;<br> <span class="hljs-attribute">server</span> www.javastack.cn:<span class="hljs-number">8080</span>;<br>&#125;<br><br><span class="hljs-section">server</span> &#123;<br> <span class="hljs-attribute">listen</span>       <span class="hljs-number">80</span>;<br> <span class="hljs-attribute">server_name</span>  www.javastack.cn;<br><br> <span class="hljs-section">location</span> <span class="hljs-regexp">~ ^/api/</span> &#123;<br>   <span class="hljs-attribute">include</span> enable-cors.conf;<br>   <span class="hljs-attribute">proxy_pass</span> http://api_server;<br>   <span class="hljs-attribute">rewrite</span> <span class="hljs-string">&quot;^/api/(.*)$&quot;</span> /<span class="hljs-variable">$1</span> <span class="hljs-literal">break</span>;<br> &#125;<br><br> <span class="hljs-section">location</span> <span class="hljs-regexp">~ ^/</span> &#123;<br>   <span class="hljs-attribute">proxy_pass</span> http://front_server;<br> &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>到此，就完成了。</p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/javastack/p/13299177.html">https://www.cnblogs.com/javastack/p/13299177.html</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/linux/" class="category-chain-item">linux</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/ubuntu/">#ubuntu</a>
+      
+        <a href="/tags/server/">#server</a>
+      
+        <a href="/tags/%E9%85%8D%E7%BD%AE/">#配置</a>
+      
+        <a href="/tags/docker/">#docker</a>
+      
+        <a href="/tags/nginx/">#nginx</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>超详细 Nginx 极简教程，傻瓜一看也会！</div>
+      <div>http://example.com/2019/02/03/2019-02-03-Nginx 极简教程/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Ning Shixian</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2019年2月3日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/08/11/2019-08-11-linux%E7%9A%84%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" title="linux的常用命令">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">linux的常用命令</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2019/01/08/2019-01-08-%E5%82%85%E9%87%8C%E5%8F%B6%E5%8F%98%E6%8D%A2/" title="傅里叶变换">
+                        <span class="hidden-mobile">傅里叶变换</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

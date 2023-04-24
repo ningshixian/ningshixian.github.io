@@ -1,0 +1,840 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="NSX">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="槽位提取是NER（Named Entity Recognition）技术在对话系统的应用，要想了解槽位提取的细节，本篇文章会先对NER进行系统介绍，然后再对槽位提取在龙小湖对话系统中的一些应用进行汇报。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="对话系统之槽位提取">
+<meta property="og:url" content="http://example.com/2021/10/31/2021-10-31-%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F%E4%B9%8B%E6%A7%BD%E4%BD%8D%E6%8F%90%E5%8F%96/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="槽位提取是NER（Named Entity Recognition）技术在对话系统的应用，要想了解槽位提取的细节，本篇文章会先对NER进行系统介绍，然后再对槽位提取在龙小湖对话系统中的一些应用进行汇报。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2021/10/31/2021-10-31-%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F%E4%B9%8B%E6%A7%BD%E4%BD%8D%E6%8F%90%E5%8F%96/640-20230424170714211">
+<meta property="og:image" content="http://example.com/2021/10/31/2021-10-31-%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F%E4%B9%8B%E6%A7%BD%E4%BD%8D%E6%8F%90%E5%8F%96/v2-63f77c2c69c5055f1bacc11429afa7a5_1440w.jpg">
+<meta property="og:image" content="http://example.com/2021/10/31/2021-10-31-%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F%E4%B9%8B%E6%A7%BD%E4%BD%8D%E6%8F%90%E5%8F%96/640-20230424170735937">
+<meta property="og:image" content="http://example.com/2021/10/31/2021-10-31-%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F%E4%B9%8B%E6%A7%BD%E4%BD%8D%E6%8F%90%E5%8F%96/640-20230424170740084">
+<meta property="og:image" content="http://example.com/2021/10/31/2021-10-31-%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F%E4%B9%8B%E6%A7%BD%E4%BD%8D%E6%8F%90%E5%8F%96/640-20230424170756424">
+<meta property="og:image" content="http://example.com/2021/10/31/2021-10-31-%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F%E4%B9%8B%E6%A7%BD%E4%BD%8D%E6%8F%90%E5%8F%96/640-20230424170805807">
+<meta property="og:image" content="http://example.com/2021/10/31/2021-10-31-%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F%E4%B9%8B%E6%A7%BD%E4%BD%8D%E6%8F%90%E5%8F%96/640-20230424170811645">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1guw6jz6h53j61dk0pwdla02.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1guw6kg95zej61e00q4dlj02.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1guw6m1fl6zj61e40q4aep02.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1guw6maoktcj61dy0pwte802.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1guw6nfex6lj61ea0q2wjv02.jpg">
+<meta property="og:image" content="http://example.com/2021/10/31/2021-10-31-%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F%E4%B9%8B%E6%A7%BD%E4%BD%8D%E6%8F%90%E5%8F%96/640-20230424170825693">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=Precision%3D\frac{TP}{TP%2BFP}">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=Recall+%3D+\frac{TP}{TP%2BFN}">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=2\times\frac{Precision\times+Recall}{Precision%2BRecall}">
+<meta property="og:image" content="http://example.com/2021/10/31/2021-10-31-%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F%E4%B9%8B%E6%A7%BD%E4%BD%8D%E6%8F%90%E5%8F%96/image-84d8e197.png">
+<meta property="article:published_time" content="2021-10-30T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-24T09:08:44.455Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="槽位提取">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2021/10/31/2021-10-31-%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F%E4%B9%8B%E6%A7%BD%E4%BD%8D%E6%8F%90%E5%8F%96/640-20230424170714211">
+  
+  
+  
+  <title>对话系统之槽位提取 - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="对话系统之槽位提取"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-10-31 00:00" pubdate>
+          2021年10月31日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          9.3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          78 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">对话系统之槽位提取</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>槽位提取是NER（Named Entity Recognition）技术在对话系统的应用，要想了解槽位提取的细节，本篇文章会先对NER进行系统介绍，然后再对槽位提取在龙小湖对话系统中的一些应用进行汇报。</p>
+<span id="more"></span>
+<h1 id="NER简述"><a href="#NER简述" class="headerlink" title="NER简述"></a>NER简述</h1><h2 id="一、什么是NER"><a href="#一、什么是NER" class="headerlink" title="一、什么是NER"></a>一、什么是NER</h2><p>Named Entity Recognition(NER)，指识别文本中具有特定意义的实体，主要包括人名、地名、机构名等专有名词。在对话机器人中，我们通过NER技术来提取对话中的实体词，即槽位词，以便用于控制对话逻辑跳转和标识对话关键词等。</p>
+<h2 id="二、NER主要方法"><a href="#二、NER主要方法" class="headerlink" title="二、NER主要方法"></a>二、NER主要方法</h2><h3 id="2-1-基于规则和词典的方法"><a href="#2-1-基于规则和词典的方法" class="headerlink" title="2.1 基于规则和词典的方法"></a>2.1 基于规则和词典的方法</h3><p>一般来说，我们在做命名实体的时候，可以首先考虑一下可否使用正则。假如命名实体的名称规律比较简单，我们可以找出模式，然后设计相应的正则表达式或者规则，然后把符合模式的字符串匹配出来，作为命名实体识别的结果。</p>
+<p>这种NER系统的特点是高精确率与低召回率；然而难以迁移应用到别的领域中去，基于领域的规则往往不通用，对新的领域而言，需要重新制定规则且不同领域字典不同。</p>
+<h3 id="2-2-无监督学习方法"><a href="#2-2-无监督学习方法" class="headerlink" title="2.2 无监督学习方法"></a>2.2 无监督学习方法</h3><p>主要是基于聚类的方法，根据文本相似度得到不同的簇，表示不同的实体类别组。常用到的特征或者辅助信息有词汇资源、语料统计信息（TF-IDF）、浅层语义信息（分块NP-chunking）等。</p>
+<h3 id="2-3-基于特征的监督学习方法"><a href="#2-3-基于特征的监督学习方法" class="headerlink" title="2.3 基于特征的监督学习方法"></a>2.3 基于特征的监督学习方法</h3><p>NER可以被转换为一个分类问题或序列标记问题。分类问题就是判断一个词语是不是命名实体、是哪一种命名实体。常见的做法就是，基于一个词语或者字的上下文构造特征，来判断这个词语或者字是否为命名实体；序列标注问题就是给句子当中的每一个词打上标签，而后提取出我们所需要的关键词；标签的格式通常有IOB2和IOBES两种标准。</p>
+<p>所以就会涉及到特征工程和模型选择上。</p>
+<p>特征工程：word级别特征（词法特征、词性标注等），词汇特征（维基百科、DBpdia知识），文档及语料级别特征。</p>
+<p>模型选择：隐马尔可夫模型、决策树、最大熵模型、最大熵马尔科夫模型、支持向量机、条件随机场。</p>
+<h3 id="2-4-深度学习方法"><a href="#2-4-深度学习方法" class="headerlink" title="2.4 深度学习方法"></a>2.4 深度学习方法</h3><p>近年来，基于DL的NER模型占据了主导地位并取得了最先进的成果。与基于特征的方法相比，深度学习有利于自动发现隐藏的特征。NN把语言看做是序列数据，然后用自身极强的拟合能力，把这种序列转换为标签序列。BiLSTM+CRF方案结合了神经网络的拟合能力和CRF的全局视野，是非常经典、有效的一种NER模型结构。</p>
+<h4 id="1）BiLSTM-CRF"><a href="#1）BiLSTM-CRF" class="headerlink" title="1）BiLSTM+CRF"></a>1）BiLSTM+CRF</h4><img src="/2021/10/31/2021-10-31-%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F%E4%B9%8B%E6%A7%BD%E4%BD%8D%E6%8F%90%E5%8F%96/640-20230424170714211" srcset="/img/loading.gif" lazyload class="" title="图片">
+<p>BiLSTM的输出作为CRF的发射概率矩阵，而CRF层可以加入一些约束来保证最终预测结果是有效的。这些约束可以在训练数据时被CRF层自动学习得到。</p>
+<h4 id="2）IDCNN-CRF"><a href="#2）IDCNN-CRF" class="headerlink" title="2）IDCNN+CRF"></a>2）IDCNN+CRF</h4><p>尽管BILSTM在NER任务中有很好的表现，但是却不能充分利用GPU的并行性，导致该模型的想能较差，因此出现了一种新的NER模型方案IDCNN+CRF。</p>
+<p>在IDCNN+CRF模型结构中，待识别query先经过Embedding层获取向量表示；然后经过空洞卷积层（IDCNN），IDCNN通过空洞卷积增大模型的感受野， 相较于传统的CNN，IDCNN能够捕捉更长的上下文信息，更适合序列标注这类需要全局信息的任务；在IDCNN之后经过一层全连接神经网络（FF层）后引入CRF，同样CRF的目的在于防止非法槽位标记（BIO）的出现。</p>
+<blockquote>
+<p>补充：尽管传统的CNN有明显的计算优势，但是传统的CNN在经过卷积之后，末梢神经元只能得到输入文本的一小部分信息，为了获取上下文信息，需要加入更多的卷积层，导致网络越来越深，参数越来越多，容易发生过拟合。</p>
+</blockquote>
+<p>文本空洞卷积的示意图如下：</p>
+<img src="/2021/10/31/2021-10-31-%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F%E4%B9%8B%E6%A7%BD%E4%BD%8D%E6%8F%90%E5%8F%96/v2-63f77c2c69c5055f1bacc11429afa7a5_1440w.jpg" srcset="/img/loading.gif" lazyload class="" title="img">
+<h4 id="3）Bert-BiLSTM-CRF"><a href="#3）Bert-BiLSTM-CRF" class="headerlink" title="3）Bert+BiLSTM+CRF"></a>3）Bert+BiLSTM+CRF</h4><p>Bert由谷歌大佬与2018年提出来，刚出来的时候横扫了11项NLP任务。BERT通过微调的方法可以灵活的应用到下游业务，所以这里我们也可以考虑使用Bert作为embedding层，将特征输入到Bilstm+CRF中，以谋求更好的效果。</p>
+<img src="/2021/10/31/2021-10-31-%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F%E4%B9%8B%E6%A7%BD%E4%BD%8D%E6%8F%90%E5%8F%96/640-20230424170735937" srcset="/img/loading.gif" lazyload class="" title="图片">
+<h4 id="NER模型之CRF的作用"><a href="#NER模型之CRF的作用" class="headerlink" title="NER模型之CRF的作用"></a>NER模型之CRF的作用</h4><p>在上述模型中，在NER任务上，我们看到很多深度学习之后都会接上一层CRF，那么CRF在整个过程中到底发挥着什么样的作用呢？通常我们直接使用逐帧softmax时，是将序列标注过程作为n个k分类问题，相当于每个token相互独立的进行分类（假设深度模型内部交互不明显的话），而采用CRF实质上是在进行一个k^n分类，相当于直接从所有的序列空间里找出转移概率最大的那条序列。其实质上是局部最优（token最优）与全局最优（序列最优）的区别，因而采用CRF能够有效避免出现非法的序列标记，从而确保序列有效。下图展示了一个softmax导致序列标注异常的案例。</p>
+<img src="/2021/10/31/2021-10-31-%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F%E4%B9%8B%E6%A7%BD%E4%BD%8D%E6%8F%90%E5%8F%96/640-20230424170740084" srcset="/img/loading.gif" lazyload class="" title="图片">
+<h2 id="三、NER模型效果优化"><a href="#三、NER模型效果优化" class="headerlink" title="三、NER模型效果优化"></a>三、NER模型效果优化</h2><h3 id="3-1-模型优化之数据增强"><a href="#3-1-模型优化之数据增强" class="headerlink" title="3.1 模型优化之数据增强"></a>3.1 模型优化之数据增强</h3><p>针对启动阶段存在的数据不足问题，可以采用数据增强的方式来补充训练数据，NER做数据增强，和别的任务有啥不一样呢？很明显，NER是一个token-level的分类任务，在进行全局结构化预测时，一些增强方式产生的数据噪音可能会让NER模型变得敏感脆弱，导致指标下降、最终奔溃。</p>
+<p>参考论文《<strong>An Analysis of Simple Data Augmentation for Named Entity Recognition</strong>》主要是将传统的数据增强方法应用于NER中、并进行全面分析与对比。效果如何？</p>
+<img src="/2021/10/31/2021-10-31-%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F%E4%B9%8B%E6%A7%BD%E4%BD%8D%E6%8F%90%E5%8F%96/640-20230424170756424" srcset="/img/loading.gif" lazyload class="" title="图片">
+<p>作者借鉴sentence-level的传统数据增强方法，将其应用于NER中，共有4种方式（如上图所示）：</p>
+<ul>
+<li><strong>Label-wise token replacement (LwTR)</strong> ：即同标签token替换，采用二项分布概率对句子进行采样，概率替换某位置的token为同标签其它token，如果token长度不一致，则进行延展，句子长度发生变化。</li>
+<li><strong>Synonym replacement (SR)</strong> ：即同义词替换，利用WordNet查询同义词，然后根据二项分布随机替换。如果替换的同义词大于1个token，那就依次延展BIO标签。</li>
+<li><strong>*Mention replacement (MR)</strong> ：即实体提及替换，与同义词方法类似，利用训练集中的相同实体类型进行替换，如果替换的mention大于1个token，那就依次延展BIO标签，如上图：「headache」替换为「neuropathic pain syndrome」，依次延展BIO标签。</li>
+<li><strong>Shuffle within segments (SiS)</strong> ：按照mention来切分句子，然后再对每个切分后的片段进行shuffle。如上图，共分为5个片段： [She did not complain of], [headache], [or], [any other neurological symptoms], [.]. 。也是通过二项分布判断是否被shuffle（mention片段不会被shuffle），如果shuffle，则打乱片段中的token顺序。</li>
+<li><strong>总结规则模板，直接生成数据</strong>。（收益不小）</li>
+</ul>
+<img src="/2021/10/31/2021-10-31-%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F%E4%B9%8B%E6%A7%BD%E4%BD%8D%E6%8F%90%E5%8F%96/640-20230424170805807" srcset="/img/loading.gif" lazyload class="" title="图片">
+<p>由上图得出以下结论：</p>
+<ul>
+<li>各种数据增强方法都超过不使用任何增强时的baseline效果。</li>
+<li>对于RNN网络，<strong>实体提及替换优于其他方法</strong>；对于Transformer网络，<strong>同义词替换最优。</strong></li>
+<li>总体上看，所有增强方法一起使用（<strong>ALL</strong>）会由于单独的增强方法。</li>
+<li>低资源条件下，数据增强效果增益更加明显；</li>
+<li>充分数据条件下，数据增强可能会带来噪声，甚至导致指标下降；</li>
+</ul>
+<h3 id="3-2-模型优化之词汇增强"><a href="#3-2-模型优化之词汇增强" class="headerlink" title="3.2 模型优化之词汇增强"></a>3.2 模型优化之词汇增强</h3><p><strong>有的学者开始另辟蹊径，利用外部词汇信息力求与BERT一战；</strong></p>
+<img src="/2021/10/31/2021-10-31-%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F%E4%B9%8B%E6%A7%BD%E4%BD%8D%E6%8F%90%E5%8F%96/640-20230424170811645" srcset="/img/loading.gif" lazyload class="" title="图片">
+<ul>
+<li>Lattice LSTM：<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1805.02023">Chinese NER Using Lattice LSTM</a></li>
+</ul>
+<p>引入词汇信息，在原有的输入序列的基础上添加匹配到的词汇作为额外的链路，整体看起来有点像<code>ResNet</code>的短路链接，两端分别连接原始输入序列的词首尾，称之为<code>Latttice-LSTM</code>。事实也证明词典带来的提升是明显的，一举超越<code>BERT</code>，重回武林宝座。缺点： 计算性能低下，不能batch并行化；信息损失：每个字符只能 获取以它为结尾的词汇信息；可迁移性差；</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1guw6jz6h53j61dk0pwdla02.jpg" srcset="/img/loading.gif" lazyload alt="image-20210928112728953"></p>
+<ul>
+<li>LR-CNN：<a target="_blank" rel="noopener" href="https://pdfs.semanticscholar.org/1698/d96c6fffee9ec969e07a58bab62cb4836614.pdf&#39;">CNN-Based Chinese NER with Lexicon Rethinking</a></li>
+</ul>
+<p>该篇指出<code>Latttice-LSTM</code>第一：速度太慢，第二：无法进行词汇匹配的选择。为了解决这两个问题，将原始输入序列按照词典匹配的词汇信息进行<code>Bigram,Trigram</code>合并然后<code>CNN</code>特征提取，然后将匹配到词汇信息，进行时间维度上attention计算后，利用<code>Rethinking</code>机制，反馈到原始<code>Bigram,Trigram</code>层，进行词汇匹配的选择，以解决词汇冲突的问题。</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1guw6kg95zej61e00q4dlj02.jpg" srcset="/img/loading.gif" lazyload alt="image-20210928112756388"></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2005.00436">Bipartite Flat-Graph Network for Nested Named Entity Recognition</a></li>
+</ul>
+<p>将引入的词汇作为额外的链路，与原始序列一起构建成输入图，字作为节点，链接是关系，然后通过对图进进行建模获得图节点的嵌入式表征，最后使用CRF进行解码。</p>
+<ul>
+<li>FLAT：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/391560782?utm_source=wechat_session&amp;utm_medium=social&amp;utm_oi=30098367447040&amp;utm_campaign=shareopn">Chinese NER Using Flat-Lattice Transformer</a>（ACL2020）</li>
+</ul>
+<p>FLAT的基本思想来源于Lattice-LSTM，Lattice-LSTM采取的RNN结构无法捕捉长距离依赖，同时引入词汇信息是有损的，同时动态的Lattice结构也不能充分进行GPU并行。为解决<strong>计算效率低下、引入词汇信息有损</strong>的这两个问题，FLAT基于Transformer结构进行了两大改进：</p>
+<p><strong>改进1：Flat-Lattice Transformer，无损引入词汇信息</strong>。FLAT不去设计或改变原生编码结构，设计巧妙的位置向量就融合了词汇信息。具体来说，对于每一个字符和词汇都构建两个head position encoding 和tail position encoding，词汇信息直接拼接到原始输入序列的末尾（避免了引入额外的链路，增加模型复杂度），并用位置编码与原始输入序列的对应位置相关联，间接指明了添加词汇所在的位置信息。</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1guw6m1fl6zj61e40q4aep02.jpg" srcset="/img/loading.gif" lazyload alt="image-20210928112926373"></p>
+<p><strong>改进2：相对位置编码，让Transformer适用NER任务</strong></p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1guw6maoktcj61dy0pwte802.jpg" srcset="/img/loading.gif" lazyload alt="image-20210928112942573"></p>
+<ul>
+<li>Lex-BERT: Enhancing BERT based NER with lexicons（2021）</li>
+</ul>
+<p>Lex-BERT相比于FLAT有三点：1. 不需要利用word embedding；2. 可以引入实体类型type信息，作者认为在领域内，可以收集包含类型信息的词汇；3. 相比FLAT，Lex-BERT推断速度更快、内存占用更小；</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1guw6nfex6lj61ea0q2wjv02.jpg" srcset="/img/loading.gif" lazyload alt="image-20210928113047712"></p>
+<ul>
+<li>Simple-Lexicon</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://ningshixian.github.io/2020/09/04/论文笔记-Simplify-the-Usage-of-Lexicon-in-Chinese-NER/">博客：Simplify the Usage of Lexicon in Chinese NER</a></p>
+<p>词汇信息是有用的，但是如何使用，学术界还未形成统一。可以看得出来，上述文章在引入词汇的方式上五花八门，计算复杂度都比较高。Simple-Lexicon该篇论文直击痛点，对于词汇信息的引入更加简单有效，采取静态加权的方法可以提前离线计算。作者首先分析列举了几种引入词汇信息方法；最终论文发现，将词汇的信息融入到特殊<code>token&#123;B,M,E,S&#125;</code>中，并和原始词向量进行concat，能够带来明显的提升。通过特殊<code>token</code>表征额外信息的方式，在NER与NRE联合学习任务中也逐渐成为一种趋势。具体细节可参考<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av543580471/">视频讲解</a></p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>最后，我们来看一下，上述各种「词汇增强」方法在中文NER任务上的性能：</p>
+<img src="/2021/10/31/2021-10-31-%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F%E4%B9%8B%E6%A7%BD%E4%BD%8D%E6%8F%90%E5%8F%96/640-20230424170825693" srcset="/img/loading.gif" lazyload class="" title="图片">
+<p>上图可以发现：总的来看，ACL2020中的FLAT和Simple-Lexicon效果最佳。具体地说：</p>
+<ul>
+<li>引入词汇信息的方法，都相较于baseline模型biLSTM+CRF有较大提升，可见引入词汇信息可以有效提升中文NER性能。</li>
+<li>采用相同词表对比时，FLAT和Simple-Lexicon好于其他方法。</li>
+<li>结合BERT效果会更佳。</li>
+</ul>
+<h2 id="四、评估标准"><a href="#四、评估标准" class="headerlink" title="四、评估标准"></a>四、评估标准</h2><p>NER任务的目标，通常是“尽量发现所有的命名实体，发现的命名实体要尽量纯净”，也就是要求查全率和查准率比较高。当然，场景也有可能要求其中一项要非常高。</p>
+<p>通常通过与人类标注水平进行比较判断NER系统的优劣。评估分两种：精确匹配评估和宽松匹配评估。</p>
+<h3 id="4-1-精确匹配评估"><a href="#4-1-精确匹配评估" class="headerlink" title="4.1 精确匹配评估"></a>4.1 精确匹配评估</h3><p>NER任务需要同时确定<strong>实体边界</strong>以及<strong>实体类别。</strong>在精确匹配评估中，只有当实体边界以及实体类别同时被精确标出时，实体识别任务才能被认定为成功。</p>
+<p>基于数据的 true positives（TP），false positives（FP），以及false negatives（FN），可以计算NER任务的精确率，召回率以及 F-score 用于评估任务优劣。</p>
+<p>对NER中的 true positives（TP），false positives（FP）与false negatives（FN）有如下解释：</p>
+<ul>
+<li>true positives（TP）：NER能正确识别实体</li>
+<li>false positives（FP）：NER能识别出实体但类别或边界判定出现错误</li>
+<li>false negatives（FN）：应该但没有被NER所识别的实体</li>
+</ul>
+<p><strong>P\R\F的计算公式如下：</strong></p>
+<p><strong>精确率</strong>： <img src="https://www.zhihu.com/equation?tex=Precision%3D\frac{TP}{TP%2BFP}" srcset="/img/loading.gif" lazyload alt="[公式]"></p>
+<p><strong>召回率</strong>： <img src="https://www.zhihu.com/equation?tex=Recall+%3D+\frac{TP}{TP%2BFN}" srcset="/img/loading.gif" lazyload alt="[公式]"></p>
+<p><strong>F-score：</strong><img src="https://www.zhihu.com/equation?tex=2\times\frac{Precision\times+Recall}{Precision%2BRecall}" srcset="/img/loading.gif" lazyload alt="[公式]"></p>
+<p>其中 F1 值又可以分为 macro-averaged 和 micro-averaged，前者是按照不同实体类别计算 F1，然后取平均；后者是把所有识别结果合在一起，再计算 F1。这两者的区别在于实体类别数目不均衡，因为通常语料集中类别数量分布不均衡，模型往往对于大类别的实体学习较好。</p>
+<h3 id="4-2-宽松匹配评估"><a href="#4-2-宽松匹配评估" class="headerlink" title="4.2 宽松匹配评估"></a>4.2 宽松匹配评估</h3><p>简言之，可视为实体位置区间部分重叠，或位置正确类别错误的，都记为正确或按照匹配的位置区间大小评测。</p>
+<h2 id="五、经验总结"><a href="#五、经验总结" class="headerlink" title="五、经验总结"></a>五、经验总结</h2><p>1、提升NER性能（performance）的⽅式往往不是直接堆砌⼀个BERT+CRF，这样做不仅效果不一定会好，推断速度也非常堪忧。就算BERT效果还不错，付出的代价也是惨重的。</p>
+<blockquote>
+<p>就算直接使用BERT+CRF进行finetune，BERT和CRF层的学习率也不要设成一样，让CRF层学习率要更大一些（一般是BERT的5～10倍），要让CRF层快速收敛。</p>
+</blockquote>
+<p>2、在NER任务上，也不要试图对BERT进⾏蒸馏压缩，很可能吃⼒不讨好。</p>
+<blockquote>
+<p>哈哈，也许废了半天劲去蒸馏，效果下降到还不如1层lstm+crf，推断速度还是慢～</p>
+</blockquote>
+<p>3、NER任务是⼀个重底层的任务，上层模型再深、性能提升往往也是有限的（甚至是下降的）。</p>
+<blockquote>
+<p>不要盲目搭建很深的网络，也不要痴迷于各种attention了。</p>
+</blockquote>
+<p>4、NER任务不同的解码方式（CRF/指针网络/Biaffine<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/152463745#ref_1">[1]</a>）之间的差异其实也是有限的，不要过分拘泥于解码⽅式。</p>
+<p>5、通过QA阅读理解的方式进行NER任务，效果也许会提升，但计算复杂度上来了，你需要对同⼀⽂本进行多次编码(对同⼀文本会构造多个question)。</p>
+<p>6、设计NER任务时，尽量不要引入嵌套实体，不好做，这往往是一个长尾问题。</p>
+<p>7、不要直接拿Transformer做NER，这是不合适的，详细可参考TENER<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/152463745#ref_2">[2]</a>。</p>
+<p>8、1层lstm+CRF的基础上，引入更丰富的embedding特征（比如char、bigram、词典特征、词性特征、elmo等），并进行多策略组合，这大概率可以解决垂直领域的NER问题。除此之外，不要忘记一个快速提升的重要手段：<strong>规则+领域词典</strong>。</p>
+<p>9、我们要更加稳妥地解决复杂NER问题（词汇增强、冷启动、低资源、噪声、不平衡、领域迁移、可解释、低耗时），这是一个需要权衡的过程，切记不要盲目追前沿，很多脏活累活还是要干一干的。</p>
+<p>10、在垂直领域，如果可以预训练一个领域相关的字向量&amp;语言模型，那是最好不过的了。</p>
+<blockquote>
+<p>补充：<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1911.04474">TENER: Adapting Transformer Encoder for Named Entity Recognition</a><br>论文详细分析了为什么原始BERT模型在NER上表现不佳的原因：位置编码只具有距离感受能力，不具有方向感受能力；并在借鉴<code>XL-Net</code>的基础上，提出了相对位置编码的方法；使用相对位置编码后，明显提升了BERT在NER上的效果。</p>
+</blockquote>
+<h1 id="对话系统之槽位提取"><a href="#对话系统之槽位提取" class="headerlink" title="对话系统之槽位提取"></a>对话系统之槽位提取</h1><blockquote>
+<p> <a target="_blank" rel="noopener" href="https://www.6aiq.com/article/1605448505199">58 同城 | 槽位识别与纠错在智能语音机器人中的实践</a></p>
+</blockquote>
+<p>在对话机器人中，经常需要槽位识别来提取用户回答中的关键信息，以便用于控制对话逻辑跳转和标识对话关键词等，我们通过命名实体识别（Named Entity Recognition，NER）技术来提取对话中的实体词（关键词），即对话机器人中的槽位词。</p>
+<p>槽位识别是一种序列标注问题，序列标注就是对给定文本的每一个字符打上标签，然后提取出我们关心的关键词，通常采用实体识别[1,2]方式实现。标签的格式通常使用两种标准：IOB2 和 IOBES。</p>
+<h2 id="槽位提取的应用"><a href="#槽位提取的应用" class="headerlink" title="槽位提取的应用"></a>槽位提取的应用</h2><p>在公司业务场景下，我们将识别以下类别的槽位：</p>
+<ul>
+<li><p>客服对话中的槽位提取(Slot Filling)</p>
+<p><strong>航道、城市、城市类型、单据号、职级序列、婚姻状况、订票类型、请假类型、分公司、*姓名</strong></p>
+<ul>
+<li>序列标注功能：http→image→单据号→时间→姓氏→二次姓氏→职级→手机号码→姓名→城市（不改变分词的结果）</li>
+<li>追问判断功能：slot_set=[‘ask]</li>
+</ul>
+</li>
+<li><p>冠寓录音文本的成分分析</p>
+<p>all：联系方式（主要是<strong>电话号码</strong>）<strong>、*看房时间、预算、姓氏</strong></p>
+</li>
+<li><p>辅助Askdata Query中的特定实体（标签）识别/抽取</p>
+<p><strong>ALM产品名和角色名抽取</strong></p>
+</li>
+<li><p>坐席知识库库名提槽</p>
+<p>即<strong>产品名</strong>（完全匹配+模糊匹配）</p>
+</li>
+<li><p>未使用</p>
+<p>C1客户描摹分析、人事员工评价、<strong>龙湖地产项目名</strong></p>
+<p><a target="_blank" rel="noopener" href="http://kuaibao.qq.com/s/20200228A09V2X00">基于词汇增强的中文命名实体识别</a></p>
+</li>
+</ul>
+<h2 id="槽位提取的方法"><a href="#槽位提取的方法" class="headerlink" title="槽位提取的方法"></a>槽位提取的方法</h2><p><strong>为什么需要实体词典匹配？</strong></p>
+<p><strong>答：</strong>主要有以下四个原因：</p>
+<p>一是搜索中用户查询的头部流量通常较短、表达形式简单，且集中在商户、品类、地址等三类实体搜索，实体词典匹配虽简单但处理这类查询准确率也可达到 90%以上。</p>
+<p>二是NER领域相关，通过挖掘业务数据资源获取业务实体词典，经过在线词典匹配后可保证识别结果是领域适配的。</p>
+<p>三是新业务接入更加灵活，只需提供业务相关的实体词表就可完成新业务场景下的实体识别。</p>
+<p>四是NER下游使用方中有些对响应时间要求极高，词典匹配速度快，基本不存在性能问题。</p>
+<p><strong>有了实体词典匹配为什么还要模型预测？</strong></p>
+<p><strong>答：</strong>有以下两方面的原因：</p>
+<p>一是随着搜索体量的不断增大，中长尾搜索流量表述复杂，越来越多OOV（Out Of Vocabulary）问题开始出现，实体词典已经无法满足日益多样化的用户需求，模型预测具备泛化能力，可作为词典匹配的有效补充。</p>
+<p>二是实体词典匹配无法解决歧义问题，比如“黄鹤楼美食”，“黄鹤楼”在实体词典中同时是武汉的景点、北京的商家、香烟产品，词典匹配不具备消歧能力，这三种类型都会输出，而模型预测则可结合上下文，不会输出“黄鹤楼”是香烟产品。</p>
+<p><strong>实体词典匹配、模型预测两路结果是怎么合并输出的？</strong></p>
+<p><strong>答：</strong>目前我们采用训练好的CRF权重网络作为打分器，来对实体词典匹配、模型预测两路输出的NER路径进行打分。在词典匹配无结果或是其路径打分值明显低于模型预测时，采用模型识别的结果，其他情况仍然采用词典匹配结果。</p>
+<h2 id="槽位词纠错"><a href="#槽位词纠错" class="headerlink" title="槽位词纠错"></a>槽位词纠错</h2><blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.6aiq.com/article/1605448505199">58 同城 | 槽位识别与纠错在智能语音机器人中的实践</a></p>
+</blockquote>
+<p>由于语音识别（Automatic Speech Recognition，ASR）技术采用的是第三方通用的语音识别，而在不同的业务中往往涉及到很多专有的名词，因此经过 ASR 后的文本很容易发生拼音正确但词识别错误的情况，或因用户口音、噪音、通话质量等问题导致 ASR 后的文本容易存在拼音相似但词不正确的问题（谐音词错误）。</p>
+<p>为了提升对话流畅度，需要对识别出的槽位词进行纠错。例如在冠寓录音分析场景中，用户回复文本 “我星辰，尔东陈”，NER 未识别出姓氏，但其实用户想表达的是“姓陈”，通过槽位纠错可以将姓氏“星辰”纠正成“姓陈”，可以更好识别用户意图。</p>
+<p>基于我们已有的领域知识（车品牌库、车系库及车品牌与车系的映射关系），首先对领域知识中的词进行预处理（去空格、去特殊符号、车系需要去掉车品牌前缀、大小写统一等），并将预处理后的词与原始领域词进行映射（chr 海外—&gt; 丰田 C-HR(海外)），后续所有与领域知识词进行比较，都采用预处理后的领域知识词，最终再映射到原始的领域知识词输出。</p>
+<p>例如，如果识别出的槽位词与相应领域知识中预处理过的词完全匹配，则返回映射的原始领域词，如果不匹配，那么认为槽位词错误，需要纠正，如何纠正呢？</p>
+<p>上述提到错误主要是由谐音或混淆音导致的，基于我们已有的车品牌、车系库，可以通过拼音相似度算法进行匹配，得到相似度最大的实体词，即认为是正确的实体词（会通过阈值来控制）。</p>
+<p>拼音相似度算法采用编辑距离，将待纠错词与车品牌、车系库中的所有词都转成拼音，待纠错词与库中的词计算编辑距离（基于拼音的每个字母计算编辑距离），即待纠错的拼音字符串需要改动多少次才能变成目标拼音字符串，同时考虑到字符串长度的影响，再除以两个字符串拼音的长度，编辑距离越小，匹配程度越高，最终通过阈值来控制是否采纳纠错结果。</p>
+<p>具体地，在语音机器人新车相关话术中，对于用户回复买车的文本，首先会提取出本句话所有识别出的车品牌，对错误的车品牌进行纠正，这里车品牌纠错设置的阈值比较大，尽可能使纠正后的车品牌正确，这样才能基于正确的车品牌进行车系的纠错。</p>
+<p>车品牌纠错后，再对所有的车系进行纠错，本句话有车品牌的会基于这些车品牌下的车系进行纠错，本句话没有车品牌的会根据待纠错词的拼音去车系库中找到带有该拼音的相关车系，再进行纠错。</p>
+<p>以车系为例，图中的车系映射表包括文字的车系映射表（h6—&gt; 哈弗 H6）和拼音的车系映射表（ei,qi,liu—&gt; 哈弗 H6），如果 ASR 后的车系文字是正确的，或车系拼音是正确的，可以直接通过车系映射表得到完整的车系名称。</p>
+<p>车系纠错时，如果本句话有车品牌，则可以直接获取该车品牌下的所有车系进行纠错；如果本句话没有车品牌，车系需要与车系库中 3000 多的车系词进行相似度比较，耗时较大，因此这里建立车系的倒排索表，key 是车系库中每个字的拼音，value 是包含这个拼音的所有车系词，对某个词纠错时，去索引表中取每个拼音的所有相关车系词进行比较。</p>
+<img src="/2021/10/31/2021-10-31-%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F%E4%B9%8B%E6%A7%BD%E4%BD%8D%E6%8F%90%E5%8F%96/image-84d8e197.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MjM5NzA5OTAwMA==&amp;mid=2650005853&amp;idx=1&amp;sn=2c6bb9e9c3751fdc3fd95e89b8b6377d&amp;chksm=bed865ca89afecdcdf0ecde9ed2385fb613cb2a40ad0c491582c7faf91841d17efdfe59718e1&amp;mpshare=1&amp;scene=1&amp;srcid=0304keVTiRXgpPHVGxGFL6mI#rd">填槽与多轮对话 | AI产品经理需要了解的AI技术概念</a></p>
+</li>
+<li><p><a href="[https://github.com/yuanxiaosc/Slot-Filling-and-Intention-Prediction-in-Paper-Translation/blob/master/槽填充和意图识别任务相关论文发展脉络.md](https://github.com/yuanxiaosc/Slot-Filling-and-Intention-Prediction-in-Paper-Translation/blob/master/槽填充和意图识别任务相关论文发展脉络.md"><strong>槽填充和意图识别任务相关论文发展脉络</strong></a>)</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/snipsco/snips-nlu">snips-nlu</a></p>
+</li>
+<li><p><a href="https://link.zhihu.com/?target=https%3A//arxiv.org/pdf/2101.11420.pdf">2021-Recent Trends in Named Entity Recognition (NER)</a></p>
+</li>
+<li><a href="https://link.zhihu.com/?target=https%3A//arxiv.org/pdf/1812.09449.pdf">2020- Survey on Deep Learning for Named Entity Recognition</a></li>
+<li><a href="https://link.zhihu.com/?target=https%3A//arxiv.org/pdf/1910.11470.pdf">2019-A survey on recent advances in named entity recognition from deep learning models</a></li>
+<li><a href="https://link.zhihu.com/?target=https%3A//www.aclweb.org/anthology/P18-3006.pdf">2018-Recognizing complex entity mentions: A review and future directions</a></li>
+<li><a href="https://link.zhihu.com/?target=https%3A//www.sciencedirect.com/science/article/abs/pii/S1574013717302782">2018-Recent named entity recognition and classification techniques: A systematic review</a></li>
+<li><a href="https://link.zhihu.com/?target=http%3A//citeseerx.ist.psu.edu/viewdoc/download%3Fdoi%3D10.1.1.714.342%26rep%3Drep1%26type%3Dpdf">2013-Named entity recognition: fallacies, challenges and opportunities</a></li>
+<li><p><a href="https://link.zhihu.com/?target=https%3A//time.mk/trajkovski/thesis/li07.pdf">2007-A survey of named entity recognition and classification</a></p>
+</li>
+<li><p>NER相关数据集可以参考：<a href="https://link.zhihu.com/?target=https%3A//github.com/SimmerChan/corpus">SimmerChan/corpus</a></p>
+</li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E6%A7%BD%E4%BD%8D%E6%8F%90%E5%8F%96/">#槽位提取</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>对话系统之槽位提取</div>
+      <div>http://example.com/2021/10/31/2021-10-31-对话系统之槽位提取/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>NSX</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年10月31日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/10/31/2021-10-31-%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F%E4%B9%8BNLU/" title="对话系统之NLU">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">对话系统之NLU</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/10/31/2021-10-31-%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F%E4%B9%8B%E9%BE%99%E5%B0%8F%E6%B9%96%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D/" title="对话系统之智能客服">
+                        <span class="hidden-mobile">对话系统之智能客服</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

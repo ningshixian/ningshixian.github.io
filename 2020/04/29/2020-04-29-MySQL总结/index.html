@@ -1,0 +1,959 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="NSX">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="MySQL总结什么是MySQL? SQL语句在线练习 （非常不错） 主要内容如下：  什么是MySQL? MySQL基础 MySQL语句总结 MySQL架构 附录：SQL注入安全">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL总结">
+<meta property="og:url" content="http://example.com/2020/04/29/2020-04-29-MySQL%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="MySQL总结什么是MySQL? SQL语句在线练习 （非常不错） 主要内容如下：  什么是MySQL? MySQL基础 MySQL语句总结 MySQL架构 附录：SQL注入安全">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/19895418-141f44f4a1dd139f?imageMogr2/auto-orient/strip|imageView2/2/w/1047/format/webp">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/19895418-abe72d9a126cff9e?imageMogr2/auto-orient/strip|imageView2/2/w/605/format/webp">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/19895418-e2bb5f705402c3f6?imageMogr2/auto-orient/strip|imageView2/2/w/720/format/webp">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/19895418-1eed858856a1b34a?imageMogr2/auto-orient/strip|imageView2/2/w/966/format/webp">
+<meta property="article:published_time" content="2020-04-28T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-23T10:28:32.047Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="SQL">
+<meta property="article:tag" content="MySQL">
+<meta property="article:tag" content="数据库">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/19895418-141f44f4a1dd139f?imageMogr2/auto-orient/strip|imageView2/2/w/1047/format/webp">
+  
+  
+  
+  <title>MySQL总结 - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="如何防止SQL注入？"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2020-04-29 00:00" pubdate>
+          2020年4月29日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          11k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          88 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">如何防止SQL注入？</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="MySQL总结"><a href="#MySQL总结" class="headerlink" title="MySQL总结"></a>MySQL总结</h1><p><a target="_blank" rel="noopener" href="https://github.com/Snailclimb/JavaGuide/blob/master/docs/database/MySQL.md#什么是mysql">什么是MySQL?</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.w3schools.com/sql/exercise.asp">SQL语句在线练习</a> （非常不错）</p>
+<p>主要内容如下：</p>
+<ul>
+<li>什么是MySQL?</li>
+<li>MySQL基础</li>
+<li>MySQL语句总结</li>
+<li>MySQL架构</li>
+<li><p>附录：SQL注入安全</p>
+<span id="more"></span>
+</li>
+</ul>
+<h2 id="什么是MySQL"><a href="#什么是MySQL" class="headerlink" title="什么是MySQL?"></a>什么是MySQL?</h2><p>MySQL 是一个关系型数据库管理系统，由瑞典 MySQL AB 公司开发，目前属于 Oracle 公司。MySQL 是一种关联数据库管理系统，关联数据库将数据保存在不同的表中，而不是将所有数据放在一个大仓库内，这样就增加了速度并提高了灵活性。</p>
+<ul>
+<li>MySQL 是开源的，目前隶属于 Oracle 旗下产品。</li>
+<li>MySQL 支持大型的数据库。可以处理拥有上千万条记录的大型数据库。</li>
+<li>MySQL 使用标准的 SQL 数据语言形式。</li>
+<li>MySQL 可以运行于多个系统上，并且支持多种语言。这些编程语言包括 C、C++、Python、Java、Perl、PHP、Eiffel、Ruby 和 Tcl 等。</li>
+<li>MySQL 对PHP有很好的支持，PHP 是目前最流行的 Web 开发语言。</li>
+<li>MySQL 支持大型数据库，支持 5000 万条记录的数据仓库，32 位系统表文件最大可支持 4GB，64 位系统支持最大的表文件为8TB。</li>
+<li>MySQL 是可以定制的，采用了 GPL 协议，你可以修改源码来开发自己的 MySQL 系统。</li>
+</ul>
+<h2 id="MySQL基础"><a href="#MySQL基础" class="headerlink" title="MySQL基础"></a>MySQL基础</h2><h3 id="SQL-DB-DBMS-分别是什么？"><a href="#SQL-DB-DBMS-分别是什么？" class="headerlink" title="SQL/DB/DBMS 分别是什么？"></a>SQL/DB/DBMS 分别是什么？</h3><blockquote>
+<p>DBMS 负责执行 sql 语句， 通过执行 sql 语句来操作 db 中的数据 </p>
+<p>DBMS -（执行）-&gt; SQL 语句 -（操作）-&gt; DB</p>
+</blockquote>
+<p>DB：DataBase (数据库， 实际上在硬盘上以文件的形似存在)</p>
+<p>DBMS：Database Management System（数据库管理系统，常见的有：MySQL, Oracle DB2 Sybase, SqlServer…）</p>
+<p>SQL:结构化查询语言， 是一门标准通用语言， 标准的sql语句适用于所有的数据库产偶</p>
+<h3 id="什么是表？"><a href="#什么是表？" class="headerlink" title="什么是表？"></a>什么是表？</h3><p>表是数据库的基本组成单元， 所有的数据都以表格的格式组织 一个表包括行和列： 行： 被称为数据/记录 列：被称为字段</p>
+<ul>
+<li>每个字段名包含哪些信息： 字段名， 数据类型， 相关约束</li>
+</ul>
+<h2 id="MySQL语句总结"><a href="#MySQL语句总结" class="headerlink" title="MySQL语句总结"></a>MySQL语句总结</h2><p><a target="_blank" rel="noopener" href="https://www.runoob.com/sql/sql-tutorial.html">SQL 教程（菜鸟教程）</a></p>
+<p><a target="_blank" rel="noopener" href="http://www.runoob.com/MySQL/MySQL-tutorial.html">MySQL 教程（菜鸟教程）</a></p>
+<p><strong>插入</strong></p>
+<figure class="highlight lasso"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs lasso">INSERT <span class="hljs-keyword">INTO</span> table_name ( field1, field2,<span class="hljs-params">...</span>fieldN )<br>                       VALUES<br>                       ( value1, value2,<span class="hljs-params">...</span>valueN );<br></code></pre></td></tr></table></figure>
+<p><strong>查询</strong></p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs pgsql"><span class="hljs-keyword">SELECT</span> <span class="hljs-built_in">column_name</span>,<span class="hljs-built_in">column_name</span><br><span class="hljs-keyword">FROM</span> <span class="hljs-built_in">table_name</span><br>[<span class="hljs-keyword">WHERE</span> Clause]<br>[<span class="hljs-keyword">LIMIT</span> N][ <span class="hljs-keyword">OFFSET</span> M]<br></code></pre></td></tr></table></figure>
+<p><strong>更新</strong></p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs pgsql"><span class="hljs-keyword">UPDATE</span> <span class="hljs-built_in">table_name</span> <span class="hljs-keyword">SET</span> field1=<span class="hljs-built_in">new</span>-value1, field2=<span class="hljs-built_in">new</span>-value2<br>[<span class="hljs-keyword">WHERE</span> Clause]<br></code></pre></td></tr></table></figure>
+<p><strong>删除</strong></p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs pgsql"><span class="hljs-keyword">DELETE</span> <span class="hljs-keyword">FROM</span> <span class="hljs-built_in">table_name</span> [<span class="hljs-keyword">WHERE</span> Clause]<br></code></pre></td></tr></table></figure>
+<p><strong>LIKE</strong></p>
+<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs n1ql"><span class="hljs-keyword">SELECT</span> field1, field2,...fieldN <br><span class="hljs-keyword">FROM</span> table_name<br><span class="hljs-keyword">WHERE</span> field1 <span class="hljs-keyword">LIKE</span> <span class="hljs-string">&#x27;%xxx%&#x27;</span><br></code></pre></td></tr></table></figure>
+<p><strong>UNION 语句</strong>：用于将不同表中相同列中查询的数据展示出来；（不包括重复数据）</p>
+<p><strong>UNION ALL 语句</strong>：用于将不同表中相同列中查询的数据展示出来；（包括重复数据）</p>
+<p>使用形式如下：</p>
+<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs n1ql"><span class="hljs-keyword">SELECT</span> 列名称 <span class="hljs-keyword">FROM</span> 表名称 <span class="hljs-keyword">UNION</span> <span class="hljs-keyword">SELECT</span> 列名称 <span class="hljs-keyword">FROM</span> 表名称 <span class="hljs-keyword">ORDER</span> <span class="hljs-keyword">BY</span> 列名称；<br><span class="hljs-keyword">SELECT</span> 列名称 <span class="hljs-keyword">FROM</span> 表名称 <span class="hljs-keyword">UNION</span> <span class="hljs-keyword">ALL</span> <span class="hljs-keyword">SELECT</span> 列名称 <span class="hljs-keyword">FROM</span> 表名称 <span class="hljs-keyword">ORDER</span> <span class="hljs-keyword">BY</span> 列名称；<br></code></pre></td></tr></table></figure>
+<p><strong>排序 order</strong></p>
+<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs n1ql"><span class="hljs-keyword">SELECT</span> * <span class="hljs-keyword">FROM</span> table_name1 <br><span class="hljs-keyword">ORDER</span> <span class="hljs-keyword">BY</span> 排序字段 [<span class="hljs-keyword">ASC</span> [<span class="hljs-keyword">DESC</span>][默认 <span class="hljs-keyword">ASC</span>]]<br></code></pre></td></tr></table></figure>
+<p><strong>分组 group</strong></p>
+<p>在分组的列上我们可以使用 COUNT, SUM, AVG,等函数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs mysql">select 字段名，分组名<br>from 表名<br>where 筛选条件  // 分组前筛选<br>group by 分组名<br>having 分组后筛选条件  //分组后筛选<br></code></pre></td></tr></table></figure>
+<p><strong>联合多表查询 JOIN</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs mysql">select 字段名<br>from 表名 as 别名<br>【连接类型】join 表名 as 别名<br>on 连接条件<br>where 筛选条件<br>order by 排序字段<br></code></pre></td></tr></table></figure>
+<p>其中【连接类型包括】大致分为如下三类：</p>
+<ul>
+<li><strong>INNER JOIN（内连接,或等值连接）</strong>：获取两个表中字段匹配关系的记录</li>
+<li><strong>LEFT JOIN（左连接）：</strong>获取左表所有记录，即使右表没有对应匹配的记录；左表是主表</li>
+<li><strong>RIGHT JOIN（右连接）：</strong> 与 LEFT JOIN 相反；右边是主表</li>
+</ul>
+<p><strong>过滤重复数据</strong></p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs pgsql"><span class="hljs-keyword">SELECT</span> <span class="hljs-keyword">DISTINCT</span> last_name, first_name<br><span class="hljs-keyword">FROM</span> <span class="hljs-keyword">table</span>;<br></code></pre></td></tr></table></figure>
+<p><strong>NULL 值处理</strong></p>
+<p>为了处理这种情况，MySQL提供了三大运算符:</p>
+<ul>
+<li><strong>IS NULL:</strong> 当列的值是 NULL,此运算符返回 true。</li>
+<li><strong>IS NOT NULL:</strong> 当列的值不为 NULL, 运算符返回 true。</li>
+<li><strong>&lt;=&gt;:</strong> 比较操作符（不同于 = 运算符），当比较的的两个值相等或者都为 NULL 时返回 true。</li>
+</ul>
+<p><strong>视图 view</strong></p>
+<blockquote>
+<p>多个地方用到同样的查询且SQL相对复杂。不保存结果，只保存SQL。</p>
+<p>优点：重用SQL，保护和封装数据。</p>
+<p>可以进行插入或者修改，不建议这样，视图最好只有‘只读’权限。</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs mysql">create view 视图名<br>as<br>查询语句；<br></code></pre></td></tr></table></figure>
+<h3 id="MySQL-函数"><a href="#MySQL-函数" class="headerlink" title="MySQL 函数"></a>MySQL 函数</h3><p><strong>MySQL 字符串函数</strong></p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CHAR_LENGTH(s)</td>
+<td>返回字符串 s 的字符数</td>
+</tr>
+<tr>
+<td>CONCAT(s1,s2…sn)</td>
+<td>字符串 s1,s2 等多个字符串合并为一个字符串</td>
+</tr>
+<tr>
+<td>FIND_IN_SET(s1,s2)</td>
+<td>返回在字符串s2中与s1匹配的字符串的位置</td>
+</tr>
+<tr>
+<td>LOCATE(s1,s)</td>
+<td>从字符串 s 中获取 s1 的开始位置</td>
+</tr>
+<tr>
+<td>LOWER(s)</td>
+<td>将字符串 s 的所有字母变成小写字母</td>
+</tr>
+<tr>
+<td>STRCMP(s1,s2)</td>
+<td>比较字符串 s1 和 s2，如果 s1 与 s2 相等返回 0 ，<br />如果 s1&gt;s2 返回 1，如果 s1&lt;s2 返回 -1</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>MySQL 数字函数</strong></p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:left">函数名</th>
+<th style="text-align:left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">ABS(x)</td>
+<td style="text-align:left">返回 x 的绝对值</td>
+</tr>
+<tr>
+<td style="text-align:left">AVG(expression)</td>
+<td style="text-align:left">返回一个表达式的平均值</td>
+</tr>
+<tr>
+<td style="text-align:left">CEIL(x)</td>
+<td style="text-align:left">返回大于或等于 x 的最小整数</td>
+</tr>
+<tr>
+<td style="text-align:left">COUNT(expression)</td>
+<td style="text-align:left">返回查询的记录总数</td>
+</tr>
+<tr>
+<td style="text-align:left">FLOOR(x)</td>
+<td style="text-align:left">返回小于或等于 x 的最大整数</td>
+</tr>
+<tr>
+<td style="text-align:left">MAX(expression)</td>
+<td style="text-align:left">返回字段 expression 中的最大值</td>
+</tr>
+<tr>
+<td style="text-align:left">MIN(expression)</td>
+<td style="text-align:left">返回字段 expression 中的最小值</td>
+</tr>
+<tr>
+<td style="text-align:left">MOD(x,y)</td>
+<td style="text-align:left">返回 x 除以 y 以后的余数</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>MySQL 日期函数</strong></p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:left">函数名</th>
+<th style="text-align:left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">CURDATE()</td>
+<td style="text-align:left">返回当前日期</td>
+</tr>
+<tr>
+<td style="text-align:left">CURRENT_TIME</td>
+<td style="text-align:left">返回当前时间</td>
+</tr>
+<tr>
+<td style="text-align:left">CURRENT_TIMESTAMP()</td>
+<td style="text-align:left">返回当前日期和时间</td>
+</tr>
+<tr>
+<td style="text-align:left">DATE()</td>
+<td style="text-align:left">从日期或日期时间表达式中提取日期值</td>
+</tr>
+<tr>
+<td style="text-align:left">DATE_FORMAT(d,f)</td>
+<td style="text-align:left">按表达式 f的要求显示日期 d</td>
+</tr>
+<tr>
+<td style="text-align:left">DAY(d)</td>
+<td style="text-align:left">返回日期值 d 的日期部分</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="MySQL架构"><a href="#MySQL架构" class="headerlink" title="MySQL架构"></a>MySQL架构</h2><p>和其它数据库相比，MySQL有点与众不同，它的架构可以在多种不同场景中应用并发挥良好作用。主要体现在存储引擎的架构上，<strong>插件式的存储引擎架构将查询处理和其它的系统任务以及数据的存储提取相分离</strong>。这种架构可以根据业务的需求和实际需要选择合适的存储引擎。</p>
+<p><img src="https:////upload-images.jianshu.io/upload_images/19895418-141f44f4a1dd139f?imageMogr2/auto-orient/strip|imageView2/2/w/1047/format/webp" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>从上图中，我们可以看出，<code>MySQL</code>体系中包含以下几个重要的部分：</p>
+<ul>
+<li><strong>连接层</strong>：最上层是一些客户端和连接服务。<strong>主要完成一些类似于连接处理、授权认证、及相关的安全方案</strong>。在该层上引入了线程池的概念，为通过认证安全接入的客户端提供线程。同样在该层上可以实现基于SSL的安全链接。服务器也会为安全接入的每个客户端验证它所具有的操作权限。</li>
+<li><strong>服务层</strong>：第二层服务层，主要完成大部分的核心服务功能， 包括查询解析、分析、优化、缓存、以及所有的内置函数，所有跨存储引擎的功能也都在这一层实现，包括触发器、存储过程、视图等</li>
+<li><strong>引擎层</strong>：第三层存储引擎层，存储引擎真正的负责了MySQL中数据的存储和提取，服务器通过API与存储引擎进行通信。不同的存储引擎具有的功能不同，这样我们可以根据自己的实际需要进行选取</li>
+<li><strong>存储层</strong>：第四层为数据存储层，主要是将数据存储在运行于该设备的文件系统之上，并完成与存储引擎的交互</li>
+</ul>
+<h3 id="存储引擎"><a href="#存储引擎" class="headerlink" title="存储引擎"></a>存储引擎</h3><p>存储引擎是MySQL的组件，用于处理不同表类型的SQL操作。不同的存储引擎提供不同的存储机制、索引技巧、锁定水平等功能，使用不同的存储引擎，还可以获得特定的功能。</p>
+<p>MySQL服务器使用<strong>可插拔</strong>的存储引擎体系结构，可以从运行中的 MySQL 服务器加载或卸载存储引擎 。常见的存储引擎就 InnoDB、MyISAM、Memory、NDB。InnoDB 现在是 MySQL 默认的存储引擎，支持<strong>事务、行级锁定和外键</strong>，它具有以下特性：</p>
+<ul>
+<li>☆通过多版本并发（<code>MVCC</code>）实现高并发性能</li>
+<li>☆支持<code>SQL</code>标准的4种隔离级别，默认为<code>Repatable</code>级别</li>
+<li>☆通过间隙锁（<code>Next-Key locking</code>）来避免幻读</li>
+<li>提供插入缓冲（<code>insert-buffer</code>）</li>
+<li>支持二次写（<code>double write</code>）</li>
+<li>自适应哈希索引（<code>adaptive hash index</code>）</li>
+<li>预读（<code>read ahead</code>）</li>
+<li>…</li>
+</ul>
+<h3 id="MySQL-索引"><a href="#MySQL-索引" class="headerlink" title="MySQL 索引"></a>MySQL 索引</h3><p>MYSQL官方对索引的定义为：索引（Index）是帮助MySQL高效获取数据的数据结构，所以说<strong>索引的本质是：数据结构</strong>。</p>
+<p>索引的目的在于提高查询效率，可以类比字典、 火车站的车次表、图书的目录等 。</p>
+<p>可以简单的理解为“排好序的快速查找数据结构”，数据本身之外，<strong>数据库还维护者一个满足特定查找算法的数据结构</strong>，这些数据结构以某种方式引用（指向）数据，这样就可以在这些数据结构上实现高级查找算法。这种数据结构，就是索引。下图是一种可能的索引方式示例。</p>
+<p><img src="https:////upload-images.jianshu.io/upload_images/19895418-abe72d9a126cff9e?imageMogr2/auto-orient/strip|imageView2/2/w/605/format/webp" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>左边的数据表，一共有两列七条记录，最左边的是数据记录的物理地址。为了加快Col2的查找，可以维护一个右边所示的二叉查找树，每个节点分别包含索引键值，和一个指向对应数据记录物理地址的指针，这样就可以运用二叉查找在一定的复杂度内获取到对应的数据，从而快速检索出符合条件的记录。</p>
+<p>索引本身也很大，不可能全部存储在内存中，<strong>一般以索引文件的形式存储在磁盘上</strong></p>
+<p>在<code>InnoDB</code>中，主要包含3种索引：</p>
+<ul>
+<li>B+树索引</li>
+<li>全文索引</li>
+<li>哈希索引</li>
+</ul>
+<p>在<code>InnoDB</code>中，索引通过<code>B+</code>树来实现，<code>B+</code>树作为索引的优点：</p>
+<ul>
+<li>非叶子节点不存储数据，使得每页能存储更多索引，减少<code>IO</code>的次数</li>
+<li>叶子节点存在相互索引的指针，便于范围查找</li>
+<li>性能稳定，每次查询都需要通过相同的次数才能获取到需要的数据</li>
+</ul>
+<p><strong>优势</strong></p>
+<ul>
+<li><strong>提高数据检索效率，降低数据库IO成本</strong></li>
+<li><strong>降低数据排序的成本，降低CPU的消耗</strong></li>
+</ul>
+<p><strong>劣势</strong></p>
+<ul>
+<li>索引也是一张表，保存了主键和索引字段，并指向实体表的记录，所以也需要占用内存</li>
+<li>虽然索引大大提高了查询速度，同时却会降低更新表的速度，如对表进行INSERT、UPDATE和DELETE。因为更新表时，MySQL不仅要保存数据，还要保存一下索引文件每次更新添加了索引列的字段， 都会调整因为更新所带来的键值变化后的索引信息</li>
+</ul>
+<h3 id="查询缓存的使用"><a href="#查询缓存的使用" class="headerlink" title="查询缓存的使用"></a>查询缓存的使用</h3><blockquote>
+<p>执行查询语句的时候，会先查询缓存。不过，MySQL 8.0 版本后移除，因为这个功能不太实用</p>
+</blockquote>
+<h3 id="MySQL-事务"><a href="#MySQL-事务" class="headerlink" title="MySQL 事务"></a>MySQL 事务</h3><h4 id="什么是事务"><a href="#什么是事务" class="headerlink" title="什么是事务?"></a>什么是事务?</h4><p><strong>事务是逻辑上的一组操作，要么都执行，要么都不执行。</strong></p>
+<p>事务最经典也经常被拿出来说例子就是转账了。假如小明要给小红转账1000元，这个转账会涉及到两个关键操作就是：将小明的余额减少1000元，将小红的余额增加1000元。万一在这两个操作之间突然出现错误比如银行系统崩溃，导致小明余额减少而小红的余额没有增加，这样就不对了。事务就是保证这两个关键操作要么都成功，要么都要失败。</p>
+<h4 id="事务的四大特性-ACID"><a href="#事务的四大特性-ACID" class="headerlink" title="事务的四大特性(ACID)"></a>事务的四大特性(ACID)</h4><ol>
+<li><strong>原子性（Atomicity）：</strong> 事务是最小的执行单位，不允许分割。事务的原子性确保动作要么全部完成，要么完全不起作用；</li>
+<li><strong>一致性（Consistency）：</strong> 执行事务后，数据库从一个正确的状态变化到另一个正确的状态；</li>
+<li><strong>隔离性（Isolation）：</strong> 并发访问数据库时，一个用户的事务不被其他事务所干扰，各并发事务之间数据库是独立的；</li>
+<li><strong>持久性（Durability）：</strong> 一个事务被提交之后。它对数据库中数据的改变是持久的，即使数据库发生故障也不应该对其有任何影响。</li>
+</ol>
+<p><strong>隔离性</strong></p>
+<p><code>InnoDB</code>的隔离性则通过锁和<code>MVCC</code>来实现，由于完整的隔离性，只能通过互斥锁来实现，而互斥锁带来的问题便是性能急剧下降，因此处于对性能的妥协和结合日常业务的使用，根据加锁的程度不同，又将隔离性分为以下四个级别：</p>
+<ul>
+<li>读未提交(<code>READ UNCOMMITTED</code>)： 会出现脏读的问题</li>
+<li>读已提交(<code>READ COMMITTED</code>)： 不会出现脏读，但是会出现不可能重复读的问题</li>
+<li>可重复读(<code>REPEATABLE READ</code>)： 不会出现不可重复读，但是会出现幻读的问题</li>
+<li>串行化(<code>SERIALIZABLE</code>)： 不会出现幻读问题</li>
+</ul>
+<h4 id="并发事务带来哪些问题"><a href="#并发事务带来哪些问题" class="headerlink" title="并发事务带来哪些问题?"></a>并发事务带来哪些问题?</h4><p>在典型的应用程序中，多个事务并发运行，经常会操作相同的数据来完成各自的任务（多个用户对同一数据进行操作）。并发虽然是必须的，但可能会导致以下的问题。</p>
+<ul>
+<li><strong>脏读（Dirty read）:</strong> 当一个事务正在访问数据并且对数据进行了修改，而这种修改还没有提交到数据库中，这时另外一个事务也访问了这个数据，然后使用了这个数据。因为这个数据是还没有提交的数据，那么另外一个事务读到的这个数据是“脏数据”，依据“脏数据”所做的操作可能是不正确的。</li>
+<li><strong>丢失修改（Lost to modify）:</strong> 指在一个事务读取一个数据时，另外一个事务也访问了该数据，那么在第一个事务中修改了这个数据后，第二个事务也修改了这个数据。这样第一个事务内的修改结果就被丢失，因此称为丢失修改。 例如：事务1读取某表中的数据A=20，事务2也读取A=20，事务1修改A=A-1，事务2也修改A=A-1，最终结果A=19，事务1的修改被丢失。</li>
+<li><strong>不可重复读（Unrepeatableread）:</strong> 指在一个事务内多次读同一数据。在这个事务还没有结束时，另一个事务也访问该数据。那么，在第一个事务中的两次读数据之间，由于第二个事务的修改导致第一个事务两次读取的数据可能不太一样。这就发生了在一个事务内两次读到的数据是不一样的情况，因此称为不可重复读。</li>
+<li><strong>幻读（Phantom read）:</strong> 幻读与不可重复读类似。它发生在一个事务（T1）读取了几行数据，接着另一个并发事务（T2）插入了一些数据时。在随后的查询中，第一个事务（T1）就会发现多了一些原本不存在的记录，就好像发生了幻觉一样，所以称为幻读。</li>
+</ul>
+<h4 id="并发事务处理问题的解决办法"><a href="#并发事务处理问题的解决办法" class="headerlink" title="并发事务处理问题的解决办法"></a>并发事务处理问题的解决办法</h4><ul>
+<li>“更新丢失”通常是应该完全避免的。但防止更新丢失，并不能单靠数据库事务控制器来解决，需要应用程序对要更新的数据加必要的锁来解决，因此，防止更新丢失应该是应用的责任。</li>
+<li>“脏读” 、 “不可重复读”和“幻读” ，其实都是数据库读一致性问题，必须由数据库提供一定的事务隔离机制来解决：</li>
+<li>一种是加锁：在读取数据前，对其加锁，阻止其他事务对数据进行修改。</li>
+<li>另一种是数据多版本并发控制（MultiVersion Concurrency Control，简称 <strong>MVCC</strong>或 MCC），也称为多版本数据库：不用加任何锁， 通过一定机制生成一个数据请求时间点的一致性数据快照 （Snapshot)， 并用这个快照来提供一定级别 （语句级或事务级） 的一致性读取。从用户的角度来看，好象是数据库可以提供同一数据的多个版本。</li>
+</ul>
+<h3 id="大表优化"><a href="#大表优化" class="headerlink" title="大表优化"></a>大表优化</h3><p>当MySQL单表记录数过大时，数据库的CRUD性能会明显下降，一些常见的优化措施如下：</p>
+<h4 id="1-限定数据的范围"><a href="#1-限定数据的范围" class="headerlink" title="1. 限定数据的范围"></a>1. 限定数据的范围</h4><p>务必禁止不带任何限制数据范围条件的查询语句。比如：我们当用户在查询订单历史的时候，我们可以控制在一个月的范围内；</p>
+<h4 id="2-读-写分离"><a href="#2-读-写分离" class="headerlink" title="2. 读/写分离"></a>2. 读/写分离</h4><p>经典的数据库拆分方案，主库负责写，从库负责读；</p>
+<h4 id="3-垂直分区"><a href="#3-垂直分区" class="headerlink" title="3. 垂直分区"></a>3. 垂直分区</h4><p><strong>根据数据库里面数据表的相关性进行拆分。</strong></p>
+<h3 id="什么是池化-什么是数据库连接池-为什么需要数据库连接池"><a href="#什么是池化-什么是数据库连接池-为什么需要数据库连接池" class="headerlink" title="什么是池化?什么是数据库连接池?为什么需要数据库连接池?"></a>什么是池化?什么是数据库连接池?为什么需要数据库连接池?</h3><p>池化设计应该不是一个新名词。我们常见的如java线程池、jdbc连接池、redis连接池等就是这类设计的代表实现。这种设计会初始预设资源，解决的问题就是抵消每次获取资源的消耗，如创建线程的开销，获取远程连接的开销等。就好比你去食堂打饭，打饭的大妈会先把饭盛好几份放那里，你来了就直接拿着饭盒加菜即可，不用再临时又盛饭又打菜，效率就高了。除了初始化资源，池化设计还包括如下这些特征：池子的初始值、池子的活跃值、池子的最大值等，这些特征可以直接映射到java线程池和数据库连接池的成员属性中。这篇文章对<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=Mzg2OTA0Njk0OA==&amp;mid=2247485679&amp;idx=1&amp;sn=57dbca8c9ad49e1f3968ecff04a4f735&amp;chksm=cea24724f9d5ce3212292fac291234a760c99c0960b5430d714269efe33554730b5f71208582&amp;token=1141994790&amp;lang=zh_CN#rd">池化设计思想</a>介绍的还不错，直接复制过来，避免重复造轮子了。</p>
+<p>数据库连接本质就是一个 socket 的连接。数据库服务端还要维护一些缓存和用户权限信息之类的 所以占用了一些内存。我们可以把数据库连接池是看做是维护的数据库连接的缓存，以便将来需要对数据库的请求时可以重用这些连接。为每个用户打开和维护数据库连接，尤其是对动态数据库驱动的网站应用程序的请求，既昂贵又浪费资源。<strong>在连接池中，创建连接后，将其放置在池中，并再次使用它，因此不必建立新的连接。如果使用了所有连接，则会建立一个新连接并将其添加到池中</strong>。 连接池还减少了用户必须等待建立与数据库的连接的时间。</p>
+<h3 id="一条SQL语句在MySQL中如何执行的"><a href="#一条SQL语句在MySQL中如何执行的" class="headerlink" title="一条SQL语句在MySQL中如何执行的"></a>一条SQL语句在MySQL中如何执行的</h3><p>客户端请求 —-&gt; 连接器（验证用户身份，给予权限）  —-&gt; 查询缓存（存在缓存则直接返回，不存在则执行后续操作） —-&gt; 分析器（对SQL进行词法分析和语法分析操作）  —-&gt; 优化器（主要对执行的sql优化选择最优的执行方案方法）  —-&gt; 执行器（执行时会先看用户是否有执行权限，有才去使用这个引擎提供的接口） —-&gt; 去引擎层获取数据返回（如果开启查询缓存则会缓存查询结果）图：极客时间</p>
+<p><img src="https:////upload-images.jianshu.io/upload_images/19895418-e2bb5f705402c3f6?imageMogr2/auto-orient/strip|imageView2/2/w/720/format/webp" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p><strong>分析器执行顺序</strong></p>
+<ul>
+<li>首先，应该明确数据来源，因此需要解析<code>FROM</code>，找到对应的数据表</li>
+<li>找到数据表后，下一步便是通过过滤条件，获取具体的数据行，因此需要解析<code>WHERE</code></li>
+<li>拿到具体的数据行之后，接下来需要处理数据行，因此需要解析<code>GROUP BY</code></li>
+<li>通过<code>GROUP BY</code>分组之后，就可以将同一个组的数据进行聚合，因此解析<code>count(),sum(),arg()</code>等</li>
+<li>通过聚合函数之后，则可以将聚合之后的数据进行过滤，因此解析<code>HAVING</code></li>
+<li>处理完数据行之后，接下来查看用户需要的数据列，因此解析<code>SELECT</code></li>
+<li>剩下的数据便是用户真真需要的数据，但是<code>SQL</code>可能会对数据进行排序等，因此处理 <code>DISTINCT</code>以及<code>ORDER</code></li>
+<li>最后，排序完成后，查看用户是否需要返回指定的行，因此处理<code>LIMIT</code></li>
+</ul>
+<p>总结出来执行顺序便是：</p>
+<figure class="highlight autohotkey"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs autohotkey">FROM`-&gt;`WHERE`-&gt;`GROUP BY`-&gt;`count()`-&gt;`HAVING`-&gt;`SELECT`-&gt;`DISTINCT`-&gt;`ORDER`-&gt;`LIMIT<br></code></pre></td></tr></table></figure>
+<h3 id="一条SQL语句执行得很慢的原因有哪些？"><a href="#一条SQL语句执行得很慢的原因有哪些？" class="headerlink" title="一条SQL语句执行得很慢的原因有哪些？"></a>一条SQL语句执行得很慢的原因有哪些？</h3><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=Mzg2OTA0Njk0OA==&amp;mid=2247485185&amp;idx=1&amp;sn=66ef08b4ab6af5757792223a83fc0d45&amp;chksm=cea248caf9d5c1dc72ec8a281ec16aa3ec3e8066dbb252e27362438a26c33fbe842b0e0adf47&amp;token=79317275&amp;lang=zh_CN#rd">腾讯面试：一条SQL语句执行得很慢的原因有哪些？—-不看后悔系列</a></p>
+<h3 id="CHAR-和-VARCHAR-的区别？"><a href="#CHAR-和-VARCHAR-的区别？" class="headerlink" title="CHAR 和 VARCHAR 的区别？"></a>CHAR 和 VARCHAR 的区别？</h3><p>char是固定长度，varchar长度可变：</p>
+<p>char(n) 和 varchar(n) 中括号中 n 代表字符的个数，并不代表字节个数，比如 CHAR(30) 就可以存储 30 个字符。</p>
+<p>存储时，前者不管实际存储数据的长度，直接按 char 规定的长度分配存储空间；而后者会根据实际存储的数据分配最终的存储空间</p>
+<h3 id="Mysql-的内连接、左连接、右连接有什么区别？"><a href="#Mysql-的内连接、左连接、右连接有什么区别？" class="headerlink" title="Mysql 的内连接、左连接、右连接有什么区别？"></a>Mysql 的内连接、左连接、右连接有什么区别？</h3><p><img src="https://upload-images.jianshu.io/upload_images/19895418-1eed858856a1b34a?imageMogr2/auto-orient/strip|imageView2/2/w/966/format/webp" srcset="/img/loading.gif" lazyload alt="img"></p>
+<h1 id="附录：SQL注入安全"><a href="#附录：SQL注入安全" class="headerlink" title="附录：SQL注入安全"></a>附录：SQL注入安全</h1><h3 id="什么是sql注入呢"><a href="#什么是sql注入呢" class="headerlink" title="什么是sql注入呢?"></a>什么是sql注入呢?</h3><p>SQL注入即是指web应用程序对用户输入数据的合法性没有判断或过滤不严，攻击者可以在web应用程序中事先定义好的查询语句的结尾上添加额外的SQL语句，在管理员不知情的情况下实现非法操作，以此来实现欺骗数据库服务器执行非授权的任意查询，从而进一步得到相应的数据信息。 </p>
+<!-- more -->
+<h3 id="如何避免-sql-注入风险"><a href="#如何避免-sql-注入风险" class="headerlink" title="如何避免 sql 注入风险"></a>如何避免 sql 注入风险</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs javascript"> <span class="hljs-number">1.</span>永远不要信任用户的输入。对用户的输入进行校验，能够通过正则表达式，或限制长度；对单引号和<br>双<span class="hljs-string">&quot;-&quot;</span>进行转换等。检查输入的数据是否具有所期望的数据格式，严格限制变量的类型，例如使用regexp包进行一些匹配处理，<br>或者使用strconv包对字符串转化成其他基本类型的数据进行判断。<br><br><span class="hljs-number">2.</span>永远不要使用动态拼装sql，能够使用參数化的sql或者直接使用存储过程进行数据查询存取。<br><br><span class="hljs-number">3.</span>永远不要使用管理员权限的数据库连接，为每一个应用使用单独的权限有限的数据库连接。<br><br><span class="hljs-number">4.</span>不要把机密信息直接存放。加密或者hash掉password和敏感的信息。对进入数据库的特殊字符（<span class="hljs-string">&#x27;&quot;\尖括号&amp;*;等）进行转义处理，</span><br><span class="hljs-string">或编码转换</span><br><span class="hljs-string"></span><br><span class="hljs-string">5.应用的异常信息应该给出尽可能少的提示，最好使用自己定义的错误信息对原始错误信息进行包装,避免网站打印出SQL错误信息，</span><br><span class="hljs-string">比如类型错误、字段不匹配等，把代码里的SQL语句暴露出来，以防止攻击者利用这些错误信息进行SQL注入。</span><br><span class="hljs-string"></span><br><span class="hljs-string">6.sql注入的检測方法一般採取辅助软件或站点平台来检測。软件一般採用sql注入检測工具jsky，站点平台就有亿思站点安全平台检測工具。</span><br><span class="hljs-string">MDCSOFT SCAN等。採用MDCSOFT-IPS能够有效的防御SQL注入。XSS攻击等。</span><br><span class="hljs-string"></span><br><span class="hljs-string">7.严格限制Web应用的数据库的操作权限，给此用户提供仅仅能够满足其工作的最低权限，从而最大限度的减少注入攻击对数据库的危害。</span><br><span class="hljs-string"></span><br><span class="hljs-string">8.在应用发布之前建议使用专业的SQL注入检测工具进行检测，以及时修补被发现的SQL注入漏洞。网上有很多这方面的开源工具，</span><br><span class="hljs-string">例如sqlmap、SQLninja等。</span><br><span class="hljs-string"></span><br><span class="hljs-string">9.所有的查询语句建议使用数据库提供的参数化查询接口，参数化的语句使用参数而不是将用户输入变量嵌入到SQL语句中，</span><br><span class="hljs-string">即不要直接拼接SQL语句。例如使用database/sql里面的查询函数Prepare和Query，或者Exec(query string, args ...interface&#123;&#125;)。</span><br></code></pre></td></tr></table></figure>
+<h3 id="pymysql-简单规避注入风险示列"><a href="#pymysql-简单规避注入风险示列" class="headerlink" title="pymysql 简单规避注入风险示列"></a>pymysql 简单规避注入风险示列</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><code class="hljs javascript">#错误示范  不要自己去拼接账户和密码<br><span class="hljs-keyword">import</span> pymysql<br>conn = pymysql.<span class="hljs-title function_">connect</span>(host=<span class="hljs-string">&#x27;127.0.0.1&#x27;</span>, user=<span class="hljs-string">&#x27;root&#x27;</span>, password=<span class="hljs-string">&#x27;318&#x27;</span>, database=<span class="hljs-string">&#x27;ftp&#x27;</span>)<br>cur = conn.<span class="hljs-title function_">cursor</span>()<br>username = <span class="hljs-title function_">input</span>(<span class="hljs-string">&#x27;user &gt;&gt;&gt;&#x27;</span>)<br>password = <span class="hljs-title function_">input</span>(<span class="hljs-string">&#x27;passwd &gt;&gt;&gt;&#x27;</span>)<br>sql = <span class="hljs-string">&quot;select * from userinfo where name = %s and password =  %s ;&quot;</span>% (username, password)<br>cur.<span class="hljs-title function_">execute</span>(sql)<br><span class="hljs-title function_">print</span>(cur.<span class="hljs-title function_">fetchone</span>())<br>cur.<span class="hljs-title function_">close</span>()<br>conn.<span class="hljs-title function_">close</span>()<br><br>user &gt;&gt;&gt;<span class="hljs-string">&#x27;我不知道账号&#x27;</span> or <span class="hljs-number">1</span>=<span class="hljs-number">1</span>;--<br>passwd &gt;&gt;&gt;我也不知道密码<br>(<span class="hljs-number">1</span>, <span class="hljs-string">&#x27;凯歌318&#x27;</span>, <span class="hljs-string">&#x27;666&#x27;</span>)<br><span class="hljs-title class_">Process</span> finished <span class="hljs-keyword">with</span> exit code <span class="hljs-number">0</span><br><br><br>#正确方法   cur.<span class="hljs-title function_">execute</span>(sql, (username, password)) 把密码和账户交给 execute去拼接<br><span class="hljs-keyword">import</span> pymysql<br>conn = pymysql.<span class="hljs-title function_">connect</span>(host=<span class="hljs-string">&#x27;127.0.0.1&#x27;</span>, user=<span class="hljs-string">&#x27;root&#x27;</span>, password=<span class="hljs-string">&#x27;318&#x27;</span>, database=<span class="hljs-string">&#x27;ftp&#x27;</span>)<br>cur = conn.<span class="hljs-title function_">cursor</span>()<br>username = <span class="hljs-title function_">input</span>(<span class="hljs-string">&#x27;user &gt;&gt;&gt;&#x27;</span>)<br>password = <span class="hljs-title function_">input</span>(<span class="hljs-string">&#x27;pwd &gt;&gt;&gt;&#x27;</span>)<br>sql = <span class="hljs-string">&quot;select * from userinfo where name = %s and pwd = %s&quot;</span><br>cur.<span class="hljs-title function_">execute</span>(sql, (username, password))<br><span class="hljs-title function_">print</span>(cur.<span class="hljs-title function_">fetchone</span>())<br>cur.<span class="hljs-title function_">close</span>()<br>conn.<span class="hljs-title function_">close</span>()<br><br>user &gt;&gt;&gt;<span class="hljs-string">&#x27;我不知道账号&#x27;</span> or <span class="hljs-number">1</span>=<span class="hljs-number">1</span>;--<br>pwd &gt;&gt;&gt;也不知道密码<br><span class="hljs-title class_">None</span><br><br><span class="hljs-title class_">Process</span> finished <span class="hljs-keyword">with</span> exit code <span class="hljs-number">0</span><br><br>user &gt;&gt;&gt;凯歌<span class="hljs-number">318</span><br>pwd &gt;&gt;&gt;<span class="hljs-number">666</span><br>(<span class="hljs-number">1</span>, <span class="hljs-string">&#x27;凯歌318&#x27;</span>, <span class="hljs-string">&#x27;666&#x27;</span>)<br><span class="hljs-title class_">Process</span> finished <span class="hljs-keyword">with</span> exit code <span class="hljs-number">0</span><br></code></pre></td></tr></table></figure>
+<h3 id="特殊情况-IN-不定长参数"><a href="#特殊情况-IN-不定长参数" class="headerlink" title="特殊情况 - IN - 不定长参数"></a>特殊情况 - IN - 不定长参数</h3><p>有一个值列表，我想在一个<code>IN</code>子句中执行的 SQL 语句。 例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python">files = [<span class="hljs-string">&#x27;file1&#x27;</span>, <span class="hljs-string">&#x27;file2&#x27;</span>, ...]  <span class="hljs-comment"># this list can have a variable number of elements</span><br>con = pymysql.connect(...)<br>cur = conn.cursor()<br><br>result = cur.execute(<span class="hljs-string">&#x27;SELECT * FROM sometable WHERE file_name IN (?)&#x27;</span>, files)<br></code></pre></td></tr></table></figure>
+<p>但是当我执行上面的语句时，我得到一个错误，例如：</p>
+<blockquote>
+<p>ProgrammingError：（’SQL包含1个参数标记，但提供了18个参数’，’HY000’）</p>
+</blockquote>
+<p>我可以使用以下内容生成变量参数字符串：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python">params = <span class="hljs-string">&quot;,&quot;</span>.join([<span class="hljs-string">&quot;%s&quot;</span>] * <span class="hljs-built_in">len</span>(files))<br>query = <span class="hljs-string">&#x27;SELECT * FROM sometable WHERE file_name IN (&#123;&#125;)&#x27;</span>.<span class="hljs-built_in">format</span>(params)<br>con.ping(reconnect=<span class="hljs-literal">True</span>)<br><br>result = cur.execute(query, files)<br></code></pre></td></tr></table></figure>
+<p>这样就可以避免SQL注入的风险。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="[https://stackoom.com/question/3tkvV/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8%E5%B8%A6%E6%9C%89IN%E5%AD%90%E5%8F%A5%E7%9A%84SQL%E5%8F%82%E6%95%B0%E4%B8%BApyodbc%E6%8F%90%E4%BE%9B%E5%8F%AF%E5%8F%98%E6%95%B0%E9%87%8F%E7%9A%84%E5%80%BC](https://stackoom.com/question/3tkvV/如何使用带有IN子句的SQL参数为pyodbc提供可变数量的值">如何使用带有IN子句的SQL参数为pyodbc提供可变数量的值？</a>)</p>
+<p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1514599">sql 注入风险</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/24e1179ef563">MySQL 三万字精华总结 + 面试100 问，吊打面试官绰绰有余（收藏系列）</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/SQL/">#SQL</a>
+      
+        <a href="/tags/MySQL/">#MySQL</a>
+      
+        <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/">#数据库</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>MySQL总结</div>
+      <div>http://example.com/2020/04/29/2020-04-29-MySQL总结/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>NSX</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2020年4月29日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/06/08/2020-06-08-%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92%E8%AF%A6%E8%BF%B0/" title="逻辑回归详述">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">逻辑回归详述</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/04/29/2020-04-29-SQL%E8%AF%AD%E6%B3%95/" title="SQL语法">
+                        <span class="hidden-mobile">SQL语法</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

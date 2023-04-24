@@ -1,0 +1,701 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="NSX">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="用 Python 做文本分析文本分析的本质是从给定文本中获取高质量、有用信息的自动化过程，其一般步骤为：数据采集、数据清洗、文本挖掘分析、可视化分析。从非结构化文本中提取特定信息，如：实体、情感分析、关键词、主题、知识管理和发现（按主题对文档进行整理和分类以便于发现，然后向读者推荐与同一主题相关的其他文章，以提供个性化的内容推荐）、聚类…在公司实际工作中，最好的大数据挖掘工程师一定是最熟悉和理解业">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python文本挖掘">
+<meta property="og:url" content="http://example.com/2019/09/10/2019-09-10-Python%E6%96%87%E6%9C%AC%E6%8C%96%E6%8E%98/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="用 Python 做文本分析文本分析的本质是从给定文本中获取高质量、有用信息的自动化过程，其一般步骤为：数据采集、数据清洗、文本挖掘分析、可视化分析。从非结构化文本中提取特定信息，如：实体、情感分析、关键词、主题、知识管理和发现（按主题对文档进行整理和分类以便于发现，然后向读者推荐与同一主题相关的其他文章，以提供个性化的内容推荐）、聚类…在公司实际工作中，最好的大数据挖掘工程师一定是最熟悉和理解业">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.afenxi.com/wp-content/uploads/2019/06/1561412011.png">
+<meta property="og:image" content="http://image.woshipm.com/wp-files/2017/08/see7woR7cx8VKGxs81J6.jpg">
+<meta property="og:image" content="https://www.afenxi.com/wp-content/uploads/2019/06/1561412012.png">
+<meta property="og:image" content="https://www.afenxi.com/wp-content/uploads/2019/06/1561412013-1.png">
+<meta property="article:published_time" content="2019-09-09T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-23T10:28:32.039Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="教程">
+<meta property="article:tag" content="技术">
+<meta property="article:tag" content="Python">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.afenxi.com/wp-content/uploads/2019/06/1561412011.png">
+  
+  
+  
+  <title>Python文本挖掘 - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="从非结构化文本中提取特定信息"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2019-09-10 00:00" pubdate>
+          2019年9月10日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          8.3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          70 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">从非结构化文本中提取特定信息</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="用-Python-做文本分析"><a href="#用-Python-做文本分析" class="headerlink" title="用 Python 做文本分析"></a>用 Python 做文本分析</h1><p>文本分析的本质是从给定文本中获取高质量、有用信息的自动化过程，其一般步骤为：<strong>数据采集、数据清洗、文本挖掘分析、可视化分析</strong>。<br>从非结构化文本中提取特定信息，如：<strong>实体、情感分析、关键词、主题、知识管理和发现（按主题对文档进行整理和分类以便于发现，然后向读者推荐与同一主题相关的其他文章，以提供个性化的内容推荐）、聚类…</strong><br>在公司实际工作中，最好的大数据挖掘工程师一定是最熟悉和理解业务的人。对于大数据挖掘的学习心得，作者认为学习数据挖掘一定要<strong>结合实际业务背景、案例背景</strong>来学习，这样才是以解决问题为导向的学习方法。</p>
+<span id="more"></span>
+<h2 id="文本分析的步骤"><a href="#文本分析的步骤" class="headerlink" title="文本分析的步骤"></a>文本分析的步骤</h2><p><img src="https://www.afenxi.com/wp-content/uploads/2019/06/1561412011.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<h2 id="常见数据挖掘方法"><a href="#常见数据挖掘方法" class="headerlink" title="常见数据挖掘方法"></a>常见数据挖掘方法</h2><p><img src="http://image.woshipm.com/wp-files/2017/08/see7woR7cx8VKGxs81J6.jpg" srcset="/img/loading.gif" lazyload alt=""></p>
+<h2 id="导包"><a href="#导包" class="headerlink" title="导包"></a>导包</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> re<br><span class="hljs-keyword">import</span> os<br><span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np<br><span class="hljs-keyword">import</span> codecs<br><span class="hljs-keyword">from</span> time <span class="hljs-keyword">import</span> time<br><span class="hljs-keyword">from</span> tqdm <span class="hljs-keyword">import</span> tqdm<br><span class="hljs-keyword">import</span> re<br><span class="hljs-keyword">from</span> wordCloud <span class="hljs-keyword">import</span> doWordCloud<br><span class="hljs-keyword">import</span> jieba<br><span class="hljs-keyword">import</span> jieba.posseg  <span class="hljs-comment"># 需要另外加载一个词性标注模块</span><br><span class="hljs-keyword">from</span> jieba.analyse <span class="hljs-keyword">import</span> *<br><span class="hljs-keyword">from</span> sklearn.feature_extraction.text <span class="hljs-keyword">import</span> TfidfVectorizer, CountVectorizer<br><span class="hljs-keyword">from</span> sklearn.decomposition <span class="hljs-keyword">import</span> LatentDirichletAllocation<br><span class="hljs-keyword">from</span> sklearn.cluster <span class="hljs-keyword">import</span> MiniBatchKMeans, SpectralCoclustering<br><span class="hljs-keyword">from</span> sklearn.metrics.cluster <span class="hljs-keyword">import</span> v_measure_score<br><span class="hljs-keyword">import</span> string<br><span class="hljs-keyword">from</span> zhon.hanzi <span class="hljs-keyword">import</span> punctuation<br><span class="hljs-keyword">import</span> gensim<br><span class="hljs-keyword">import</span> gensim.corpora <span class="hljs-keyword">as</span> corpora<br><span class="hljs-keyword">from</span> snownlp <span class="hljs-keyword">import</span> SnowNLP<br><span class="hljs-keyword">import</span> matplotlib.pyplot <span class="hljs-keyword">as</span> plt<br><span class="hljs-keyword">from</span> colorama <span class="hljs-keyword">import</span> init, Fore, Back, Style<br></code></pre></td></tr></table></figure>
+<h2 id="数据采集"><a href="#数据采集" class="headerlink" title="数据采集"></a>数据采集</h2><p>读入我们的数据文件，显式指定编码类型，以免出现乱码错误</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 读取无结构文档</span><br><span class="hljs-keyword">for</span> txt_file <span class="hljs-keyword">in</span> tqdm(os.listdir(path)):<br>    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> os.path.isdir(txt_file):<br>        <span class="hljs-keyword">with</span> codecs.<span class="hljs-built_in">open</span>(path + <span class="hljs-string">&quot;/&quot;</span> + txt_file, <span class="hljs-string">&quot;r&quot;</span>, <span class="hljs-string">&quot;utf-8&quot;</span>) <span class="hljs-keyword">as</span> f:<br></code></pre></td></tr></table></figure>
+<h2 id="数据预处理"><a href="#数据预处理" class="headerlink" title="数据预处理"></a>数据预处理</h2><p>数据分析/挖掘领域有一条金科玉律：“Garbage in, Garbage out”，做好数据预处理，对于取得理想的分析结果来说是至关重要的。本文的数据规整主要是对文本数据进行清洗，处理的条目如下：</p>
+<ol>
+<li>去除文本噪声信息<br> 处理编码问题 (codecs)<br> 去掉停用词(没有实际意义的符号)<pre><code class="hljs"> 标点符号：， 。！ /、*+-
+ 特殊符号：❤❥웃유♋☮✌☏☢☠✔☑♚▲♪等
+ 中文停用词
+</code></pre></li>
+<li>将文档分割成句子</li>
+<li>中文分词 tokenize (jieba, 了避免歧义和切出符合预期效果的词汇，笔者采取的是精确（分词）模式)</li>
+<li>词性标注。snownlp 是不二选择，还可以使用 pattern</li>
+<li>计算Bigrams：如果两个词经常一起毗邻出现，那么这两个词可以结合成一个新词 (未使用)</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs python">stop_words = []<br><span class="hljs-keyword">with</span> codecs.<span class="hljs-built_in">open</span>(stopWord_path, <span class="hljs-string">&quot;r&quot;</span>, <span class="hljs-string">&quot;utf-8&quot;</span>) <span class="hljs-keyword">as</span> f:<br>    <span class="hljs-keyword">for</span> line <span class="hljs-keyword">in</span> f:<br>        stop_words.append(line.strip(<span class="hljs-string">&quot;\n&quot;</span>).strip())<br>        <br>...<br><span class="hljs-keyword">with</span> codecs.<span class="hljs-built_in">open</span>(path + <span class="hljs-string">&quot;/&quot;</span> + txt_file, <span class="hljs-string">&quot;r&quot;</span>, <span class="hljs-string">&quot;utf-8&quot;</span>) <span class="hljs-keyword">as</span> f:<br>    file_content = f.read()  <span class="hljs-comment"># 以列表形式读取日志数据</span><br>    file_content = re.sub(<span class="hljs-string">r&quot;^\s+$&quot;</span>, <span class="hljs-string">&quot;&quot;</span>, file_content)  <span class="hljs-comment"># 去除换行符和空白字符</span><br>    <span class="hljs-comment"># 去除字符串中的所有数字和字母</span><br>    file_content = re.sub(<span class="hljs-string">&quot;[0-9a-zA-Z_-]+&quot;</span>, <span class="hljs-string">&quot;&quot;</span>, file_content)<br>    <span class="hljs-comment"># 去除特殊中文标点</span><br>    file_content = re.sub(<span class="hljs-string">r&quot;[%s]+&quot;</span> % punctuation, <span class="hljs-string">&quot;&quot;</span>, file_content)<br>    <span class="hljs-comment"># 去除特殊英文标点</span><br>    file_content = re.sub(<span class="hljs-string">r&quot;[%s]+&quot;</span> % string.punctuation, <span class="hljs-string">&quot;&quot;</span>, file_content)<br>    <span class="hljs-comment"># if word &gt;= u&#x27;\u4e00&#x27; and word &lt;= u&#x27;\u9fa5&#x27;:#判断是否是汉字</span><br><br>    <span class="hljs-comment"># # 仅保留名词或特定POS (HMM)</span><br>    <span class="hljs-comment"># s = SnowNLP(file_content)</span><br>    <span class="hljs-comment"># pos_list = s.tags  # [(u&#x27;这个&#x27;, u&#x27;r&#x27;), (u&#x27;东西&#x27;, u&#x27;n&#x27;)]</span><br>    <span class="hljs-comment"># word_list = [</span><br>    <span class="hljs-comment">#     w for w, pos in pos_list if pos in [&quot;n&quot;, &quot;a&quot;, &quot;v&quot;, &quot;d&quot;]</span><br>    <span class="hljs-comment"># ]  # &#x27;NN&#x27;, &#x27;ADJ&#x27;, &#x27;VB&#x27;, &#x27;ADV&#x27;</span><br>    <span class="hljs-comment"># # 关键词 （TextRank算法）</span><br>    <span class="hljs-comment"># kw_list = s.keywords(3)</span><br>    <span class="hljs-comment"># # 文档摘要 （TextRank算法）</span><br>    <span class="hljs-comment"># summmary_list = s.summary(3)</span><br><br>    <span class="hljs-comment"># jieba分词</span><br>    word_list = jieba.cut(file_content)<br>    <span class="hljs-comment"># 去除停用词</span><br>    word_list = [w <span class="hljs-keyword">for</span> w <span class="hljs-keyword">in</span> word_list <span class="hljs-keyword">if</span> w <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> stop_words]<br>segments.append(<span class="hljs-string">&quot; &quot;</span>.join(word_list))<br></code></pre></td></tr></table></figure>
+<p>单词之间都已经被空格区分开了。下面我们需要做一项重要工作，叫做文本的<strong>向量化</strong>。</p>
+<p>不要被这个名称吓跑。它的意思其实很简单。因为计算机不但不认识中文，甚至连英文也不认识，它只认得数字。我们需要做的，是把文章中的关键词转换为一个个特征（列），然后对每一篇文章数关键词出现个数。</p>
+<h2 id="特征抽取"><a href="#特征抽取" class="headerlink" title="特征抽取"></a>特征抽取</h2><p>我们希望获取到的词汇，既能保留文本的信息，同时又能反映它们的相对重要性。</p>
+<p>特征选取的方式：</p>
+<ol>
+<li>构建词向量空间：统计文本词频，生成文本的词向量空间</li>
+<li>权重策略——TF-IDF：使用TF-IDF发现特征词，并抽取为反映文档主题的特征</li>
+</ol>
+<p>经过上面的步骤之后，我们就可以把文本集转化成一个矩阵。</p>
+<h3 id="TF-IDF向量化"><a href="#TF-IDF向量化" class="headerlink" title="TF-IDF向量化"></a>TF-IDF向量化</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python">vectorizer = TfidfVectorizer(stop_words=stop_words, sublinear_tf=<span class="hljs-literal">True</span>, max_df=<span class="hljs-number">0.5</span>)<br><span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;\nvectorizing...&quot;</span>)<br>vector = vectorizer.fit_transform(segments)<br><span class="hljs-comment"># 查看结果</span><br><span class="hljs-comment"># print(vectorizer.vocabulary_)   # 词表索引</span><br><span class="hljs-comment"># print(vectorizer.idf_)   # 词表中每个词的IDF权重</span><br><span class="hljs-comment"># print(vector.toarray())  # 向量化结果 [[0. 0. 0.07097325 ... 0. 0. 0. ]...]</span><br></code></pre></td></tr></table></figure>
+<h2 id="文本挖掘"><a href="#文本挖掘" class="headerlink" title="文本挖掘"></a>文本挖掘</h2><p>关于文本挖掘方面的相关知识，请参看<a target="_blank" rel="noopener" href="http://www.woshipm.com/operate/413569.html">《数据运营|数据分析中，文本分析远比数值型分析重要！（上）》</a>、<a target="_blank" rel="noopener" href="http://www.woshipm.com/operate/415186.html">《在运营中，为什么文本分析远比数值型分析重要？一个实际案例，五点分析（下）》</a>。</p>
+<p>本文的文本挖掘部分主要涉及:<br><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs awk">高频词统计<span class="hljs-regexp">/关键词提取/</span>关键词云<br>    TF-IDF的关键词提取方法<br>文章标题聚类<br>文章内容聚类<br>文章内容LDA主题模型分析<br>词向量/关联词分析<br>ATM模型<br>词汇分散图<br>词聚类分析<br></code></pre></td></tr></table></figure></p>
+<h3 id="用Python提取中文关键词"><a href="#用Python提取中文关键词" class="headerlink" title="用Python提取中文关键词"></a>用Python提取中文关键词</h3><blockquote>
+<p>对于关键词提取，笔者没有采取词频统计的方法，因为词频统计的逻辑是：一个词在文章中出现的次数越多，则它就越重要。因而，笔者采用的是TF-IDF（termfrequency–inverse document frequency）的关键词提取方法：</p>
+</blockquote>
+<ul>
+<li>关键字抽取步骤：</li>
+</ul>
+<p><img src="https://www.afenxi.com/wp-content/uploads/2019/06/1561412012.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># TextRank关键词提取</span><br><span class="hljs-built_in">print</span>(Fore.RED + <span class="hljs-string">&quot;关键词提取结果如下：&quot;</span>)<br>topk_list = textrank(<span class="hljs-string">&quot;\n&quot;</span>.join(segments), withWeight=<span class="hljs-literal">True</span>, topK=<span class="hljs-number">100</span>)<br>topk_keyword = []<br><span class="hljs-keyword">with</span> codecs.<span class="hljs-built_in">open</span>(<span class="hljs-string">&#x27;result/TextRank算法提取的 TOP100 关键词.txt&#x27;</span>, <span class="hljs-string">&#x27;w&#x27;</span>, <span class="hljs-string">&#x27;utf-8&#x27;</span>) <span class="hljs-keyword">as</span> f:<br>    <span class="hljs-keyword">for</span> keyword, weight <span class="hljs-keyword">in</span> topk_list:<br>        f.write(<span class="hljs-string">&quot;&#123;&#125;\t&#123;&#125;\n&quot;</span>.<span class="hljs-built_in">format</span>(keyword, weight))<br>        topk_keyword.append(keyword)<br>        <span class="hljs-built_in">print</span>(Fore.GREEN + <span class="hljs-string">&quot;%s\t%s&quot;</span> % (keyword, weight))<br>        <br><span class="hljs-comment"># 选取TOP100关键词来绘制关键词云</span><br>doWordCloud(<span class="hljs-string">&#x27; &#x27;</span>.join(topk_keyword), stop_words) <br></code></pre></td></tr></table></figure>
+<p>下面是笔者利用jieba在经预处理后的、近70MB的语料中抽取出的TOP100关键词(略)</p>
+<h3 id="统计性分析"><a href="#统计性分析" class="headerlink" title="统计性分析"></a>统计性分析</h3><p>只从文本中提取1000个最重要的特征关键词，然后停止</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># CountVectorizer统计词频</span><br>n_features = <span class="hljs-number">1000</span>  <span class="hljs-comment"># 提取1000个最重要的特征关键词</span><br>vectorizer = CountVectorizer(<br>    max_df=<span class="hljs-number">0.95</span>,<br>    min_df=<span class="hljs-number">2</span>,<br>    max_features=n_features,<br>    strip_accents=<span class="hljs-string">&quot;unicode&quot;</span>,<br>    stop_words=stop_words,<br>)<br>vector = vectorizer.fit_transform(segments)<br>vocab = vectorizer.vocabulary_<br>cipin = vector.toarray()  <span class="hljs-comment"># 词频统计 [[1 1 1 1 1 1 1 2]]</span><br></code></pre></td></tr></table></figure>
+<h3 id="利用LDA进行主题抽取"><a href="#利用LDA进行主题抽取" class="headerlink" title="利用LDA进行主题抽取"></a>利用LDA进行主题抽取</h3><p>刚才针对关键词的分类较为粗略，且人为划分，难免有失偏颇，达不到全面的效果。因此，笔者采用LDA主题模型来发现该语料中的潜在主题。关于LDA主题模型的相关原理，请参看<a target="_blank" rel="noopener" href="http://www.woshipm.com/data-analysis/706813.html">《【干货】用大数据文本挖掘，来洞察“共享单车”的行业现状及走势》</a>的第4部分。</p>
+<p>LDA是一种典型的无监督（也就是说，我们事先不知道每段文本里面说的是啥，每个文本没有啥标签）、基于统计学习的词袋模型，即它认为一篇文档是由一组词构成的一个集合，词与词之间没有顺序以及先后的关系。一篇文档可以包含多个主题，文档中每一个词都由其中的一个主题生成。主题模型通过分析文本中的词来发现文档中的主题、主题之间的联系方式和主题的发展，通过主题模型可以使我们组织和总结无法人工标注的海量电子文档。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">trainLDA</span>(<span class="hljs-params">vector</span>):<br>    <span class="hljs-comment"># 主题分析</span><br>    n_topics = [<span class="hljs-number">5</span>]<br>    perplexityLst = [<span class="hljs-number">1.0</span>]*<span class="hljs-built_in">len</span>(n_topics)<br><br>    <span class="hljs-comment">#训练LDA并打印训练时间</span><br>    lda_models = []<br>    <span class="hljs-keyword">for</span> idx, n_topic <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(n_topics):<br>        lda = LatentDirichletAllocation(n_components=n_topic,<br>                                        max_iter=<span class="hljs-number">100</span>,<br>                                        learning_method=<span class="hljs-string">&#x27;batch&#x27;</span>,    <span class="hljs-comment"># &#x27;batch&#x27; &#x27;online&#x27;</span><br>                                        evaluate_every=<span class="hljs-number">200</span>,<br>                                        learning_offset=<span class="hljs-number">50.0</span>,<br>                                        random_state=<span class="hljs-number">0</span>)<br>        t0 = time()<br>        lda.fit(vector)<br>        <span class="hljs-comment"># 收敛效果(perplexity)</span><br>        perplexityLst[idx] = lda.perplexity(vector)<br>        lda_models.append(lda)<br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;# of Topic: %d, &quot;</span> % n_topics[idx])<br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;done in %0.3fs, N_iter %d, &quot;</span> % ((time() - t0), lda.n_iter_))<br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;收敛效果 Perplexity Score (越小越好) %0.3f&quot;</span> % perplexityLst[idx])<br><br>    <span class="hljs-comment">#打印最佳模型</span><br>    best_index = perplexityLst.index(<span class="hljs-built_in">min</span>(perplexityLst))<br>    best_n_topic = n_topics[best_index]<br>    best_model = lda_models[best_index]<br>    <span class="hljs-built_in">print</span>(Fore.RED + <span class="hljs-string">&quot;Best # of Topic: &quot;</span>, best_n_topic)<br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;\n&#x27;</span>)<br><br>    <span class="hljs-comment"># 定义以下的函数，把每个主题里面的前若干个关键词显示出来</span><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">print_top_words</span>(<span class="hljs-params">model, feature_names, n_top_words</span>):<br>        <span class="hljs-keyword">with</span> codecs.<span class="hljs-built_in">open</span>(<span class="hljs-string">&quot;result/主题簇.txt&quot;</span>, <span class="hljs-string">&quot;w&quot;</span>, <span class="hljs-string">&quot;utf-8&quot;</span>) <span class="hljs-keyword">as</span> f:<br>            <span class="hljs-keyword">for</span> topic_idx, topic <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(model.components_):<br>                f.write(<span class="hljs-string">&quot;Topic #%d:\n&quot;</span> % topic_idx)<br>                f.write(<br>                    <span class="hljs-string">&quot;\n&quot;</span>.join(<br>                        [feature_names[i] <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> topic.argsort()[: -n_top_words - <span class="hljs-number">1</span> : -<span class="hljs-number">1</span>]]<br>                    )<br>                )<br>                f.write(<span class="hljs-string">&quot;\n&quot;</span>)<br>                <span class="hljs-built_in">print</span>(Fore.RED + <span class="hljs-string">&quot;Topic #%d:&quot;</span> % topic_idx)<br>                <span class="hljs-built_in">print</span>(<br>                    Fore.GREEN<br>                    + <span class="hljs-string">&quot; &quot;</span>.join(<br>                        [feature_names[i] <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> topic.argsort()[: -n_top_words - <span class="hljs-number">1</span> : -<span class="hljs-number">1</span>]]<br>                    )<br>                )<br>            <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;\n&quot;</span>)<br><br>    <span class="hljs-comment"># 打印主题建模的结果</span><br>    n_top_words = <span class="hljs-number">10</span>  <span class="hljs-comment"># 主题数量</span><br>    tf_feature_names = vectorizer.get_feature_names()<br>    print_top_words(lda, tf_feature_names, n_top_words)<br>    <span class="hljs-comment"># 将doc转换为话题分布的函数</span><br>    doc_topic_dist = lda.transform(vector)<br><br>trainLDA(vector)<br></code></pre></td></tr></table></figure>
+<p>一般情况下，笔者将主题的数量设定为10个，经过数小时的运行，得到如下结果：</p>
+<figure class="highlight tap"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs tap">Topic <span class="hljs-comment">#0:</span><br>学习 模型 使用 算法 方法 机器 可视化 神经网络 特征 处理 计算 系统 不同 数据库 训练 分类 基于 工具 一种 深度<br>Topic <span class="hljs-comment">#1:</span><br>这个 就是 可能 如果 他们 没有 自己 很多 什么 不是 但是 这样 因为 一些 时候 现在 用户 所以 非常 已经<br>Topic <span class="hljs-comment">#2:</span><br>企业 平台 服务 管理 互联网 公司 行业 数据分析 业务 用户 产品 金融 创新 客户 实现 系统 能力 产业 工作 价值<br>Topic <span class="hljs-comment">#3:</span><br>中国<span class="hljs-number"> 2016 </span>电子 增长<span class="hljs-number"> 10 </span>市场 城市<span class="hljs-number"> 2015 </span>关注 人口 检索<span class="hljs-number"> 30 </span>或者 其中 阅读 应当 美国 全国 同比 20<br>Topic <span class="hljs-comment">#4:</span><br>人工智能 学习 领域 智能 机器人 机器 人类 公司 深度 研究 未来 识别 已经 医疗 系统 计算机 目前 语音 百度 方面<br></code></pre></td></tr></table></figure>
+<ul>
+<li>利用LDA做了主题抽取,不论是5个还是10个主题，可能都不是最优的数量选择。你可以根据程序反馈的结果不断尝试。</li>
+</ul>
+<h3 id="ATM模型"><a href="#ATM模型" class="headerlink" title="ATM模型"></a>ATM模型</h3><p>ATM模型（author-topic model）也是“概率主题模型”家族的一员，是LDA主题模型（Latent Dirichlet Allocation ）的拓展，它能对某个语料库中作者的写作主题进行分析，找出某个作家的写作主题倾向，以及找到具有同样写作倾向的作家，它是一种新颖的主题探索方式。</p>
+<h3 id="词向量-关联词分析"><a href="#词向量-关联词分析" class="headerlink" title="词向量/关联词分析"></a>词向量/关联词分析</h3><h3 id="词聚类"><a href="#词聚类" class="headerlink" title="词聚类"></a>词聚类</h3><h3 id="文档聚类"><a href="#文档聚类" class="headerlink" title="文档聚类"></a>文档聚类</h3><ul>
+<li>参照博客《<a target="_blank" rel="noopener" href="https://medium.com/@wshuyi/%E5%A6%82%E4%BD%95%E7%94%A8python%E4%BB%8E%E6%B5%B7%E9%87%8F%E6%96%87%E6%9C%AC%E6%8A%BD%E5%8F%96%E4%B8%BB%E9%A2%98-a802e8608d39">如何用Python从海量文本提取主题？</a>》，面对的是大量的文档，利用主题发现功能对文章聚类</li>
+<li>参照博客《<a target="_blank" rel="noopener" href="https://juejin.im/post/5caf63cb518825215d37c0e7">使用Gensim进行主题建模(一)</a></li>
+</ul>
+<p>每一条评论都围绕一个或几个核心主旨进行阐述，这个核心主旨就是评论的中心思想。基于主旨话题分析技术获取文本主旨，每一条评论可能包含多个主旨话题，每一个话题包含多个主题词，通过评论的隶属度确定评论所属的主旨话题，通过主题词的分布确定主旨的含义。评论话题的具体分析流程如下，此过程要依次进行词法分析、文本过滤、主旨话题分析：</p>
+<p><img src="https://www.afenxi.com/wp-content/uploads/2019/06/1561412013-1.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<p>接下来采用的是基于谱联合聚类算法（Spectral Co-clustering algorithm）的文档聚类，这部分的原理涉及到艰深的数学和算法知识，可能会引起小伙伴们的阅读不适感，如果是这样，请快速跳过，直接看后面的操作和结果。</p>
+<p>先将待分析的文本经TF-IDF向量化构成了词频矩阵，然后使用Dhillon的谱联合聚类算法（Spectral Co-clustering algorithm）进行双重聚类（Biclusters）。所得到的“文档-词汇”双聚类（Biclusters）会把某些文档子集中的常用词汇聚集在一起，由若干个关键词构成某个主题。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 将聚类结果写入文件</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">writeClusterResult</span>(<span class="hljs-params">y</span>):<br>    result_dict = &#123;&#125;<br>    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-built_in">len</span>(y)):<br>        <span class="hljs-keyword">if</span> y[i] <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> result_dict:<br>            result_dict[y[i]] = []<br>        result_dict[y[i]].append(os.listdir(path)[:<span class="hljs-number">15</span>][i].strip())<br><br>    <span class="hljs-comment"># 按value长度逆序排序，写入</span><br>    result_list = <span class="hljs-built_in">sorted</span>(result_dict.items(), key=<span class="hljs-keyword">lambda</span> d: <span class="hljs-built_in">len</span>(d[<span class="hljs-number">1</span>]), reverse=<span class="hljs-literal">True</span>)<br>    <span class="hljs-keyword">with</span> codecs.<span class="hljs-built_in">open</span>(<span class="hljs-string">&quot;result/prediction_cluster.txt&quot;</span>, <span class="hljs-string">&quot;w&quot;</span>, encoding=<span class="hljs-string">&#x27;utf-8&#x27;</span>) <span class="hljs-keyword">as</span> target:<br>        <span class="hljs-keyword">for</span> item <span class="hljs-keyword">in</span> result_list:<br>            target.write(<span class="hljs-string">&quot;&#123;&#125;\n&#123;&#125;\n\n&quot;</span>.<span class="hljs-built_in">format</span>(item[<span class="hljs-number">0</span>], <span class="hljs-string">&quot;\n&quot;</span>.join(item[<span class="hljs-number">1</span>])))<br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;聚类结果写入文件完成!!!&#x27;</span>)<br><br><span class="hljs-comment"># 文本聚类</span><br>n_clusters = <span class="hljs-number">5</span><br>kmeans = MiniBatchKMeans(n_clusters=n_clusters, batch_size=<span class="hljs-number">20000</span>, random_state=<span class="hljs-number">0</span>)<br><br><span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;MiniBatchKMeans...&quot;</span>)<br>y_kmeans = kmeans.fit_predict(vector).tolist()<br>y_kmeans = np.array(y_kmeans)<br>writeClusterResult(y_kmeans)<br></code></pre></td></tr></table></figure>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a target="_blank" rel="noopener" href="https://medium.com/@wshuyi/%E5%A6%82%E4%BD%95%E7%94%A8python%E4%BB%8E%E6%B5%B7%E9%87%8F%E6%96%87%E6%9C%AC%E6%8A%BD%E5%8F%96%E4%B8%BB%E9%A2%98-a802e8608d39">如何用Python从海量文本抽取主题？</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/e4b24a734ccc">如何用Python做词云</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.afenxi.com/65120.html">如何从 “用户评论”中挖掘业务价值</a></p>
+<p><a target="_blank" rel="noopener" href="http://www.woshipm.com/data-analysis/706813.html">【干货】用大数据文本挖掘，来洞察“共享单车”的行业现状及走势</a></p>
+<p><a target="_blank" rel="noopener" href="http://www.woshipm.com/data-analysis/873430.html">以虎嗅网4W+文章的文本挖掘为例，展现数据分析的一整套流程</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E6%95%99%E7%A8%8B/">#教程</a>
+      
+        <a href="/tags/%E6%8A%80%E6%9C%AF/">#技术</a>
+      
+        <a href="/tags/Python/">#Python</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Python文本挖掘</div>
+      <div>http://example.com/2019/09/10/2019-09-10-Python文本挖掘/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>NSX</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2019年9月10日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/09/25/2019-09-25-Anaconda%E5%AE%89%E8%A3%85%E4%B8%8E%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83%E8%AE%BE%E7%BD%AE/" title="Anaconda安装与虚拟环境设置">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Anaconda安装与虚拟环境设置</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2019/09/04/2019-09-04-%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/" title="正则表达式">
+                        <span class="hidden-mobile">正则表达式</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

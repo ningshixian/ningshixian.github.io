@@ -1,0 +1,758 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="NSX">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="本文地址：【深度语义匹配模型】实践篇：语义匹配在贝壳找房智能客服中的应用  一、背景贝壳智能客服主要解决经纪人在业务中遇到的常见的问题，主要场景有闲聊、卡片触发、精准问答、sug、QA问答。对于非寒暄的场景下，QA问答的占比是最大的，有70%以上，而QA问答效果强烈依赖于数据建设。 QA问答的场景所需的模块大致分为数据层、NLU层、召回层和排序层，数据建设为整个流程中的语义召回、匹配、排序提供足">
+<meta property="og:type" content="article">
+<meta property="og:title" content="贝壳找房智能客服">
+<meta property="og:url" content="http://example.com/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E8%B4%9D%E5%A3%B3%E6%89%BE%E6%88%BF/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="本文地址：【深度语义匹配模型】实践篇：语义匹配在贝壳找房智能客服中的应用  一、背景贝壳智能客服主要解决经纪人在业务中遇到的常见的问题，主要场景有闲聊、卡片触发、精准问答、sug、QA问答。对于非寒暄的场景下，QA问答的占比是最大的，有70%以上，而QA问答效果强烈依赖于数据建设。 QA问答的场景所需的模块大致分为数据层、NLU层、召回层和排序层，数据建设为整个流程中的语义召回、匹配、排序提供足">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E8%B4%9D%E5%A3%B3%E6%89%BE%E6%88%BF/59c5ab7e56e150f915ba7a5f0c37e3c3.png">
+<meta property="og:image" content="http://example.com/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E8%B4%9D%E5%A3%B3%E6%89%BE%E6%88%BF/640-20230424171445070">
+<meta property="og:image" content="http://example.com/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E8%B4%9D%E5%A3%B3%E6%89%BE%E6%88%BF/image-62fbaf12fba54c68bb6f647fc13af7f2.png">
+<meta property="og:image" content="http://example.com/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E8%B4%9D%E5%A3%B3%E6%89%BE%E6%88%BF/640-20230424171541819">
+<meta property="og:image" content="http://example.com/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E8%B4%9D%E5%A3%B3%E6%89%BE%E6%88%BF/640-20230424171552216">
+<meta property="og:image" content="http://example.com/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E8%B4%9D%E5%A3%B3%E6%89%BE%E6%88%BF/640-20230424171603167">
+<meta property="og:image" content="http://example.com/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E8%B4%9D%E5%A3%B3%E6%89%BE%E6%88%BF/640-20230424171611280">
+<meta property="og:image" content="http://example.com/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E8%B4%9D%E5%A3%B3%E6%89%BE%E6%88%BF/640-20230424171615076">
+<meta property="og:image" content="http://example.com/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E8%B4%9D%E5%A3%B3%E6%89%BE%E6%88%BF/640-20230424171618699">
+<meta property="og:image" content="http://example.com/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E8%B4%9D%E5%A3%B3%E6%89%BE%E6%88%BF/640-20230424171622019">
+<meta property="og:image" content="http://example.com/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E8%B4%9D%E5%A3%B3%E6%89%BE%E6%88%BF/640-20230424171624983">
+<meta property="og:image" content="http://example.com/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E8%B4%9D%E5%A3%B3%E6%89%BE%E6%88%BF/640-20230424171627916">
+<meta property="og:image" content="http://example.com/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E8%B4%9D%E5%A3%B3%E6%89%BE%E6%88%BF/640-20230424171630644">
+<meta property="og:image" content="http://example.com/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E8%B4%9D%E5%A3%B3%E6%89%BE%E6%88%BF/640-20230424171633627">
+<meta property="og:image" content="http://example.com/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E8%B4%9D%E5%A3%B3%E6%89%BE%E6%88%BF/640-20230424171636820">
+<meta property="og:image" content="http://example.com/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E8%B4%9D%E5%A3%B3%E6%89%BE%E6%88%BF/640-20230424171639958">
+<meta property="og:image" content="http://example.com/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E8%B4%9D%E5%A3%B3%E6%89%BE%E6%88%BF/640-20230424171642719">
+<meta property="og:image" content="http://example.com/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E8%B4%9D%E5%A3%B3%E6%89%BE%E6%88%BF/640-20230424171648083">
+<meta property="og:image" content="http://example.com/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E8%B4%9D%E5%A3%B3%E6%89%BE%E6%88%BF/640-20230424171651192">
+<meta property="og:image" content="http://example.com/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E8%B4%9D%E5%A3%B3%E6%89%BE%E6%88%BF/image-df7609226a064c3b90b1626b03e87dee.png">
+<meta property="og:image" content="http://example.com/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E8%B4%9D%E5%A3%B3%E6%89%BE%E6%88%BF/image-6df328d4084146baa9311135265ddf21.png">
+<meta property="article:published_time" content="2021-10-30T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-24T09:17:06.752Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="智能问答系统">
+<meta property="article:tag" content="贝壳找房">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E8%B4%9D%E5%A3%B3%E6%89%BE%E6%88%BF/59c5ab7e56e150f915ba7a5f0c37e3c3.png">
+  
+  
+  
+  <title>贝壳找房智能客服 - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="贝壳找房智能客服"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-10-31 00:00" pubdate>
+          2021年10月31日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          8.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          68 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">贝壳找房智能客服</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <blockquote>
+<p>本文地址：<a target="_blank" rel="noopener" href="https://www.6aiq.com/article/1590190626464">【深度语义匹配模型】实践篇：语义匹配在贝壳找房智能客服中的应用</a></p>
+</blockquote>
+<h2 id="一、背景"><a href="#一、背景" class="headerlink" title="一、背景"></a>一、背景</h2><p>贝壳智能客服主要解决经纪人在业务中遇到的常见的问题，主要场景有闲聊、卡片触发、精准问答、sug、QA问答。对于非寒暄的场景下，QA问答的占比是最大的，有70%以上，而QA问答效果强烈依赖于数据建设。</p>
+<p>QA问答的场景所需的模块大致分为数据层、NLU层、召回层和排序层，数据建设为整个流程中的语义召回、匹配、排序提供足够的query和title的匹配对。</p>
+<span id="more"></span>
+<h2 id="二、整体架构"><a href="#二、整体架构" class="headerlink" title="二、整体架构"></a>二、整体架构</h2><p>整个智能客服的架构如下图所示：</p>
+<img src="/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E8%B4%9D%E5%A3%B3%E6%89%BE%E6%88%BF/59c5ab7e56e150f915ba7a5f0c37e3c3.png" srcset="/img/loading.gif" lazyload class="" title="img">
+<p>其中，意图识别NLU的结构如下：</p>
+<img src="/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E8%B4%9D%E5%A3%B3%E6%89%BE%E6%88%BF/640-20230424171445070" srcset="/img/loading.gif" lazyload class="" title="图片">
+<ul>
+<li><strong>NLU 层</strong>：NLU 层是对用户输入的 query 进行解析，包含意图识别、分词与词法分析、短语改写等功能。意图识别是为了识别出 query 的意图，我们通过日志分析总结出了 116 个意图，其中包含 7 个 Task 意图，1 个寒暄意图，和 108 个具体业务意图，会根据不同的意图识别结果走不同的 bot。这里的意图识别模型用的是 fastText，该模型有高效的训练速度和较高的识别准确率，做出来的结果也可以达到上线使用的标准。词法分析维护了一些词典，通过词典匹配能获得 query 中的关键词和关键短语。短语改写的目的是为了纠错，比如“搏学考试”手误输入成了“博学考试”，短语改写便能将其纠正，query 改写后能更容易召回正确答案。</li>
+<li><strong>召回层</strong>：召回层是将候选答案从 FAQ 库中拿回，获得待排序的候选集。此处用了两种召回方式：<strong>检索召回和语义召回</strong>。检索召回会根据 NLU 层的意图识别与词法分析结果进行关键词和意图的加权，同时，n-gram 的使用也一定程度上减弱了分词错误带来的负面影响。语义召回是将相似问构建成一个 <strong>faiss 索引</strong>，这些相似问已经由知识库运营人员总结成标准问，并和知识产生了挂接。query 和相似问会被映射到同一个语义向量空间，<strong>通过 KNN 能快速拿到和 query 最相近的相似问</strong>，从而拿到最可能回答 query 的答案。下图直观展示了语义召回的过程：</li>
+</ul>
+<img src="/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E8%B4%9D%E5%A3%B3%E6%89%BE%E6%88%BF/image-62fbaf12fba54c68bb6f647fc13af7f2.png" srcset="/img/loading.gif" lazyload class="">
+<ul>
+<li><strong>排序层</strong>：排序层是将召回层拿到的候选知识进行排序，将和 query 最相关的知识尽可能往前排。排序模型采用了 <strong>GBDT</strong>，GBDT 作为一种常用的树模型，可天然地对原始特征进行特征划分、特征组合和特征选择，并得到高阶特征属性和非线性映射。我们考虑用 GBDT 可以组合多种特征，可扩展性强，并且后期验证 GBDT 的效果好于单独使用匹配算法效果，因此，当前<strong>匹配算法在排序层中作为一种特征来使用</strong>。</li>
+<li><strong>返回层</strong>：query 经过上述处理之后会对处理结果进行返回。四种返回层场景展示，依次是 Chat-bot,Task-Bot,KBQA 和 QA-Bot：</li>
+</ul>
+<h2 id="三、FAQ数据挖掘流程"><a href="#三、FAQ数据挖掘流程" class="headerlink" title="三、FAQ数据挖掘流程"></a>三、FAQ数据挖掘流程</h2><h3 id="3-1-标准问生产流程"><a href="#3-1-标准问生产流程" class="headerlink" title="3.1 标准问生产流程"></a>3.1 标准问生产流程</h3><p>标准问的挖掘流程可以分为三大部分：挖掘可用query并推送、标注人员进行标准问生产、知识库的知识挂接。</p>
+<img src="/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E8%B4%9D%E5%A3%B3%E6%89%BE%E6%88%BF/640-20230424171541819" srcset="/img/loading.gif" lazyload class="" title="图片">
+<p>标准问的整体挖掘流程从拿到埋点日志开始，选择点踩query、无召回query和有返回知识但是用户没有点击的query（这些query是适合标准问产出，为整个召回排序提效的数据），然后经过分类去除寒暄等意图的query，faiss召回和query相似的现有标准问，然后把query聚类后推送给标注人员。</p>
+<p>数据会根据意图推送给不同的标注人员，标注人员会首先判断query是否有效，若是无效query则直接结束标注，有效query会先和现有的标准问进行判断是否匹配，若匹配，则选出正确的，若不匹配，则总结成新标准问。最终获得推送query和对应的标准问。</p>
+<p>由于一条标准问，对应的不同城市的知识会有不同，比如同样是问“业绩分配比例”，可能北京的业绩分配结果和天津的不同，所以标准问需要查找和挂接所有城市的知识，挂接完成后标准问就和一条知识一样被存储在知识库中。</p>
+<img src="/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E8%B4%9D%E5%A3%B3%E6%89%BE%E6%88%BF/640-20230424171552216" srcset="/img/loading.gif" lazyload class="" title="图片">
+<h3 id="3-2-相似问生产流程"><a href="#3-2-相似问生产流程" class="headerlink" title="3.2 相似问生产流程"></a>3.2 相似问生产流程</h3><p>相似问的整体挖掘流程和标准问类似，也是从拿到埋点日志开始，选择点击标准问的query，同样经过分类去除寒暄等意图的query，判断query和标准问的相似度是否较高 ，若足够高，达到设定的阈值则进行推送。</p>
+<img src="/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E8%B4%9D%E5%A3%B3%E6%89%BE%E6%88%BF/640-20230424171603167" srcset="/img/loading.gif" lazyload class="" title="图片">
+<p>标注人员只需要判断，query和标准问是否是在问同一问题，若是，query是否需要改写为更为完整通用的句子，然后把改写后或者直接可用的相似问推入线上知识库即可。</p>
+<p>由于日志中的标准问已经挂接了知识，产出的相似问不需要在进行知识挂接，且标注人员只需要对现有query进行修改，标注简单。相似问和标准问相比产出快、产量高。</p>
+<h2 id="四、相似问挖掘实践"><a href="#四、相似问挖掘实践" class="headerlink" title="四、相似问挖掘实践"></a>四、相似问挖掘实践</h2><p>下面来具体介绍一下，相似问挖掘中我们所尝试的各种算法以及效果。</p>
+<p>相似问挖掘中所尝试的模块主要有在召回层使用数据增强的同义词替换，聚类、knn和生成式方法，以及排序层的相似度排序。</p>
+<h3 id="4-1-数据增强—同义词替换"><a href="#4-1-数据增强—同义词替换" class="headerlink" title="4.1 数据增强—同义词替换"></a>4.1 数据增强—同义词替换</h3><p>同义词替换所需的数据有标准问和同义词组，其中同义词又可分为行业同义词（知识生产人员积累）和日常同义词（算法挖掘+人工筛选）。</p>
+<p>替换方式分为简单同义词和同义词组两种，简单同义词是标准问进行分词后替换，若为同义词组的话，则直接替换不需分词。</p>
+<p>行业同义替换后效果如下图所示（std表示标准问，替换的同义词用”[ ]”标出），其中“核销、下架、无效”为同义词，“查询、查看、查找”为同义词，行业同义词是人工积累获得，替换后可直接使用，不需要人工过滤。</p>
+<img src="/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E8%B4%9D%E5%A3%B3%E6%89%BE%E6%88%BF/640-20230424171611280" srcset="/img/loading.gif" lazyload class="" title="图片">
+<p>日常同义词质量没有行业同义词高，替换后query需人工过滤。如下图中“哪里、在哪儿”是同义词，标准问“签后报单的入口在哪里？”替换为“签后报单的入口在在哪儿? ”，是不通顺的。但日常同义词数据量大，当其他相似问挖掘方法产出有限时，同义词替换可作为兜底数据。</p>
+<img src="/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E8%B4%9D%E5%A3%B3%E6%89%BE%E6%88%BF/640-20230424171615076" srcset="/img/loading.gif" lazyload class="" title="图片">
+<h3 id="4-2-相似度–cos相似度"><a href="#4-2-相似度–cos相似度" class="headerlink" title="4.2 相似度–cos相似度"></a>4.2 相似度–cos相似度</h3><p>计算用户query和点击的标准问之间的相似度，若query和标准问的相似度足够高，则把该query作为标准问的相似问。这里我们使用的是cos相似度，阈值设置为0.6，如下图可知，标准问为“VR带看没有声音怎么办？”点击这条标准问的query有“vr来电不响 ”、“vr带看没声音 ”、“为什么我的小被vr讲房没有声音呢”，和标准问的相似度都达到了0.6以上，经过人工判断，可知，只有“vr带看没声音”和原标准问的意思相同，是原标准问的相似问。而第二个例子，由于query“vr讲房稿在那里 ”应该是“vr讲房稿在哪里 ”，所以是标准问“VR讲房的模板是什么？”的相似问，但需修改错别字。</p>
+<img src="/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E8%B4%9D%E5%A3%B3%E6%89%BE%E6%88%BF/640-20230424171618699" srcset="/img/loading.gif" lazyload class="" title="图片">
+<h3 id="4-3-聚类–KMeans-DBSCAN"><a href="#4-3-聚类–KMeans-DBSCAN" class="headerlink" title="4.3 聚类–KMeans/DBSCAN"></a>4.3 聚类–KMeans/DBSCAN</h3><p>聚类算法用到用户query和标准问，做法是将query和标准问映射到同一空间一起进行聚类，根据聚类结果，将每个类中的query作为该聚类中的标准问的相似问。</p>
+<img src="/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E8%B4%9D%E5%A3%B3%E6%89%BE%E6%88%BF/640-20230424171622019" srcset="/img/loading.gif" lazyload class="" title="图片">
+<p>尝试的具体算法有KMeans聚类（k=80，数据量1k+），聚类效果为每个聚类的query个数较均衡，但聚类后query意图分散，图中可以看出聚类label=2时，query包含有离职、转店、审核等意图。</p>
+<img src="/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E8%B4%9D%E5%A3%B3%E6%89%BE%E6%88%BF/640-20230424171624983" srcset="/img/loading.gif" lazyload class="" title="图片">
+<p>处理KMeans聚类还尝试了DBSCAN聚类，DBSCAN聚类是基于密度的距离，不需要设置聚类个数，但是需要设置类内最大距离，这里希望聚在一起的query意图足够相近，设置类内最大距离较小，导致每个聚类的query个数相差较大，聚类个数有1k+，大多为单点，但同一类内的query意图分散，图中可以看出聚类label=1时，query包含有手机号、房源录入、400电话、贝壳币等意图。</p>
+<img src="/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E8%B4%9D%E5%A3%B3%E6%89%BE%E6%88%BF/640-20230424171627916" srcset="/img/loading.gif" lazyload class="" title="图片">
+<h3 id="4-4-k近邻"><a href="#4-4-k近邻" class="headerlink" title="4.4 k近邻"></a>4.4 k近邻</h3><p>用到的数据是用户query（圆圈表示）和标注标准问的query（菱形表示），将标注标准问的query和用户query映射到同一空间，查看离用户query最近的k个query所对应的标准问类别，若用户query周围大于的k/2的query都对应同一标准问，则用户query也作为该标准问的相似问。</p>
+<img src="/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E8%B4%9D%E5%A3%B3%E6%89%BE%E6%88%BF/640-20230424171630644" srcset="/img/loading.gif" lazyload class="" title="图片">
+<p>knn所用数据为用户query和标注标准问的query，根据数据量的大小、k值大小分别进行对比实验。</p>
+<img src="/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E8%B4%9D%E5%A3%B3%E6%89%BE%E6%88%BF/640-20230424171633627" srcset="/img/loading.gif" lazyload class="" title="图片">
+<p>测评1和测评3说明数据从2500增加到6w时，准确率从0.567增加到0.786（绿框），测评3和4说明了k值从5减到3时准确率从0.732增加到0.786（黄框）。</p>
+<p>实验还尝试了在数据量一定时，分别使用k=3标注query和k=5标注query，且只有两者标注一致时才作为标签使用，发现标注的query的标签为对应标准问的准确率为0.838，可知叠加不同k值下的效果进行标注时效果较好（蓝框）。</p>
+<p>但是测评1-5都是对训练集进行测试，测评6为对测试集进行测试，发现数据量6w时，训练集的准确率为0.732，测试集的准确率为0.599，可知模型对新数据的判断效果不佳（红圈），但是随着数据量的增长，knn效果会有所提升，后期数据积累到一定水平时，该方法还存在尝试的价值。</p>
+<h3 id="4-5-生成式—seq2seq-attention-SLCVAE"><a href="#4-5-生成式—seq2seq-attention-SLCVAE" class="headerlink" title="4.5 生成式—seq2seq+attention/SLCVAE"></a>4.5 生成式—seq2seq+attention/SLCVAE</h3><p>生成式算法需要的训练数据为标准问和标注标准问的query，以标准问为输入，对应的query为输出，训练GEN模型。预测则是输入标准问，以生成的新query作为相似问。</p>
+<img src="/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E8%B4%9D%E5%A3%B3%E6%89%BE%E6%88%BF/640-20230424171636820" srcset="/img/loading.gif" lazyload class="" title="图片">
+<p>这里采用了两种生成式模型，seq2seq+attention和SLCVAE模型。</p>
+<p>seq2seq+attention是在seq2seq的基础上，添加attention（注意力），当前的输入与目标状态越相似，那么在当前的输入的权重就会越大，说明当前的输出越依赖于当前的输入。</p>
+<img src="/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E8%B4%9D%E5%A3%B3%E6%89%BE%E6%88%BF/640-20230424171639958" srcset="/img/loading.gif" lazyload class="" title="图片">
+<p>我们在统计了模型训练30轮、40轮、50轮之后的结果发现，生成的query会有字重复现象，停止较慢，且生成的query质量不高的现象。</p>
+<img src="/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E8%B4%9D%E5%A3%B3%E6%89%BE%E6%88%BF/640-20230424171642719" srcset="/img/loading.gif" lazyload class="" title="图片">
+<p>然后尝试了阿里在19年提出的SLCVAE模型，说起SLCVAE模型要先从AE（AutoEncoder）模型开始，它就是简单的encoder、decoder，encoder输出的中间向量是确定的，为了增加输出的多样性，出现了VAE(Variational AutoEncoder)，即学习输入的均值和方差采样得到中间向量，来保证解码的多样性。</p>
+<p>而SLCVAE（Self Labeling Conditional Variational Auto Encoder）模型则是添加了输出作为Conditional来限制生成的结果，并且添加Labeling phase，解码共用相同的参数网络。</p>
+<img src="/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E8%B4%9D%E5%A3%B3%E6%89%BE%E6%88%BF/640-20230424171648083" srcset="/img/loading.gif" lazyload class="" title="图片">
+<p>SLCVAE的最终的效果如下：pred0、pred1、pred3、pred4都是原训练集里存在的数据，只有pred2是新生成的query。可以看出生成的query会有“照搬”训练集的情况出现，生成的query质量尚可但数量少。尝试增加数据量（37w+），”照搬”情况依然存在，调整参数增加输出的多样性，query质量下降。</p>
+<img src="/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E8%B4%9D%E5%A3%B3%E6%89%BE%E6%88%BF/640-20230424171651192" srcset="/img/loading.gif" lazyload class="" title="图片">
+<h3 id="4-6-算法对比"><a href="#4-6-算法对比" class="headerlink" title="4.6 算法对比"></a>4.6 算法对比</h3><p>最后关于相似问的各种算法实践，进行了3个方面的对比：</p>
+<ul>
+<li><strong>挖掘难度</strong>：同义词替换&gt;聚类、knn、生成式&gt; 相似度</li>
+</ul>
+<p>从挖掘难度上看，同义词替换难度最大，相似度的方式难度最小，原因是同义词替换需要依赖同义词，同义词的积累和总结是一个长期的过程。而聚类、knn、生成式方法，则需要标准问和标注标准问的数据，而相似度挖掘只需要标准问即可。</p>
+<ul>
+<li><strong>数据产量</strong>：日常同义词&gt;相似度&gt;行业同义词</li>
+</ul>
+<p>数据产量上来说，由于聚类、knn、生成式方法产出效果不好，没有进行测评。剩下的日常同义词占比最大，相似度挖掘是以日志为基础，能够持续挖掘数量也很多，行业同义词由于数量较少，所以产出有限。</p>
+<ul>
+<li><strong>数据质量</strong>：行业同义词&gt;日常同义词&gt;相似度&gt;聚类、knn、生成式</li>
+</ul>
+<p>虽然行业同义词产量少，但是数据质量是最高的，因为它是纯人工积累的，然后是日常同义词，之后是相似度，最后是聚类、knn和生成式方法。</p>
+<h2 id="五、匹配算法实践"><a href="#五、匹配算法实践" class="headerlink" title="五、匹配算法实践"></a>五、匹配算法实践</h2><h3 id="5-1-数据准备"><a href="#5-1-数据准备" class="headerlink" title="5.1 数据准备"></a>5.1 数据准备</h3><p>随着标准问数量的增加，知识库中存在大量query和标准问的匹配对，将这些匹配对当作正样本，label为1。将query随机抽取一条与之不匹配的标准问作为负样本，label为0。共产生12w+的训练样本和5000条测试样本，正负样本比例为1:1。标准问是由人工标注总结，因此数据集质量较高，正样本匹配关系很强，数据比较规整。训练样本展示：</p>
+<img src="/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E8%B4%9D%E5%A3%B3%E6%89%BE%E6%88%BF/image-df7609226a064c3b90b1626b03e87dee.png" srcset="/img/loading.gif" lazyload class="" title="img">
+<h3 id="5-2-模型训练"><a href="#5-2-模型训练" class="headerlink" title="5.2 模型训练"></a>5.2 模型训练</h3><p>我们对4种交互型的深度语义匹配模型进行尝试，分别是ABCNN（ABCNN-1，ABCNN-2，ABCNN-3），PairCNN，ESIM和Bimpm。使用交互型匹配模型的原因如下：</p>
+<ol>
+<li>交互型的深匹配模型能很好地把握语义焦点，对上下文重要性进行合理建模。</li>
+<li>从训练集数据来看，正样本是人工标注的有监督数据，交互型模型能保证较高的准确率。</li>
+</ol>
+<p>四种模型都有优秀的表现效果，因线上使用的模型是ABCNN-2，这里为大家展示该模型的部分实现代码。</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><code class="hljs reasonml">#attention矩阵<br>def make<span class="hljs-constructor">_attention_mat(<span class="hljs-params">x1</span>, <span class="hljs-params">x2</span>)</span>:<br>            # 作者论文中提出计算attention的方法 在实际过程中反向传播计算梯度时 容易出现NaN的情况 这里面加以修改<br>            # euclidean = tf.sqrt(tf.reduce<span class="hljs-constructor">_sum(<span class="hljs-params">tf</span>.<span class="hljs-params">square</span>(<span class="hljs-params">x1</span> - <span class="hljs-params">tf</span>.<span class="hljs-params">matrix_transpose</span>(<span class="hljs-params">x2</span>)</span>), axis=<span class="hljs-number">1</span>))<br>            # return <span class="hljs-number">1</span><span class="hljs-operator"> / </span>(<span class="hljs-number">1</span> + euclidean)<br> <br>            x1 = tf.transpose(tf.squeeze(x1, <span class="hljs-literal">[-<span class="hljs-number">1</span>]</span>), <span class="hljs-literal">[<span class="hljs-number">0</span>, <span class="hljs-number">2</span>, <span class="hljs-number">1</span>]</span>)<br>            # 矩阵乘法einsum(&#x27;ij,jk-&gt;ik&#x27;, m0, m1)  # output<span class="hljs-literal">[<span class="hljs-identifier">i</span>,<span class="hljs-identifier">k</span>]</span> = sum_j m0<span class="hljs-literal">[<span class="hljs-identifier">i</span>,<span class="hljs-identifier">j</span>]</span><span class="hljs-operator"> * </span>m1<span class="hljs-literal">[<span class="hljs-identifier">j</span>, <span class="hljs-identifier">k</span>]</span><br>            attention = tf.einsum(<span class="hljs-string">&quot;ijk,ikl-&gt;ijl&quot;</span>, x1, tf.squeeze(x2, <span class="hljs-literal">[-<span class="hljs-number">1</span>]</span>))<br>            return attention<br> <br>#全部cnn层相关操作<br> def <span class="hljs-constructor">CNN_layer(<span class="hljs-params">variable_scope</span>, <span class="hljs-params">x1</span>, <span class="hljs-params">x2</span>, <span class="hljs-params">d</span>)</span>:<br>            <span class="hljs-keyword">with</span> tf.variable<span class="hljs-constructor">_scope(<span class="hljs-params">variable_scope</span>)</span>:<br>  <br>                #卷积<br>                left_conv = convolution(name_scope=<span class="hljs-string">&quot;left&quot;</span>, x=pad<span class="hljs-constructor">_for_wide_conv(<span class="hljs-params">x1</span>)</span>, d=d, reuse=False)<br>                right_conv = convolution(name_scope=<span class="hljs-string">&quot;right&quot;</span>, x=pad<span class="hljs-constructor">_for_wide_conv(<span class="hljs-params">x2</span>)</span>, d=d, reuse=True)<br>          <br>                #获得注意力矩阵<br>                left_attention, right_attention = None, None<br>                att_mat = make<span class="hljs-constructor">_attention_mat(<span class="hljs-params">left_conv</span>, <span class="hljs-params">right_conv</span>)</span><br>                left_attention, right_attention = tf.reduce<span class="hljs-constructor">_sum(<span class="hljs-params">att_mat</span>, <span class="hljs-params">axis</span>=2)</span>, tf.reduce<span class="hljs-constructor">_sum(<span class="hljs-params">att_mat</span>, <span class="hljs-params">axis</span>=1)</span><br>                 <br>                #pooling（average pooling（w-ap）和qverage pooling（all-ap））<br>                left_wp = w<span class="hljs-constructor">_pool(<span class="hljs-params">variable_scope</span>=<span class="hljs-string">&quot;left&quot;</span>, <span class="hljs-params">x</span>=<span class="hljs-params">left_conv</span>, <span class="hljs-params">attention</span>=<span class="hljs-params">left_attention</span>)</span><br>                left_ap = all<span class="hljs-constructor">_pool(<span class="hljs-params">variable_scope</span>=<span class="hljs-string">&quot;left&quot;</span>, <span class="hljs-params">x</span>=<span class="hljs-params">left_conv</span>)</span><br>                right_wp = w<span class="hljs-constructor">_pool(<span class="hljs-params">variable_scope</span>=<span class="hljs-string">&quot;right&quot;</span>, <span class="hljs-params">x</span>=<span class="hljs-params">right_conv</span>, <span class="hljs-params">attention</span>=<span class="hljs-params">right_attention</span>)</span><br>                right_ap = all<span class="hljs-constructor">_pool(<span class="hljs-params">variable_scope</span>=<span class="hljs-string">&quot;right&quot;</span>, <span class="hljs-params">x</span>=<span class="hljs-params">right_conv</span>)</span><br> <br>                return  left_ap, right_ap<br> <br> <br>#x1,x2是需要匹配的文本embedding后的结果<br>x1_expanded = tf.expand<span class="hljs-constructor">_dims(<span class="hljs-params">x1</span>, -1)</span><br>x2_expanded = tf.expand<span class="hljs-constructor">_dims(<span class="hljs-params">x2</span>, -1)</span><br> <br>#average pooling(all-ap)最终获得为列向量<br>LO_0 = all<span class="hljs-constructor">_pool(<span class="hljs-params">variable_scope</span>=<span class="hljs-string">&quot;input-left&quot;</span>, <span class="hljs-params">x</span>=<span class="hljs-params">x1_expanded</span>)</span><br>RO_0 = all<span class="hljs-constructor">_pool(<span class="hljs-params">variable_scope</span>=<span class="hljs-string">&quot;input-right&quot;</span>, <span class="hljs-params">x</span>=<span class="hljs-params">x2_expanded</span>)</span><br> <br>#x1,x2全部cnn层相关操作后所得特征<br> LO_1,  RO_1 = <span class="hljs-constructor">CNN_layer(<span class="hljs-params">variable_scope</span>=<span class="hljs-string">&quot;CNN-1&quot;</span>, <span class="hljs-params">x1</span>=<span class="hljs-params">x1_expanded</span>, <span class="hljs-params">x2</span>=<span class="hljs-params">x2_expanded</span>, <span class="hljs-params">d</span>=<span class="hljs-params">d0</span>)</span><br> <br>#计算相似度<br>#作者论文中提出计算相似度的方法是将L01_1,R0_1拼接后进行逻辑回归，这里为了简化计算直接将all_pooling层和L01_1,R0_1分别计算相似度后拼接，然后进行逻辑回归<br>self.sims = <span class="hljs-literal">[<span class="hljs-identifier">cos_sim</span>(LO<span class="hljs-identifier">_0</span>, RO<span class="hljs-identifier">_0</span>), <span class="hljs-identifier">cos_sim</span>(LO<span class="hljs-identifier">_1</span>, RO<span class="hljs-identifier">_1</span>)]</span><br></code></pre></td></tr></table></figure>
+<h3 id="5-3-效果测评"><a href="#5-3-效果测评" class="headerlink" title="5.3 效果测评"></a>5.3 效果测评</h3><p>5000条测评数据的情况下，上述模型都取得了较好的匹配效果。</p>
+<img src="/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E8%B4%9D%E5%A3%B3%E6%89%BE%E6%88%BF/image-6df328d4084146baa9311135265ddf21.png" srcset="/img/loading.gif" lazyload class="" title="img">
+<p>从<strong>耗时</strong>来看Bimpm训练耗时较长，相比于其他模型收敛速度较慢，整体的耗时排序为t(ABCNN) &lt; t(PairCNN) &lt; t(ESIM) &lt; t(Bimpm)，ABCNN的三种算法训练时间没有明显差别。需要特别说明的是，由于Bimpm模型复杂，在cpu上训练时间过长，最终的训练是在GPU上完成。</p>
+<p>从<strong>准确率</strong>来看ABCNN-3和PairCNN的准确率低于95%，剩余都高于95%。ABCNN的三种算法中，ABCNN-1和ABCNN-2的效果相差较小，ABCNN-3的网络结构综合了ABCNN-1和ABCNN-2的结构，但是实验效果并没有更好，反而更差，从侧面反映网络结构更复杂，准确率不一定就更好。</p>
+<h3 id="5-4-经验与踩坑"><a href="#5-4-经验与踩坑" class="headerlink" title="5.4 经验与踩坑"></a>5.4 经验与踩坑</h3><p><strong>Q：数据对模型有什么影响？</strong></p>
+<p><strong>A:</strong> 数据质量决定了模型效果的好坏，也尝试采用点击title与query计算相似度，大于某个阈值作为正样本，未点击title与query计算相似度，小于某个阈值作为负样本，因存在错误数据，模型训练效果大打折扣。</p>
+<p><strong>Q: 除了数据外，ABCNN模型训练效果受什么影响？</strong></p>
+<p><strong>A:</strong> ABCNN模型最初几轮的训练效果与模型的随机初始值有很大关系，初始值较差和较好的时候训练达到相同效果的情况下，训练epoch number相差10多轮不足为奇。</p>
+<p><strong>Q：为何Bimpm训练时间长？</strong></p>
+<p><strong>A:</strong> Bimpm模型结构相对复杂，从训练时间上和内存使用率上来说，bimpm应该是放在有GPU情况下考虑选择的模型，并且用原文的参数进行训练时会遇到显存用尽的报错，上表中的结果是删掉两层全连接层，并且减少了神经元个数后训练得出的。</p>
+<p><strong>Q：复杂模型的构建与训练有什么建议？</strong></p>
+<p><strong>A：</strong> 检查写的神经网络是否本身有问题，训练时先用小样本，再逐步增大样本量，通过是否过拟合来判断网络是否正确。</p>
+<h2 id="五、总结与展望"><a href="#五、总结与展望" class="headerlink" title="五、总结与展望"></a>五、总结与展望</h2><p>当前的深度语义匹配模型已经在贝壳智能客服的在线咨询主场景中使用，模型上线后，QA-bot的列表点击率有了2%的绝对提升，对于一些简单的问题已经能够将较匹配的答案排到top3。</p>
+<p>但是对于需要深度语义及具有知识背景的问题，如：“A3到A4需要多少分”的问题，还没有办法将答案“经纪人积分与级别是如何对应的？”排在靠前的位置。当前正在进行知识图谱方向的开发，对知识库内的知识进行结构化的梳理，希望在匹配的同时能够具有简单的推理，来更好的理解用户语言背后的需求。</p>
+<p><strong>展望：</strong></p>
+<ol>
+<li>数据是效果的基础，智能客服效果所依赖的FAQ库也需要不断的知识扩充，如何通过自动或半自动的方法挖出更多高质量的相似问或者标准问，为知识运营人员提效，也是我们现阶段正在探索的方向。</li>
+<li>当前的匹配算法仅作为一种特征使用在gbdt排序模型中，后期随着匹配算法的不断积累，会将所有的匹配模型进行整合，以一种更通用的模块化的方式，为有文本匹配需求的各个业务场景提供匹配算法的支持。</li>
+</ol>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://www.zhuanzhi.ai/document/77fcf0cca73b38e383b041f289a7cf69">【深度语义匹配模型】实践篇：语义匹配在贝壳找房智能客服中的应用</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.infoq.cn/article/9zuez8y*kvzyloz5lkpg">智能客服系统的构建与算法迭代</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/C70HVVxG4VK1oCyz2dKGJg">贝壳智能客服中的数据建设</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E6%99%BA%E8%83%BD%E9%97%AE%E7%AD%94%E7%B3%BB%E7%BB%9F/">#智能问答系统</a>
+      
+        <a href="/tags/%E8%B4%9D%E5%A3%B3%E6%89%BE%E6%88%BF/">#贝壳找房</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>贝壳找房智能客服</div>
+      <div>http://example.com/2021/10/31/2021-10-31-智能客服-贝壳找房/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>NSX</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年10月31日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E5%B9%B3%E5%AE%89%E4%BA%BA%E5%AF%BF/" title="平安人寿智能问答系统">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">平安人寿智能问答系统</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E7%BE%8E%E5%9B%A2/" title="美团智能客服核心技术与实践">
+                        <span class="hidden-mobile">美团智能客服核心技术与实践</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

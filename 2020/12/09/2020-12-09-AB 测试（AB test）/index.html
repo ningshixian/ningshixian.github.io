@@ -1,0 +1,686 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="NSX">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="A&#x2F;B 测试（A&#x2F;B test） 什么是A&#x2F;B测试 A&#x2F;B测试的本质 A&#x2F;B测试的两种做法 A&#x2F;B测试的步骤 基于hash的AB测试 其他常见问题">
+<meta property="og:type" content="article">
+<meta property="og:title" content="A&#x2F;B 测试（A&#x2F;B test）">
+<meta property="og:url" content="http://example.com/2020/12/09/2020-12-09-AB%20%E6%B5%8B%E8%AF%95%EF%BC%88AB%20test%EF%BC%89/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="A&#x2F;B 测试（A&#x2F;B test） 什么是A&#x2F;B测试 A&#x2F;B测试的本质 A&#x2F;B测试的两种做法 A&#x2F;B测试的步骤 基于hash的AB测试 其他常见问题">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/abtest.png">
+<meta property="article:published_time" content="2020-12-08T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-23T10:28:32.058Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="AB Test">
+<meta property="article:tag" content="AB测试">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ningshixian.github.io/resources/images/abtest.png">
+  
+  
+  
+  <title>A/B 测试（A/B test） - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="A/B 测试（A/B test）"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2020-12-09 00:00" pubdate>
+          2020年12月9日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          20 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">A/B 测试（A/B test）</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="A-B-测试（A-B-test）"><a href="#A-B-测试（A-B-test）" class="headerlink" title="A/B 测试（A/B test）"></a><a target="_blank" rel="noopener" href="https://www.cnblogs.com/HuZihu/p/11178068.html">A/B 测试（A/B test）</a></h1><ul>
+<li>什么是A/B测试</li>
+<li>A/B测试的本质</li>
+<li>A/B测试的两种做法</li>
+<li>A/B测试的步骤</li>
+<li>基于hash的AB测试</li>
+<li><p>其他常见问题</p>
+<span id="more"></span>
+</li>
+</ul>
+<h3 id="什么是A-B测试？"><a href="#什么是A-B测试？" class="headerlink" title="什么是A/B测试？"></a>什么是A/B测试？</h3><p>A/B 测试是一种产品优化的方法，为同一个优化目标制定两个方案（比如两个页面），让一部分用户使用A 方案（称为控制组或对照组），同时另一部分用户使用 B 方案（称为变化组或试验组），统计并对比不同方案的转化率、点击量、留存率等指标，以判断不同方案的优劣并进行决策。</p>
+<h3 id="A-B测试的本质："><a href="#A-B测试的本质：" class="headerlink" title="A/B测试的本质："></a>A/B测试的本质：</h3><p>A/B测试中是用对照版本和试验版本这两个样本的数据来对两个总体是否存在差异进行检验，所以其本质是使用假设检验中的独立样本t检验 。</p>
+<p>零假设为：试验版本的总体参数与对照版本的总体参数无显著差异。</p>
+<p>备择假设为：试验版本的总体参数与对照版本的总体参数有显著差异。</p>
+<h3 id="A-B测试的两种做法："><a href="#A-B测试的两种做法：" class="headerlink" title="A/B测试的两种做法："></a>A/B测试的两种做法：</h3><p>1，连续测试（Consecutive Testing）：对所有用户第一阶段投放A版本，第二阶段投放B版本。</p>
+<p>优点是容易部署和跟踪，不需要分流用户；缺点是结果没有同步测试那么准确，因为随着时间的推移，在测试过程中可能发生很多不可控的变化。</p>
+<p>2，同步测试（Synchronous Testing）：在同一时间段，将用户分流到不同方案，一部分用户使用A版本，一部分用户使用B版本。</p>
+<p>优点结果比连续测试准确；缺点是实现比较复杂，需要选择有效的试验组，制定分流方案。</p>
+<p>一般来说，A/B测试都是采用同步测试（Synchronous Testing）的方法。</p>
+<h3 id="A-B测试的步骤："><a href="#A-B测试的步骤：" class="headerlink" title="A/B测试的步骤："></a>A/B测试的步骤：</h3><p>1，通过数据分析，找到现有产品中可能存在的问题，针对性地提出产品优化的方案并进行假设。例子：“假设把注册流程中的图片校验码方式，改成短信校验码的方式，注册转化率可能会提升”。</p>
+<p>2，确立优化目标和比较指标。设立可量化的、可以落实到某一个具体功能点的、可实施的小目标。比如：“通过优化注册流程，将注册转化率提升20%”。</p>
+<p>3，设计优化版本并完成开发。</p>
+<p>4，确定测试时长。</p>
+<p>5，确定分流方案（每个测试版本的分流比例）。</p>
+<p>6，按照分流比例开放线上流量进行测试。</p>
+<p>7，收集实验数据进行有效性判断和效果判断。</p>
+<p>8，根据试验结果有以下几种可能：①发布新版本；②调整分流比例继续测试；③在未达成目标效果的情况下继续优化迭代方案，重新开发并上线试验。</p>
+<p><strong>鹅厂实践</strong></p>
+<p><img src="https://ningshixian.github.io/resources/images/abtest.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<h3 id="基于hash的AB测试"><a href="#基于hash的AB测试" class="headerlink" title="基于hash的AB测试"></a>基于hash的AB测试</h3><p>在AB测试中需要将用户随机的分成两组，通过对每个用户唯一id<strong>做hash运算，并对hash值对2取模</strong>，便可以将用户分成0，1两组（分桶测试便是hahs对n取模）。</p>
+<p>每组采用不同的策略，并定义一个策略Id，跟随不同的策略埋点，在最后回收策略Id，最后通过策略id分析ab两种策略的好坏。</p>
+<h3 id="其他常见问题："><a href="#其他常见问题：" class="headerlink" title="其他常见问题："></a>其他常见问题：</h3><p>1，测试时长应该设定多久？</p>
+<p>测试的时长不宜过短。用户进入到新方案中，很可能因为好奇而表现得更加活跃，但随着时间的推移，逐渐趋于冷静，数据表现回到本该有的水平，如果实验观察期设置的过早，则容易得出错误的结论。适应期的长短通常以足量用户参与试验后的2到3天为宜。适应期过后的试验时间长短除了需要考察样本量外，还需要参考用户的行为周期，譬如说电商用户的购买行为有较强的周期规律，周末的购买量与工作日会有显著差异，这时测试的周期需要能够覆盖一个完整的周期，也就是应该大于1周。</p>
+<p>但是测试时间也不宜太长，因为A/B测试是对线上多个版本的测试，这也就意味着线上系统需要同时维护多个可用的版本，长时间的A/B测试无疑加大了系统的复杂性。</p>
+<p>2，应该怎样对用户进行分流？</p>
+<p>分流也就是抽样，应该保证同时性、同质性、唯一性、稳定性。</p>
+<p>①同时性：分流应该是同时进行的。</p>
+<p>②同质性：分出的用户群在各维度的特征都应相似。可以基于用户的设备特征（例如手机机型、操作系统版本号、手机语言等）和用户的其他标签（例如性别、年龄、新老用户、会员等级等）进行分群，每一个A/B测试都可以选定特定的用户群进行试验。</p>
+<p>③唯一性：即要求用户不被重复计入测试。</p>
+<p>④稳定性：每次用户都应被分到相同的实验版本，这样可以保证用户体验的一致性，保证用户能够在适应新版本的情况下有稳定的表现。</p>
+<p>3，什么是A/A测试？</p>
+<p>A/A测试将分给原始版本的流量再次划分，分出的两组流量分别给两个相同的原始版本进行测试。A/A测试用来评估两个实验组是否是处于相同的水平，是为了测试埋点、分流、实验统计的正确性，增加A/B测试的结论可信度。如果AA实验的结果不存在显著差异，那么可以认为实验结果是有效的，进而可以对新老版本的实验结果进行进一步的判断。</p>
+<p>4，A/B测试只能同时测试2个方案吗？</p>
+<p>A/B测试不是只能测试A方案和B方案，实际上一个测试可以包含A/B/C/D/E/……多个版本，但是要保证是单变量的测试，比如按钮的颜色—-赤/橙/黄/绿/青/蓝/紫，那么这七个方案可以同时做A/B测试，但如果某方案在旁边新增了另一个按钮，即便实验结果产生了显著差异，我们也无法判断这种差异的成因究竟是什么。</p>
+<p>5，为什么要A/B测试</p>
+<ul>
+<li>产品优化<strong>依靠经验主义</strong>，不能保证新的产品版本一定会有业绩提升</li>
+<li>重大产品功能<strong>很难决策</strong>，不确定哪个方案效果最优</li>
+<li><strong>后验成本高</strong>，如果改版失败，业绩损失无法挽回</li>
+</ul>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/68019926">https://zhuanlan.zhihu.com/p/68019926</a></p>
+<p><a target="_blank" rel="noopener" href="http://www.appadhoc.com/blog/ab-test-in-dianrong/">http://www.appadhoc.com/blog/ab-test-in-dianrong/</a></p>
+<p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1496302">https://</a><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1496302">cloud.tencent.com/developer/article/1496302</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/20045543">https://www.zhihu.com/question/20045543</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.leapoahead.com/2015/08/27/introduction-to-ab-testing/">https://blog.leapoahead.com/2015/08/27/introduction-to-ab-testing/</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/typeck/p/11808187.html">https://www.cnblogs.com/typeck/p/11808187.html</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/AB-Test/">#AB Test</a>
+      
+        <a href="/tags/AB%E6%B5%8B%E8%AF%95/">#AB测试</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>A/B 测试（A/B test）</div>
+      <div>http://example.com/2020/12/09/2020-12-09-AB 测试（AB test）/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>NSX</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2020年12月9日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/12/14/2020-12-14-Rasa%E5%AE%89%E8%A3%85%E4%BB%A5%E5%8F%8A%E9%A1%B9%E7%9B%AE%E5%88%9D%E5%B0%9D%E8%AF%95/" title="Rasa安装以及项目初尝试">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Rasa安装以及项目初尝试</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/12/01/2020-12-01-%E7%BB%8F%E5%85%B8%E7%AE%97%E6%B3%95%E9%87%8D%E6%B8%A9AC%E8%87%AA%E5%8A%A8%E6%9C%BA%EF%BC%88%E8%BD%AC%E8%BD%BD%EF%BC%89/" title="经典算法重温 Aho-Corasick automaton（转载）">
+                        <span class="hidden-mobile">经典算法重温 Aho-Corasick automaton（转载）</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

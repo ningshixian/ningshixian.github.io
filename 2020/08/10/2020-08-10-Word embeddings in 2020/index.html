@@ -1,0 +1,751 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="NSX">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Word embeddings in 2020 转载自 https:&#x2F;&#x2F;colab.research.google.com&#x2F;drive&#x2F;1N7HELWImK9xCYheyozVP3C_McbiRo1nb   本文对每个词嵌入方法都有一个（非常）简短的描述，进一步研究的链接以及Python中的代码示例。所有代码都打包为Google Colab Notebook。 根据Wikipedia的说法，单词嵌">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Word embeddings in 2020">
+<meta property="og:url" content="http://example.com/2020/08/10/2020-08-10-Word%20embeddings%20in%202020/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="Word embeddings in 2020 转载自 https:&#x2F;&#x2F;colab.research.google.com&#x2F;drive&#x2F;1N7HELWImK9xCYheyozVP3C_McbiRo1nb   本文对每个词嵌入方法都有一个（非常）简短的描述，进一步研究的链接以及Python中的代码示例。所有代码都打包为Google Colab Notebook。 根据Wikipedia的说法，单词嵌">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/word-embeddings.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/word-embeddings-1.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/word-embeddings-2.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/word-embeddings-3.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/word-embeddings-4.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/word-embeddings-5.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/word-embeddings-6.gif">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/word-embeddings-7.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/word-embeddings-8.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/word-embeddings-9.png">
+<meta property="article:published_time" content="2020-08-09T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-23T10:28:32.052Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="技术">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ningshixian.github.io/resources/images/word-embeddings.png">
+  
+  
+  
+  <title>Word embeddings in 2020 - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="当前单词嵌入方法的简要概述：从Word2vec到Transformers"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2020-08-10 00:00" pubdate>
+          2020年8月10日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          14k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          114 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">当前单词嵌入方法的简要概述：从Word2vec到Transformers</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="Word-embeddings-in-2020"><a href="#Word-embeddings-in-2020" class="headerlink" title="Word embeddings in 2020"></a>Word embeddings in 2020</h1><blockquote>
+<p>转载自 <a target="_blank" rel="noopener" href="https://colab.research.google.com/drive/1N7HELWImK9xCYheyozVP3C_McbiRo1nb">https://colab.research.google.com/drive/1N7HELWImK9xCYheyozVP3C_McbiRo1nb</a></p>
+</blockquote>
+<p><img src="https://ningshixian.github.io/resources/images/word-embeddings.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<p>本文对每个词嵌入方法都有一个（非常）简短的描述，进一步研究的链接以及Python中的代码示例。所有代码都打包为<a target="_blank" rel="noopener" href="https://colab.research.google.com/drive/1N7HELWImK9xCYheyozVP3C_McbiRo1nb">Google Colab Notebook</a>。</p>
+<p>根据Wikipedia的说法，<strong>单词嵌入</strong>是自然语言处理（NLP）中一组语言建模和功能学习技术的总称，其中词汇表中的单词或短语被映射为实数向量。</p>
+ <span id="more"></span>
+<h1 id="One-hot-or-CountVectorizing"><a href="#One-hot-or-CountVectorizing" class="headerlink" title="One-hot or CountVectorizing"></a>One-hot or CountVectorizing</h1><p>将单词转换为向量的最基本方法是计算每个文档中每个单词的出现次数。这种方法称为计数向量化或独热编码。</p>
+<p>此方法的主要原理是收集一组文档（它们可以是单词，句子，段落甚至文章），并计算每个文档中每个单词的出现次数。严格来说，结果矩阵的列是单词，行是文档。</p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs applescript"><span class="hljs-keyword">from</span> sklearn.feature_extraction.<span class="hljs-built_in">text</span> import CountVectorizer<br><span class="hljs-comment"># create CountVectorizer object</span><br>vectorizer = CountVectorizer()<br>corpus = [<br>          &#x27;Text <span class="hljs-keyword">of</span> <span class="hljs-keyword">the</span> very <span class="hljs-keyword">first</span> new sentence <span class="hljs-keyword">with</span> <span class="hljs-keyword">the</span> <span class="hljs-keyword">first</span> <span class="hljs-built_in">words</span> <span class="hljs-keyword">in</span> sentence.&#x27;,<br>          &#x27;Text <span class="hljs-keyword">of</span> <span class="hljs-keyword">the</span> <span class="hljs-keyword">second</span> sentence.&#x27;,<br>          &#x27;Number three <span class="hljs-keyword">with</span> lot <span class="hljs-keyword">of</span> <span class="hljs-built_in">words</span> <span class="hljs-built_in">words</span> <span class="hljs-built_in">words</span>.&#x27;,<br>          &#x27;Short <span class="hljs-built_in">text</span>, less <span class="hljs-built_in">words</span>.&#x27;,<br>]<br><br><span class="hljs-comment"># learn the vocabulary and store CountVectorizer sparse matrix in term_frequencies</span><br>term_frequencies = vectorizer.fit_transform(corpus) <br>vocab = vectorizer.get_feature_names()<br><br><span class="hljs-comment"># convert sparse matrix to numpy array</span><br>term_frequencies = term_frequencies.toarray()<br><br><span class="hljs-comment"># visualize term frequencies </span><br>import seaborn <span class="hljs-keyword">as</span> sns<br>sns.heatmap(term_frequencies, annot=True, cbar = False, xticklabels = vocab);<br></code></pre></td></tr></table></figure>
+<p><img src="https://ningshixian.github.io/resources/images/word-embeddings-1.png" srcset="/img/loading.gif" lazyload alt="Image for post"></p>
+<p>计数向量化的另一种方法是，如果在文档中找到单词（无论频率如何），则放置1；如果在文档中找不到单词，则放置0。在这种情况下，我们得到了真正的“独热”编码。</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs routeros">one_hot_vectorizer = CountVectorizer(<span class="hljs-attribute">binary</span>=<span class="hljs-literal">True</span>)<br>one_hot = one_hot_vectorizer.fit_transform(corpus).toarray()<br><br>sns.heatmap(one_hot, <span class="hljs-attribute">annot</span>=<span class="hljs-literal">True</span>, cbar = <span class="hljs-literal">False</span>, xticklabels = vocab)<br></code></pre></td></tr></table></figure>
+<p><img src="https://ningshixian.github.io/resources/images/word-embeddings-2.png" srcset="/img/loading.gif" lazyload alt="Image for post"></p>
+<h1 id="TF-IDF编码"><a href="#TF-IDF编码" class="headerlink" title="TF-IDF编码"></a>TF-IDF编码</h1><p>对于大量的文档集，“ a”，“ the”，“ is”等词经常出现，但它们携带的信息不多。使用 one-hot 编码方法无法决定这些单词的重要性。解决此问题的方法之一是停用词过滤（stopwords filtering），但是此解决方案是离散的，不灵活。</p>
+<p>TF-IDF（term frequency — inverse document frequency）可以更好地解决此问题。TF-IDF降低了常用单词的权重，增加了仅在当前文档中出现的稀有单词的权重。TF-IDF公式如下所示：</p>
+<script type="math/tex; mode=display">
+tfidf(term, document)=tf(term, document) \cdot idf(term)</script><p>TF是通过单词在文档中出现的次数除以文档中单词的总数计算得到：</p>
+<script type="math/tex; mode=display">
+tf(term, document)=\frac{n_{i}}{\sum_{k=1}^{W} n_{k}}</script><p>IDF（反向文档频率），其解释方式与反向文档数量相同，其中N是文档数量，$n(t)$是包含当前单词 $t$ 的文档数量。</p>
+<script type="math/tex; mode=display">
+idf(term)=\log \frac{N}{n_{t}}</script><figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs pgsql"><span class="hljs-keyword">from</span> sklearn.feature_extraction.text <span class="hljs-keyword">import</span> TfidfVectorizer<br><span class="hljs-keyword">import</span> seaborn <span class="hljs-keyword">as</span> sns<br><br>corpus = [<br>          <span class="hljs-string">&#x27;Time flies like an arrow.&#x27;</span>,<br>          <span class="hljs-string">&#x27;Fruit flies like a banana.&#x27;</span><br>]<br><br>vocab = [<span class="hljs-string">&#x27;an&#x27;</span>, <span class="hljs-string">&#x27;arrow&#x27;</span>, <span class="hljs-string">&#x27;banana&#x27;</span>, <span class="hljs-string">&#x27;flies&#x27;</span>, <span class="hljs-string">&#x27;fruit&#x27;</span>, <span class="hljs-string">&#x27;like&#x27;</span>, <span class="hljs-string">&#x27;time&#x27;</span>]<br><br>tfidf_vectorizer = TfidfVectorizer()<br>tfidf = tfidf_vectorizer.fit_transform(corpus).toarray()<br><br>sns.heatmap(tfidf, annot=<span class="hljs-keyword">True</span>, cbar = <span class="hljs-keyword">False</span>, xticklabels = vocab)<br></code></pre></td></tr></table></figure>
+<p><img src="https://ningshixian.github.io/resources/images/word-embeddings-3.png" srcset="/img/loading.gif" lazyload alt="Image for post"></p>
+<h1 id="Word2Vec-和-GloVe"><a href="#Word2Vec-和-GloVe" class="headerlink" title="Word2Vec 和 GloVe"></a>Word2Vec 和 GloVe</h1><p>词嵌入的最常用模型是<a target="_blank" rel="noopener" href="https://github.com/dav/word2vec/">word2vec</a>和<a target="_blank" rel="noopener" href="https://nlp.stanford.edu/projects/glove/">GloVe</a>，它们都是基于分布假设的无监督方法（在相同上下文中出现的词往往具有相似的含义）。</p>
+<p>Word2Vec单词嵌入是单词的矢量表示，输入大量文本作为输入（例如Wikipedia，科学，新闻，文章等）时，并由无监督模型进行学习。单词的这些表示形式捕获了单词之间的语义相似性。Word2Vec单词嵌入以如下方式学习，即意思相近的单词（例如“ king”和“ queen”）的向量之间的距离比含义完全不同的单词（例如“ king”和“ carpet”）的距离更近 。</p>
+<p><img src="https://ningshixian.github.io/resources/images/word-embeddings-4.png" srcset="/img/loading.gif" lazyload alt="Image for post"></p>
+<p>Word2Vec向量甚至允许对向量进行一些数学运算。例如，在此操作中，我们为每个单词使用word2vec向量：</p>
+<script type="math/tex; mode=display">
+king — man + woman = queen</script><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># Download Google Word2Vec embeddings https://code.google.com/archive/p/word2vec/</span><br><br>!wget https://s3.amazonaws.com/dl4j-distribution/GoogleNews-vectors-negative300.<span class="hljs-built_in">bin</span>.gz<br>!gunzip GoogleNews-vectors-negative300.<span class="hljs-built_in">bin</span><br><br><span class="hljs-comment"># Try Word2Vec with Gensim</span><br><br><span class="hljs-keyword">import</span> gensim<br><br><span class="hljs-comment"># Load pretrained vectors from Google</span><br>model = gensim.models.KeyedVectors.load_word2vec_format(<span class="hljs-string">&#x27;GoogleNews-vectors-negative300.bin&#x27;</span>, binary=<span class="hljs-literal">True</span>)<br>king = model[<span class="hljs-string">&#x27;king&#x27;</span>]<br><br><span class="hljs-comment"># king - man + woman = queen</span><br><span class="hljs-built_in">print</span>(model.most_similar(positive=[<span class="hljs-string">&#x27;woman&#x27;</span>, <span class="hljs-string">&#x27;king&#x27;</span>], negative=[<span class="hljs-string">&#x27;man&#x27;</span>]))<br><br><span class="hljs-built_in">print</span>(model.similarity(<span class="hljs-string">&#x27;woman&#x27;</span>, <span class="hljs-string">&#x27;man&#x27;</span>))<br></code></pre></td></tr></table></figure>
+<p>另一个词嵌入方法是<strong>Glove</strong>（“Global Vectors”）。它是一种基于单词-上下文矩阵的矩阵分解技术。它首先构造一个由（单词x上下文）共现信息组成的大型矩阵，即，对于每个“单词”（行），您需要计算在一个大型语料库中，该单词在某个“上下文”（列）中出现的频率。然后，将此矩阵分解为低维（单词x特征）矩阵，其中每行现在存储每个单词的矢量表示。通常，这是通过最小化“reconstruction loss”来完成的。这种损失试图找到可以解释高维数据中大部分变化的低维表示形式。</p>
+<figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs nix"><span class="hljs-comment"># Try Glove word embeddings with Spacy</span><br><br>!python3 -m spacy download en_core_web_lg<br><span class="hljs-built_in">import</span> spacy<br><br><span class="hljs-comment"># Load the spacy model that you have installed</span><br><span class="hljs-built_in">import</span> en_core_web_lg<br><span class="hljs-attr">nlp</span> = en_core_web_lg.load()<br><span class="hljs-comment"># process a sentence using the model</span><br><span class="hljs-attr">doc</span> = nlp(<span class="hljs-string">&quot;man king stands on the carpet and sees woman queen&quot;</span>)<br></code></pre></td></tr></table></figure>
+<p>找到King和Queen 之间的相似之处（值越高越好）。</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">doc</span>[<span class="hljs-number">1</span>].similarity(doc[<span class="hljs-number">9</span>])<br><span class="hljs-comment"># 0.72526103</span><br></code></pre></td></tr></table></figure>
+<p>Find similarity between King and carpet.</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">doc</span>[<span class="hljs-number">1</span>].similarity(doc[<span class="hljs-number">5</span>])<br><span class="hljs-comment"># 0.20431946</span><br></code></pre></td></tr></table></figure>
+<p>Check if king — man + woman = queen. We will multiply vectors for ‘man’ and ‘woman’ by two, because subtracting one vector for ‘man’ and adding the vector for ‘woman’ will do little to the original vector for “king”, likely because those “man” and “woman” are related themselves.</p>
+<figure class="highlight golo"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs golo">v =  doc[<span class="hljs-number">1</span>].<span class="hljs-keyword">vector</span> - (doc[<span class="hljs-number">0</span>].<span class="hljs-keyword">vector</span>*<span class="hljs-number">2</span>) + (doc[<span class="hljs-number">8</span>].<span class="hljs-keyword">vector</span>*<span class="hljs-number">2</span>)<br><br>from scipy.spatial <span class="hljs-keyword">import</span> distance<br><span class="hljs-keyword">import</span> numpy as np<br><br><span class="hljs-comment"># Format the vocabulary for use in the distance function</span><br>vectors = [token.<span class="hljs-keyword">vector</span> <span class="hljs-keyword">for</span> token <span class="hljs-keyword">in</span> doc]<br>vectors = np.<span class="hljs-keyword">array</span>(vectors)<br><br><span class="hljs-comment"># Find the closest word below </span><br>closest_index = distance.cdist(np.expand_dims(v, axis = <span class="hljs-number">0</span>), vectors, metric = &#x27;cosine&#x27;).argmin()<br>output_word = doc[closest_index].text<br><span class="hljs-keyword">print</span>(output_word)<br><br><span class="hljs-comment"># queen</span><br></code></pre></td></tr></table></figure>
+<h1 id="快速文字"><a href="#快速文字" class="headerlink" title="快速文字"></a>快速文字</h1><p><a target="_blank" rel="noopener" href="https://github.com/facebookresearch/fastText">FastText</a>是word2vec的扩展，由Tomas Mikolov团队开发（他于2013年创建了word2vec框架）</p>
+<p>与原始word2vec向量相比，FastText的主要改进是包含了字符<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/N-gram">n-gram</a>，它可以为未出现在训练数据中的单词（“词汇外”单词）计算单词表示形式。</p>
+<figure class="highlight coffeescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs coffeescript">!pip install Cython --install-option=<span class="hljs-string">&quot;--no-cython-compile&quot;</span><br>!pip install fasttext<br><br><span class="hljs-comment"># download pre-trained language word vectors from one of 157 languges  https://fasttext.cc/docs/en/crawl-vectors.html</span><br><span class="hljs-comment"># it will take some time, about 5 minutes</span><br><span class="hljs-keyword">import</span> fasttext<br><span class="hljs-keyword">import</span> fasttext.util<br>fasttext.util.download_model(<span class="hljs-string">&#x27;en&#x27;</span>, if_exists=<span class="hljs-string">&#x27;ignore&#x27;</span>)  <span class="hljs-comment"># English</span><br>ft = fasttext.load_model(<span class="hljs-string">&#x27;cc.en.300.bin&#x27;</span>)<br></code></pre></td></tr></table></figure>
+<p>为“king”一词创建嵌入</p>
+<figure class="highlight lasso"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs lasso"><span class="hljs-literal">ft</span>.get_word_vector(<span class="hljs-string">&#x27;king&#x27;</span>)<br></code></pre></td></tr></table></figure>
+<p>为“king”一词获取最相似的词</p>
+<figure class="highlight lasso"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs lasso"><span class="hljs-literal">ft</span>.get_nearest_neighbors(<span class="hljs-string">&#x27;king&#x27;</span>)<br></code></pre></td></tr></table></figure>
+<p><img src="https://ningshixian.github.io/resources/images/word-embeddings-5.png" srcset="/img/loading.gif" lazyload alt="Image for post"></p>
+<p>测试模型为未知单词创建向量的能力</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs reasonml">ft.get<span class="hljs-constructor">_nearest_neighbors(&#x27;<span class="hljs-params">king</span>-<span class="hljs-params">warrior</span>&#x27;)</span><br></code></pre></td></tr></table></figure>
+<h1 id="ELMo-Embeddings-from-Language-Models"><a href="#ELMo-Embeddings-from-Language-Models" class="headerlink" title="ELMo (Embeddings from Language Models)"></a>ELMo (Embeddings from Language Models)</h1><p>与传统的单词嵌入（例如word2vec和GLoVe）不同，分配给token或单词的ELMo矢量取决于当前上下文，实际上是包含该单词的整个句子的函数。因此，同一单词在不同上下文中可以具有不同的单词向量。而且，ELMo表示完全基于字符，因此它们不限于任何预定义的词汇表。</p>
+<p>来自官方网站的说明：</p>
+<p><a target="_blank" rel="noopener" href="https://allennlp.org/elmo"><strong>ELMo</strong></a> is a deep contextualized word representation that models both (1) complex characteristics of the word use (e.g., syntax and semantics), and (2) how these uses vary across linguistic contexts (i.e., to model polysemy). These word vectors are learned functions of the internal states of a deep bidirectional language model (biLM), which is pre-trained on a large text corpus. They can be easily added to existing models and significantly improve the state of the art across a broad range of challenging NLP problems, including question answering, textual entailment and sentiment analysis.</p>
+<figure class="highlight monkey"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs monkey"><span class="hljs-meta"># use tensorflow 1.x for ELMo, because trere are still no ELMo for tensorflow 2.0</span><br><br>%tensorflow_version <span class="hljs-number">1</span>.x<br><br><span class="hljs-keyword">import</span> tensorflow_hub as hub<br><span class="hljs-keyword">import</span> tensorflow as tf<span class="hljs-meta"></span><br><span class="hljs-meta"></span><br><span class="hljs-meta"># Download pretrained ELMo model from Tensorflow Hub https://tfhub.dev/google/elmo/3</span><br><br>elmo = hub.<span class="hljs-keyword">Module</span>(<span class="hljs-string">&quot;https://tfhub.dev/google/elmo/3&quot;</span>, trainable=<span class="hljs-literal">True</span>)<br><br>sentences =  \<br>[<span class="hljs-comment">&#x27;king arthur, also called arthur or aathur pendragon, legendary british king who appears in a cycle of \</span><br>medieval romances (known as the matter of britain) as the sovereign of a knightly fellowship of the round table.<span class="hljs-comment">&#x27;, </span><br><span class="hljs-comment">&#x27;it is not certain how these legends originated or whether the figure of arthur was based on a historical person.&#x27;, </span><br><span class="hljs-comment">&#x27;the legend possibly originated either in wales or in those parts of northern britain inhabited by brythonic-speaking celts.&#x27;, </span><br><span class="hljs-comment">&#x27;for a fuller treatment of the stories about king arthur, see also arthurian legend.&#x27;]</span><br></code></pre></td></tr></table></figure>
+<p>为了将句子输入到模型训练，我们需要将它们分成单词数组和填充数组，并保持相同的长度。另外，我们将创建“mask”数组来表示每个element是一个实词还是填充符号（在我们的示例中为“ _”）。稍后我们将使用“掩码”数组进行可视化，来显示真实存在的单词。</p>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs livecodeserver"><span class="hljs-keyword">words</span> = []<br>mask = []<br>masked_words = []<br><span class="hljs-keyword">for</span> sent <span class="hljs-keyword">in</span> <span class="hljs-keyword">sentences</span>:<br>  splitted = sent.<span class="hljs-built_in">split</span>()<br>  <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(<span class="hljs-number">36</span>):<br>    <span class="hljs-keyword">try</span>:<br>      <span class="hljs-keyword">words</span>.append(splitted[i])<br>    except:<br>      <span class="hljs-keyword">words</span>.append(<span class="hljs-string">&#x27;_&#x27;</span>)<br><span class="hljs-keyword">for</span> <span class="hljs-built_in">word</span> <span class="hljs-keyword">in</span> <span class="hljs-keyword">words</span>:<br>  <span class="hljs-keyword">if</span> <span class="hljs-built_in">word</span> == <span class="hljs-string">&quot;_&quot;</span>:<br>    mask.append(False)<br>  <span class="hljs-keyword">else</span>:<br>    mask.append(True)<br>    masked_words.append(<span class="hljs-built_in">word</span>)<br></code></pre></td></tr></table></figure>
+<p>使用ELMo创建嵌入：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs routeros">embeddings = elmo(<br>    sentences,<br>    <span class="hljs-attribute">signature</span>=<span class="hljs-string">&quot;default&quot;</span>,<br>    <span class="hljs-attribute">as_dict</span>=<span class="hljs-literal">True</span>)[<span class="hljs-string">&quot;elmo&quot;</span>]<br></code></pre></td></tr></table></figure>
+<p>将Tensorflow张量转换为numpy数组。</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs css">%%<span class="hljs-selector-tag">time</span><br>with tf<span class="hljs-selector-class">.Session</span>() as sess:<br>  sess.<span class="hljs-built_in">run</span>(tf.<span class="hljs-built_in">global_variables_initializer</span>())<br>  sess.<span class="hljs-built_in">run</span>(tf.<span class="hljs-built_in">tables_initializer</span>())<br>  x = sess.<span class="hljs-built_in">run</span>(embeddings)<br><br>embs = x.<span class="hljs-built_in">reshape</span>(-<span class="hljs-number">1</span>, <span class="hljs-number">1024</span>)<br><br>masked_embs = embs[mask]<br></code></pre></td></tr></table></figure>
+<p>使用<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Principal_component_analysis">PCA</a>可视化词嵌入</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><code class="hljs routeros"><span class="hljs-keyword">from</span> sklearn.decomposition import PCA<br><br>pca = PCA(<span class="hljs-attribute">n_components</span>=10)<br>y = pca.fit_transform(masked_embs)<br><br><span class="hljs-keyword">from</span> sklearn.manifold import TSNE<br><br>y = TSNE(<span class="hljs-attribute">n_components</span>=2).fit_transform(y)<br><br>import plotly as py<br>import plotly.graph_objs as go<br><br>data = [<br>    go.Scatter(<br>        x=[i[0] <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> y],<br>        y=[i[1] <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> y],<br>        <span class="hljs-attribute">mode</span>=<span class="hljs-string">&#x27;markers&#x27;</span>,<br>        text=[i <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> masked_words],<br>    <span class="hljs-attribute">marker</span>=dict(<br>        <span class="hljs-attribute">size</span>=16,<br>        color = [len(i) <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> masked_words], #<span class="hljs-built_in">set</span> color equal <span class="hljs-keyword">to</span> a variable<br>        opacity= 0.8,<br>        <span class="hljs-attribute">colorscale</span>=<span class="hljs-string">&#x27;Viridis&#x27;</span>,<br>        <span class="hljs-attribute">showscale</span>=<span class="hljs-literal">False</span><br>    )<br>    )<br>]<br>layout = go.Layout()<br>layout = dict(<br>              yaxis = dict(zeroline = <span class="hljs-literal">False</span>),<br>              xaxis = dict(zeroline = <span class="hljs-literal">False</span>)<br>             )<br>fig = go.Figure(<span class="hljs-attribute">data</span>=data, <span class="hljs-attribute">layout</span>=layout)<br>fig.show()<br></code></pre></td></tr></table></figure>
+<p><img src="https://ningshixian.github.io/resources/images/word-embeddings-6.gif" srcset="/img/loading.gif" lazyload alt="Image for post"></p>
+<h1 id="Transformers"><a href="#Transformers" class="headerlink" title="Transformers"></a>Transformers</h1><p>最后，是时候使用最新技术- Transformers。著名的<a target="_blank" rel="noopener" href="https://openai.com/blog/better-language-models/">GPT-2</a>，<a target="_blank" rel="noopener" href="https://github.com/google-research/bert">BERT</a>，<a target="_blank" rel="noopener" href="https://blog.einstein.ai/introducing-a-conditional-transformer-language-model-for-controllable-generation/">CTRL</a> 都是基于Transformers生成上下文相关的词嵌入。但是与ELMo 不同，Transformers不使用<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Recurrent_neural_network">RNN</a>，它们不需要一个接一个地顺序处理句子中的单词。句子中的所有单词都是并行处理的，这种方法可以加快处理速度，并解决<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Vanishing_gradient_problem">梯度消失的问题</a>（vanishing gradient problem）。</p>
+<p>Transformers 使用<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1706.03762">注意力机制</a>来描述每个特定单词与句子中所有其他单词的联系和依存关系。Jay Alammar在<a target="_blank" rel="noopener" href="http://jalammar.github.io/illustrated-transformer/">精美插图</a>中详细描述了Transformers 的这种机制和主要原理。</p>
+<p><img src="https://ningshixian.github.io/resources/images/word-embeddings-7.png" srcset="/img/loading.gif" lazyload alt="Image for post"></p>
+<p>示例，我们将使用 Hugging face 开源的<a target="_blank" rel="noopener" href="https://huggingface.co/transformers/">Transformers</a>库，其中包含最新的基于Transformers的模型（例如<a target="_blank" rel="noopener" href="https://huggingface.co/transformers/model_doc/bert.html">BERT</a>，<a target="_blank" rel="noopener" href="https://huggingface.co/transformers/model_doc/xlnet.html">XLNet</a>，<a target="_blank" rel="noopener" href="https://huggingface.co/transformers/model_doc/dialogpt.html">DialoGPT</a>或<a target="_blank" rel="noopener" href="https://huggingface.co/transformers/model_doc/gpt2.html">GPT-2</a>）。</p>
+<p>使用BERT获取词嵌入。首先，我们需要安装Transformers库。</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cmake">!pip <span class="hljs-keyword">install</span> transformers<br></code></pre></td></tr></table></figure>
+<p>现在，我们导入pytorch, the pretrained BERT model, and a BERT tokenizer，它将句子转换为适合BERT的输入格式（标记自身并添加特殊标记，例如[SEP]和[CLS]）的所有必需工作。</p>
+<figure class="highlight clean"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs clean"><span class="hljs-keyword">import</span> torch<br>torch.manual_seed(<span class="hljs-number">0</span>)<br><span class="hljs-keyword">from</span> transformers <span class="hljs-keyword">import</span> BertTokenizer, BertModel<br><br><span class="hljs-keyword">import</span> logging<br><span class="hljs-keyword">import</span> matplotlib.pyplot <span class="hljs-keyword">as</span> plt<br>% matplotlib <span class="hljs-keyword">inline</span><br><br># Load pre-trained model tokenizer (vocabulary)<br>tokenizer = BertTokenizer.from_pretrained(<span class="hljs-string">&#x27;bert-base-uncased&#x27;</span>, do_lower_case=<span class="hljs-literal">True</span>)<br></code></pre></td></tr></table></figure>
+<p>输入一些句子并将其标记化。</p>
+<figure class="highlight vbnet"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs vbnet">sentences =  \<br>[<span class="hljs-comment">&#x27;king arthur, also called arthur or aathur pendragon, legendary british king who appears in a cycle of \</span><br>medieval romances (known <span class="hljs-keyword">as</span> the matter <span class="hljs-keyword">of</span> britain) <span class="hljs-keyword">as</span> the sovereign <span class="hljs-keyword">of</span> a knightly fellowship <span class="hljs-keyword">of</span> the round table.<span class="hljs-comment">&#x27;, </span><br><span class="hljs-comment">&#x27;it is not certain how these legends originated or whether the figure of arthur was based on a historical person.&#x27;, </span><br><span class="hljs-comment">&#x27;the legend possibly originated either in wales or in those parts of northern britain inhabited by brythonic-speaking celts.&#x27;, </span><br><span class="hljs-comment">&#x27;for a fuller treatment of the stories about king arthur, see also arthurian legend.&#x27;]</span><br><br># Print the original sentence.<br>print(<span class="hljs-comment">&#x27; Original: &#x27;, sentences[0][:99])</span><br><br># Print the sentence splitted <span class="hljs-keyword">into</span> tokens.<br>print(<span class="hljs-comment">&#x27;Tokenized: &#x27;, tokenizer.tokenize(sentences[0])[:15])</span><br><br># Print the sentence mapped <span class="hljs-keyword">to</span> token ids.<br>print(<span class="hljs-comment">&#x27;Token IDs: &#x27;, tokenizer.convert_tokens_to_ids(tokenizer.tokenize(sentences[0]))[:15])</span><br></code></pre></td></tr></table></figure>
+<p><img src="https://ningshixian.github.io/resources/images/word-embeddings-8.png" srcset="/img/loading.gif" lazyload alt="Image for post"></p>
+<p>请注意，某些标记可能看起来像这样：[‘aa’, ‘##th’, ‘##ur’, ‘pen’, ‘##dra’, ‘##gon’]。这是因为 BERT tokenizer 是使用WordPiece模型创建的。该模型贪婪地创建一个固定大小的词汇表，其中包含最适合我们的语言数据的单个字符，子词和单词。BERT tokenizer 生成器使用的词汇表包含所有英语字符，以及在该模型所训练的英语语料库中找到的约30,000个最常见的单词和子单词。因此，如果词汇表中未提及该词，则该词将分为子词和字符。某些子词之前的两个井号（##）表明该子词是较大词的一部分，并在另一个子词之前。</p>
+<p>我们将使用 <code>tokenizer.encode_plus</code> 函数，该函数：</p>
+<ul>
+<li>将句子拆分为 tokens</li>
+<li>添加特殊的[CLS]和[SEP] tokens</li>
+<li>将令牌映射到其ID</li>
+<li>将所有句子填充或截断为相同长度</li>
+</ul>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs routeros"><span class="hljs-comment"># Tokenize all of the sentences and map tokens to word IDs.</span><br>input_ids = []<br>attention_masks = []<br>tokenized_texts = []<br><br><span class="hljs-keyword">for</span> sent <span class="hljs-keyword">in</span> sentences:<br>    encoded_dict = tokenizer.encode_plus(<br>                        sent,                      <br>                        add_special_tokens = <span class="hljs-literal">True</span>,<br>                        <span class="hljs-attribute">truncation</span>=<span class="hljs-literal">True</span>,<br>                        max_length = 48,          <br>                        pad_to_max_length = <span class="hljs-literal">True</span>,                        <br>                        return_tensors = <span class="hljs-string">&#x27;pt&#x27;</span>,    <br>                   )<br>    <br>    # Save tokens <span class="hljs-keyword">from</span> sentence as a separate array. <br>    marked_text = <span class="hljs-string">&quot;[CLS] &quot;</span> + sent + <span class="hljs-string">&quot; [SEP]&quot;</span><br>    tokenized_texts.append(tokenizer.tokenize(marked_text))<br>    <br>    <br>    # <span class="hljs-built_in">Add</span> the encoded sentence <span class="hljs-keyword">to</span> the list.    <br>    input_ids.append(encoded_dict[<span class="hljs-string">&#x27;input_ids&#x27;</span>])<br><br><span class="hljs-comment"># Convert the list into tensor.</span><br>input_ids = torch.cat(input_ids, <span class="hljs-attribute">dim</span>=0)<br></code></pre></td></tr></table></figure>
+<p><strong>Segment ID</strong>. BERT通过使用1和0来区分两个句子这种方式训练的。我们将分别对每个句子进行编码，因此我们将每个句子中的每个标记标记为1。</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ini"><span class="hljs-attr">segments_ids</span> = torch.<span class="hljs-literal">on</span>es_like(input_ids)<br></code></pre></td></tr></table></figure>
+<p>现在，我们可以调用BERT模型，并最终获得模型隐层状态，然后根据这些状态创建单词嵌入。</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs stylus">with torch<span class="hljs-selector-class">.no_grad</span>():<br>    outputs = <span class="hljs-built_in">model</span>(input_ids, segments_ids)<br>    hidden_states = outputs<span class="hljs-selector-attr">[2]</span><br></code></pre></td></tr></table></figure>
+<p>Let’s examine what we’ve got</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-built_in">print</span> (<span class="hljs-string">&quot;Number of layers:&quot;</span>, <span class="hljs-built_in">len</span>(hidden_states), <span class="hljs-string">&quot;  (initial embeddings + 12 BERT layers)&quot;</span>)<br><span class="hljs-built_in">print</span> (<span class="hljs-string">&quot;Number of batches:&quot;</span>, <span class="hljs-built_in">len</span>(hidden_states[<span class="hljs-number">0</span>]))<br><span class="hljs-built_in">print</span> (<span class="hljs-string">&quot;Number of tokens:&quot;</span>, <span class="hljs-built_in">len</span>(hidden_states[<span class="hljs-number">0</span>][<span class="hljs-number">0</span>]))<br><span class="hljs-built_in">print</span> (<span class="hljs-string">&quot;Number of hidden units:&quot;</span>, <span class="hljs-built_in">len</span>(hidden_states[<span class="hljs-number">0</span>][<span class="hljs-number">0</span>][<span class="hljs-number">0</span>]))<br><br><span class="hljs-comment"># 13</span><br><span class="hljs-comment"># 4</span><br><span class="hljs-comment"># 48</span><br><span class="hljs-comment"># 768</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-comment"># Concatenate the tensors for all layers. </span><br><span class="hljs-attribute">token_embeddings</span> = torch.stack(hidden_states, dim=<span class="hljs-number">0</span>)<br><br><span class="hljs-comment"># Swap dimensions, so we get tensors in format: [sentence, tokens, hidden layes, features]</span><br><span class="hljs-attribute">token_embeddings</span> = token_embeddings.permute(<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">0</span>,<span class="hljs-number">3</span>)<br></code></pre></td></tr></table></figure>
+<p>我们将使用最后四个隐层来创建每个单词嵌入。</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ini"><span class="hljs-attr">processed_embeddings</span> = token_embeddings[:, :, <span class="hljs-number">9</span>:, :]<br></code></pre></td></tr></table></figure>
+<p>将每个token的四层连接起来以创建嵌入</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">embeddings</span> = torch.reshape(processed_embeddings, (<span class="hljs-number">4</span>, <span class="hljs-number">48</span>, -<span class="hljs-number">1</span>))<br></code></pre></td></tr></table></figure>
+<p>让我们检查一下第一句的嵌入。首先，我们获取需要比较的令牌ID</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs stylus"><span class="hljs-keyword">for</span> <span class="hljs-selector-tag">i</span>, token_str <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(tokenized_texts<span class="hljs-selector-attr">[0]</span>):<br>  print (<span class="hljs-selector-tag">i</span>, token_str)<br></code></pre></td></tr></table></figure>
+<p><img src="https://ningshixian.github.io/resources/images/word-embeddings-9.png" srcset="/img/loading.gif" lazyload alt="Image for post"></p>
+<p>我们可以看到“king”一词位于索引1和17。我们将检查嵌入1和17之间的距离。此外，我们还将检查“arthur”一词的嵌入是否更接近“king”，然后是否接近“table”。</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">from</span> scipy.spatial.distance import cosine<br> <br><span class="hljs-attribute">kings</span> = cosine(embeddings[<span class="hljs-number">0</span>][<span class="hljs-number">1</span>], embeddings[<span class="hljs-number">0</span>][<span class="hljs-number">17</span>])<br><span class="hljs-attribute">king_table</span> = cosine(embeddings[<span class="hljs-number">0</span>][<span class="hljs-number">1</span>], embeddings[<span class="hljs-number">0</span>][<span class="hljs-number">46</span>])<br><span class="hljs-attribute">king_archtur</span> = cosine(embeddings[<span class="hljs-number">0</span>][<span class="hljs-number">2</span>], embeddings[<span class="hljs-number">0</span>][<span class="hljs-number">1</span>])<br> <br><span class="hljs-attribute">print</span>(&#x27;Distance for two kings:  %.<span class="hljs-number">2</span>f&#x27; % kings)<br><span class="hljs-attribute">print</span>(&#x27;Distance from king to table:  %.<span class="hljs-number">2</span>f&#x27; % king_table)<br><span class="hljs-attribute">print</span>(&#x27;Distance from Archtur to king:  %.<span class="hljs-number">2</span>f&#x27; % king_archtur)<br><br><span class="hljs-comment"># 0.21</span><br><span class="hljs-comment"># 0.73</span><br><span class="hljs-comment"># 0.40</span><br></code></pre></td></tr></table></figure>
+<p>因此，我们看到两个“king”的嵌入非常相似，但不完全相同，并且Archtur更像是king而不是table。</p>
+<p>使用 <a target="_blank" rel="noopener" href="https://github.com/AliOsm/simplerepresentations"><strong>simplerepresentations</strong></a> 模块可能会更简单。该模块完成了我们之前所做的所有工作-从BERT中提取所需的隐层状态，并在几行代码中创建词嵌入。</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs routeros">!pip install simplerepresentations<br><br>import torch<br><span class="hljs-keyword">from</span> simplerepresentations import RepresentationModel<br>torch.manual_seed(0)<br><br>model_type = <span class="hljs-string">&#x27;bert&#x27;</span><br>model_name = <span class="hljs-string">&#x27;bert-base-uncased&#x27;</span><br><br>representation_model = RepresentationModel(<br>  <span class="hljs-attribute">model_type</span>=model_type,<br>  <span class="hljs-attribute">model_name</span>=model_name,<br>  <span class="hljs-attribute">batch_size</span>=4,<br>  <span class="hljs-attribute">max_seq_length</span>=48, <br>  <span class="hljs-attribute">combination_method</span>=<span class="hljs-string">&#x27;cat&#x27;</span>, <br>  <span class="hljs-attribute">last_hidden_to_use</span>=4 <br> )<br><br>text_a = sentences<br><br>all_sentences_representations, all_tokens_representations = representation_model(<span class="hljs-attribute">text_a</span>=text_a)<br></code></pre></td></tr></table></figure>
+<p>Check distaces between Archtur, king and table.</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">from</span> scipy.spatial.distance import cosine<br><br><span class="hljs-attribute">kings</span> = cosine(all_tokens_representations[<span class="hljs-number">0</span>][<span class="hljs-number">1</span>], all_tokens_representations[<span class="hljs-number">0</span>][<span class="hljs-number">17</span>])<br><span class="hljs-attribute">king_table</span> = cosine(all_tokens_representations[<span class="hljs-number">0</span>][<span class="hljs-number">1</span>], all_tokens_representations[<span class="hljs-number">0</span>][<span class="hljs-number">46</span>])<br><span class="hljs-attribute">king_archtur</span> = cosine(all_tokens_representations[<span class="hljs-number">0</span>][<span class="hljs-number">2</span>], all_tokens_representations[<span class="hljs-number">0</span>][<span class="hljs-number">1</span>])<br><br><span class="hljs-attribute">print</span>(&#x27;Distance for two kings:  %.<span class="hljs-number">2</span>f&#x27; % kings)<br><span class="hljs-attribute">print</span>(&#x27;Distance from king to table:  %.<span class="hljs-number">2</span>f&#x27; % king_table)<br><span class="hljs-attribute">print</span>(&#x27;Distance from Archtur to king:  %.<span class="hljs-number">2</span>f&#x27; % king_archtur)<br><br><span class="hljs-comment"># 0.21</span><br><span class="hljs-comment"># 0.73</span><br><span class="hljs-comment"># 0.40</span><br></code></pre></td></tr></table></figure>
+<p>结果相同，代码更少。</p>
+<h1 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h1><p>希望阅读本文后，对当前的词嵌入方法有了一个概念，并开始了解如何在Python中快速实现这些方法。NLP的世界是多种多样的，并且有更多的嵌入模型和方法。</p>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://mccormickml.com/2019/05/14/BERT-word-embeddings-tutorial/">BERT单词嵌入教程</a></li>
+<li><a target="_blank" rel="noopener" href="http://jalammar.github.io/illustrated-transformer/">图解变压器</a></li>
+<li><a target="_blank" rel="noopener" href="http://jalammar.github.io/illustrated-gpt2/">图解GPT-2（可视化变压器语言模型）</a></li>
+<li><a target="_blank" rel="noopener" href="https://towardsdatascience.com/from-pre-trained-word-embeddings-to-pre-trained-language-models-focus-on-bert-343815627598">从预训练的单词嵌入到预训练的语言模型—专注于BERT</a></li>
+<li><a target="_blank" rel="noopener" href="https://towardsdatascience.com/make-your-own-rick-sanchez-bot-with-transformers-and-dialogpt-fine-tuning-f85e6d1f4e30">使用Transformers和DialoGPT进行微调，制作自己的Rick Sanchez（机器人）</a></li>
+<li><a target="_blank" rel="noopener" href="https://medium.com/swlh/playing-with-word-vectors-308ab2faa519">玩单词向量</a></li>
+<li><a target="_blank" rel="noopener" href="https://towardsdatascience.com/light-on-math-ml-intuitive-guide-to-understanding-glove-embeddings-b13b4f19c010">理解GloVe嵌入的直观指南</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.shanelynn.ie/word-embeddings-in-python-with-spacy-and-gensim/">具有Spacy和Gensim的Python中的单词嵌入</a></li>
+<li><a target="_blank" rel="noopener" href="https://medium.com/analytics-vidhya/brief-review-of-word-embedding-families-2019-b2bbc601bbfe">单词嵌入家庭的简要回顾（2019）</a></li>
+<li><a target="_blank" rel="noopener" href="https://towardsdatascience.com/word-embeddings-exploration-explanation-and-exploitation-with-code-in-python-5dac99d5d795">词嵌入：探索，解释和利用（Python中的代码）</a></li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E6%8A%80%E6%9C%AF/">#技术</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Word embeddings in 2020</div>
+      <div>http://example.com/2020/08/10/2020-08-10-Word embeddings in 2020/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>NSX</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2020年8月10日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/08/24/2020-08-24-sklearn%E8%AF%84%E4%BC%B0%E6%8C%87%E6%A0%87/" title="sklearn分类评价指标介绍">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">sklearn分类评价指标介绍</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/07/23/2020-07-23-%E7%94%A8%E4%BA%BA%E8%AF%9D%E8%A7%A3%E9%87%8A%E4%BA%A4%E5%8F%89%E7%86%B5/" title="用人话解释交叉熵">
+                        <span class="hidden-mobile">用人话解释交叉熵</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

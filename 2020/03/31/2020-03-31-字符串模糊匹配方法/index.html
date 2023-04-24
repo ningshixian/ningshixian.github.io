@@ -1,0 +1,794 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="NSX">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="字符串模糊匹配指南 textdistance: 30+传统的字面距离计算 √ difflib: Python自带的计算文本差异的辅助工具 √ fuzzywuzzy: 依据编辑算法计算两个序列之间的差异 strsimpy: 计算各种字符串距离的包 Fast Fuzzy Matching: 快  textdistance库 ❤❤❤textdistance 库使用传统的字面匹配算法来综合评估两段文本的匹">
+<meta property="og:type" content="article">
+<meta property="og:title" content="字符串模糊匹配指南">
+<meta property="og:url" content="http://example.com/2020/03/31/2020-03-31-%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%A8%A1%E7%B3%8A%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="字符串模糊匹配指南 textdistance: 30+传统的字面距离计算 √ difflib: Python自带的计算文本差异的辅助工具 √ fuzzywuzzy: 依据编辑算法计算两个序列之间的差异 strsimpy: 计算各种字符串距离的包 Fast Fuzzy Matching: 快  textdistance库 ❤❤❤textdistance 库使用传统的字面匹配算法来综合评估两段文本的匹">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2020/03/31/2020-03-31-%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%A8%A1%E7%B3%8A%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95/textdistance-cosine.jpg">
+<meta property="article:published_time" content="2020-03-30T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-24T11:31:36.366Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="字符串模糊匹配">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2020/03/31/2020-03-31-%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%A8%A1%E7%B3%8A%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95/textdistance-cosine.jpg">
+  
+  
+  
+  <title>字符串模糊匹配指南 - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="字符串模糊匹配指南"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2020-03-31 00:00" pubdate>
+          2020年3月31日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          10k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          84 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">字符串模糊匹配指南</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="字符串模糊匹配指南"><a href="#字符串模糊匹配指南" class="headerlink" title="字符串模糊匹配指南"></a>字符串模糊匹配指南</h1><ul>
+<li>textdistance: 30+传统的字面距离计算 √</li>
+<li>difflib: Python自带的计算文本差异的辅助工具 √</li>
+<li>fuzzywuzzy: 依据编辑算法计算两个序列之间的差异</li>
+<li>strsimpy: 计算各种字符串距离的包</li>
+<li>Fast Fuzzy Matching: 快</li>
+</ul>
+<h2 id="textdistance库-❤❤❤"><a href="#textdistance库-❤❤❤" class="headerlink" title="textdistance库 ❤❤❤"></a>textdistance库 ❤❤❤</h2><p><a target="_blank" rel="noopener" href="https://github.com/life4/textdistance">textdistance</a> 库使用传统的字面匹配算法来综合评估两段文本的匹配程度！它使用30多种不同的算法计算序列的距离，提供了可用于模糊匹配算法的集合.</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs haskell"><span class="hljs-meta"># pip install textdistance</span><br><span class="hljs-keyword">import</span> textdistance<br></code></pre></td></tr></table></figure>
+<p>All algorithms have some common methods:</p>
+<ol>
+<li><code>.distance(*sequences)</code> — calculate distance between sequences.</li>
+<li><code>.similarity(*sequences)</code> — calculate similarity for sequences.</li>
+<li><code>.maximum(*sequences)</code> — maximum possible value for distance and similarity. For any sequence: <code>distance + similarity == maximum</code>.</li>
+<li><code>.normalized_distance(*sequences)</code> — normalized distance between sequences. The return value is a float between 0 and 1, where 0 means equal, and 1 totally different.</li>
+<li><code>.normalized_similarity(*sequences)</code> — normalized similarity for sequences. The return value is a float between 0 and 1, where 0 means totally different, and 1 equal.</li>
+</ol>
+<h3 id="Levenshtein距离"><a href="#Levenshtein距离" class="headerlink" title="Levenshtein距离"></a>Levenshtein距离</h3><p>指两个<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E5%AD%97%E4%B8%B2">字串</a>之间，由一个转成另一个所需的最少编辑操作次数。</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">textdistance</span>.levenshtein(<span class="hljs-string">&quot;this test&quot;</span>, <span class="hljs-string">&quot;that test&quot;</span>) # <span class="hljs-number">2</span><br><span class="hljs-attribute">textdistance</span>.levenshtein.normalized_similarity(<span class="hljs-string">&quot;this test&quot;</span>, <span class="hljs-string">&quot;that test&quot;</span>) # <span class="hljs-number">0</span>.<span class="hljs-number">8</span><br></code></pre></td></tr></table></figure>
+<h3 id="Jaccard-相似度"><a href="#Jaccard-相似度" class="headerlink" title="Jaccard 相似度"></a>Jaccard 相似度</h3><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ruby"><span class="hljs-meta prompt_">&gt;&gt;</span> textdistance.jaccard（tokens_1，tokens_2）<br></code></pre></td></tr></table></figure>
+<h3 id="余弦相似度"><a href="#余弦相似度" class="headerlink" title="余弦相似度"></a>余弦相似度</h3><p>余弦相似度是比较两个字符串的常用方法。该算法将字符串视为向量，并计算它们之间的余弦值。与上面的 Jaccard Similarity 相似，余弦相似度也忽略了要比较的字符串中的顺序。</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">textdistance</span>.cosine(<span class="hljs-string">&quot;apple&quot;</span>, <span class="hljs-string">&quot;ppale&quot;</span>) # <span class="hljs-number">1</span>.<span class="hljs-number">0</span><br></code></pre></td></tr></table></figure>
+<img src="/2020/03/31/2020-03-31-%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%A8%A1%E7%B3%8A%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95/textdistance-cosine.jpg" srcset="/img/loading.gif" lazyload class="">
+<h2 id="difflib库-❤❤❤"><a href="#difflib库-❤❤❤" class="headerlink" title="difflib库 ❤❤❤"></a>difflib库 ❤❤❤</h2><blockquote>
+<p><a target="_blank" rel="noopener" href="https://docs.python.org/zh-cn/3.7/library/difflib.html">difflib</a> —- 计算差异的辅助工具</p>
+</blockquote>
+<p>此模块提供用于比较序列的类和函数，有以下内容：</p>
+<p><strong>_class_ </strong><code>**difflib.SequenceMatcher**</code></p>
+<p>这是一个灵活的类，可用于比较任何类型的序列对，只要序列元素为 <a target="_blank" rel="noopener" href="https://docs.python.org/zh-cn/3.7/glossary.html#term-hashable">hashable</a> 对象。 <strong>其思路是找到不包含“垃圾”元素的最长连续匹配子序列；</strong>所谓“垃圾”元素是指其在某种意义上没有价值，例如空白行或空白符。然后同样的思路将递归地应用于匹配序列的左右序列片段。 这并不能产生最小编辑序列，但确实能产生在人们看来“正确”的匹配。</p>
+<p><strong>自动垃圾启发式计算:</strong> <code>[SequenceMatcher](https://docs.python.org/zh-cn/3.7/library/difflib.html#difflib.SequenceMatcher)</code> 支持使用启发式计算来自动将特定序列项视为垃圾。 这种启发式计算会统计每个单独项在序列中出现的次数。 如果某一项（在第一项之后）的重复次数超过序列长度的 1% 并且序列长度至少有 200 项，该项会被标记为“热门”并被视为序列匹配中的垃圾。 这种启发式计算可以通过在创建 <code>[SequenceMatcher](https://docs.python.org/zh-cn/3.7/library/difflib.html#difflib.SequenceMatcher)</code> 时将 <code>autojunk</code> 参数设为 <code>False</code> 来关闭。</p>
+<p><strong>_class_ </strong><code>**difflib.Differ**</code></p>
+<p>这个类的作用是比较由文本行组成的序列，并产生可供人阅读的差异或增量信息。 Differ 统一使用 <code>[SequenceMatcher](https://docs.python.org/zh-cn/3.7/library/difflib.html#difflib.SequenceMatcher)</code> 来完成行序列的比较以及相似（接近匹配）行内部字符序列的比较。</p>
+<p><code>[Differ](https://docs.python.org/zh-cn/3.7/library/difflib.html#difflib.Differ)</code> 增量的每一行均以双字母代码打头：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>双字母代码</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&#39;- &#39;</code></td>
+<td>行为序列 1 所独有</td>
+</tr>
+<tr>
+<td><code>&#39;+ &#39;</code></td>
+<td>行为序列 2 所独有</td>
+</tr>
+<tr>
+<td><code>&#39; &#39;</code></td>
+<td>行在两序列中相同</td>
+</tr>
+<tr>
+<td><code>&#39;? &#39;</code></td>
+<td>行不存在于任一输入序列</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><code>**difflib.get_close_matches**</code><strong>(_word_, _possibilities_, _n=3_, _cutoff=0.6_)</strong></p>
+<p>返回由最佳“近似”匹配构成的列表。</p>
+<p>_word_ 为一个指定目标近似匹配的序列（通常为字符串），_possibilities_ 为一个由用于匹配 _word_ 的序列构成的列表（通常为字符串列表）。可选参数 _n_ (默认为 <code>3</code>) 指定最多返回多少个近似匹配； _n_ 必须大于 <code>0</code>；可选参数 _cutoff_ (默认为 <code>0.6</code>) 是一个 [0, 1] 范围内的浮点数。 与 _word_ 相似度得分未达到该值的候选匹配将被忽略。候选匹配中（不超过 _n_ 个）的最佳匹配将以列表形式返回，按相似度得分排序，最相似的排在最前面。</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs stylus">&gt;&gt;&gt; <span class="hljs-built_in">get_close_matches</span>(<span class="hljs-string">&#x27;appel&#x27;</span>, <span class="hljs-selector-attr">[<span class="hljs-string">&#x27;ape&#x27;</span>, <span class="hljs-string">&#x27;apple&#x27;</span>, <span class="hljs-string">&#x27;peach&#x27;</span>, <span class="hljs-string">&#x27;puppy&#x27;</span>]</span>)<br><span class="hljs-selector-attr">[<span class="hljs-string">&#x27;apple&#x27;</span>, <span class="hljs-string">&#x27;ape&#x27;</span>]</span><br></code></pre></td></tr></table></figure>
+<p><code>**difflib.ndiff**</code><strong>(_a_, _b_, _linejunk=None_, _charjunk=IS_CHARACTER_JUNK_)</strong></p>
+<p>比较 _a_ 和 _b_ (字符串列表)；返回 <code>[Differ](https://docs.python.org/zh-cn/3.7/library/difflib.html#difflib.Differ)</code> 形式的增量信息 (一个产生增量行的 <a target="_blank" rel="noopener" href="https://docs.python.org/zh-cn/3.7/glossary.html#term-generator">generator</a>)。</p>
+<p>可选关键字形参 _linejunk_ 和 _charjunk_ 均为过滤函数 (或为 <code>None</code>)</p>
+<h3 id="SequenceMatcher-对象"><a href="#SequenceMatcher-对象" class="headerlink" title="SequenceMatcher 对象"></a>SequenceMatcher 对象</h3><p><code>[SequenceMatcher](https://docs.python.org/zh-cn/3.7/library/difflib.html#difflib.SequenceMatcher)</code> 类具有这样的构造器：</p>
+<ul>
+<li>_class_ <code>difflib.SequenceMatcher</code>(_isjunk=None_, _a=’’_, _b=’’_, _autojunk=True_)</li>
+</ul>
+<p>可选参数<code>isjunk</code>必须是<code>none</code>（默认值）等同于传递<code>lambda x:0</code>；换句话说，不忽略任何元素；可选参数 _autojunk_ 可用于启用自动垃圾启发式计算。</p>
+<p><code>[SequenceMatcher](https://docs.python.org/zh-cn/3.7/library/difflib.html#difflib.SequenceMatcher)</code> 对象具有以下方法：</p>
+<ul>
+<li><code>find_longest_match</code>(_alo_, _ahi_, _blo_, _bhi_) √</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_27586341/article/details/106054086">源码解析</a>。找出 <code>a[alo:ahi]</code> 和 <code>b[blo:bhi]</code> 中的最长匹配块。如果 _isjunk_ 被省略或为 <code>None</code>，<code>[find_longest_match()](https://docs.python.org/zh-cn/3.7/library/difflib.html#difflib.SequenceMatcher.find_longest_match)</code> 将返回 <code>(i, j, k)</code> 使得 <code>a[i:i+k]</code> 等于 <code>b[j:j+k]</code></p>
+<figure class="highlight python-repl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python-repl"><span class="hljs-meta prompt_">&gt;&gt;&gt;</span> <span class="language-python"><span class="hljs-keyword">import</span> difflib</span><br><span class="hljs-meta prompt_">&gt;&gt;&gt;</span> <span class="language-python">s = difflib.SequenceMatcher(<span class="hljs-literal">None</span>, <span class="hljs-string">&#x27;abcd&#x27;</span>, <span class="hljs-string">&#x27;abcd abcd&#x27;</span>)</span><br><span class="hljs-meta prompt_">&gt;&gt;&gt;</span> <span class="language-python">s.find_longest_match(<span class="hljs-number">0</span>,<span class="hljs-number">4</span>,<span class="hljs-number">0</span>,<span class="hljs-number">9</span>)</span><br>Match(a=0, b=0, size=4)<br><span class="hljs-meta prompt_">&gt;&gt;&gt;</span><br></code></pre></td></tr></table></figure>
+<ul>
+<li><code>get_matching_blocks</code>()</li>
+</ul>
+<p>返回描述非重叠匹配子序列的三元组列表。 每个三元组的形式为 <code>(i, j, n)</code>，其含义为 <code>a[i:i+n] == b[j:j+n]</code>。 这些三元组按 _i_ 和 _j_ 单调递增排列。</p>
+<p>最后一个三元组用于占位，其值为 <code>(len(a), len(b), 0)</code>。 它是唯一 <code>n == 0</code> 的三元组。 如果 <code>(i, j, n)</code> 和 <code>(i&#39;, j&#39;, n&#39;)</code> 是在列表中相邻的三元组，且后者不是列表中的最后一个三元组，则 <code>i+n &lt; i&#39;</code> 或 <code>j+n &lt; j&#39;</code>；换句话说，相邻的三元组总是描述非相邻的相等块。</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs routeros">&gt;&gt;&gt; s = difflib.SequenceMatcher(None, <span class="hljs-string">&#x27;abxcd&#x27;</span>, <span class="hljs-string">&#x27;abcd&#x27;</span>)<br>&gt;&gt;&gt; s.get_matching_blocks()<br>[Match(<span class="hljs-attribute">a</span>=0, <span class="hljs-attribute">b</span>=0, <span class="hljs-attribute">size</span>=2), Match(<span class="hljs-attribute">a</span>=3, <span class="hljs-attribute">b</span>=2, <span class="hljs-attribute">size</span>=2), Match(<span class="hljs-attribute">a</span>=5, <span class="hljs-attribute">b</span>=4, <span class="hljs-attribute">size</span>=0)]<br></code></pre></td></tr></table></figure>
+<ul>
+<li><code>get_opcodes</code>() √</li>
+</ul>
+<p>返回描述如何将 _a_ 变为 _b_ 的 5 元组列表，每个元组的形式为 <code>(tag, i1, i2, j1, j2)</code>。 在第一个元组中 <code>i1 == j1 == 0</code>，而在其余的元组中 _i1_ 等于前一个元组的 _i2_，并且 _j1_ 也等于前一个元组的 _j2_。</p>
+<p>_tag_ 值为字符串，其含义如下：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&#39;replace&#39;</code></td>
+<td><code>a[i1:i2]</code> 应由 <code>b[j1:j2]</code> 替换。</td>
+</tr>
+<tr>
+<td><code>&#39;delete&#39;</code></td>
+<td><code>a[i1:i2]</code> 应被删除。 请注意在此情况下 <code>j1 == j2</code>。</td>
+</tr>
+<tr>
+<td><code>&#39;insert&#39;</code></td>
+<td><code>b[j1:j2]</code> 应插入到 <code>a[i1:i1]</code>。 请注意在此情况下 <code>i1 == i2</code>。</td>
+</tr>
+<tr>
+<td><code>&#39;equal&#39;</code></td>
+<td><code>a[i1:i2] == b[j1:j2]</code> (两个子序列相同)。</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>代码如下：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs stylus">&gt;&gt;&gt; <span class="hljs-selector-tag">a</span> = <span class="hljs-string">&quot;qabxcd&quot;</span><br>&gt;&gt;&gt; <span class="hljs-selector-tag">b</span> = <span class="hljs-string">&quot;abycdf&quot;</span><br>&gt;&gt;&gt; s = <span class="hljs-built_in">SequenceMatcher</span>(None, <span class="hljs-selector-tag">a</span>, b)<br>&gt;&gt;&gt; <span class="hljs-keyword">for</span> tag, i1, i2, j1, j2 <span class="hljs-keyword">in</span> s<span class="hljs-selector-class">.get_opcodes</span>():<br>...     <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;&#123;:7&#125;   a[&#123;&#125;:&#123;&#125;] --&gt; b[&#123;&#125;:&#123;&#125;] &#123;!r:&gt;8&#125; --&gt; &#123;!r&#125;&#x27;</span><span class="hljs-selector-class">.format</span>(<br>...         tag, i1, i2, j1, j2, <span class="hljs-selector-tag">a</span><span class="hljs-selector-attr">[i1:i2]</span>, <span class="hljs-selector-tag">b</span><span class="hljs-selector-attr">[j1:j2]</span>))<br>delete    <span class="hljs-selector-tag">a</span><span class="hljs-selector-attr">[0:1]</span> --&gt; <span class="hljs-selector-tag">b</span><span class="hljs-selector-attr">[0:0]</span>      <span class="hljs-string">&#x27;q&#x27;</span> --&gt; <span class="hljs-string">&#x27;&#x27;</span><br>equal     <span class="hljs-selector-tag">a</span><span class="hljs-selector-attr">[1:3]</span> --&gt; <span class="hljs-selector-tag">b</span><span class="hljs-selector-attr">[0:2]</span>     <span class="hljs-string">&#x27;ab&#x27;</span> --&gt; <span class="hljs-string">&#x27;ab&#x27;</span><br>replace   <span class="hljs-selector-tag">a</span><span class="hljs-selector-attr">[3:4]</span> --&gt; <span class="hljs-selector-tag">b</span><span class="hljs-selector-attr">[2:3]</span>      <span class="hljs-string">&#x27;x&#x27;</span> --&gt; <span class="hljs-string">&#x27;y&#x27;</span><br>equal     <span class="hljs-selector-tag">a</span><span class="hljs-selector-attr">[4:6]</span> --&gt; <span class="hljs-selector-tag">b</span><span class="hljs-selector-attr">[3:5]</span>     <span class="hljs-string">&#x27;cd&#x27;</span> --&gt; <span class="hljs-string">&#x27;cd&#x27;</span><br>insert    <span class="hljs-selector-tag">a</span><span class="hljs-selector-attr">[6:6]</span> --&gt; <span class="hljs-selector-tag">b</span><span class="hljs-selector-attr">[5:6]</span>       <span class="hljs-string">&#x27;&#x27;</span> --&gt; <span class="hljs-string">&#x27;f&#x27;</span><br></code></pre></td></tr></table></figure>
+<ul>
+<li><code>ratio</code>()</li>
+</ul>
+<p>返回一个取值范围 [0, 1] 的浮点数作为序列相似性度量。</p>
+<p>其中 T 是两个序列中元素的总数量，M 是匹配的数量，即 2.0*M / T。 请注意如果两个序列完全相同则该值为 <code>1.0</code>，如果两者完全不同则为 <code>0.0</code>。</p>
+<p>如果 <code>get_matching_blocks()</code> 或 <code>get_opcodes()</code> 尚未被调用则此方法运算消耗较大，在此情况下你可能需要先调用 <code>quick_ratio()</code> 或 <code>real_quick_ratio()</code> 来获取一个上界。</p>
+<figure class="highlight python-repl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python-repl"><span class="hljs-meta prompt_">&gt;&gt;&gt;</span> <span class="language-python">s = difflib.SequenceMatcher(<span class="hljs-literal">None</span>, <span class="hljs-string">&#x27;abcd&#x27;</span>, <span class="hljs-string">&#x27;bcde&#x27;</span>)</span><br><span class="hljs-meta prompt_">&gt;&gt;&gt;</span> <span class="language-python">s.ratio()</span><br>0.75<br><span class="hljs-meta prompt_">&gt;&gt;&gt;</span> <span class="language-python">s.quick_ratio()</span><br>0.75<br></code></pre></td></tr></table></figure>
+<h3 id="Differ-对象"><a href="#Differ-对象" class="headerlink" title="Differ 对象"></a>Differ 对象</h3><p>这个类的作用是比较由文本行组成的序列，并产生可供人阅读的差异或增量信息。 Differ 统一使用 SequenceMatcher 来完成行序列的比较以及相似（接近匹配）行内部字符序列的比较。</p>
+<p><code>Differ</code> 类具有这样的构造器：</p>
+<ul>
+<li><p>_class_ <code>difflib.``Differ</code>(_linejunk=None_, _charjunk=None_)</p>
+<p>可选关键字形参 _linejunk_ 和 _charjunk_ 均为过滤函数 (或为 <code>None</code>)： </p>
+</li>
+</ul>
+<p><code>Differ</code> 对象是通过一个单独方法来使用（生成增量）的：</p>
+<ul>
+<li><p>compare(a, b)</p>
+<p>比较两个由行组成的序列，并生成增量（一个由行组成的序列）。<br>每个序列必须包含一个以换行符结尾的单行字符串。 这样的序列可以通过文件类对象的 readlines() 方法来获取。 所生成的增量同样由以换行符结尾的字符串构成，可以通过文件类对象的 writelines() 方法原样打印出来。 </p>
+</li>
+</ul>
+<h2 id="fuzzywuzzy"><a href="#fuzzywuzzy" class="headerlink" title="fuzzywuzzy"></a>fuzzywuzzy</h2><blockquote>
+<p>FuzzyWuzzy 是一个简单易用的模糊字符串匹配工具包。它依据 Levenshtein Distance 算法 计算两个序列之间的差异。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/seatgeek/fuzzywuzzy、">https://github.com/seatgeek/fuzzywuzzy、</a></p>
+</blockquote>
+<p>导入库</p>
+<figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs angelscript"><span class="hljs-keyword">from</span> fuzzywuzzy <span class="hljs-keyword">import</span> fuzz<br><span class="hljs-keyword">from</span> fuzzywuzzy <span class="hljs-keyword">import</span> process<br></code></pre></td></tr></table></figure>
+<p>简单匹配</p>
+<figure class="highlight python-repl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs python-repl"><span class="hljs-meta prompt_">&gt;&gt;&gt;</span> <span class="language-python">fuzz.ratio(<span class="hljs-string">&quot;this is a test&quot;</span>, <span class="hljs-string">&quot;this is a test!&quot;</span>)</span><br>    97<br></code></pre></td></tr></table></figure>
+<p>非完全匹配</p>
+<figure class="highlight python-repl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs python-repl"><span class="hljs-meta prompt_">&gt;&gt;&gt;</span> <span class="language-python">fuzz.partial_ratio(<span class="hljs-string">&quot;this is a test&quot;</span>, <span class="hljs-string">&quot;this is a test!&quot;</span>)</span><br>    100<br></code></pre></td></tr></table></figure>
+<p>忽略顺序匹配</p>
+<figure class="highlight python-repl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs python-repl"><span class="hljs-meta prompt_">&gt;&gt;&gt;</span> <span class="language-python">fuzz.ratio(<span class="hljs-string">&quot;fuzzy wuzzy was a bear&quot;</span>, <span class="hljs-string">&quot;wuzzy fuzzy was a bear&quot;</span>)</span><br>    91<br><span class="hljs-meta prompt_">&gt;&gt;&gt;</span> <span class="language-python">fuzz.token_sort_ratio(<span class="hljs-string">&quot;fuzzy wuzzy was a bear&quot;</span>, <span class="hljs-string">&quot;wuzzy fuzzy was a bear&quot;</span>)</span><br>    100<br></code></pre></td></tr></table></figure>
+<p>去重子集匹配</p>
+<figure class="highlight python-repl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs python-repl"><span class="hljs-meta prompt_">&gt;&gt;&gt;</span> <span class="language-python">fuzz.token_sort_ratio(<span class="hljs-string">&quot;fuzzy was a bear&quot;</span>, <span class="hljs-string">&quot;fuzzy fuzzy was a bear&quot;</span>)</span><br>    84<br><span class="hljs-meta prompt_">&gt;&gt;&gt;</span> <span class="language-python">fuzz.token_set_ratio(<span class="hljs-string">&quot;fuzzy was a bear&quot;</span>, <span class="hljs-string">&quot;fuzzy fuzzy was a bear&quot;</span>)</span><br>    100<br></code></pre></td></tr></table></figure>
+<p>Process返回模糊匹配的字符串和相似度</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs stylus">&gt;&gt;&gt; choices = <span class="hljs-selector-attr">[<span class="hljs-string">&quot;Atlanta Falcons&quot;</span>, <span class="hljs-string">&quot;New York Jets&quot;</span>, <span class="hljs-string">&quot;New York Giants&quot;</span>, <span class="hljs-string">&quot;Dallas Cowboys&quot;</span>]</span><br>&gt;&gt;&gt; process<span class="hljs-selector-class">.extract</span>(<span class="hljs-string">&quot;new york jets&quot;</span>, choices, limit=<span class="hljs-number">2</span>)<br>    <span class="hljs-selector-attr">[(<span class="hljs-string">&#x27;New York Jets&#x27;</span>, 100), (<span class="hljs-string">&#x27;New York Giants&#x27;</span>, 78)]</span><br>&gt;&gt;&gt; process<span class="hljs-selector-class">.extractOne</span>(<span class="hljs-string">&quot;cowboys&quot;</span>, choices)<br>    (<span class="hljs-string">&quot;Dallas Cowboys&quot;</span>, <span class="hljs-number">90</span>)<br></code></pre></td></tr></table></figure>
+<p>可以传入附加参数到 extractOne 方法来设置使用特定的匹配模式，一个典型的用法是来匹配文件路径</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs reasonml">&gt;&gt;&gt; process.extract<span class="hljs-constructor">One(<span class="hljs-string">&quot;System of a down - Hypnotize - Heroin&quot;</span>, <span class="hljs-params">songs</span>)</span><br>    (&#x27;/music/library/good/System <span class="hljs-keyword">of</span> a Down/<span class="hljs-number">2005</span> - Hypnotize/<span class="hljs-number">01</span> - <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">Attack</span>.</span></span>mp3&#x27;, <span class="hljs-number">86</span>)<br>&gt;&gt;&gt; process.extract<span class="hljs-constructor">One(<span class="hljs-string">&quot;System of a down - Hypnotize - Heroin&quot;</span>, <span class="hljs-params">songs</span>, <span class="hljs-params">scorer</span>=<span class="hljs-params">fuzz</span>.<span class="hljs-params">token_sort_ratio</span>)</span><br>    (<span class="hljs-string">&quot;/music/library/good/System of a Down/2005 - Hypnotize/10 - She&#x27;s Like Heroin.mp3&quot;</span>, <span class="hljs-number">61</span>)<br></code></pre></td></tr></table></figure>
+<h2 id="strsimpy"><a href="#strsimpy" class="headerlink" title="strsimpy"></a>strsimpy</h2><p>这是一个用于计算各种字符串距离的包。其使用方法如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> strsimpy.levenshtein <span class="hljs-keyword">import</span> Levenshtein<br>levenshtein = Levenshtein()<br><span class="hljs-built_in">print</span>(levenshtein.distance(<span class="hljs-string">&#x27;My string&#x27;</span>, <span class="hljs-string">&#x27;My $string&#x27;</span>))<br><br><br><span class="hljs-keyword">from</span> strsimpy.normalized_levenshtein <span class="hljs-keyword">import</span> NormalizedLevenshtein<br>normalized_levenshtein = NormalizedLevenshtein()<br><span class="hljs-built_in">print</span>(normalized_levenshtein.distance(<span class="hljs-string">&#x27;My string&#x27;</span>, <span class="hljs-string">&#x27;My $string&#x27;</span>))<br><span class="hljs-built_in">print</span>(normalized_levenshtein.similarity(<span class="hljs-string">&#x27;My string&#x27;</span>, <span class="hljs-string">&#x27;My $string&#x27;</span>))<br><br><br><span class="hljs-comment"># 带权重的编辑距离</span><br><span class="hljs-keyword">from</span> strsimpy.weighted_levenshtein <span class="hljs-keyword">import</span> WeightedLevenshtein<br><span class="hljs-keyword">from</span> strsimpy.weighted_levenshtein <span class="hljs-keyword">import</span> CharacterSubstitutionInterface<br><span class="hljs-keyword">class</span> <span class="hljs-title class_">CharacterSubstitution</span>(<span class="hljs-title class_ inherited__">CharacterSubstitutionInterface</span>):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">cost</span>(<span class="hljs-params">self, c0, c1</span>):<br>        <span class="hljs-keyword">if</span> c0==<span class="hljs-string">&#x27;t&#x27;</span> <span class="hljs-keyword">and</span> c1==<span class="hljs-string">&#x27;r&#x27;</span>:<br>            <span class="hljs-keyword">return</span> <span class="hljs-number">0.5</span><br>        <span class="hljs-keyword">return</span> <span class="hljs-number">1.0</span><br>weighted_levenshtein = WeightedLevenshtein(CharacterSubstitution())<br><span class="hljs-built_in">print</span>(weighted_levenshtein.distance(<span class="hljs-string">&#x27;String1&#x27;</span>, <span class="hljs-string">&#x27;String2&#x27;</span>))<br><br><br><span class="hljs-keyword">from</span> strsimpy.damerau <span class="hljs-keyword">import</span> Damerau<br>damerau = Damerau()<br><span class="hljs-built_in">print</span>(damerau.distance(<span class="hljs-string">&#x27;ABCDEF&#x27;</span>, <span class="hljs-string">&#x27;ABDCEF&#x27;</span>))<br><br><br><span class="hljs-comment"># 最优化对齐后的编辑距离</span><br><span class="hljs-keyword">from</span> strsimpy.optimal_string_alignment <span class="hljs-keyword">import</span> OptimalStringAlignment<br>optimal_string_alignment = OptimalStringAlignment()<br><span class="hljs-built_in">print</span>(optimal_string_alignment.distance(<span class="hljs-string">&#x27;CA&#x27;</span>, <span class="hljs-string">&#x27;ABC&#x27;</span>))<br><br><br><span class="hljs-keyword">from</span> strsimpy.jaro_winkler <span class="hljs-keyword">import</span> JaroWinkler<br>jarowinkler = JaroWinkler()<br><span class="hljs-built_in">print</span>(jarowinkler.similarity(<span class="hljs-string">&#x27;My string&#x27;</span>, <span class="hljs-string">&#x27;My tsring&#x27;</span>))<br><br><br><span class="hljs-comment"># 最长公共子序列</span><br><span class="hljs-keyword">from</span> strsimpy.longest_common_subsequence <span class="hljs-keyword">import</span> LongestCommonSubsequence<br>lcs = LongestCommonSubsequence()<br><span class="hljs-built_in">print</span>(lcs.distance(<span class="hljs-string">&#x27;AGCAT&#x27;</span>, <span class="hljs-string">&#x27;GAC&#x27;</span>))<br><br><br><span class="hljs-keyword">from</span> strsimpy.metric_lcs <span class="hljs-keyword">import</span> MetricLCS<br>metric_lcs = MetricLCS()<br>s1 = <span class="hljs-string">&#x27;ABCDEFG&#x27;</span><br>s2 = <span class="hljs-string">&#x27;ABCDEFHJKL&#x27;</span><br><span class="hljs-built_in">print</span>(metric_lcs.distance(s1, s2))<br><br><br><span class="hljs-comment"># ngram</span><br><span class="hljs-keyword">from</span> strsimpy.ngram <span class="hljs-keyword">import</span> NGram<br>twogram = NGram(<span class="hljs-number">2</span>)<br><span class="hljs-built_in">print</span>(twogram.distance(<span class="hljs-string">&#x27;ABCD&#x27;</span>, <span class="hljs-string">&#x27;ABTUIO&#x27;</span>))<br>s1 = <span class="hljs-string">&#x27;Adobe CreativeSuite 5 Master Collection from cheap 4zp&#x27;</span><br>s2 = <span class="hljs-string">&#x27;Adobe CreativeSuite 5 Master Collection from cheap d1x&#x27;</span><br>fourgram = NGram(<span class="hljs-number">4</span>)<br><span class="hljs-built_in">print</span>(fourgram.distance(s1, s2))<br><br><br><span class="hljs-keyword">from</span> strsimpy.qgram <span class="hljs-keyword">import</span> QGram<br>qgram = QGram(<span class="hljs-number">2</span>)<br><span class="hljs-built_in">print</span>(qgram.distance(<span class="hljs-string">&#x27;ABCD&#x27;</span>, <span class="hljs-string">&#x27;ABCE&#x27;</span>))<br><br><br><span class="hljs-keyword">from</span> strsimpy.cosine <span class="hljs-keyword">import</span> Cosine<br>cosine = Cosine(<span class="hljs-number">2</span>)<br>s0 = <span class="hljs-string">&#x27;My first string&#x27;</span><br>s1 = <span class="hljs-string">&#x27;My other string...&#x27;</span><br>p0 = cosine.get_profile(s0)<br>p1 = cosine.get_profile(s1)<br><span class="hljs-built_in">print</span>(cosine.similarity_profiles<br></code></pre></td></tr></table></figure>
+<h2 id="Fast-Fuzzy-Matching"><a href="#Fast-Fuzzy-Matching" class="headerlink" title="Fast Fuzzy Matching"></a>Fast Fuzzy Matching</h2><blockquote>
+<p>通过 ngram 寻找紧密匹配的对象。这种查找紧密匹配的方法不仅应该非常有效，而且还可以通过其对整个数据中不太常见的字符组更加重视的能力来产生高质量的匹配项。</p>
+</blockquote>
+<p>使用字符串相似性度量，例如<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Jaro%E2%80%93Winkler_distance">Jaro-Winkler</a>或<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Levenshtein_distance">Levenshtein</a>距离度量，存在着一个明显的问题，就是所需的计算量呈二次方增长（必须将每个条目与数据集中的每个其他条目进行比较）。该方法最大的优势是速度，使用 TF-IDF、N-Grams 和稀疏矩阵乘法更快地完成模糊匹配！</p>
+<p>示例代码：</p>
+<p><a target="_blank" rel="noopener" href="https://bergvca.github.io/2017/10/14/super-fast-string-matching.html">https://bergvca.github.io/2017/10/14/super-fast-string-matching.html</a></p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/112488614">字符串模糊匹配的方法都有哪些</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%A8%A1%E7%B3%8A%E5%8C%B9%E9%85%8D/">#字符串模糊匹配</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>字符串模糊匹配指南</div>
+      <div>http://example.com/2020/03/31/2020-03-31-字符串模糊匹配方法/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>NSX</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2020年3月31日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/03/31/2020-03-31-Trie%20%E6%A0%91%E5%AE%9E%E7%8E%B0%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E%E8%87%AA%E5%8A%A8%E8%81%94%E6%83%B3/" title="Trie 树">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Trie 树</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/03/31/2020-03-31-%E6%A8%A1%E5%BC%8F%E5%8C%B9%E9%85%8D%E6%8A%80%E6%9C%AF%E6%80%BB%E7%BB%93%EF%BC%88AC%E8%87%AA%E5%8A%A8%E6%9C%BA%EF%BC%89/" title="模式匹配技术总结（AC自动机）">
+                        <span class="hidden-mobile">模式匹配技术总结（AC自动机）</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

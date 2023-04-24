@@ -1,0 +1,878 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="NSX">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="NL2SQLNL2SQL任务NL2SQL(Natural Language to SQL)， 顾名思义，是一项将自然语言转为可执行 SQL 语句的技术。它可以充当数据库的智能接口，让不熟悉数据库的用户能够快速地找到自己想要的数据，对改善用户与数据库之间的交互方式有很大意义。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NL2SQL">
+<meta property="og:url" content="http://example.com/2019/12/30/2019-12-30-NL2SQL/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="NL2SQLNL2SQL任务NL2SQL(Natural Language to SQL)， 顾名思义，是一项将自然语言转为可执行 SQL 语句的技术。它可以充当数据库的智能接口，让不熟悉数据库的用户能够快速地找到自己想要的数据，对改善用户与数据库之间的交互方式有很大意义。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/2019102321315989.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0RyZWFtX2FuZ2VsX1o=,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/uYIC4meJTZ1ibzoXCwJRS7QlR6Utmb5GIbKs1btFoLdpu8f154fwNGcke8pp0QrPf8ZI7CR4icx9jBhx87McxaicA/640?wx_fmt=png&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/uYIC4meJTZ1ibzoXCwJRS7QlR6Utmb5GIiaMiaicoul62bjz1ibBrT2xOYu7NlDFamXo2RMZOVbNVQCjBzIxzSWk0cg/640?wx_fmt=png&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/uYIC4meJTZ1ibzoXCwJRS7QlR6Utmb5GIkdvyInbQBPUGPo6ic2XK3bNAkxDPYic0GOymw1WaJicAtJzd7IetPvNJg/640?wx_fmt=png&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/uYIC4meJTZ1ibzoXCwJRS7QlR6Utmb5GIRLdl9FQx3ibetkR5lYYX3xf6yCiaNmvoassJmlPqQ1w2br3nz2LX2Kag/640?wx_fmt=png&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/uYIC4meJTZ1ibzoXCwJRS7QlR6Utmb5GIukaiagjDUITXkw6gxMbHDgK0J394VQPZrfzcsmrpsX2ZIJj8WoPiaOvA/640?wx_fmt=png&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/uYIC4meJTZ1ibzoXCwJRS7QlR6Utmb5GIVMyEAficegvnicoGtJJtwO7gnGH5E1tF8qQ9CTTsYaYIl7MMDkQ7crzA/640?wx_fmt=png&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/%E5%9B%BE%E7%89%870.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/%E5%9B%BE%E7%89%871.5.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/%E5%9B%BE%E7%89%871.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/%E5%9B%BE%E7%89%872.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/%E5%9B%BE%E7%89%873.jpg">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/%E5%9B%BE%E7%89%874.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/%E5%9B%BE%E7%89%875.png">
+<meta property="og:image" content="https://tianchi-public.oss-cn-hangzhou.aliyuncs.com/public/files/forum/157129841401120721571298414104.png">
+<meta property="og:image" content="https://github.com/beader/tianchi_nl2sql/raw/master/imgs/label.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/%E5%9B%BE%E7%89%876.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/%E5%9B%BE%E7%89%877.png">
+<meta property="article:published_time" content="2019-12-29T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-23T10:28:32.043Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="教程">
+<meta property="article:tag" content="技术">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/2019102321315989.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0RyZWFtX2FuZ2VsX1o=,size_16,color_FFFFFF,t_70">
+  
+  
+  
+  <title>NL2SQL - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="自然语言转换成SQL查询"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2019-12-30 00:00" pubdate>
+          2019年12月30日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          7.3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          61 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">自然语言转换成SQL查询</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="NL2SQL"><a href="#NL2SQL" class="headerlink" title="NL2SQL"></a>NL2SQL</h1><h2 id="NL2SQL任务"><a href="#NL2SQL任务" class="headerlink" title="NL2SQL任务"></a>NL2SQL任务</h2><p>NL2SQL(Natural Language to SQL)， 顾名思义，是一项将自然语言转为可执行 SQL 语句的技术。它可以充当数据库的智能接口，让不熟悉数据库的用户能够快速地找到自己想要的数据，对改善用户与数据库之间的交互方式有很大意义。 </p>
+<span id="more"></span>
+<h2 id="NL2SQL-的价值"><a href="#NL2SQL-的价值" class="headerlink" title="NL2SQL 的价值"></a>NL2SQL 的价值</h2><p>当前，大量信息存储在结构化和半结构化知识库中，如数据库。对于这类数据的分析和获取需要通过SQL等编程语言与数据库进行交互操作，SQL的使用难度限制了非技术用户，给数据分析和使用带来了较高的门槛。人们迫切需要技术或工具完成自然语言与数据库的交互，因此诞生了Text-to-SQL任务。NL2SQL图示如下：</p>
+<p><img src="https://img-blog.csdnimg.cn/2019102321315989.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0RyZWFtX2FuZ2VsX1o=,size_16,color_FFFFFF,t_70" srcset="/img/loading.gif" lazyload alt=""></p>
+<p>我们通过图1中的实例来介绍一下Text-to-SQL任务。该任务包含两部分：<strong>Text-to-SQL解析器和SQL执行器</strong>。</p>
+<p>解析器的输入是给定的数据库和针对该数据库的问题，输出是问题对应的SQL查询语句，如图中红色箭头标示。SQL执行器在数据库上完成该查询语句的执行，及给出问题的最终答案，如图中绿色箭头标示。</p>
+<p>SQL执行器有很多成熟的系统，如MySQL，SQLite等，该部分不是本文重点。本文主要介绍解析器，学术界中Text-to-SQL任务默认为Text-to-SQL解析模型。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/uYIC4meJTZ1ibzoXCwJRS7QlR6Utmb5GIbKs1btFoLdpu8f154fwNGcke8pp0QrPf8ZI7CR4icx9jBhx87McxaicA/640?wx_fmt=png&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>根据SQL的构成，解析器需要完成两个任务，即“<strong>问题与数据库的映射</strong>”和“<strong>SQL生成</strong>”。</p>
+<p>在问题与数据库的映射中，需要找出问题依赖的表格以及具体的列，如图1实例中，问题“绿化率前5的城市有哪些，分别隶属于哪些省？”依赖的数据库内容包括：表格“中国城市”，具体的列“名称”、“所属省”、“绿化率”（SQL查询语句蓝色标注成分）。</p>
+<p>在SQL生成中，结合第一步识别结果以及问题包含信息，生成满足语法的SQL查询语句，如实例中的“Select 名称,所属省 From 中国城市 Where 绿化率 &gt; 30%”。</p>
+<h2 id="Text-to-SQL研究进展"><a href="#Text-to-SQL研究进展" class="headerlink" title="Text-to-SQL研究进展"></a>Text-to-SQL研究进展</h2><p>我们接下来将从<strong>相关数据集</strong>和<strong>模型</strong>两方面介绍该技术的研究进展。</p>
+<h3 id="1、数据集介绍"><a href="#1、数据集介绍" class="headerlink" title="1、数据集介绍"></a>1、数据集介绍</h3><p>图2给出了Text-to-SQL数据集发展趋势，代表数据集参见表1。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/uYIC4meJTZ1ibzoXCwJRS7QlR6Utmb5GIiaMiaicoul62bjz1ibBrT2xOYu7NlDFamXo2RMZOVbNVQCjBzIxzSWk0cg/640?wx_fmt=png&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>目前，NL2SQL 方向已经有 WikiSQL、Spider、WikiTableQuestions、ATIS 等诸多公开数据集，如图所示：</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/uYIC4meJTZ1ibzoXCwJRS7QlR6Utmb5GIkdvyInbQBPUGPo6ic2XK3bNAkxDPYic0GOymw1WaJicAtJzd7IetPvNJg/640?wx_fmt=png&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>不同数据集都有各自的特点，这里简单介绍一下这四个数据集:</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/salesforce/WikiSQL">WikiSQL</a>：该数据集是Salesforce在2017年提出的大型标注NL2SQL数据集，也是目前规模最大的NL2SQL数据集。它包含了 24,241张表，80,645条自然语言问句及相应的SQL语句。目前学术界的预测准确率可达91.8%。 </li>
+<li><a target="_blank" rel="noopener" href="https://yale-lily.github.io/spider">Spider</a>：Spider数据集是耶鲁大学于2018年新提出的一个较大规模的NL2SQL数据集。该数据集包含了10,181条自然语言问句，分布在200个独立数据库中的5,693条SQL，内容覆盖了138个不同的领域。虽然在数据数量上不如WikiSQL，但Spider引入了更多的SQL用法，例如Group By、Order By、Having等高阶操作，甚至需要Join不同表，更贴近真实场景，所以难度也更大。目前准确率最高只有54.7%</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/ppasupat/WikiTableQuestions">WikiTableQuestions</a> 是斯坦福大学于 2015 年提出的一个针对维基百科中那些半结构化表格问答的数据集，包含了 22,033 条真实问句以及 2,108 张表格。 </li>
+<li><a target="_blank" rel="noopener" href="https://www.kaggle.com/siddhadev/ms-cntk-atis">The Air Travel Information System (ATIS)</a> 是一个年代较为久远的经典数据集，由德克萨斯仪器公司在 1990 年提出。该数据集获取自关系型数据库 Official Airline Guide (OAG, 1990)，包含 27 张表以及不到 2,000 次的问询，每次问询平均 7 轮，93% 的情况下需要联合 3 张以上的表才能得到答案，问询的内容涵盖了航班、费用、城市、地面服务等信息。 </li>
+<li>中文数据集目前只有追一科技在天池发布的比赛数据集，包括4万条有标签数据作为训练集，1万条无标签数据作为测试集。目前比赛第一名的成绩，准确率达到了92%。 </li>
+</ul>
+<h3 id="2、模型介绍"><a href="#2、模型介绍" class="headerlink" title="2、模型介绍"></a>2、模型介绍</h3><p>SQL查询语句是一个符合语法、有逻辑结构的序列，其构成来自三部分：<strong>数据库、问题、SQL关键词</strong>。</p>
+<p>在当前深度学习研究背景下，Text-to-SQL任务可被看作是一个类似于神经机器翻译的序列到序列的生成任务，主要采用Seq2Seq模型框架。基线Seq2Seq模型加入注意力、拷贝等机制后，在单领域数据集上可以达到80%以上的准确率，但在多领域数据集上效果很差，准确率均低于25%。</p>
+<p>从<strong>编码</strong>和<strong>解码</strong>两个方面进行原因分析：</p>
+<ul>
+<li><p>在编码阶段，问题与数据库之间需要形成很好的对齐或映射关系，即问题中涉及了哪些表格中的哪些元素（包含列名和表格元素值）；同时，问题与SQL语法也需要进行映射，即问题中词语触发了哪些关键词操作（如Group、Order、Select、Where等）、聚合操作（如Min、Max、Count等）等；最后，问题表达的逻辑结构需要表示并反馈到生成的SQL查询语句上，逻辑结构包括嵌套、多子句等。</p>
+</li>
+<li><p>在解码阶段，SQL语言是一种有逻辑结构的语言，需要保证其语法合理性和可执行性。普通的Seq2Seq框架并不具备建模这些信息的能力。</p>
+</li>
+</ul>
+<p>当前基于Seq2Seq框架，主要有以下几种改进：</p>
+<p>1）基于Pointer Network的改进</p>
+<p>首先，SQL组成来自三部分：<strong>数据库中元素</strong>（如表名、列名、表格元素值）、<strong>问题中词汇</strong>、 <strong>SQL关键字</strong>。其次，当前公开的多领域数据集为了验证模型数据库无关，在划分训练集和测试集时要求数据库无交叉，这种划分方式导致测试集数据库中很大比例的元素属于未登录词。传统的Seq2Seq模型是解决不好这类问题的。</p>
+<p>Pointer Network很好地解决了这一问题，其输出所用到的词表是随输入而变化的。具体做法是利用注意力机制，直接从输入序列中选取单词作为输出。在Text-to-SQL任务中，将问题中词汇、SQL关键词、对应数据库的所有元素作为输入序列，利用Pointer Network从输入序列中拷贝单词作为最终生成SQL的组成元素。</p>
+<p>由于Pointer Network可以较好的满足具体数据库无关这一要求，在多领域数据集上的模型大多使用该网络，如Seq2SQL[1]、STAMP[8]、Coarse2Fine[9] 、IRNet[16]等模型。</p>
+<p>2）基于Sequence-to-set的改进</p>
+<p>在简单问题对应的数据集合上，其SQL查询语句形式简单（仅包含Select和Where关键词），为了解决Seq2Seq模型中顺序错误带来的影响（如“条件1 And 条件2”，预测为“条件2 And 条件1”，属于顺序错误，但对应的SQL是正确的），SQLNet[10]提出了Sequence-to-set模型，基于所有的列预测其属于哪个关键词（即属于Select还是Where，在SQLNet模型中仅预测是否属于Where），针对SQL 中每一个关键词选择概率最高的前K个列。</p>
+<p>该模式适用于SQL形式简单的数据集，在WikiSQL和NL2SQL这两个数据集合上使用较多，且衍生出很多相关模型，如TypeSQL[11]、SQLova[12]、X-SQL[13]等。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/uYIC4meJTZ1ibzoXCwJRS7QlR6Utmb5GIRLdl9FQx3ibetkR5lYYX3xf6yCiaNmvoassJmlPqQ1w2br3nz2LX2Kag/640?wx_fmt=png&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" srcset="/img/loading.gif" lazyload alt="img"></p>
+<h3 id="3、评价方法"><a href="#3、评价方法" class="headerlink" title="3、评价方法"></a>3、评价方法</h3><p>Text-to-SQL任务的评价方法主要包含两种：<strong>精确匹配率</strong>（Exact Match, Accqm）、<strong>执行正确率</strong>（Execution Accuracy, Accex）。</p>
+<p>精确匹配率指,预测得到的SQL语句与标准SQL语句精确匹配成功的问题占比。为了处理由成分顺序带来的匹配错误，当前精确匹配评估将预测的SQL语句和标准SQL语句按着SQL关键词分成多个子句，每个子句中的成分表示为集合，当两个子句对应的集合相同则两个子句相同，当两个SQL所有子句相同则两个SQL精确匹配成功；</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/uYIC4meJTZ1ibzoXCwJRS7QlR6Utmb5GIukaiagjDUITXkw6gxMbHDgK0J394VQPZrfzcsmrpsX2ZIJj8WoPiaOvA/640?wx_fmt=png&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>执行正确指，执行预测的SQL语句，数据库返回正确答案的问题占比。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/uYIC4meJTZ1ibzoXCwJRS7QlR6Utmb5GIVMyEAficegvnicoGtJJtwO7gnGH5E1tF8qQ9CTTsYaYIl7MMDkQ7crzA/640?wx_fmt=png&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>目前仅WikiSQL数据集支持Acc<em>ex</em>，其他数据集仅支持Accqm。大部分数据集发布了对应的评估脚本，方便大家在同一个评估标准下进行算法研究。</p>
+<h3 id="4、NL2SQL实现简述"><a href="#4、NL2SQL实现简述" class="headerlink" title="4、NL2SQL实现简述"></a>4、NL2SQL实现简述</h3><p>NL2SQL的基本思路是打造一条从自然语言到SQL的转换链路，多采用的是语义解析和规则的方式构建NL2SQL系统，其架构大体如下：</p>
+<p><img src="https://ningshixian.github.io/resources/images/图片0.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<ol>
+<li>用户UI：用户交互界面，包括问句自动提示、可视化选择等功能。</li>
+<li>Storage：Storage是数据存储中心，包括了Knowledge Graph、Intent words以及database schema信息。同时也会将用户的搜索log存储起来。</li>
+<li>Parser：主要负责对user query进行parsing，包括了annotator(字符串匹配+NER+意图识别等一系列操作)、grammar（语法检测）、semantic predict（语义预测）、ranking（评分排序）。这部分会调用借助图谱来提高实体和关系识别精度。</li>
+<li>Answering Engine：用于将语义解析的结果转换成SQL，包括表识别、查询语句生成器等，最终将结果（数据、可视化结果、SQL等）返回给user。</li>
+</ol>
+<h2 id="XSQL"><a href="#XSQL" class="headerlink" title="XSQL"></a>XSQL</h2><ul>
+<li><strong>论文地址： <a target="_blank" rel="noopener" href="https://arxiv.org/pdf/1908.08113">https://arxiv.org/pdf/1908.08113</a></strong> </li>
+<li>X-SQL 的 Query Structure</li>
+</ul>
+<p><img src="https://ningshixian.github.io/resources/images/图片1.5.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<ul>
+<li>X-SQL是微软提出的NL2SQL模型，参考了SQLNet、SQLova等模型的思路.</li>
+<li>X-SQL 的模型架构分为三层 (如下所示)：<ul>
+<li>Encoder: 首先使用 bert 风格的预训练模型（MT-DNN） 对 Question 和 SQL 表格进行编码和特征提取， 得到上下文输出来增强结构模式表示，并结合类型信息;</li>
+<li>Context Reinforcing Layer:  该结构用于增强在 equence Encoder （序列编码器）得到的 H_[CTX]， 从而得到增强的语义表示 HCi ；</li>
+<li>Output Layer:  输出层完成 SQL 语句的生成，我们将其分为 6 个子任务（select-column, select-aggregation, where-number, where-column, where-operator, and where-value），这六个任务彼此之间相互结合，彼此制约。 </li>
+</ul>
+</li>
+</ul>
+<p><img src="https://ningshixian.github.io/resources/images/图片1.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<h3 id="X-SQL模型—Encoder"><a href="#X-SQL模型—Encoder" class="headerlink" title="X-SQL模型—Encoder"></a>X-SQL模型—Encoder</h3><p>X-SQL使用了一个BERT-Like模型MT-DNN作为Token Sequence Encoder，同时进行以下修改：</p>
+<ul>
+<li>引入了一个特殊空列<code>[EMPTY]</code>的概念，并将其追加到每个Table Schema后面；</li>
+<li>BERT中的<code>Segment Embedding</code>被替换为<code>Type Embedding</code>，包括：Question 、Categorial Column、Numerical Column、Special Empty Column 这四种类型；</li>
+<li>此外，单纯地将标志位<code>[CLS]</code>重命名为<code>[CTX]</code></li>
+</ul>
+<p><img src="https://ningshixian.github.io/resources/images/图片2.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<h4 id="X-SQL模型—Context-Reinforcing-Layer"><a href="#X-SQL模型—Context-Reinforcing-Layer" class="headerlink" title="X-SQL模型—Context Reinforcing Layer"></a>X-SQL模型—Context Reinforcing Layer</h4><ul>
+<li>对上一层Encoder的输出 H_[CTX] 进一步“强化”，从而为表的每一列学习新的表示h_Ci</li>
+<li>这种强化体现在两方面：<ul>
+<li>由于Column Tokens的输出长短不一，所以需要对Column Embeddings进行“调整”；</li>
+<li>此外为了加强Context的影响，在Alignment Model中会使用到Context Embedding的信息；</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://ningshixian.github.io/resources/images/图片3.jpg" srcset="/img/loading.gif" lazyload alt=""></p>
+<p>通过这种方式可以捕获到哪一个查询词与哪一列最相关，从而得到增强的语义表示 HCi 。它的计算过程如下所示： </p>
+<script type="math/tex; mode=display">
+s_{it}=f(Uh_{[CTX]}/\sqrt{d},Vh_{C_{it}}/\sqrt{d})</script><script type="math/tex; mode=display">
+a_{it}=softmax(s_{it})</script><script type="math/tex; mode=display">
+h_{C_i}=\sum_{t=1}^{n_i}{a_{it}}{h_{C_{it}}}</script><p>其中，$f$只是普通的点乘 (dot-product) 操作。最后，针对每一列 (schema representation h_Ci)，独立的使用下面的子网络结构得到使用融合 h_Ci 和 hctx 的 <code>rCi</code>，公式如下所示：</p>
+<script type="math/tex; mode=display">
+r_{C_{i}}=LayerNorm(U^`h_{[CTX]}+V^`h_{C_{i}})</script><h4 id="X-SQL模型—Output-Layer"><a href="#X-SQL模型—Output-Layer" class="headerlink" title="X-SQL模型—Output Layer"></a>X-SQL模型—Output Layer</h4><p>Output层由六个子分类器构成：</p>
+<ul>
+<li>S-COL：查询表的哪一列 </li>
+<li>S-AGG： 使用什么聚合函数 </li>
+<li><strong>W-NUM</strong>： 查找where子句的数量（四个可能标签的分类，每个标签表示1~4 ）</li>
+<li>W-COL：选择表的哪几列</li>
+<li>W-OP： 对这几列的操作符 </li>
+<li>W-VAL： 这几列的值 </li>
+</ul>
+<p>其中五个子模型的输出会被填到QueryStructure中。w-col、w-op 和 w-val 这三个任务是依赖 w-num 的，因为 w-num 决定了对几列进行约束，这样它们三个只需要取 softmax 最大的那几个。</p>
+<p><img src="https://ningshixian.github.io/resources/images/图片4.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<p>每个子模型的说明：</p>
+<p><img src="https://ningshixian.github.io/resources/images/图片5.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<p>在训练过程中，我们优化目标是所有单个子任务损失的总和。</p>
+<p><a target="_blank" rel="noopener" href="https://tianchi.aliyun.com/markets/tianchi/zhuiyi_cn">追一NL2SQL天池任务</a></p>
+<h4 id="任务描述"><a href="#任务描述" class="headerlink" title="任务描述"></a>任务描述</h4><blockquote>
+<p>首届中文NL2SQL挑战赛，使用金融以及通用领域的表格数据作为数据源，提供在此基础上标注的自然语言与SQL语句的匹配对，希望选手可以利用数据训练出可以准确转换自然语言到SQL的模型。</p>
+</blockquote>
+<p>模型的输入为一个 Question + Table，输出一个 SQL 结构，该 SQL 结构对应一条 SQL 语句。示例如下图黄色部分，需要预测的有4部分：</p>
+<ul>
+<li>挑选的列(sel)</li>
+<li>列上的聚合函数(agg)</li>
+<li>筛选的条件(conds)</li>
+<li>条件间的关系(cond_conn_op)</li>
+</ul>
+<p><img src="https://tianchi-public.oss-cn-hangzhou.aliyuncs.com/public/files/forum/157129841401120721571298414104.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<h4 id="任务数据"><a href="#任务数据" class="headerlink" title="任务数据"></a>任务数据</h4><ul>
+<li><p>4万条有标签数据作为训练集</p>
+</li>
+<li><p>1万条无标签数据作为测试集</p>
+</li>
+</ul>
+<h4 id="评价指标"><a href="#评价指标" class="headerlink" title="评价指标"></a>评价指标</h4><ul>
+<li><strong>全匹配率 (Logic Form Accuracy)</strong>: 预测完全正确的SQL语句。其中，列的顺序并不影响准确率的计算。</li>
+<li><strong>执行匹配率 (Execution Accuracy)</strong>: 预测的SQL的执行结果与真实SQL的执行结果一致。</li>
+</ul>
+<p>官方的评估指标是 <code>(全匹配率 + 执行匹配率) / 2</code>，也就是说你有可能写出跟标注答案不同的SQL语句，但执行结果是一致的，这也算正确一半。 </p>
+<h4 id="难点分析"><a href="#难点分析" class="headerlink" title="难点分析"></a>难点分析</h4><ul>
+<li>不限制使用表格内容信息</li>
+<li>存在conds value不能从question提取的样本</li>
+<li>select agg存在多项</li>
+<li>没有conds缺失的样本</li>
+</ul>
+<h2 id="第一名解决方案M-SQL"><a href="#第一名解决方案M-SQL" class="headerlink" title="第一名解决方案M-SQL"></a>第一名解决方案M-SQL</h2><ol>
+<li><strong>将原始的 Label 做一个简单的变换</strong></li>
+</ol>
+<p><img src="https://github.com/beader/tianchi_nl2sql/raw/master/imgs/label.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<ol>
+<li><strong>对输入进行改造</strong></li>
+</ol>
+<p>将 Question 与 Header 顺序连接， 其中每一个表头也视为一个句子，用<code>[CLS]***[SEP]</code>括住。</p>
+<ol>
+<li><strong>M-SQL 模型架构</strong></li>
+</ol>
+<p>第一个<code>[CLS]</code>对应的向量，我们可以认为是整个问题的句向量，我们用它来预测<code>XXX</code>的连接符。后面的每个[CLS]对应的向量，我们认为是每个表头的编码向量，我们把它拿出来，用来预测该表头表示的列是否应该被select .  现在就剩下比较复杂的conds了，就是<code>where col_1 == value_1</code>这样子的，col_1、value_1以及运算符==都要找出来。 </p>
+<p><strong>两个较特殊的改进：</strong></p>
+<ul>
+<li>W-col-val模型<ul>
+<li>相较于X-SQL的W-VAL预测Value的首尾偏移量，W-col-val改用了序列标注的方式提取Where Value；</li>
+</ul>
+</li>
+<li>W-val-match模型<ul>
+<li>提取各列的 Distinct Value Set，基于Matching的方式匹配最可能的【列-值】；<ul>
+<li>基于文本的匹配：rouge-L、编辑距离等；</li>
+<li>基于语义的匹配：LR、MLP、相似度计算等</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://ningshixian.github.io/resources/images/图片6.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<h4 id="M-SQL在X-SQL的基础上进行了调整和扩展-对比"><a href="#M-SQL在X-SQL的基础上进行了调整和扩展-对比" class="headerlink" title="M-SQL在X-SQL的基础上进行了调整和扩展(对比)"></a><strong>M-SQL在X-SQL的基础上进行了调整和扩展</strong>(对比)</h4><ul>
+<li>Encoder：<ul>
+<li>预训练模型更换（MT-DNN → Bert-wwm-ext）;</li>
+<li>Token/TokenType调整；</li>
+</ul>
+</li>
+<li>Column Representation：基本和X-SQL一致；</li>
+<li>Sub-models：<ul>
+<li>增加S-num辅助任务</li>
+<li>合并W-NUM和Reducer预测；</li>
+<li>将原本的W-VAL换成了W-col-val和W-val-match；</li>
+<li>(待定) 把sel与agg结合，当作多分类问题</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://ningshixian.github.io/resources/images/图片7.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<h2 id="现阶段的问题"><a href="#现阶段的问题" class="headerlink" title="现阶段的问题"></a>现阶段的问题</h2><ul>
+<li>WikiSQL 数据集的数据形式和功能薄弱<ul>
+<li>条件的表达只支持最基础的 <code>&gt;、&lt;、=</code></li>
+<li>条件之间的关系只有 <code>and</code> </li>
+<li>不支持聚组、排序、嵌套等其它众多常用的 SQL 语法 </li>
+<li>不需要联合多表查询答案，真实答案所在表格已知 </li>
+<li>这样的数据集并不符合真实的应用场景 </li>
+</ul>
+</li>
+<li>Query Structure中的元素不存在递归关系</li>
+<li>天池TableQA（5w，中文），样本量少，且结构简单</li>
+</ul>
+<p>如何更好地结合数据库信息来理解并表达用户语句的语义、如何编码及表达数据库的信息、如何生成复杂却有必要的 SQL 语句，此类挑战还有很多需要解决，它们都是非常值得探索的方向。 </p>
+<h2 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h2><p> 现在Bert可用的中文预训练权重有两个</p>
+<ul>
+<li>一个是<a target="_blank" rel="noopener" href="https://github.com/google-research/bert">官方版</a>的</li>
+<li>一个是<a target="_blank" rel="noopener" href="https://github.com/ymcui/Chinese-BERT-wwm">哈工大版</a>的</li>
+</ul>
+<p>两个的最终效果差不多，但是哈工大版的收敛更快。 </p>
+<h3 id="复现过程"><a href="#复现过程" class="headerlink" title="复现过程"></a>复现过程</h3><p><strong>Part1: 预处理</strong></p>
+<p>首先对question进行了格式统一,具体如下:</p>
+<ol>
+<li>百分数转换，例如<strong>百分之10</strong>转化为<strong>10%</strong>,<strong>百分之十</strong>转换为<strong>10%</strong>, 百分之一点五转化为<strong>1.5%</strong></li>
+<li>大写数字转阿拉伯数字，例如<strong>十二</strong>转换为<strong>12</strong>; <strong>二十万</strong>转化为<strong>200000</strong>; 一点二转化为<strong>1.2</strong></li>
+<li>年份转换，如将12年转换为2012年</li>
+<li>利用规则与编辑距离对query进行修正</li>
+<li>query信息标记：[CLS] -&gt; [XLS]</li>
+</ol>
+<p>然后，SQL分析</p>
+<ul>
+<li>常用的SQL模式分析</li>
+</ul>
+<p><strong>Part2:模型介绍</strong></p>
+<ul>
+<li>预训练模型：Bert-wwm-ext，哈工大</li>
+<li>W-num，W-op融合</li>
+</ul>
+<p><strong>Part3: 后处理</strong></p>
+<p><strong>Part4: 模型效果评估</strong></p>
+<p><strong>Part5: 网络/应用</strong></p>
+<p>通过云服务构建服务器后，构建可与各种DBMS链接的网页</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p> <a target="_blank" rel="noopener" href="https://kexue.fm/archives/6771">基于Bert的NL2SQL模型：一个简明的Baseline</a> </p>
+<p> RAdam 优化器的实现 <a target="_blank" rel="noopener" href="https://github.com/bojone/keras_radam/blob/master/radam.py">keras_radam</a>  </p>
+<p> CyberZHG 大神的开源项目 <a target="_blank" rel="noopener" href="https://github.com/CyberZHG/keras-bert">keras-bert</a> </p>
+<p> 哈工大讯飞联合实验室的 <a target="_blank" rel="noopener" href="https://github.com/ymcui/Chinese-BERT-wwm">Chinese-BERT-wwm</a> 项目 </p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/baidu_33512336/article/details/93531497">追一：NL2SQL的发展</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/Dream_angel_Z/article/details/102711508">NL2SQL概述：一文了解NL2SQL</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.chainnews.com/articles/180724030413.htm">自然语言到 SQL 语句，微软只用六个子任务，结果超越人类水平</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/beader/tianchi_nl2sql">追一科技首届中文NL2SQL挑战赛决赛第3名方案+代码</a></p>
+<p>X-SQL，X-SQL: REINFORCE CONTEXT INTO SCHEMA REPRESENTATION</p>
+<p>M-SQL，M-SQL:Muti-Schema Representation Learning for Single-Table Text2SQL Generation（修改中…）</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E6%95%99%E7%A8%8B/">#教程</a>
+      
+        <a href="/tags/%E6%8A%80%E6%9C%AF/">#技术</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>NL2SQL</div>
+      <div>http://example.com/2019/12/30/2019-12-30-NL2SQL/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>NSX</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2019年12月30日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/01/20/2020-01-20-%E6%96%B0%E8%AF%8D%E5%8F%91%E7%8E%B0/" title="新词发现">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">新词发现</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2019/12/18/2019-12-18-Python%E6%97%B6%E9%97%B4%E5%92%8C%E6%97%A5%E6%9C%9F%E6%93%8D%E4%BD%9C/" title="Python时间和日期操作">
+                        <span class="hidden-mobile">Python时间和日期操作</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

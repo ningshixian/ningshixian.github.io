@@ -1,0 +1,770 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="NSX">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="从最优化的角度来推导出Softmax交叉熵损失函数一般而言，最优化的问题通常需要构造一个目标函数。使用神经网络进行多分类（假设为 $C$ 类)时的目标函数是什么？可以将各个类别的输出独立开来，每个类别占据一个维度。那么如果让一个样本的真值标签（ground-truth label）所对应的分数比其他分数更大，就可以通过比较 $C$ 个分数的大小来判断样本的类别了。 多分类优化目标：  输出C个分数">
+<meta property="og:type" content="article">
+<meta property="og:title" content="度量学习之 AMSoftmax 理解">
+<meta property="og:url" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E4%B9%8BAMSoftmax/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="从最优化的角度来推导出Softmax交叉熵损失函数一般而言，最优化的问题通常需要构造一个目标函数。使用神经网络进行多分类（假设为 $C$ 类)时的目标函数是什么？可以将各个类别的输出独立开来，每个类别占据一个维度。那么如果让一个样本的真值标签（ground-truth label）所对应的分数比其他分数更大，就可以通过比较 $C$ 个分数的大小来判断样本的类别了。 多分类优化目标：  输出C个分数">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=%5Cmathcal%7BL%7D++%3D%5Csum_%7Bi%3D1%2Ci%5Cneq+y%7D%5E%7BC%7D+%5Cmax%28+z_i+-+z_y%2C+0%29#id=VMd31&amp;originHeight=63&amp;originWidth=208&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=%5Cmathcal%7BL%7D_%7Bhinge%7D+%3D+%5Csum_%7Bi%3D1%2Ci%5Cneq+y%7D%5E%7BC%7D+%5Cmax%28z_i+-+z_y+%2B+m%2C+0%29#id=ri7LM&amp;originHeight=63&amp;originWidth=282&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=%5Cmathcal%7BL%7D+%3D+%5Cmax%28+%5Cmax_%7Bi%5Cneq+y%7D%5C%7Bz_i%5C%7D+-+z_y%2C+0%29#id=oTsRi&amp;originHeight=36&amp;originWidth=212&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=%5Cmathcal%7BL%7D_%7Blse%7D+%3D+%5Cmax%5Cleft%28+%5Clog%5Cleft%28+%5Csum_%7Bi%3D1%2Ci%5Cneq+y%7D%5E%7BC%7D%7Be%5E%7Bz_i%7D%7D+%5Cright%29+-+z_y%2C+0%5Cright%29#id=BqApN&amp;originHeight=63&amp;originWidth=304&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=%5Cfrac%7B%5Cpartial+%5Clog%5Cleft%28+%5Csum_%7Bi%3D1%2Ci%5Cneq+y%7D%5E%7BC%7D%7Be%5E%7Bz_i%7D%7D+%5Cright%29%7D%7B%5Cpartial+z_j%7D+%3D+%5Cfrac%7Be%5E%7Bz_j%7D%7D%7B%5Csum_%7Bi%3D1%2Ci%5Cneq+y%7D%5Ec%7Be%5E%7Bz_i%7D%7D%7D#id=LytbJ&amp;originHeight=71&amp;originWidth=283&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=%5Cbegin%7Baligned%7D+%5Cmathcal%7BL%7D_%7Bsoftmax%7D++%26%3D+%5Clog%5Cleft%281+%2B+e%5E%7B%5Clog%5Cleft%28+%5Csum_%7Bi%3D1%2Ci%5Cneq+y%7D%5E%7BC%7D%7Be%5E%7Bz_i%7D%7D+%5Cright%29+-+z_y%7D%5Cright%29%5C%5C+%26%3D+%5Clog%5Cleft%281+%2B+%5Cfrac%7B%5Csum_%7Bi%3D1%2Ci%5Cneq+y%7D%5E%7BC%7D%7Be%5E%7Bz_i%7D%7D%7D%7Be%5E%7Bz_y%7D%7D%5Cright%29%5C%5C+%26%3D+%5Clog%5Cfrac%7B%5Csum_%7Bi%3D1%7D%5E%7BC%7D%7Be%5E%7Bz_i%7D%7D%7D%7Be%5E%7Bz_y%7D%7D%5C%5C+%26%3D+-%5Clog%5Cfrac%7Be%5E%7Bz_y%7D%7D%7B%5Csum_%7Bi%3D1%7D%5E%7BC%7D%7Be%5E%7Bz_i%7D%7D%7D+%5Cend%7Baligned%7D#id=rmp2h&amp;originHeight=223&amp;originWidth=318&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E4%B9%8BAMSoftmax/1654705593746-3eed78fd-f45d-4bbc-9e7f-18040f9b168a.png">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E4%B9%8BAMSoftmax/1654705999652.png">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=%5Cmathcal%7BL%7D+%3D+-%5Clog%5Cleft%28+%7B%5Cfrac%7Be%5E%7Bs%5Ctilde%7Bz_y%7D%7D%7D%7B%5Csum_%7Bi%3D1%7D%5E%7BC%7De%5E%7Bs%5Ctilde%7Bz_i%7D%7D%7D%7D+%5Cright%29+#id=nWRQv&amp;originHeight=60&amp;originWidth=189&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=%5Cmathcal%7BL%7D+%3D+%5Cmax%28+%5Cmax_%7Bi%5Cneq+y%7D%5C%7Bz_i%5C%7D+-+z_y%2C+0%29#id=C7LWo&amp;originHeight=36&amp;originWidth=212&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=%5Cmathcal%7BL%7D+%3D+%5Cmax%28+%5Cmax_%7Bi%5Cneq+y%7D%5C%7Bz_i%5C%7D+-+z_y+%2B+m%2C+0%29#id=lwqHt&amp;originHeight=36&amp;originWidth=251&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=%5Cmathcal%7BL%7D+%3D+%5Cmax%28+%5Cmax_%7Bi%5Cneq+y%7D%5C%7Bsz_i%5C%7D+-+sz_y+%2B+sm%2C+0%29#id=wrStj&amp;originHeight=36&amp;originWidth=278&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E4%B9%8BAMSoftmax/1.png">
+<meta property="article:published_time" content="2021-11-25T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-24T11:50:51.351Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="原创">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.zhihu.com/equation?tex=%5Cmathcal%7BL%7D++%3D%5Csum_%7Bi%3D1%2Ci%5Cneq+y%7D%5E%7BC%7D+%5Cmax%28+z_i+-+z_y%2C+0%29#id=VMd31&amp;originHeight=63&amp;originWidth=208&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+  
+  
+  
+  <title>度量学习之 AMSoftmax 理解 - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="度量学习之 AMSoftmax 理解"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-11-26 00:00" pubdate>
+          2021年11月26日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.6k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          22 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">度量学习之 AMSoftmax 理解</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="从最优化的角度来推导出Softmax交叉熵损失函数"><a href="#从最优化的角度来推导出Softmax交叉熵损失函数" class="headerlink" title="从最优化的角度来推导出Softmax交叉熵损失函数"></a>从最优化的角度来推导出Softmax交叉熵损失函数</h2><p>一般而言，最优化的问题通常需要构造一个目标函数。使用神经网络进行多分类（假设为 $C$ 类)时的目标函数是什么？可以将各个类别的输出独立开来，每个类别占据一个维度。那么如果让一个样本的真值标签（ground-truth label）所对应的分数比其他分数更大，就可以通过比较 $C$ 个分数的大小来判断样本的类别了。</p>
+<p>多分类优化目标：</p>
+<blockquote>
+<p>输出C个分数，使目标分数比非目标分数更大。</p>
+</blockquote>
+<p>换成数学描述，设 $z=f(x)∈R^c、y$ 为真值标签的序号，那优化目标即为：</p>
+<p>$∀_{j≠y}, z_y&gt;z_j $</p>
+<p>利用max函数，让$ z_y $刚刚超过$ z_j $时就停止，防止 z 无限地上升或下降，控制整个神经网络的幅度</p>
+<p><img src="https://www.zhihu.com/equation?tex=%5Cmathcal%7BL%7D++%3D%5Csum_%7Bi%3D1%2Ci%5Cneq+y%7D%5E%7BC%7D+%5Cmax%28+z_i+-+z_y%2C+0%29#id=VMd31&amp;originHeight=63&amp;originWidth=208&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""></p>
+<p>然而这样做往往会使模型的泛化性能比较差，添加一个参数m，让 $z_y$ 比 $z_j$ 大过一定的数值才停止：</p>
+<p><img src="https://www.zhihu.com/equation?tex=%5Cmathcal%7BL%7D_%7Bhinge%7D+%3D+%5Csum_%7Bi%3D1%2Ci%5Cneq+y%7D%5E%7BC%7D+%5Cmax%28z_i+-+z_y+%2B+m%2C+0%29#id=ri7LM&amp;originHeight=63&amp;originWidth=282&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> </p>
+<p>这个 loss 也即hinge loss…</p>
+<p>多分类改进的优化目标（大量的非目标分数得到优化，导致的梯度爆炸）：</p>
+<blockquote>
+<p>改进：输出C个分数，使目标分数比<strong>最大的</strong>非目标分数更大。</p>
+</blockquote>
+<p>这样我们的损失函数就变成了：</p>
+<p><img src="https://www.zhihu.com/equation?tex=%5Cmathcal%7BL%7D+%3D+%5Cmax%28+%5Cmax_%7Bi%5Cneq+y%7D%5C%7Bz_i%5C%7D+-+z_y%2C+0%29#id=oTsRi&amp;originHeight=36&amp;originWidth=212&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""></p>
+<p>问题：每次优化的分数过少，会使得网络收敛极其缓慢，</p>
+<p>解决：<strong>smooth</strong>。</p>
+<p>max函数的smooth版是LogSumExp函数：</p>
+<p><img src="https://www.zhihu.com/equation?tex=%5Cmathcal%7BL%7D_%7Blse%7D+%3D+%5Cmax%5Cleft%28+%5Clog%5Cleft%28+%5Csum_%7Bi%3D1%2Ci%5Cneq+y%7D%5E%7BC%7D%7Be%5E%7Bz_i%7D%7D+%5Cright%29+-+z_y%2C+0%5Cright%29#id=BqApN&amp;originHeight=63&amp;originWidth=304&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> </p>
+<p>LogSumExp函数的导数恰好为softmax函数：</p>
+<p><img src="https://www.zhihu.com/equation?tex=%5Cfrac%7B%5Cpartial+%5Clog%5Cleft%28+%5Csum_%7Bi%3D1%2Ci%5Cneq+y%7D%5E%7BC%7D%7Be%5E%7Bz_i%7D%7D+%5Cright%29%7D%7B%5Cpartial+z_j%7D+%3D+%5Cfrac%7Be%5E%7Bz_j%7D%7D%7B%5Csum_%7Bi%3D1%2Ci%5Cneq+y%7D%5Ec%7Be%5E%7Bz_i%7D%7D%7D#id=LytbJ&amp;originHeight=71&amp;originWidth=283&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> </p>
+<p>LogSumExp函数值是大于等于max函数值的，而且等于取到的条件也是非常苛刻的，所以使用LogSumExp函数相当于变相地加了一定的 $m$。</p>
+<p>继续smooth：</p>
+<p><img src="https://www.zhihu.com/equation?tex=%5Cbegin%7Baligned%7D+%5Cmathcal%7BL%7D_%7Bsoftmax%7D++%26%3D+%5Clog%5Cleft%281+%2B+e%5E%7B%5Clog%5Cleft%28+%5Csum_%7Bi%3D1%2Ci%5Cneq+y%7D%5E%7BC%7D%7Be%5E%7Bz_i%7D%7D+%5Cright%29+-+z_y%7D%5Cright%29%5C%5C+%26%3D+%5Clog%5Cleft%281+%2B+%5Cfrac%7B%5Csum_%7Bi%3D1%2Ci%5Cneq+y%7D%5E%7BC%7D%7Be%5E%7Bz_i%7D%7D%7D%7Be%5E%7Bz_y%7D%7D%5Cright%29%5C%5C+%26%3D+%5Clog%5Cfrac%7B%5Csum_%7Bi%3D1%7D%5E%7BC%7D%7Be%5E%7Bz_i%7D%7D%7D%7Be%5E%7Bz_y%7D%7D%5C%5C+%26%3D+-%5Clog%5Cfrac%7Be%5E%7Bz_y%7D%7D%7B%5Csum_%7Bi%3D1%7D%5E%7BC%7D%7Be%5E%7Bz_i%7D%7D%7D+%5Cend%7Baligned%7D#id=rmp2h&amp;originHeight=223&amp;originWidth=318&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""></p>
+<p>在经过两步smooth化之后，我们将一个难以收敛的函数逐步改造成了大家所熟知的softmax交叉熵损失函数。从这个推导过程中我们可以看出smooth化不仅可以让优化更畅通，而且还变相地在类间引入了一定的间隔，从而提升了泛化性能。</p>
+<img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E4%B9%8BAMSoftmax/1654705593746-3eed78fd-f45d-4bbc-9e7f-18040f9b168a.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<h2 id="Softmax理解之二分类与多分类"><a href="#Softmax理解之二分类与多分类" class="headerlink" title="Softmax理解之二分类与多分类"></a>Softmax理解之二分类与多分类</h2><p>总结一下，Softmax交叉熵损失函数在进行多分类时可以理解为是在训练多个二分类器的组合，只不过因为Softmax训练的是类别向量而不是分界面，所以其训练效率得到了很大的提升。Softmax交叉熵损失函数的多条优良的性质以及它在多个二分类器之间的权重分配方式有助于我们设计其他的损失函数，同时也能启发一下多个损失函数之间加权方式的研究，毕竟Softmax看似是多分类，实际上是有着巧妙设计的权重的多个二分类器，那么其他的多损失函数说不定也能利用一下类似的权重分配方式呢？</p>
+<h2 id="Softmax理解之Smooth程度控制"><a href="#Softmax理解之Smooth程度控制" class="headerlink" title="Softmax理解之Smooth程度控制"></a>Softmax理解之Smooth程度控制</h2><p>总结一下，softmax 函数中的 $z$  幅度既不能过大、也不能过小，过小会导致近对目标函数近似效果不佳的问题；过大则会使类间的间隔趋近于0，影响泛化性能。</p>
+<p>那么如何去控制 $z$ 的幅度呢？那就是 Softmax 交叉熵损失的温度项 $T$  ：</p>
+<p>$\begin{aligned}<br>\mathcal{L}_{softmax}&amp;=-\log \left(\frac{e^{z_{y}}}{\sum_{i=1}^{C} e^{z_{i}}}\right) \\<br>&amp;=-\log \left(\frac{e^{\frac{z_{y}}{T}}}{\sum_{i=1}^{C} e^{\frac{z_{i}}{T}}}\right) \\<br>\end{aligned}$</p>
+<p>温度项控制着 Softmax 的 smooth 程度， $T$  越小，则 Softmax 越接近one-hot max， $T$  越大，则近似效果越差。注意这个 $T$  是施加在所有的分数 $z$ 上的，所以这是对分数的一个线性变换，如何让温度项能够生效呢？</p>
+<img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E4%B9%8BAMSoftmax/1654705999652.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>答案是将特征和权重全部归一化，这样 $z$ 就从特征与权重的内积变成了特征与权重的余弦，由于余弦值的范围是 $[-1,1]$ ，所以 $z$ 的幅度就大致被定下来了，然后我们再乘上一个尺度因子 $s$ 来拉长 $z$ 的幅度，来保证输入到 Softmax 里的分数能在一个合适的范围：</p>
+<p><img src="https://www.zhihu.com/equation?tex=%5Cmathcal%7BL%7D+%3D+-%5Clog%5Cleft%28+%7B%5Cfrac%7Be%5E%7Bs%5Ctilde%7Bz_y%7D%7D%7D%7B%5Csum_%7Bi%3D1%7D%5E%7BC%7De%5E%7Bs%5Ctilde%7Bz_i%7D%7D%7D%7D+%5Cright%29+#id=nWRQv&amp;originHeight=60&amp;originWidth=189&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""></p>
+<p>这里的 $\hat{z}$ 表示是由归一化后的特征与权重的内积（即余弦)得到的分数。</p>
+<h2 id="Softmax理解之margin"><a href="#Softmax理解之margin" class="headerlink" title="Softmax理解之margin"></a>Softmax理解之margin</h2><p>分类模型通过学得的分界线可以表现很不错，但如果要进行特征比对任务，必须将类间的间隔拉得更大，才能保证“类间距离大于类内距离”这一目标（分类与排序的不等价性）。如何提高间隔呢？Margin-based Softmax度量学习可以了解一下，目标是：1️⃣ 除了好的分类概率，一个好的度量空间更加重要；2️⃣ 增大类间差异并且减小类内差异。</p>
+<blockquote>
+<p>输出C个分数，使目标分数比<strong>最大的</strong>非目标分数更大。</p>
+</blockquote>
+<p>其对应的损失函数为：</p>
+<p><img src="https://www.zhihu.com/equation?tex=%5Cmathcal%7BL%7D+%3D+%5Cmax%28+%5Cmax_%7Bi%5Cneq+y%7D%5C%7Bz_i%5C%7D+-+z_y%2C+0%29#id=C7LWo&amp;originHeight=36&amp;originWidth=212&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> </p>
+<p>参考 hinge loss，引入间隔项：</p>
+<p><img src="https://www.zhihu.com/equation?tex=%5Cmathcal%7BL%7D+%3D+%5Cmax%28+%5Cmax_%7Bi%5Cneq+y%7D%5C%7Bz_i%5C%7D+-+z_y+%2B+m%2C+0%29#id=lwqHt&amp;originHeight=36&amp;originWidth=251&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> </p>
+<p>这个损失函数的意义是：</p>
+<blockquote>
+<p>输出C个分数，使目标分数比最大的非目标分数还要大 m。</p>
+</blockquote>
+<p>这里有两个需要注意的问题：一是需要限制分数 $z$ 的取值范围，否则参数 m 设置没有意义，采用一些归一化方法；二是需要控制分数 $z$ 的幅度，保证对目标函数的近似效果和泛化性能，采用尺度因子 s。</p>
+<p>于是损失函数变为：</p>
+<p><img src="https://www.zhihu.com/equation?tex=%5Cmathcal%7BL%7D+%3D+%5Cmax%28+%5Cmax_%7Bi%5Cneq+y%7D%5C%7Bsz_i%5C%7D+-+sz_y+%2B+sm%2C+0%29#id=wrStj&amp;originHeight=36&amp;originWidth=278&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> </p>
+<p>注意 $max(x,0)$ 的smooth版即softplus函数 $log(1+e^x)$  ，替换后：</p>
+<p>$\begin{aligned}<br>\mathcal{L} &amp;=\max \left(\max _{i \neq y}\left\{s \widetilde{z_{i}}\right\}-s \widetilde{z_{y}}+s m, 0\right) \\<br>&amp; \approx \operatorname{Softplus}\left(L S E\left(s \widetilde{z_{i}} ; i \neq y\right)-s\left(\widetilde{z_{y}}-m\right)\right) \\<br>&amp;=-\log \left(\frac{e^{s\left(\widetilde{z_{y}}-m\right)}}{e^{s\left(\widetilde{z_{y}}-m\right)}+\sum_{i \neq y} e^{s \widetilde{z_{i}}}}\right)<br>\end{aligned}$</p>
+<p>这个 loss 也即AM-Softmax loss，“带有加性间隔的 Softmax 交叉熵损失函数”。</p>
+<img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E4%B9%8BAMSoftmax/1.png" srcset="/img/loading.gif" lazyload class="" title="AMSoftmax loss.png">
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/45014864">Softmax理解的第一篇-从最优化的角度看待Softmax损失函数</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/45368976">Softmax理解的第二篇-Softmax理解之二分类与多分类</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/49939159">Softmax理解的第三篇-Softmax理解之Smooth程度控制</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/52108088">Softmax理解的第四篇-Softmax理解之margin</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0/" class="category-chain-item">度量学习</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%8E%9F%E5%88%9B/">#原创</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>度量学习之 AMSoftmax 理解</div>
+      <div>http://example.com/2021/11/26/2021-11-26-度量损失函数之AMSoftmax/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>NSX</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年11月26日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E7%AE%80%E8%BF%B0/" title="度量学习简述">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">度量学习简述</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/11/15/2021-11-15-Keyword-BERT/" title="Keyword-BERT">
+                        <span class="hidden-mobile">Keyword-BERT</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

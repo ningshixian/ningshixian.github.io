@@ -1,0 +1,676 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="NSX">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="任何列书单和在线视频超过10条的，基本都是混子。列了几十本书和几百小时在线视频的人，大部分自己连1&#x2F;10都没读完过。这种人统称为“书单教育家”，代表人物就是罗文益。 要我说，读一本deep learning和PRML，读python和numpy的官方文档，看一个Andrew Ng和Hinton的coursera，剩下的读一读经典paper和github开源代码，动手造造轮子，就完全足够入门了。 在">
+<meta property="og:type" content="article">
+<meta property="og:title" content="✨NLP入门极简教程">
+<meta property="og:url" content="http://example.com/2019/01/01/2019-01-01-%E2%9C%A8NLP%E5%85%A5%E9%97%A8%E6%9E%81%E7%AE%80%E6%95%99%E7%A8%8B/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="任何列书单和在线视频超过10条的，基本都是混子。列了几十本书和几百小时在线视频的人，大部分自己连1&#x2F;10都没读完过。这种人统称为“书单教育家”，代表人物就是罗文益。 要我说，读一本deep learning和PRML，读python和numpy的官方文档，看一个Andrew Ng和Hinton的coursera，剩下的读一读经典paper和github开源代码，动手造造轮子，就完全足够入门了。 在">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-12-31T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-24T09:45:39.142Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="NLP教程">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>✨NLP入门极简教程 - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="✨NLP入门极简教程"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2019-01-01 00:00" pubdate>
+          2019年1月1日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          21 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">✨NLP入门极简教程</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>任何列书单和在线视频超过10条的，基本都是混子。列了几十本书和几百小时在线视频的人，大部分自己连1/10都没读完过。这种人统称为“书单教育家”，代表人物就是罗文益。</p>
+<p>要我说，读一本deep learning和PRML，读python和numpy的官方文档，看一个Andrew Ng和Hinton的coursera，剩下的读一读经典paper和github开源代码，动手造造轮子，就完全足够入门了。</p>
+<h2 id="在线课程推荐"><a href="#在线课程推荐" class="headerlink" title="在线课程推荐"></a>在线课程推荐</h2><ul>
+<li>【双语字幕】斯坦福CS224n《深度学习自然语言处理》课程(2017) by Chris Manning &amp; Richard Socher<br>推荐理由：面向NLP的深度学习课程，从基础神经网路讲起，到概率模型，再到word2vec，最后讲到RNN模型在NLP领域的应用等，是NLP方向的必修课。<br>#bilibili#搬运：<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av13383754/">https://www.bilibili.com/video/av13383754/</a></li>
+<li>【双语字幕】斯坦福CS224n《深度学习自然语言处理》课程(2019) by Chris Manning<br>上一门课程的升级版，补充了更多内容<br>#bilibili#搬运：<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1Eb411H7Pq?share_source=copy_web">https://www.bilibili.com/video/BV1Eb411H7Pq?share_source=copy_web</a></li>
+<li>李宏毅老师的系列课程<br>地址：<a target="_blank" rel="noopener" href="http://speech.ee.ntu.edu.tw/~tlkagk/courses.html">http://speech.ee.ntu.edu.tw/~tlkagk/courses.html</a></li>
+<li>林轩田老师的课程，机器学习基石和机器学习技法<br>主页：  <a target="_blank" rel="noopener" href="https://www.csie.ntu.edu.tw/~htlin/mooc/">https://www.csie.ntu.edu.tw/~htlin/mooc/</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/yandexdataschool/nlp_course">YSDA course in Natural Language Processing</a><br>这门课程是2021年的，使用Tensorflow/Keras 以及 Pytorch 作为实现框架！！！ </li>
+</ul>
+<p>2018线上课程的文字版讲解：<a target="_blank" rel="noopener" href="https://lena-voita.github.io/nlp_course.html#preview_text_clf">https://lena-voita.github.io/nlp_course.html#preview_text_clf</a><br>    每周的课程 PPT 和研讨会材料位于 ./week* 文件夹中</p>
+<h2 id="机器学习-书籍推荐"><a href="#机器学习-书籍推荐" class="headerlink" title="机器学习 书籍推荐"></a>机器学习 书籍推荐</h2><ol>
+<li><p>周志华的<a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1hscnaQC">《机器学习》</a>作为通读教材，不用深入，从宏观上了解机器学习 </p>
+</li>
+<li><p>李航的<a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1dF2b4jf">《统计学习方法》</a>作为经典的深入案例，仔细研究几个算法的来龙去脉 | <a target="_blank" rel="noopener" href="https://github.com/WenDesi/lihang_book_algorithm">书中的代码python实现</a> </p>
+</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/exacity/deeplearningbook-chinese">《Deep Learning》</a>Ian Goodfellow / Yoshua Bengio / Aaron Courville<br>(花书)不是一次就能读完读透的，已经有基础的同学可以当作工具书来用，在碰到难题或者面试前都可以翻    </li>
+<li><a target="_blank" rel="noopener" href="https://nndl.github.io/">《神经网络与深度学习》</a> 邱锡鹏</li>
+<li>模式识别与机器学习(PRML)<br><a target="_blank" rel="noopener" href="https://www.microsoft.com/en-us/research/people/cmbishop/#!prml-book">下载主页</a>  <a target="_blank" rel="noopener" href="http://prml.github.io/">本书代码</a>  <a target="_blank" rel="noopener" href="https://github.com/ctgk/PRML">机器学习经典教材《PRML》所有代码实现</a> </li>
+</ol>
+<h2 id="NLP-书籍推荐"><a href="#NLP-书籍推荐" class="headerlink" title="NLP 书籍推荐"></a>NLP 书籍推荐</h2><ol>
+<li>《统计自然语言处理（第二版）》宗成庆<br>主要内容：本书介绍了统计自然语言处理的基本概念、理论方法和最新研究进展，内容包括语言模型、隐马尔可夫模型、语料库技术、汉语自动分词与词性标注、句法分析、词义消歧、篇章分析、统计机器翻译、语音翻译、文本分类、信息检索与问答系统、自动文摘和信息抽取、口语信息处理与人机对话系统等。</li>
+<li>《Introduction to Information Retrieval》Chris Manning<br>排名/搜索领域的一本好书。本书在国内有中译本《信息检索导论》，必读-第2、6章</li>
+<li>《Neural Network Methods for Natural Language Processing》<br>本书内容涵盖了自然语言处理的方方面面，从底层的词法分词、语法分析和语义分析，到和应用更为接近的自然语言处理任务要、对话系统等。书中将自然语言处理、计算语言学以及语音识别等内容融合在一起，把各种技术相互联系起来，让读者了解怎样才能最佳地利用每种技术，怎样才能将各种技术结合起来使用。本书在国内有中译本《自然语言处理综论》</li>
+<li>进阶可选《Speech and Language Processing》<br>对NLP领域神经网络应用的深入介绍</li>
+</ol>
+<p>下载：<a target="_blank" rel="noopener" href="https://web.stanford.edu/~jurafsky/slp3/ed3book.pdf">https://web.stanford.edu/~jurafsky/slp3/ed3book.pdf</a></p>
+<h2 id="NLP-课外补充书籍"><a href="#NLP-课外补充书籍" class="headerlink" title="NLP 课外补充书籍"></a>NLP 课外补充书籍</h2><ol>
+<li>《数学之美》+《智能问答》+《机器翻译》+《知识图谱》</li>
+<li>《自然语言处理实战》 20年底出版，配有Keras代码，比其他深度学习框架都容易些。</li>
+</ol>
+<h2 id="面试相关-书籍推荐"><a href="#面试相关-书籍推荐" class="headerlink" title="面试相关 书籍推荐"></a>面试相关 书籍推荐</h2><ol>
+<li>《百面机器学习》《百面深度学习》Hulu团队出品，基本是面试必备了，可以迅速不就遗漏知识点</li>
+<li>川大毕业极客创建项目《深度学习500问》<br>地址： <a target="_blank" rel="noopener" href="https://github.com/yuquanle/DeepLearning-500-questions">https://github.com/yuquanle/DeepLearning-500-questions</a></li>
+</ol>
+<h2 id="炼丹调参"><a href="#炼丹调参" class="headerlink" title="炼丹调参"></a>炼丹调参</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/24720954">深度学习网络调参技巧</a></li>
+<li>《Deep Learning for Vision: Tricks of the Trade》Marc’Aurelio Ranzato 在 CVPR 上 的 presentation slides/talk（Youtube 等地方可以搜到）。caffe 作者之一贾扬清推荐。涉及到了许多 DL 的调参技巧（在 slides 比较靠后的地方）</li>
+<li><a target="_blank" rel="noopener" href="http://mp.weixin.qq.com/s?biz=MzA3MzI4MjgzMw==&amp;mid=2650738568&amp;idx=1&amp;sn=e3492aef7d67cbd20c982c348600d42a&amp;chksm=871acbf6b06d42e0b7ae37438befc2f301ab3c3e5cf616a08acc94ab4e8032ada246c1e81ce4&amp;scene=21#wechat_redirect">机器学习算法如何调参？这里有一份神经网络学习速率设置指南</a></li>
+<li><a target="_blank" rel="noopener" href="http://mp.weixin.qq.com/s?biz=MzA3MzI4MjgzMw==&amp;mid=2650744897&amp;idx=1&amp;sn=c1bdf8f8e6daeab3abccef549c6c213e&amp;chksm=871aec3fb06d65296bf2436a671eaebbf21cbdeb8995d388e8972accea14d0a558e2ddce92dd&amp;scene=21#wechat_redirect">构建深度神经网络，我有 20 条「不成熟」的小建议</a></li>
+<li><a target="_blank" rel="noopener" href="http://mp.weixin.qq.com/s?biz=MzA3MzI4MjgzMw==&amp;mid=2650743506&amp;idx=2&amp;sn=df5d98de3bfa8ea4e2460bbb5d0659cb&amp;chksm=871ae6acb06d6fba90c7e46ed8ad1a188acbbf4bd0a260c33a2b7d0f16ef8d1162f4cb5b3e10&amp;scene=21#wechat_redirect">入门 深度学习模型的简单优化技巧</a></li>
+<li><a target="_blank" rel="noopener" href="http://mp.weixin.qq.com/s?biz=MzA3MzI4MjgzMw==&amp;mid=2650742657&amp;idx=1&amp;sn=92ff1cd3481155430d51349caead02a2&amp;chksm=871adbffb06d52e9fb8f5b152f7e43954e340ba2bec1204fb5d4a572864f1832cec0ebdfc455&amp;scene=21#wechat_redirect">谷歌机器学习 43 条规则：机器学习工程的最佳实践经验</a></li>
+<li><a target="_blank" rel="noopener" href="http://mp.weixin.qq.com/s?biz=MzA3MzI4MjgzMw==&amp;mid=2650747821&amp;idx=3&amp;sn=0a74be78e4137a597d8ae62c2b3dd78a&amp;chksm=871af7d3b06d7ec56b3094b4771fb4031aa64f79c713c77373d9debcd1e7ffe338988fabd549&amp;scene=21#wechat_redirect">教程 从超参数到架构，一文简述模型优化策略</a></li>
+<li><a target="_blank" rel="noopener" href="http://yyue.blogspot.com/2015/01/a-brief-overview-of-deep-learning.html">http://yyue.blogspot.com/2015/01/a-brief-overview-of-deep-learning.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://flashgene.com/archives/9846.html">https://flashgene.com/archives/9846.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://wulc.me/2018/05/01/梯度裁剪及其作用/">https://wulc.me/2018/05/01/梯度裁剪及其作用/</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/57828011">https://www.zhihu.com/question/57828011</a></li>
+</ul>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/342465172">2021年NLP入门书籍推荐-李rumor</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/58874484">NLP入门推荐书目（2019版）-刘知远</a></p>
+<p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1814273">NLP爱好者学习资源推荐汇总</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/59184256">初入NLP领域的一些小建议-香农科技·李级为</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/NLP%E6%95%99%E7%A8%8B/">#NLP教程</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>✨NLP入门极简教程</div>
+      <div>http://example.com/2019/01/01/2019-01-01-✨NLP入门极简教程/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>NSX</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2019年1月1日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/01/03/2019-01-03-%E4%B8%AA%E4%BA%BA%E7%A7%8B%E6%8B%9B%E7%AC%94%E9%9D%A2%E8%AF%95%E7%BB%8F%E9%AA%8C%E6%95%B4%E7%90%86/" title="个人秋招笔面试经验整理">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">个人秋招笔面试经验整理</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2018/12/04/2018-12-04-Keras%E4%BC%98%E5%8C%96%E5%99%A8%E4%BB%8B%E7%BB%8D/" title="Keras优化器介绍">
+                        <span class="hidden-mobile">Keras优化器介绍</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

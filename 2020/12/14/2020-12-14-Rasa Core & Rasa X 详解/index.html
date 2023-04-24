@@ -1,0 +1,1095 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="NSX">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Rasa Core Rasa X Rasa Action Server">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Rasa Core &amp; Rasa X 详解">
+<meta property="og:url" content="http://example.com/2020/12/14/2020-12-14-Rasa%20Core%20&%20Rasa%20X%20%E8%AF%A6%E8%A7%A3/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="Rasa Core Rasa X Rasa Action Server">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://flashgene.com/wp-content/uploads/2020/04/9d373f74b2cbb4925ff0cc2e7649db9e.jpg">
+<meta property="og:image" content="https://flashgene.com/wp-content/uploads/2020/04/e85b0bc1accb546be2a817523b5ee22c.png">
+<meta property="og:image" content="https://flashgene.com/wp-content/uploads/2020/04/68e68cbe6bf8a5e4f8bddb1f5eb5c2be.png">
+<meta property="article:published_time" content="2020-12-13T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-23T10:28:32.059Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="Rasa Core">
+<meta property="article:tag" content="Rasa X">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://flashgene.com/wp-content/uploads/2020/04/9d373f74b2cbb4925ff0cc2e7649db9e.jpg">
+  
+  
+  
+  <title>Rasa Core &amp; Rasa X 详解 - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Rasa Core &amp; Rasa X 详解"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2020-12-14 00:00" pubdate>
+          2020年12月14日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          18k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          147 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Rasa Core &amp; Rasa X 详解</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <ul>
+<li>Rasa Core</li>
+<li>Rasa X</li>
+<li><p>Rasa Action Server</p>
+<span id="more"></span>
+</li>
+</ul>
+<h1 id="Rasa-Core"><a href="#Rasa-Core" class="headerlink" title="Rasa Core"></a>Rasa Core</h1><p><a target="_blank" rel="noopener" href="https://jiangdg.blog.csdn.net/article/details/105434136">https://jiangdg.blog.csdn.net/article/details/105434136</a></p>
+<p>Rasa框架提供的对话管理模块，即Dialog Management(DM)</p>
+<p>它控制着人机对话的过程，是人机对话系统的重要组成部分。DM会根据NLU模块输出的语义表示执行对话状态的更新和追踪，并根据一定策略选择相应的候选动作。在对话过程中不断根据当前状态决定下一步应该采取的最优动作（如：提供结果，询问特定限制条件，澄清或确认需求等）</p>
+<p><img src="https://flashgene.com/wp-content/uploads/2020/04/9d373f74b2cbb4925ff0cc2e7649db9e.jpg" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>DM有两个任务：</p>
+<ol>
+<li>对话状态维护（dialog state tracking, DST）</li>
+</ol>
+<p>对话状态是指记录了哪些槽位已经被填充、下一步该做什幺、填充什幺槽位，还是进行何种操作。用数学形式表达为，t+1 时刻的对话状态S(t+1)，依赖于之前时刻 t 的状态St，和之前时刻 t 的系统行为At，以及当前时刻 t+1 对应的用户行为O(t+1)。可以写成S(t+1)←St+At+O(t+1)。</p>
+<ol>
+<li>生成系统决策（dialog policy）</li>
+</ol>
+<p>根据 DST 中的对话状态（DS），产生系统行为（dialog act），决定下一步做什幺 dialog act 可以表示观测到的用户输入（用户输入 -&gt; DA，就是 NLU 的过程），以及系统的反馈行为（DA -&gt; 系统反馈，就是 NLG 的过程）</p>
+<blockquote>
+<p><strong>对于1，Rasa实现很简单，就是简单地基于策略的槽状态替换。</strong></p>
+<p><strong>对于2，Rasa使用基于LSTM的排序学习，大体上是将当前轮用户意图、上一轮系统行为、当前槽值状态向量化，然后与所有系统行为做相似度学习，以此决定当前轮次的一个或多个系统行为</strong></p>
+</blockquote>
+<h2 id="Action"><a href="#Action" class="headerlink" title="Action"></a>Action</h2><p><strong>一、动机</strong></p>
+<p>当Rasa NLU识别到用户输入Message的意图后，Rasa Core对话管理模块将如何对其作出回应呢？</p>
+<blockquote>
+<p>答案：action</p>
+</blockquote>
+<p><strong>二、action 有哪些类别？</strong></p>
+<ul>
+<li>default actions</li>
+<li>utter actions</li>
+<li>custom actions</li>
+</ul>
+<p><strong>2.1 default actions</strong></p>
+<ul>
+<li>介绍：Rasa Core默认的一组actions，我们无需定义它们，直接可以story和domain中使用；</li>
+<li>类别：<ul>
+<li>action_listen：监听action，Rasa Core在会话过程中通常会自动调用该action；</li>
+<li>action_restart：重置状态，比初始化Slots(插槽)的值等；</li>
+<li>action_default_fallback：当Rasa Core得到的置信度低于设置的阈值时，默认执行该action；</li>
+</ul>
+</li>
+</ul>
+<p><strong>2.2 utter actions</strong></p>
+<ul>
+<li>介绍：以utter_为开头，仅仅用于向用户发送一条消息作为反馈的一类actions；</li>
+<li>定义：只需要在domain.yml文件中的actions:字段定义以utter_为开头的action即可，而具体回复内容将被定义在templates:部分；</li>
+</ul>
+<figure class="highlight nestedtext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs nestedtext"><span class="hljs-attribute">actions</span><span class="hljs-punctuation">:</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-string">utter_answer_greet</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-string">utter_answer_goodbye</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-string">utter_answer_thanks</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-string">utter_introduce_self</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-string">utter_introduce_selfcando</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-string">utter_introduce_selffrom</span><br></code></pre></td></tr></table></figure>
+<p><strong>2.3 custom actions</strong></p>
+<p>即自定义action，允许开发者执行任何操作并反馈给用户，比如简单的返回一串字符串，或者控制家电、检查银行账户余额等等；</p>
+<p><strong>三、自定义动作是如何工作</strong></p>
+<p>当您的助手预测自定义动作时，Rasa服务器将<code>POST</code>使用json有效负载向动作服务器发送请求，其中包括预测动作的名称，对话ID，跟踪器的内容和域的内容。</p>
+<p>当动作服务器完成自定义动作的运行时，它将返回<a target="_blank" rel="noopener" href="https://rasa.com/docs/rasa/next/responses">响应</a>和<a target="_blank" rel="noopener" href="https://rasa.com/docs/action-server/events">事件</a>的json。然后，Rasa服务器将响应返回给用户，并将事件添加到会话跟踪器。</p>
+<p><strong>3.1 编写自定义Action</strong></p>
+<p><code>Action Class</code>为任何自定义操作的基类。要定义自定义动作，请创建<code>Action</code>该类的子类并覆盖两个必需的方法<code>name</code>和<code>run</code>。当动作服务器<code>name</code>收到运行动作的请求时，它将根据其方法的返回值调用动作。</p>
+<p>骨架自定义操作如下所示：</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs ruby"><span class="hljs-keyword">class</span> <span class="hljs-title class_">MyCustomAction</span>(<span class="hljs-title class_">Action</span>):<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">name</span>(<span class="hljs-params"><span class="hljs-variable language_">self</span></span>) -&gt; <span class="hljs-title class_">Text</span>:<br>        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;action_name&quot;</span><br><br>    async <span class="hljs-keyword">def</span> <span class="hljs-title function_">run</span>(<span class="hljs-params"></span><br><span class="hljs-params">        <span class="hljs-variable language_">self</span>, dispatcher, <span class="hljs-symbol">tracker:</span> <span class="hljs-title class_">Tracker</span>, <span class="hljs-symbol">domain:</span> <span class="hljs-title class_">Dict</span>[<span class="hljs-title class_">Text</span>, <span class="hljs-title class_">Any</span>],</span><br><span class="hljs-params">    </span>) -&gt; <span class="hljs-title class_">List</span>[<span class="hljs-title class_">Dict</span>[<span class="hljs-title class_">Text</span>, <span class="hljs-title class_">Any</span>]]:<br><br>        <span class="hljs-keyword">return</span> []<br></code></pre></td></tr></table></figure>
+<ul>
+<li><p>Action.name()    定义动作的名称。该方法返回的名称是您的机器人域中使用的名称。</p>
+</li>
+<li><p>Action.run()    参数解释：</p>
+<ul>
+<li><p>dispatcher –用于将消息发送回用户的调度程序。</p>
+<ul>
+<li>utter_message() 方法可用于将任何类型的响应返回给用户</li>
+</ul>
+<figure class="highlight nim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs nim">dispatcher.utter_message(text = <span class="hljs-string">&quot;Hey there&quot;</span>)<br>dispatcher.utter_message(image = <span class="hljs-string">&quot;&quot;</span>)<br>dispatcher.utter_message(json_message = <span class="hljs-meta">&#123;...&#125;</span>)<br>dispatcher.utter_message(<span class="hljs-keyword">template</span> = <span class="hljs-string">&quot;utter_greet&quot;</span>)<br>dispatcher.utter_message(<span class="hljs-keyword">template</span> = <span class="hljs-string">&quot;utter_greet_name&quot;</span>, name = <span class="hljs-string">&quot;Aimee&quot;</span>)<br>dispatcher.utter_messsage(buttons = [<br>                &#123;<span class="hljs-string">&quot;payload&quot;</span>: <span class="hljs-string">&quot;/affirm&quot;</span>, <span class="hljs-string">&quot;title&quot;</span>: <span class="hljs-string">&quot;Yes&quot;</span>&#125;,<br>                &#123;<span class="hljs-string">&quot;payload&quot;</span>: <span class="hljs-string">&quot;/deny&quot;</span>, <span class="hljs-string">&quot;title&quot;</span>: <span class="hljs-string">&quot;No&quot;</span>&#125;,<br>            ]<br></code></pre></td></tr></table></figure>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://rasa.com/docs/action-server/sdk-tracker">tracker</a> –当前用户的状态跟踪器。可以通过<code>Tracker</code>属性和方法获取有关过去事件和会话当前状态的信息，如：访问插槽值 <code>tracker.get_slot(slot_name)</code>，最新的用户消息是<code>tracker.latest_message.text</code>以及任何其他 <code>rasa_sdk.Tracker</code>属性。具体请参阅<a target="_blank" rel="noopener" href="https://rasa.com/docs/action-server/sdk-tracker">跟踪器</a>的<a target="_blank" rel="noopener" href="https://rasa.com/docs/action-server/sdk-tracker">文档</a>。</p>
+</li>
+<li><p>domain–机器人的域</p>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>3.2 Running a Rasa SDK Action Server</strong></p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs routeros">rasa <span class="hljs-built_in">run</span> actions<br></code></pre></td></tr></table></figure>
+<h2 id="FormAction"><a href="#FormAction" class="headerlink" title="FormAction"></a>FormAction</h2><p><strong>一、动机</strong></p>
+<p>在 Rasa Core 中，有时，我们需要执行 一个 Action 并 填充 多个 slots 时（eg：用户询问 天气时，Bot 需要知道 用户 想 查询的 是 哪一天（date-time），哪个地方（address），才能做出 正确 的 反馈），这个时候，需要怎么办么？</p>
+<blockquote>
+<p>答案：采用 FormAction 实现。</p>
+</blockquote>
+<p><strong>二、为什么 可以 采用 FormAction 实现呢？</strong></p>
+<p>FormAction会遍历监管的所有slot，当发现相关的slot未被填充时，就会向用户主动发起询问，直到所有slot被填充完毕，才会执行接下来的业务逻辑。</p>
+<p><strong>三、FormAction 的 工作流程</strong></p>
+<ol>
+<li>用户 输入 query;</li>
+<li>FormAction 遍历监控所有 slots；</li>
+<li>while 所有 slots 都被 填充？<ul>
+<li>发现 相关 slot 未被 填充时，主动 向 用户 发起 询问；</li>
+</ul>
+</li>
+<li>所有 slots 填充 完毕；</li>
+<li>继续执行下一步 业务逻辑；</li>
+</ol>
+<p><strong>三、FormAction 怎么构建？</strong></p>
+<p><strong>3.1 构建 story</strong></p>
+<ul>
+<li>注意：在 story 中，不仅需要考虑用户按照我们的设计准确的提供有效信息，而且还要考虑用户在中间过程改变要执行的意图情况或称输入无效信息，因为对于FormAction来说，如果无法获得预期的信息就会报错；</li>
+<li>两种情况：<ul>
+<li>情况一 happy path：</li>
+<li>情况二 unhappy path：</li>
+</ul>
+</li>
+<li>实例:</li>
+</ul>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs stata">## happy path<br><span class="hljs-comment">* request_weather</span><br>    - weather_form<br>    - <span class="hljs-keyword">form</span>&#123;<span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;weather_form&quot;</span>&#125;  激活<span class="hljs-keyword">form</span><br>    - <span class="hljs-keyword">form</span>&#123;<span class="hljs-string">&quot;name&quot;</span>: null&#125;  使<span class="hljs-keyword">form</span>无效<br>    <br>## unhappy path<br><span class="hljs-comment">* request_weather</span><br>    - weather_form<br>    - <span class="hljs-keyword">form</span>&#123;<span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;weather_form&quot;</span>&#125;<br><span class="hljs-comment">* stop</span><br>    - utter_ask_continue<br><span class="hljs-comment">* deny</span><br>    - action_deactivate_form<br>    - <span class="hljs-keyword">form</span>&#123;<span class="hljs-string">&quot;name&quot;</span>: null&#125;<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>注：</p>
+<ul>
+<li>“* request_weather” : 意图</li>
+<li>“- weather_form” ：form action，可以理解为 Core 针对意图 request_weather 所执行的 动作 Action；</li>
+<li>“- form{“name”: “weather_form”}” ： 激活 form （这个 name 对应 action.py 中 Class WeatherForm 的 函数 name() 的返回值）；</li>
+<li>“- action_deactivate_form”：默认 的 action，作用是用户可能在表单操作过程中改变主意，决定不继续最初的请求，我们使用这个default action来禁止(取消)表单，同时重置要请求的所有slots；</li>
+</ul>
+</blockquote>
+<p><strong>3.2 在 定义域 domain.yml 中添加 form 字段</strong></p>
+<ul>
+<li>动机：定义域 domain.yml 类似于 配置文件，该文件中 配置 该项目 所需要 的 intents、slots、entities、actions、forms、responses；</li>
+<li>目标：配置 form</li>
+</ul>
+<figure class="highlight nestedtext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs nestedtext"><span class="hljs-attribute">intents</span><span class="hljs-punctuation">:</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-string">request_weather</span><br><br><span class="hljs-attribute">forms</span><span class="hljs-punctuation">:</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-string">weather_form</span><br></code></pre></td></tr></table></figure>
+<p><strong>3.3 配置 FormPolicy 策略模块</strong></p>
+<ul>
+<li>动机：前面 【<a target="_blank" rel="noopener" href="https://github.com/km1994/nlp_paper_study/blob/master/dialogue_system_study/rasa/rasa系列/rasa_core_FormAction.md#为什么-可以-采用-formaction-实现呢">为什么可以采用 FormAction 实现呢？</a>】说了，FormAction 可以 持续 向用户 询问 未 填充 的 slot 的信息。那么，是什么 方法 使他具有该功能呢？</li>
+<li>原因：主要 是 有 FormPolicy 方法</li>
+<li>介绍：FormPolicy是MemoizationPolicy的扩展，用于处理(form)表单的填充事项；</li>
+<li>思路：当一个FormAction被调用时，FormPolicy将持续预测表单动作，直到表单中的所有槽都被填满，然后再执行对应的FormAction；</li>
+<li>如何 使用 FormActions ?<ul>
+<li>在 config.yml 配置文件中配置</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight nestedtext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs nestedtext"><span class="hljs-attribute">policies</span><span class="hljs-punctuation">:</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-string">name: EmbeddingPolicy</span><br>    <span class="hljs-attribute">epochs</span><span class="hljs-punctuation">:</span> <span class="hljs-string">100</span><br>    <span class="hljs-attribute">max_history</span><span class="hljs-punctuation">:</span> <span class="hljs-string">5</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-string">name: FallbackPolicy</span><br>    <span class="hljs-attribute">fallback_action_name</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&#x27;action_default_fallback&#x27;</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-string">name: MemoizationPolicy</span><br>    <span class="hljs-attribute">max_history</span><span class="hljs-punctuation">:</span> <span class="hljs-string">5</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-string">name: FormPolicy</span><br></code></pre></td></tr></table></figure>
+<p><strong>3.4 实现 WeatherForm 动作 Action</strong></p>
+<ul>
+<li>动机：看完上面内容，你是否有以下疑问：<ul>
+<li><ol>
+<li>意图 request_weather 怎么知道要执行哪些 动作 Action 呢？</li>
+</ol>
+</li>
+<li><ol>
+<li>FormPolicy 策略模块 怎么 知道 WeatherForm 需要 哪些 槽位呢？</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>答案：需要在 action.py 文件中 定义 WeatherForm 的相关 Action</li>
+<li>样例代码：</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># action weather_form</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">WeatherForm</span>(<span class="hljs-title class_ inherited__">FormAction</span>):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">name</span>(<span class="hljs-params">self</span>) -&gt; Text:<br>        <span class="hljs-string">&quot;&quot;&quot;Unique identifier of the form&quot;&quot;&quot;</span><br>        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;weather_form&quot;</span><br><br><span class="hljs-meta">    @staticmethod</span><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">required_slots</span>(<span class="hljs-params">tracker: Tracker</span>) -&gt; <span class="hljs-type">List</span>[Text]:<br>        <span class="hljs-string">&quot;&quot;&quot;A list of required slots that the form has to fill&quot;&quot;&quot;</span><br>        <span class="hljs-keyword">return</span> [<span class="hljs-string">&quot;date-time&quot;</span>, <span class="hljs-string">&quot;address&quot;</span>]<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">submit</span>(<span class="hljs-params"></span><br><span class="hljs-params">        self,</span><br><span class="hljs-params">        dispatcher: CollectingDispatcher,</span><br><span class="hljs-params">        tracker: Tracker,</span><br><span class="hljs-params">        domain: <span class="hljs-type">Dict</span>[Text, <span class="hljs-type">Any</span>],</span><br><span class="hljs-params">    </span>) -&gt; <span class="hljs-type">List</span>[<span class="hljs-type">Dict</span>]:<br>        <span class="hljs-string">&quot;&quot;&quot;Define what the form has to do</span><br><span class="hljs-string">            after all required slots are filled&quot;&quot;&quot;</span><br>        address = tracker.get_slot(<span class="hljs-string">&#x27;address&#x27;</span>)<br>        date_time = tracker.get_slot(<span class="hljs-string">&#x27;date-time&#x27;</span>)<br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;action_default_fallback-&gt;address:<span class="hljs-subst">&#123;address&#125;</span>&quot;</span>)<br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;action_default_fallback-&gt;date_time:<span class="hljs-subst">&#123;date_time&#125;</span>&quot;</span>)<br>        dispatcher.utter_message(<span class="hljs-string">&quot;正在为你查询 &#123;&#125; &#123;&#125;的天气 ing&quot;</span>.<span class="hljs-built_in">format</span>(address,date_time))<br>        <span class="hljs-keyword">return</span> [Restarted()]<br></code></pre></td></tr></table></figure>
+<ul>
+<li><p>代码解析：</p>
+<ul>
+<li>name()：定义 Action 名称;</li>
+<li>required_slots(tracker: Tracker)：定义 需要 填充 slots;</li>
+<li>submit()：执行函数，当 所有 槽位 填充完，通过该函数 进行 responses；</li>
+</ul>
+</li>
+<li><p>流程解析：</p>
+<ol>
+<li><p>当form action第一被调用时，form就会被激活并进入FormPolicy策略模式；</p>
+</li>
+<li><p>每次执行form action，required_slots会被调用，当发现某个还未被填充时，会主动去调用形式为uter_ask_{slotname}的模板(注：定义在domain.yml的templates字段中)；</p>
+</li>
+<li><p>当所有slot被填充完毕，submit方法就会被调用，此时本次form操作完毕被取消激活；</p>
+</li>
+</ol>
+</li>
+</ul>
+<h2 id="Stories"><a href="#Stories" class="headerlink" title="Stories"></a>Stories</h2><p><strong>二、动机</strong></p>
+<p>在对话管理（DM）中需要通过学习 获取到 必要的知识。那么，DM 的 训练数据从何而来？训练数据的格式是怎么样的？</p>
+<blockquote>
+<p>答案： Stories</p>
+</blockquote>
+<p><strong>三、什么是 Stories？</strong></p>
+<ul>
+<li>介绍：Rasa 采用 Stories 作为一种训练 DM 模型的数据格式；</li>
+<li>存放地址：该训练数据存放在 story.md 文件中。</li>
+<li>说明：Stories 是用户和人工智能助手之间的对话的表示，转换为特定的格式，其中用户输入表示为相应的意图(和必要的实体)，而助手的响应表示为相应的操作名称。</li>
+<li>该数据的格式如下所示：</li>
+</ul>
+<figure class="highlight dust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs dust"><span class="language-xml"><span class="hljs-comment">&lt;!-- ##表示story的描述，没有实际作用 --&gt;</span></span><br><span class="language-xml">## greet + location/price + cuisine + num people</span><br><span class="language-xml">* greet</span><br><span class="language-xml">   - utter_greet</span><br><span class="language-xml">* inform</span><span class="hljs-template-variable">&#123;&quot;location&quot;: &quot;rome&quot;, &quot;price&quot;: &quot;cheap&quot;&#125;</span><span class="language-xml"></span><br><span class="language-xml">   - action_on_it</span><br><span class="language-xml">   - action_ask_cuisine</span><br><span class="language-xml">* inform</span><span class="hljs-template-variable">&#123;&quot;cuisine&quot;: &quot;spanish&quot;&#125;</span><span class="language-xml"></span><br><span class="language-xml">   - action_ask_numpeople    </span><br><span class="language-xml">* inform</span><span class="hljs-template-variable">&#123;&quot;people&quot;: &quot;six&quot;&#125;</span><span class="language-xml"></span><br><span class="language-xml">   - action_ack_dosearch</span><br><span class="language-xml">  </span><br><span class="language-xml"><span class="hljs-comment">&lt;!-- Form Action--&gt;</span></span><br><span class="language-xml">## happy path </span><br><span class="language-xml">* request_weather</span><br><span class="language-xml">   - weather_form</span><br><span class="language-xml">   - form</span><span class="hljs-template-variable">&#123;&quot;name&quot;: &quot;weather_form&quot;&#125;</span><span class="language-xml"></span><br><span class="language-xml">   - form</span><span class="hljs-template-variable">&#123;&quot;name&quot;: null&#125;</span><br></code></pre></td></tr></table></figure>
+<p><strong>四、Stories 主要分哪些部分呢？</strong></p>
+<p><strong>4.1 用户输入 (User Messages)</strong></p>
+<ul>
+<li>“xx”:”yy” 对应的信息 为 用户输入消息，采用 NLU 管道输出的 intent 和 entities 来表示可能的输入，policies 根据 intent 和 entities 预测下一步 action；</li>
+<li>类别：<ul>
+<li>“* greet”：用户输入无 entity 的场景；</li>
+<li>“* inform{“people”: “six”}”：用户输入包含 entity 的场景，响应这一类 intent 为 普通 action;</li>
+<li>“* request_weather”：用户输入Message对应的intent为form action情况；</li>
+</ul>
+</li>
+</ul>
+<p><strong>4.2 动作 （Action）</strong></p>
+<ul>
+<li>“-”：要执行动作(Action)；</li>
+<li>分类：<ul>
+<li>utterance actions：在domain.yaml中定义以utter_为前缀，比如名为greet的意图，它的回复应为utter_greet；</li>
+<li>custom actions：自定义动作，具体逻辑由我们自己实现，虽然在定义action名称的时候没有限制，但是还是建议以action_为前缀，比如名为inform的意图fetch_profile的意图，它的response可为action_fetch_profile；</li>
+</ul>
+</li>
+</ul>
+<p><strong>4.3 事件（Action）</strong></p>
+<ul>
+<li>“-”：要执行事件（Action）；</li>
+<li>分类：<ul>
+<li>槽值设置(SlotSet)：</li>
+<li>激活/注销表单(Form)：</li>
+</ul>
+</li>
+</ul>
+<p><strong>4.3.1 Slot Events</strong></p>
+<ul>
+<li>作用：当我们在自定义Action中设置了某个槽值，那么我们就需要在Story中Action执行之后显著的将这个SlotSet事件标注出来，格式为- slot{“slot_name”: “value”}。</li>
+<li>举例：我们在action_fetch_profile中设置了Slot名为account_type的值，代码如下：</li>
+</ul>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs kotlin">from rasa_sdk.actions <span class="hljs-keyword">import</span> Action<br>from rasa_sdk.events <span class="hljs-keyword">import</span> SlotSet<br><span class="hljs-keyword">import</span> requests<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">FetchProfileAction</span>(Action):<br>    def name(self):<br>        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;fetch_profile&quot;</span><br><br>    def run(self, dispatcher, tracker, domain):<br>        url = <span class="hljs-string">&quot;http://myprofileurl.com&quot;</span><br>        <span class="hljs-keyword">data</span> = requests.<span class="hljs-keyword">get</span>(url).json<br>        <span class="hljs-keyword">return</span> [SlotSet(<span class="hljs-string">&quot;account_type&quot;</span>, <span class="hljs-keyword">data</span>[<span class="hljs-string">&quot;account_type&quot;</span>])]<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>注：需要在Story中执行action_fetch_profile之后，添加- slot{“account_type” : “premium”}。</p>
+</blockquote>
+<figure class="highlight clean"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs clean">## fetch_profile<br>* fetch_profile<br>   - action_fetch_profile<br>   - slot&#123;<span class="hljs-string">&quot;account_type&quot;</span> : <span class="hljs-string">&quot;premium&quot;</span>&#125;<br>   - utter_welcome_premium<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>如果您的自定义Action中将槽值重置为None，则对应的事件为-slot{“slot_name”: null}</p>
+</blockquote>
+<p><strong>4.3.2 Form Events</strong></p>
+<ul>
+<li>三种形式的表单事件(Form Events):<ul>
+<li>Form Action事件:<ul>
+<li>介绍：表单动作事件，是自定义Action的一种，用于一个表单操作</li>
+<li>“- restaurant_form”</li>
+</ul>
+</li>
+<li>Form activation事件：<ul>
+<li>介绍：激活表单事件，当form action事件执行后，会立马执行该事件</li>
+<li>“- form{“name”: “restaurant_form”}”</li>
+</ul>
+</li>
+<li>Form deactivation事件:<ul>
+<li>介绍：注销表单事件，作用与form activation相反</li>
+<li>“- form{“name”: null}”</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight fsharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs fsharp">## happy path<br><span class="hljs-operator">*</span> request_weather<br>    <span class="hljs-operator">-</span> weather_form<br>    <span class="hljs-operator">-</span> <span class="hljs-keyword">form</span>&#123;<span class="hljs-string">&quot;name&quot;</span><span class="hljs-operator">:</span> <span class="hljs-string">&quot;weather_form&quot;</span>&#125;<br>    <span class="hljs-operator">-</span> <span class="hljs-keyword">form</span>&#123;<span class="hljs-string">&quot;name&quot;</span><span class="hljs-operator">:</span> <span class="hljs-literal">null</span>&#125;<br></code></pre></td></tr></table></figure>
+<p>总之，我们在构建Story时，可以说是多种多样的，因为设计的故事情节是多种多样的，这就意味着上述三种内容的组合也是非常灵活的。另外，在设计Story时Rasa还提供了<a target="_blank" rel="noopener" href="https://rasa.com/docs/rasa/core/stories/#id9">Checkpoints </a>和<a target="_blank" rel="noopener" href="https://rasa.com/docs/rasa/core/stories/#id9">OR statements</a>两种功能，来提升构建Story的灵活度，但是需要注意的是，东西虽好，但是不要太贪了，过多的使用不仅增加了复杂度，同时也会拖慢训练的速度。</p>
+<h2 id="Domain"><a href="#Domain" class="headerlink" title="Domain"></a>Domain</h2><ul>
+<li><p>Domain，描述了对话机器人应知道的所有信息</p>
+<p>类似于“人的大脑”，存储了<strong>意图intents、实体entities、插槽slots、动作actions、响应、表单等</strong>信息。domain.yml文件组成结构如下：</p>
+<p><img src="https://flashgene.com/wp-content/uploads/2020/04/e85b0bc1accb546be2a817523b5ee22c.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<ol>
+<li><p>intents</p>
+<p>意图的定义是在NLU样本中实现的，并且在每个意图下面我们需要枚举尽可多的样本用于训练，以达到Bot能够准确识别出我们输入的一句话到底想要干什幺</p>
+</li>
+<li><p>session_config</p>
+<p>即会话配置，这部分的作用为配置一次会话(conversation session)是否有超时限制</p>
+</li>
+<li><p>slots</p>
+<p>即插槽，它就像对话机器人的内存，它通过键值对的形式可用来收集存储用户输入的信息(实体)或者查询数据库的数据</p>
+</li>
+<li><p>entities</p>
+<p>即实体，类似于输入文本中的关键字，需要在NLU样本中进行标注，然后Bot进行实体识别，并将其填充到Slot槽中，便于后续进行相关的业务操作</p>
+</li>
+<li><p>actions</p>
+<p>当Rasa NLU识别到用户输入Message的意图后，Rasa Core对话管理模块就会对其作出回应，而完成这个回应的模块就是action</p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs asciidoc">actions:<br>– utter<span class="hljs-emphasis">_answer_affirm</span><br><span class="hljs-emphasis">– utter_answer_deny</span><br><span class="hljs-emphasis">– utter_answer_</span>greet<br></code></pre></td></tr></table></figure>
+</li>
+<li><p>forms</p>
+<p>即表单，该部分列举了在NLU样本中自定义了哪些表单动作 (Form Actions)</p>
+<figure class="highlight nestedtext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs nestedtext"><span class="hljs-attribute">forms</span><span class="hljs-punctuation">:</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-string">weather_form</span><br></code></pre></td></tr></table></figure>
+</li>
+<li><p>responses</p>
+<p>描述UtterActions具体的回复内容，并且每个UtterAction下可以定义多条信息，当用户发起一个意图，比如 “你好!”，就触发utter_answer_greet操作，Rasa Core会从该action的模板中自动选择其中的一条信息作为结果反馈给用户。除此之外，还可以在训练数据中存储Responses；或者自定义一个NLG服务来生成Responses。</p>
+<figure class="highlight vbnet"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs vbnet"><span class="hljs-symbol">responses:</span><br>  utter_answer_greet:<br>    - <span class="hljs-keyword">text</span>: <span class="hljs-string">&quot;您好！请问我可以帮到您吗？&quot;</span><br>    - <span class="hljs-keyword">text</span>: <span class="hljs-string">&quot;您好！很高兴为您服务。请说出您要查询的功能？&quot;</span><br>    <br>  utter_ask_date_time:<br>    - <span class="hljs-keyword">text</span>: <span class="hljs-string">&quot;请问您要查询哪一天的天气？&quot;</span><br></code></pre></td></tr></table></figure>
+</li>
+</ol>
+</li>
+</ul>
+<h2 id="Slots"><a href="#Slots" class="headerlink" title="Slots"></a>Slots</h2><ul>
+<li><p>Slots</p>
+<ul>
+<li><p>Slots Type</p>
+<ol>
+<li>Text：文本</li>
+<li>Boolean：布尔型</li>
+<li>Categorical：多个值中的一个</li>
+<li>Float：浮点数</li>
+<li>List：</li>
+<li>Unfeaturized：不影响对话的数据</li>
+</ol>
+</li>
+<li><p>slots 填充方式</p>
+<ul>
+<li>通过initial_value字段为当前slot提供一个初始值</li>
+<li>Slots Set from NLU <code>\* greet&#123;“name”: “Ali”&#125;</code></li>
+<li>Slots Set By Clicking Buttons</li>
+<li>Slots Set by Actions：在Custom Action中通过返回事件来填充Slots的值</li>
+</ul>
+</li>
+<li><p>Slots值的两种获取方式</p>
+<ul>
+<li><p>Get Slot in responses</p>
+<p>在domain.yaml的responses部分，可以通过{slotname}的形式获取槽值</p>
+<figure class="highlight nestedtext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs nestedtext"><span class="hljs-attribute">responses</span><span class="hljs-punctuation">:</span><br><span class="hljs-punctuation"></span><br><span class="hljs-attribute">utter_greet</span><span class="hljs-punctuation">:</span><br><span class="hljs-attribute">– text</span><span class="hljs-punctuation">:</span> <span class="hljs-string">“Hey, &#123;name&#125;. How are you?”</span><br></code></pre></td></tr></table></figure>
+</li>
+<li><p>Get Slot in Custom Action</p>
+<p>通过Tracker，能够轻松获取整个对话信息，其中就包括Slot的值</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> rasa_sdk.actions <span class="hljs-keyword">import</span> Action<br><span class="hljs-keyword">from</span> rasa_sdk.events <span class="hljs-keyword">import</span> SlotSet<br><span class="hljs-keyword">import</span> requests<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">FetchProfileAction</span>(<span class="hljs-title class_ inherited__">Action</span>):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">name</span>(<span class="hljs-params">self</span>):<br>    	<span class="hljs-keyword">return</span> “fetch_profile”<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">run</span>(<span class="hljs-params">self, dispatcher, tracker, domain</span>):<br>        <span class="hljs-comment"># 获取slot account_type的值</span><br>        account_type = tracker.get_slot(‘account_type’)<br>        <span class="hljs-keyword">return</span> []<br></code></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="Policies"><a href="#Policies" class="headerlink" title="Policies"></a>Policies</h2><p><strong>二、动机</strong></p>
+<p>在对话管理（DM）需要根据 用户输入 作出 相应的响应，该过程就需要 制定合适 的策略。</p>
+<blockquote>
+<p>答案： Policies</p>
+</blockquote>
+<p><strong>三、Policies 是什么？</strong></p>
+<ul>
+<li><p>介绍：Policies 是 Rasa Core中的策略模块；</p>
+</li>
+<li><p>对应类：rasa_core.policies.Policy；</p>
+</li>
+<li><p>作用：使用合适的策略（Policy）来预测一次对话后要执行的行为（Actions）；</p>
+</li>
+<li><p>预测原理：衡量命中的哪些Policies哪个置信度高，由置信度高的Policy选择合适的Action执行。假如出现不同的Policy拥有相同的置信度，那么就由它们的优先级决定，即选择优先级高的Policy；</p>
+</li>
+<li><p>Rasa对提供的Policies进行了优先级排序，具体如下表：</p>
+<p><img src="https://flashgene.com/wp-content/uploads/2020/04/68e68cbe6bf8a5e4f8bddb1f5eb5c2be.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+</li>
+</ul>
+<p><strong>四、Policies 的 策略模块的作用？</strong></p>
+<p><strong>4.1 Memoization Policy</strong></p>
+<ul>
+<li>作用：只记住(memorizes)训练数据中的对话。如果训练数据中存在这样的对话，那么它将以置信度为1.0预测下一个动作，否则将预测为None，此时置信度为0.0；</li>
+<li>如何在策略配置文件config.yml文件中，配置MemoizationPlicy策略，其中，max_history(超参数)决定了模型查看多少个对话历史以决定下一个执行的action；</li>
+</ul>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs dts"><span class="hljs-symbol">policies:</span><br>   - name: <span class="hljs-string">&quot;MemoizationPolicy&quot;</span><br><span class="hljs-symbol">   max_history:</span> <span class="hljs-number">5</span><br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>注：max_history值越大训练得到的模型就越大并且训练时间会变长，关于该值到底该设置多少，我们可以举这么个例子，比如有这么一个Intent：out_of_scope来描述用户输入的消息off-topic(离题)，当用户连续三次触发out_of_scope意图，这时候我们就需要主动告知用户需要向其提供帮助，如果要Rasa Core能够学习这种模型，max_history应该至少为3。story.md中表现如下：</p>
+</blockquote>
+<figure class="highlight ceylon"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs ceylon">* <span class="hljs-keyword">out</span><span class="hljs-number">_</span><span class="hljs-keyword">of</span><span class="hljs-number">_</span>scope<br>   - utter<span class="hljs-number">_</span><span class="hljs-keyword">default</span><br>* <span class="hljs-keyword">out</span><span class="hljs-number">_</span><span class="hljs-keyword">of</span><span class="hljs-number">_</span>scope<br>   - utter<span class="hljs-number">_</span><span class="hljs-keyword">default</span><br>* <span class="hljs-keyword">out</span><span class="hljs-number">_</span><span class="hljs-keyword">of</span><span class="hljs-number">_</span>scope<br>   - utter<span class="hljs-number">_</span>help<span class="hljs-number">_m</span>essage<br></code></pre></td></tr></table></figure>
+<p><strong>4.2 Keras Policy</strong></p>
+<ul>
+<li>作用：Keras框架中实现的神经网络来预测选择执行下一个action；</li>
+<li>默认的框架：使用LSTM(Long Short-Term Memory，长短期记忆网络)算法，但是我们也可以重写KerasPolicy.model_architecture函数来实现自己的框架(architecture)。KerasPolicy的模型很简单，只是单一的LSTM+Dense+softmax，这就需要我们不断地完善自己的story来把各种情况下的story进行补充；</li>
+<li>如何在策略配置文件config.yml文件中，配置KerasPolicy策略，其中，epochs表示训练的次数，max_history同上：</li>
+</ul>
+<figure class="highlight nestedtext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs nestedtext"><span class="hljs-attribute">policies</span><span class="hljs-punctuation">:</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-string">name: KerasPolicy</span><br>    <span class="hljs-attribute">epochs</span><span class="hljs-punctuation">:</span> <span class="hljs-string">100</span><br>    <span class="hljs-attribute">max_history</span><span class="hljs-punctuation">:</span> <span class="hljs-string">5</span><br></code></pre></td></tr></table></figure>
+<p><strong>4.3 Embedding Policy</strong></p>
+<ul>
+<li>动机：基于机器学习的对话管理能够学习复杂的行为以完成任务，但是将其功能扩展到新领域并不简单，尤其是不同策略处理不合作用户行为的能力，以及在学习新任务(如预订酒店)时，如何将完成一项任务(如餐厅预订)重新应用于该任务时的情况；</li>
+<li><p>作用：循环嵌入式对话策略(Recurrent Embedding Dialogue Policy，REDP)，它通过将actions和对话状态嵌入到相同的向量空间(vector space)能够获得较好的效果，REDP包含一个基于改进的Neural Turing Machine的记忆组件和注意机制，在该任务上显著优于基线LSTM分类器；</p>
+</li>
+<li><p>配置EmbeddingPolicy参数：</p>
+</li>
+</ul>
+<figure class="highlight nestedtext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs nestedtext"><span class="hljs-attribute">policies</span><span class="hljs-punctuation">:</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-string">name: EmbeddingPolicy</span><br>    <span class="hljs-attribute">epochs</span><span class="hljs-punctuation">:</span> <span class="hljs-string">100</span><br>    <span class="hljs-attribute">featurizer</span><span class="hljs-punctuation">:</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-string">name: FullDialogueTrackerFeaturizer</span><br>      <span class="hljs-attribute">state_featurizer</span><span class="hljs-punctuation">:</span><br>        <span class="hljs-bullet">-</span> <span class="hljs-string">name: LabelTokenizerSingleStateFeaturizer</span><br></code></pre></td></tr></table></figure>
+<p><strong>4.4 Form Policy</strong></p>
+<ul>
+<li><p>作用：MemoizationPolicy的扩展，用于处理(form)表单的填充事项。当一个FormAction被调用时，FormPolicy将持续预测表单动作，直到表单中的所有槽都被填满，然后再执行对应的FormAction；</p>
+</li>
+<li><p>使用：需要实现FormAction，在<code>domain.yml</code>中指定，在<code>stories.md</code>中使用</p>
+<p>当一个FormAction被调用时，FormPolicy将持续预测表单动作，直到表单中的所有槽都被填满，然后再执行对应的FormAction。</p>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> rasa_sdk <span class="hljs-keyword">import</span> Tracker<br><span class="hljs-keyword">from</span> rasa_sdk.forms <span class="hljs-keyword">import</span> FormAction<br><span class="hljs-keyword">from</span> typing <span class="hljs-keyword">import</span> <span class="hljs-type">Dict</span>, Text, <span class="hljs-type">Any</span>, <span class="hljs-type">List</span><br><span class="hljs-keyword">from</span> rasa_sdk.executor <span class="hljs-keyword">import</span> CollectingDispatcher<br><br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">FacilityForm</span>(<span class="hljs-title class_ inherited__">FormAction</span>):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">name</span>(<span class="hljs-params">self</span>) -&gt; Text:<br>        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;facility_form&quot;</span><br><br><span class="hljs-meta">    @staticmethod</span><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">required_slots</span>(<span class="hljs-params">tracker: Tracker</span>) -&gt; <span class="hljs-type">List</span>[Text]:<br>        <span class="hljs-keyword">return</span> [<span class="hljs-string">&quot;facility_type&quot;</span>, <span class="hljs-string">&quot;location&quot;</span>]<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">slot_mappings</span>(<span class="hljs-params">self</span>) -&gt; <span class="hljs-type">Dict</span>[Text, <span class="hljs-type">Any</span>]:<br>        <span class="hljs-keyword">return</span> &#123;<span class="hljs-string">&quot;facility_type&quot;</span>: self.from_entity(entity=<span class="hljs-string">&quot;facility_type&quot;</span>, intent=[<span class="hljs-string">&quot;inform&quot;</span>, <span class="hljs-string">&quot;search_provider&quot;</span>]),<br>                <span class="hljs-string">&quot;location&quot;</span>: self.from_entity(entity=<span class="hljs-string">&quot;location&quot;</span>, intent=[<span class="hljs-string">&quot;inform&quot;</span>, <span class="hljs-string">&quot;search_provider&quot;</span>])&#125;<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">submit</span>(<span class="hljs-params">self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: <span class="hljs-type">Dict</span>[Text, <span class="hljs-type">Any</span>]</span>) -&gt; <span class="hljs-type">List</span>[<span class="hljs-type">Dict</span>]:<br>        location = tracker.get_slot(<span class="hljs-string">&#x27;location&#x27;</span>)<br>        facility_type = tracker.get_slot(<span class="hljs-string">&#x27;facility_type&#x27;</span>)<br>        dispatcher.utter_button_message(<span class="hljs-string">&quot;Here is home health agency near you&quot;</span>)<br>        <span class="hljs-keyword">return</span> []<br></code></pre></td></tr></table></figure>
+<figure class="highlight ldif"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs ldif"><span class="hljs-attribute">forms</span>:<br><span class="hljs-literal">-</span> facility_form<br></code></pre></td></tr></table></figure>
+<p><strong>4.5 Mapping Policy</strong></p>
+<ul>
+<li>作用：M可用于直接将意图映射到要执行的action，从而实现被映射的action总会被执行，其中，这种映射是通过triggers属性实现的；</li>
+<li>使用：无视之前对话，一旦触发意图就操作；映射是传递intent属性给<code>triggers</code>实现的，修改<code>domain.yml</code></li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">intents:</span><br> <span class="hljs-bullet">-</span> <span class="hljs-attr">greet:</span> &#123;<span class="hljs-attr">triggers:</span> <span class="hljs-string">utter_goodbye</span>&#125;<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>注：greet是意图；utter_goodbye是action。<br>一个意图最多只能映射到一个action，我们的机器人一旦收到映射意图的消息，它将执行对应的action。然后，继续监听下一条message。需要注意的是，对于上述映射，我们还需要要在story.md文件中添加如下样本，否则，任何机器学习策略都可能被预测的action_greet在dialouge历史中突然出现而混淆</p>
+</blockquote>
+<p><strong>4.6 Fallback Policy</strong></p>
+<ul>
+<li>作用：如果意图识别的置信度低于nlu_threshold，或者没有任何对话策略预测的action置信度高于core_threshold，FallbackPolicy将执行fallback action。通俗来说，就是我们的对话机器人意图识别和action预测的置信度没有满足对应的阈值，该策略将使机器人执行指定的默认action；</li>
+<li>使用：例如用户问了让机器人理解不了的东西时需要回退</li>
+</ul>
+<figure class="highlight nestedtext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs nestedtext"><span class="hljs-attribute">policies</span><span class="hljs-punctuation">:</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-string">name: &quot;FallbackPolicy&quot;</span><br>    <span class="hljs-comment"># 意图理解置信度阈值</span><br>    <span class="hljs-attribute">nlu_threshold</span><span class="hljs-punctuation">:</span> <span class="hljs-string">0.3</span><br>    <span class="hljs-comment"># action预测置信度阈值</span><br>    <span class="hljs-attribute">core_threshold</span><span class="hljs-punctuation">:</span> <span class="hljs-string">0.3</span><br>    <span class="hljs-comment"># fallback action</span><br>    <span class="hljs-attribute">fallback_action_name</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&#x27;action_default_fallback&#x27;</span><br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>注：其中，action_default_fallback是Rasa Core中的一个默认操作，它将向用户发送utter_default模板消息，因此我们需要确保在domain.yml文件中指定此模板；</p>
+</blockquote>
+<ul>
+<li>自定义使用：在fallback_action_name字段自定义默认回复的action，比如my_fallback_cation，就可以这么改：</li>
+</ul>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs dts"><span class="hljs-symbol">policies:</span><br>  - name: <span class="hljs-string">&quot;FallbackPolicy&quot;</span><br><span class="hljs-symbol">    nlu_threshold:</span> <span class="hljs-number">0.4</span><br><span class="hljs-symbol">    core_threshold:</span> <span class="hljs-number">0.3</span><br><span class="hljs-symbol">    fallback_action_name:</span> <span class="hljs-string">&quot;my_fallback_action&quot;</span><br></code></pre></td></tr></table></figure>
+<h2 id="Interactive-Learning"><a href="#Interactive-Learning" class="headerlink" title="Interactive Learning"></a>Interactive Learning</h2><p>虽然我们可以容易的人工构建story样本数据，但是往往会出现一些考虑不全，甚至出错等问题，基于此，Rasa Core框架为我们提供了一种交互式学习(Interactive Learning)来获得所需的样本数据。</p>
+<ol>
+<li>开启Action Server</li>
+</ol>
+<figure class="highlight brainfuck"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs brainfuck"><span class="hljs-comment">python</span> <span class="hljs-literal">-</span><span class="hljs-comment">m rasa run actions</span> <span class="hljs-literal">--</span><span class="hljs-comment">port 5055</span> <span class="hljs-literal">--</span><span class="hljs-comment">actions actions</span> <span class="hljs-literal">--</span><span class="hljs-comment">debug</span><br></code></pre></td></tr></table></figure>
+<ol>
+<li>开启Interactive Learning</li>
+</ol>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs awk">python -m rasa interactive -m models<span class="hljs-regexp">/20200313-101055.tar.gz –endpoints configs/</span>endpoints.yml –config configs/config.yml<br><br>\<span class="hljs-comment"># 或者（没有已训练模型情况）</span><br><br>\<span class="hljs-comment"># rasa会先训练好模型，再开启交互式学习会话</span><br><br>python -m rasa interactive –data <span class="hljs-regexp">/data –domain configs/</span>domain.yml –endpoints configs<span class="hljs-regexp">/endpoints.yml –config configs/</span>config.yml<br></code></pre></td></tr></table></figure>
+<p>分别执行(1)、(2)命令后，我们可以预设一个交互场景根据终端的提示操作即可。如果一个交互场景所有流程执行完毕，按Ctrl+C结束并选择Start Fresh进入下一个场景即可。当然Rasa还提供了可视化界面，以帮助你了解每个Story样本构建的过程，网址：<a target="_blank" rel="noopener" href="http://localhost:5005/visualization.html。">http://localhost:5005/visualization.html。</a></p>
+<h1 id="Rasa-X"><a href="#Rasa-X" class="headerlink" title="Rasa X"></a>Rasa X</h1><ul>
+<li><p>layers on top of Rasa Open Source and helps you build a better assistant</p>
+</li>
+<li><p>is a free, closed source tool available to all developers</p>
+</li>
+<li>can be deployed anywhere, so your training data stays secure and proprietary</li>
+</ul>
+<p>Rasa X可以以本地模式安装，也可以使用Kubernetes / Openshift或Docker Compose安装在服务器上。请考虑以下哪种描述最能描述您的情况，并相应地选择一种安装方法。</p>
+<h2 id="本地模式"><a href="#本地模式" class="headerlink" title="本地模式"></a>本地模式</h2><p>如果以下任何一种描述您的用例，则最好的方法是：</p>
+<ul>
+<li>您正在开发自己的Rasa助手，并希望在用户界面中与其聊天并与他人共享</li>
+<li>您是第一次浏览Rasa X，只想了解它在本地的工作方式</li>
+</ul>
+<p>在以下情况下，您将需要使用其他安装选项之一：</p>
+<ul>
+<li>您已经准备好部署助手并将其提供给最终用户</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://rasa.com/docs/rasa-x/installation-and-setup/install/local-mode">本地模式安装指南</a></p>
+<h2 id="服务器快速安装"><a href="#服务器快速安装" class="headerlink" title="服务器快速安装"></a>服务器快速安装</h2><p>这是在服务器或群集上安装Rasa X的最简单，最快的方法。如果您不确定选择哪种方法，请尝试这种方法。</p>
+<p>如果以下任何一种描述您的用例，则最好的方法是：</p>
+<ul>
+<li>您正在安装要在生产中使用的Rasa X，并且不需要太多自定义</li>
+<li>您是第一次浏览Rasa X，并想了解它在服务器上的工作方式</li>
+</ul>
+<p>在以下情况下，您将需要使用其他服务器安装选项之一：</p>
+<ul>
+<li>您的系统不符合<a target="_blank" rel="noopener" href="https://rasa.com/docs/rasa-x/installation-and-setup/install/quick-install-script#requirements">要求</a></li>
+<li>除了<a target="_blank" rel="noopener" href="https://rasa.com/docs/rasa-x/installation-and-setup/customize#server-quick-install">此方法可用的</a>定制之外，您还需要其他定制</li>
+<li>您期望机器人有大量流量（数百个并发用户），并且需要扩展</li>
+<li>您正在安装Rasa Enterprise</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://rasa.com/docs/rasa-x/installation-and-setup/install/quick-install-script">服务器快速安装指南</a></p>
+<h2 id="Docker撰写"><a href="#Docker撰写" class="headerlink" title="Docker撰写"></a>Docker撰写</h2><p>如果满足以下条件，则使用Docker Compose在服务器上安装Rasa X是一个不错的选择：</p>
+<ul>
+<li>您不能或不想使用Kubernetes / Openshift</li>
+<li>您需要比快速安装脚本提供的更多自定义设置</li>
+<li>您不会期望大量的用户流量（即数百个并发用户）</li>
+</ul>
+<p>安装脚本可用于满足<a target="_blank" rel="noopener" href="https://rasa.com/docs/rasa-x/installation-and-setup/install/docker-compose#requirements">硬件和操作系统要求的</a>服务器 。对于其他操作系统，您可以通过Docker Compose手动安装RasaX。</p>
+<p><a target="_blank" rel="noopener" href="https://rasa.com/docs/rasa-x/installation-and-setup/install/docker-compose">Docker Compose安装指南</a></p>
+<h2 id="注意❤❤❤"><a href="#注意❤❤❤" class="headerlink" title="注意❤❤❤"></a>注意❤❤❤</h2><p>启动 <code>rasa x</code> 的过程中，windows下可能会遇到如下问题</p>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs livecodeserver">rasa.shared.exceptions.FileIOException: Failed <span class="hljs-built_in">to</span> <span class="hljs-built_in">read</span> <span class="hljs-built_in">file</span> <span class="hljs-string">&#x27;C:\Users\NINGSH~1\AppData\Local\Temp\tmpmqoghnak&#x27;</span>, could <span class="hljs-keyword">not</span> <span class="hljs-built_in">read</span> <span class="hljs-keyword">the</span> <span class="hljs-built_in">file</span> <span class="hljs-keyword">using</span> utf<span class="hljs-number">-8</span> <span class="hljs-built_in">to</span> decode <span class="hljs-keyword">it</span>. Please make sure <span class="hljs-keyword">the</span> <span class="hljs-built_in">file</span> is stored <span class="hljs-keyword">with</span> this encoding.<br></code></pre></td></tr></table></figure>
+<p>解决：win10下需保证所有 XXX.yml 等配置文件不包含中文，或者是修改rasa\shared\utils\io.py代码：</p>
+<figure class="highlight julia"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs julia">def read_file(filename: <span class="hljs-built_in">Union</span>[<span class="hljs-built_in">Text</span>, Path], encoding: <span class="hljs-built_in">Text</span> = DEFAULT_ENCODING) -&gt; <span class="hljs-built_in">Any</span>:<br>    <span class="hljs-string">&quot;&quot;&quot;Read text from a file.&quot;&quot;&quot;</span><br><br>    <span class="hljs-keyword">import</span> codecs<br>    <span class="hljs-keyword">try</span>:<br>        with codecs.open(filename, <span class="hljs-string">&#x27;r&#x27;</span>, encoding=encoding) as f:<br>            <span class="hljs-keyword">return</span> f.read()<br>    except FileNotFoundError:<br>        raise FileNotFoundException(<br>            <span class="hljs-string">f&quot;Failed to read file, &quot;</span> <span class="hljs-string">f&quot;&#x27;&#123;os.path.abspath(filename)&#125;&#x27; does not exist.&quot;</span><br>        )<br>    except UnicodeDecodeError:<br>        <span class="hljs-keyword">try</span>:<br>            with codecs.open(filename, <span class="hljs-string">&#x27;r&#x27;</span>, encoding=&#x27;gb2312&#x27;) as f:<br>                <span class="hljs-keyword">return</span> f.read()<br>        except <span class="hljs-built_in">Exception</span>:<br>            raise FileIOException(<br>                <span class="hljs-string">f&quot;Failed to read file &#x27;&#123;os.path.abspath(filename)&#125;&#x27;, &quot;</span><br>                <span class="hljs-string">f&quot;could not read the file using &#123;encoding&#125; to decode &quot;</span><br>                <span class="hljs-string">f&quot;it. Please make sure the file is stored with this &quot;</span><br>                <span class="hljs-string">f&quot;encoding.&quot;</span><br>            )<br></code></pre></td></tr></table></figure>
+<h1 id="遇到的坑"><a href="#遇到的坑" class="headerlink" title="遇到的坑"></a>遇到的坑</h1><ol>
+<li>训练数据JSON格式实体entity为中文，报错<code>UnicodeEncodeError: &#39;ascii&#39; codec can&#39;t encode characters</code>，entity命名应使用英文</li>
+<li>根目录不要有文件<code>test.py</code>，启动API服务时会运行该文件，可能会报错</li>
+<li>项目名不要带中文，启动Rasa X时可能报错</li>
+<li>YAML文件涉及字符串最好用<code>&quot;</code>包围起来，特别为了调用Rasa API时。如<code>- payload: &quot;/inform&#123;\&quot;gender\&quot;: \&quot;男\&quot;&#125;&quot;</code></li>
+<li>一个Form激活时输入了无关数据报错<code>Failed to extract slot xxx with action xxx_form</code>，可在Stories中添加<code>action_deactivate_form</code>停止</li>
+</ol>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>400 多行代码！超详细 Rasa 中文聊天机器人开发指南<br><a target="_blank" rel="noopener" href="https://flashgene.com/archives/110272.html">https://flashgene.com/archives/110272.html</a></p>
+<p>Rasa中文聊天机器人开发指南</p>
+<p><a target="_blank" rel="noopener" href="https://jiangdg.blog.csdn.net/article/details/104328946">https://jiangdg.blog.csdn.net/article/details/104328946</a></p>
+<p>Rasa入门——AI助手和聊天机器人</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/lly1122334/article/details/104041589">https://blog.csdn.net/lly1122334/article/details/104041589</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Rasa-Core/">#Rasa Core</a>
+      
+        <a href="/tags/Rasa-X/">#Rasa X</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Rasa Core &amp; Rasa X 详解</div>
+      <div>http://example.com/2020/12/14/2020-12-14-Rasa Core &amp; Rasa X 详解/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>NSX</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2020年12月14日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/12/15/2020-12-15-Python3%E7%BC%93%E5%AD%98%E6%9C%BA%E5%88%B6lru_cache/" title="Python3中的LRU缓存机制">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Python3中的LRU缓存机制</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/12/14/2020-12-14-Rasa%20NLU%20%E8%AF%A6%E8%A7%A3/" title="Rasa NLU 详解">
+                        <span class="hidden-mobile">Rasa NLU 详解</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

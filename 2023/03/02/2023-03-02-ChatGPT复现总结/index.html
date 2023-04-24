@@ -1,0 +1,896 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Ning Shixian">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="复现ChatGPT的难点与平替复现和使用GPT-3&#x2F;ChatGPT，我们应该注意什么？  1.3B的模型+RLHF就可以很强，在真正的落地中，训一个for单一生成任务的定制化ChatGPT不再那么遥不可及，一两张A100和十万级别的数据就可以了——《追赶ChatGPT的难点与平替》 在人力、算力、时间有限的情况下，效率最优的路径是直接在1.3B模型上迭代，大概10万标注数据，复现一个低配小型Ch">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ChatGPT复现总结">
+<meta property="og:url" content="http://example.com/2023/03/02/2023-03-02-ChatGPT%E5%A4%8D%E7%8E%B0%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="复现ChatGPT的难点与平替复现和使用GPT-3&#x2F;ChatGPT，我们应该注意什么？  1.3B的模型+RLHF就可以很强，在真正的落地中，训一个for单一生成任务的定制化ChatGPT不再那么遥不可及，一两张A100和十万级别的数据就可以了——《追赶ChatGPT的难点与平替》 在人力、算力、时间有限的情况下，效率最优的路径是直接在1.3B模型上迭代，大概10万标注数据，复现一个低配小型Ch">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2023/03/02/2023-03-02-ChatGPT%E5%A4%8D%E7%8E%B0%E6%80%BB%E7%BB%93/1679295939637-8e94487d-80ae-4e1e-aa5b-d1a4243fe198.png">
+<meta property="og:image" content="http://example.com/2023/03/02/2023-03-02-ChatGPT%E5%A4%8D%E7%8E%B0%E6%80%BB%E7%BB%93/1679287538189-e1794b1e-3c7b-460c-97e3-86810e38163c.png">
+<meta property="og:image" content="http://example.com/2023/03/02/2023-03-02-ChatGPT%E5%A4%8D%E7%8E%B0%E6%80%BB%E7%BB%93/1679287654270-36317103-d54c-4a4c-a04e-86d85fc39f17.png">
+<meta property="og:image" content="http://example.com/2023/03/02/2023-03-02-ChatGPT%E5%A4%8D%E7%8E%B0%E6%80%BB%E7%BB%93/1679302137322-1ef27792-adac-40f2-8bb1-756fcd24d13a.png">
+<meta property="og:image" content="http://example.com/2023/03/02/2023-03-02-ChatGPT%E5%A4%8D%E7%8E%B0%E6%80%BB%E7%BB%93/1677659173665-772a024e-3d03-4990-bf8b-b4a4d778261c.png">
+<meta property="article:published_time" content="2023-03-02T07:06:20.000Z">
+<meta property="article:modified_time" content="2023-04-24T14:14:34.599Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="原创">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2023/03/02/2023-03-02-ChatGPT%E5%A4%8D%E7%8E%B0%E6%80%BB%E7%BB%93/1679295939637-8e94487d-80ae-4e1e-aa5b-d1a4243fe198.png">
+  
+  
+  
+  <title>ChatGPT复现总结 - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="ChatGPT复现总结"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-03-02 15:06" pubdate>
+          2023年3月2日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          6.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          51 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">ChatGPT复现总结</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <blockquote>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/607847588?utm_medium=social&amp;utm_oi=556189566109925376&amp;utm_psn=1611295462803406848&amp;utm_source=wechat_session">复现ChatGPT的难点与平替</a><br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/607744955">复现和使用GPT-3/ChatGPT，我们应该注意什么？</a></p>
+</blockquote>
+<p>1.3B的模型+RLHF就可以很强，在真正的落地中，训一个for单一生成任务的定制化ChatGPT不再那么遥不可及，一两张A100和十万级别的数据就可以了——《追赶ChatGPT的难点与平替》</p>
+<p>在人力、算力、时间有限的情况下，<strong>效率最优的路径是直接在1.3B模型上迭代，大概10万标注数据，复现一个低配小型ChatGPT，验证整个流程的有效性，再去做175B的模型。——《</strong>追赶ChatGPT的难点与平替<strong>》</strong></p>
+<img src="/2023/03/02/2023-03-02-ChatGPT%E5%A4%8D%E7%8E%B0%E6%80%BB%E7%BB%93/1679295939637-8e94487d-80ae-4e1e-aa5b-d1a4243fe198.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<h2 id="LLM-资源"><a href="#LLM-资源" class="headerlink" title="LLM 资源"></a>LLM 资源</h2><ul>
+<li>GPT-3 和 PaLM，这两个模型都不是公开的</li>
+<li>OPT 和 Bloom 是公开模型，基于<strong>GPT架构</strong>，但是效果达不到GPT-3；<ul>
+<li>OPT只支持英文，Bloom支持中英；</li>
+<li>OPT-IML (OPT + Instruction Meta-Learning) is a set of instruction-tuned versions of OPT, ①OPT-IML trained on 1500 tasks with several tasks held-out for purposes of downstream evaluation, and ②OPT-IML-Max trained on all ~2000 tasks</li>
+<li><a target="_blank" rel="noopener" href="https://huggingface.co/bigscience/bloom-1b1">bigscience/bloom-1b1</a>、</li>
+<li><a target="_blank" rel="noopener" href="https://huggingface.co/facebook/opt-350m">facebook/opt-350m</a>、<a target="_blank" rel="noopener" href="https://huggingface.co/facebook/opt-125m">facebook/opt-125m</a>、<a target="_blank" rel="noopener" href="https://huggingface.co/facebook/opt-iml-max-1.3b">facebook/opt-iml-max-1.3b</a></li>
+</ul>
+</li>
+<li><strong>另外还有 mT5、GLM、LLAMA 等不基于 GPT 架构；</strong><ul>
+<li><a target="_blank" rel="noopener" href="https://huggingface.co/miguelvictor/multilingual-gpt2-large">miguelvictor/multilingual-gpt2-large</a></li>
+<li><a target="_blank" rel="noopener" href="https://huggingface.co/models?sort=downloads&amp;search=llama+7">LLAMA-7B</a></li>
+</ul>
+</li>
+</ul>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th></th>
+<th><strong>预训练语料库的token数</strong></th>
+<th><strong>在预训练过程能看到的token数</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PaLM</td>
+<td>780B</td>
+<td>770B</td>
+</tr>
+<tr>
+<td>GPT-3</td>
+<td>500B</td>
+<td>300B</td>
+</tr>
+<tr>
+<td>OPT</td>
+<td>180B</td>
+<td>300B</td>
+</tr>
+<tr>
+<td>BLOOM</td>
+<td>341B</td>
+<td>366B</td>
+</tr>
+<tr>
+<td>LLAMA</td>
+<td>&gt;1T</td>
+<td>&gt;1T</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="平替方案"><a href="#平替方案" class="headerlink" title="平替方案"></a>平替方案</h2><p><a target="_blank" rel="noopener" href="https://github.com/hpcaitech/ColossalAI">ColossalAI</a>框架，提供了在单张 GPU 上即可尝试的 ChatGPT 训练流程</p>
+<ul>
+<li>对于基于 1.2 亿参数小模型的 ChatGPT 训练，最低仅需 1.62GB 显存，任意单张消费级 GPU 即可满足</li>
+<li>ChatGPT 提供了开源基础模型 GPT，OPT 和 BLOOM</li>
+</ul>
+<p>预训练数据要求：</p>
+<ul>
+<li><strong>通过数据筛选以得到高质量数据。</strong>一个用更少但质量更高的数据集训练的预训练模型，可以在性能上超过另一个用更多的混合质量数据集训练的模型。</li>
+<li><strong>通过数据去重避免记忆和过拟合。</strong>去重有助于避免预训练模型多次面对相同的数据后记住它们或者在其上过拟合，因此有助于提高模型的泛化能力。</li>
+<li><strong>保证数据多样性以确保LLM的泛化性。</strong>包括领域多样性、格式多样性（例如：文本、代码和表格）和语言多样性。</li>
+</ul>
+<p>训练三部曲：</p>
+<ul>
+<li>阶段 1：监督微调 (SFT，也可以叫 Instruction tuning）解锁知识和涌现能力<ul>
+<li>收集各种NLP数据集，构造【指令+回复】语料；</li>
+<li>使用构造的数据监督微调一个大模型，如 opt 1.3B、bloom 1.1B(中文)；</li>
+</ul>
+</li>
+</ul>
+<img src="/2023/03/02/2023-03-02-ChatGPT%E5%A4%8D%E7%8E%B0%E6%80%BB%E7%BB%93/1679287538189-e1794b1e-3c7b-460c-97e3-86810e38163c.png" srcset="/img/loading.gif" lazyload class="" title="未命名绘图.drawio.png">
+<ul>
+<li><p>阶段 2：训练奖励模型（RM do not with lora），评价文本生成的好坏</p>
+<ul>
+<li><p>Second, given the fine-tuned model and a prompt, the model will generate several model outputs. A labeler gives the desired score and ranks the output to compose a comparison dataset, which is used to train the reward model.</p>
+<p>给定微调模型和采样Prompts，预测生成多个模型输出，然后需要人工打分排序，以组成比较数据集，该数据集用于训练奖励模型。</p>
+</li>
+<li>Prompts 的收集是个难题！可以考虑中英互译、爬虫知乎问答、已有 prompts 自己写答案…</li>
+</ul>
+</li>
+</ul>
+<img src="/2023/03/02/2023-03-02-ChatGPT%E5%A4%8D%E7%8E%B0%E6%80%BB%E7%BB%93/1679287654270-36317103-d54c-4a4c-a04e-86d85fc39f17.png" srcset="/img/loading.gif" lazyload class="" title="未命名绘图.drawio.png">
+<ul>
+<li>阶段 3：通过强化学习让模型去拟合人的偏好<ul>
+<li>Finally, the fine-tuned model (ChatGPT) is optimized against the reward model using the Proximal Policy Optimization (PPO) RL algorithm</li>
+<li>最后，使用 PPO 针对训练有素的奖励模型对大模型进行微调，以使 LLM 与人类偏好保持一致</li>
+</ul>
+</li>
+</ul>
+<img src="/2023/03/02/2023-03-02-ChatGPT%E5%A4%8D%E7%8E%B0%E6%80%BB%E7%BB%93/1679302137322-1ef27792-adac-40f2-8bb1-756fcd24d13a.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<h3 id="1、Instruction-tuning-→-SFT"><a href="#1、Instruction-tuning-→-SFT" class="headerlink" title="1、Instruction-tuning → SFT"></a>1、Instruction-tuning → SFT</h3><blockquote>
+<p>这一阶段是对语言模型进行指令微调，使语言模型能够更好地遵循指令；</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/zhilizju/Awesome-instruction-tuning">https://github.com/zhilizju/Awesome-instruction-tuning</a></p>
+</blockquote>
+<p>以下是英文的<a target="_blank" rel="noopener" href="https://github.com/zhilizju/Awesome-instruction-tuning">【指令+答案】数据集</a>：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Modified from Traditional NLP</th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Datasets</td>
+<td>Number of Tasks</td>
+<td>Number of Instances</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/orhonovich/unnatural-instructions">Unnatural Inst.</a> ⭐️75</td>
+<td>117</td>
+<td>64 k</td>
+</tr>
+<tr>
+<td>core_data.jsonl，包含 64k 个【指令-输入-输出】三元组，以及 full_data.jsonl，包含完整的240,670个不自然指令示例。</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/allenai/natural-instructions">Super-Natural Inst.</a></td>
+<td>1613</td>
+<td>5M</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://instructions.apps.allenai.org/">Natural Inst v1.0</a></td>
+<td>61</td>
+<td>620 k</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/google-research/FLAN/tree/main#flan-2021">Flan 2021</a></td>
+<td>62</td>
+<td>4.4M</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/bigscience-workshop/promptsource">P3</a></td>
+<td>62</td>
+<td>12M</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/allenai/unifiedqa">UnifiedQA</a></td>
+<td>46</td>
+<td>750k</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/tatsu-lab/stanford_alpaca">tatsu-lab/Alpaca</a></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/gururise/AlpacaDataCleaned">gururise/Cleaned Alpaca</a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Generated by LLMs</th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Datasets</td>
+<td>Number of Tasks</td>
+<td>Number of Instances</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://huggingface.co/datasets/yizhongw/self_instruct">GPT-3 Self-Instruct</a> ⭐️180</td>
+<td>41 k</td>
+<td>82 k</td>
+</tr>
+<tr>
+<td>data/gpt3-generations/batch_221203/all_instances_82K.jsonl：一共包含41K条指令，82K个实例输入和输出配对，调整重点是多轮对话、<strong>问答</strong>、分类、提取和摘要等几个任务data/finetuning/self_instruct_221203：干净的GPT3微调格式 (prompt + completion) ，这种格式是用于训练GPT3模型的一种特定的JSONL文件格式</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/tatsu-lab/stanford_alpaca/blob/main/alpaca_data.json">alpaca_data</a></td>
+<td>En</td>
+<td>52 k</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/XueFuzhao/InstructionWild">ColossalChat InstructionWild</a></td>
+<td>En Zh</td>
+<td>104 k</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>一阶段训练代码如下：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python">nohup python -u run_clm_no_trainer.py --train_file data/all_instances_82K.csv  --model_name_or_path /data/voiceprint2/FlexGen-main/opt-iml-<span class="hljs-built_in">max</span>-<span class="hljs-number">1.3</span>b  --block_size <span class="hljs-number">512</span> --per_device_train_batch_size <span class="hljs-number">2</span> --per_device_eval_batch_size <span class="hljs-number">2</span> --num_train_epochs <span class="hljs-number">4</span> --output_dir opt_1b3_Selfdata_epoch4 --learning_rate <span class="hljs-number">2e-5</span> &gt; logs/finetune_onSelfInstruct_opt1b3.log &amp;<br><br><span class="hljs-comment"># 添加梯度累计</span><br>python -u run_clm_no_trainer.py --train_file data/all_instances_82K.csv  --model_name_or_path /data/voiceprint2/FlexGen-main/opt-iml-<span class="hljs-built_in">max</span>-<span class="hljs-number">1.3</span>b  --block_size <span class="hljs-number">512</span> --per_device_train_batch_size <span class="hljs-number">2</span> --per_device_eval_batch_size <span class="hljs-number">2</span> --num_train_epochs <span class="hljs-number">4</span> --output_dir opt_1b3_Selfdata_epoch4 --learning_rate <span class="hljs-number">2e-5</span> --gradient_accumulation_steps <span class="hljs-number">15</span><br><br><span class="hljs-comment"># Lora (SFT效果会变差？)</span><br>CUDA_VISIBLE_DEVICES=<span class="hljs-number">2</span> nohup python train_sft.py --dataset data/gpt3_generations.csv --strategy naive --model opt --pretrain /data/voiceprint2/FlexGen-main/opt-iml-<span class="hljs-built_in">max</span>-<span class="hljs-number">1.3</span>b --max_epochs <span class="hljs-number">4</span> --batch_size <span class="hljs-number">8</span> --lora_rank <span class="hljs-number">16</span> &gt; logs/finetune_onSelfInstruct_opt1b3.log &amp;<br></code></pre></td></tr></table></figure>
+<p>ps：机器为4卡，GPU型号是Tesla V100-PCIE 4卡 32G</p>
+<p>ps：block_size相当于序列长度至多 512 否则 OOM，batch-size最大至多 3，学习率默认是 5e-5；</p>
+<p>ps：训练 4 个 epoch</p>
+<h3 id="2、Reward-Model-Training"><a href="#2、Reward-Model-Training" class="headerlink" title="2、Reward Model Training"></a>2、Reward Model Training</h3><p>以下是用于训练奖励模型的英文数据集：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://huggingface.co/datasets/HuggingFaceH4/stack-exchange-preferences">Dataset Card for H4 Stack Exchange Preferences Dataset</a><ul>
+<li>来自 Stack Exchange 的1000多万个问题的问答数据集，带多个答案以及评分；</li>
+</ul>
+</li>
+<li><a target="_blank" rel="noopener" href="https://huggingface.co/datasets/Anthropic/hh-rlhf">Anthropic/hh-rlhf</a><ul>
+<li>features: [‘chosen’, ‘rejected’]</li>
+<li>160800 条训练数据， 8553 条测试数据</li>
+<li>—dataset Anthropic/hh-rlhf</li>
+</ul>
+</li>
+<li><a target="_blank" rel="noopener" href="https://huggingface.co/datasets/Dahoas/rm-static/tree/main">Dahoas/rm-static</a><ul>
+<li>features: [‘prompt’, ‘response’, ‘chosen’, ‘rejected’]</li>
+<li>76256 条训练数据，5103 条测试数据</li>
+<li>—dataset Dahoas/rm-static</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs python">nohup python -u train_reward_model.py --strategy naive --pretrain facebook/opt-125m --model opt --dataset Anthropic/hh-rlhf --save_path no_lora_rm_opt125m.pth --loss_fn log_sig --max_epochs <span class="hljs-number">4</span> --batch_size <span class="hljs-number">8</span> &gt; logs/opt_rm.log &amp;<br><br><span class="hljs-comment"># 分布式训练要先切换编译器</span><br>scl enable devtoolset-<span class="hljs-number">7</span> bash<br>source ~/.bashrc<br>source activate xxenv<br><br>CUDA_VISIBLE_DEVICES=<span class="hljs-number">0</span>,<span class="hljs-number">1</span> nohup torchrun --standalone --nproc_per_node <span class="hljs-number">2</span> train_reward_model.py  --strategy colossalai_zero2 --pretrain facebook/opt-350m --dataset Anthropic/hh-rlhf --save_path no_lora_rm_opt350m.pth --loss_fn log_sig --max_epochs <span class="hljs-number">2</span> --batch_size <span class="hljs-number">8</span> &gt; logs/opt_rm.log &amp;<br></code></pre></td></tr></table></figure>
+<p>注意：</p>
+<p>①可能遇到如下问题。原因是我们 reward model 任务是一个回归任务，，而我们加载的是预训练语言模型 PLM（_AutoModelForCausalLM是在一系列token之后预测token的任务_），所以会提示我们加载模型的时候扔掉了一些不匹配/未使用的神经网络参数（比如：PLM 的预测 head 被扔掉了，同时随机初始化了一个回归任务的预测 head）<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/403496010">https://zhuanlan.zhihu.com/p/403496010</a></p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs pgsql"><span class="hljs-keyword">Some</span> weights <span class="hljs-keyword">of</span> the model <span class="hljs-keyword">checkpoint</span> at facebook/opt<span class="hljs-number">-125</span>m were <span class="hljs-keyword">not</span> used <span class="hljs-keyword">when</span> initializing OPTModel: [<span class="hljs-string">&#x27;lm_head.weight&#x27;</span>]<br></code></pre></td></tr></table></figure>
+<p>②卡到No pre-built kernel is found, build and load the cpu_adam kernel during runtime now<br>的时候 删除这个/home/lhadmin/.cache/colossalai 文件夹就行</p>
+<p>③单机多卡进行分布式（gemini）训练时会遇到错误，导致无法保存！改为zero2</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># torch.save(trainer.model)</span><br><br>NotImplementedError<br>WARNING:torch.distributed.elastic.multiprocessing.api:Sending process <span class="hljs-number">17278</span> closing signal SIGTERM<br>ERROR:torch.distributed.elastic.multiprocessing.api:failed (exitcode: <span class="hljs-number">1</span>) local_rank: <span class="hljs-number">1</span> (pid: <span class="hljs-number">17279</span>) of binary: /usr/local/anaconda3/envs/nlp_env39/<span class="hljs-built_in">bin</span>/python<br></code></pre></td></tr></table></figure>
+<p>④ 测试 reward model 效果，所有 input 的预测得分都一样？</p>
+<p>解决：将opt350m 改为opt125m + 增大batch_size=8</p>
+<h3 id="3、PPO-训练"><a href="#3、PPO-训练" class="headerlink" title="3、PPO 训练"></a>3、PPO 训练</h3><p>ColossalAI使用Hugging Face 的<a target="_blank" rel="noopener" href="https://huggingface.co/datasets/fka/awesome-chatgpt-prompts/tree/main">awesome-chatgpt-prompts</a>作为训练数据，因此将此prompts.csv下载到工作文件夹。该测试使用一个小数据集，大约 100 个提示。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs python">nohup python train_prompts.py data/prompts.csv --strategy naive --lora_rank <span class="hljs-number">16</span> --model opt --pretrain opt_1b3_Selfdata_epoch4 --rm_path no_lora_rm_opt350m.pth --max_epochs <span class="hljs-number">5</span> &gt; logs/opt1b3Actor_RM_opt_ep5_Lora16_RL.log &amp;<br><br><span class="hljs-comment"># 分布式训练要先切换编译器</span><br>scl enable devtoolset-<span class="hljs-number">7</span> bash<br>source ~/.bashrc<br>source activate xxenv<br><br>CUDA_VISIBLE_DEVICES=<span class="hljs-number">1</span>,<span class="hljs-number">2</span> torchrun --standalone --nproc_per_node <span class="hljs-number">2</span> train_prompts.py data/prompts.csv --strategy colossalai_zero2 --lora_rank <span class="hljs-number">16</span> --model opt --pretrain opt_1b3_Selfdata_epoch4 --rm_path no_lora_rm_opt350m.pth --max_epochs <span class="hljs-number">5</span><br><br><span class="hljs-comment">#rm_path lora_rm_model.pth是前一步训练好的reward model 地址 必须指定正确才能正常工作</span><br></code></pre></td></tr></table></figure></p>
+<ul>
+<li>OPTActor.model = OPTForCausalLM</li>
+<li>OPTCritic.model = OPTModel    OPTCritic.value_head = nn.Linear</li>
+<li>OPTRM.model = OPTModel        OPTRM.value_head = nn.Linear</li>
+</ul>
+<p>注意 1：ColossalAI的 ChatGPT 复现不包括 SFT 的训练部分。另外训练好的 Reward 模型暂时还不支持放到 RL 里面去用，需要自行解决。</p>
+<img src="/2023/03/02/2023-03-02-ChatGPT%E5%A4%8D%E7%8E%B0%E6%80%BB%E7%BB%93/1677659173665-772a024e-3d03-4990-bf8b-b4a4d778261c.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/ChatGPT/" class="category-chain-item">ChatGPT</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%8E%9F%E5%88%9B/">#原创</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>ChatGPT复现总结</div>
+      <div>http://example.com/2023/03/02/2023-03-02-ChatGPT复现总结/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Ning Shixian</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年3月2日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/03/14/PPO%20%E8%A6%81%E7%82%B9%E6%91%98%E5%BD%95/" title="PPO要点摘录">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">PPO要点摘录</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/02/26/2023-02-26-Transformer%E8%AF%A6%E8%A7%A3/" title="Transformer详解          ">
+                        <span class="hidden-mobile">Transformer详解          </span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

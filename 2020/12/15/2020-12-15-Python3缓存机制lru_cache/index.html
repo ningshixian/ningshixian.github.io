@@ -1,0 +1,674 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="NSX">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="缓存是一种将定量数据加以保存以备迎合后续获取需求的处理方式，旨在加快数据获取的速度。数据的生成过程可能需要经过计算，规整，远程获取等操作，如果是同一份数据需要多次使用，每次都重新生成会大大浪费时间。所以，如果将计算或者远程请求等操作获得的数据缓存下来，会加快后续的数据获取需求。 本文接下来会介绍Python3中的 functools.lru_cache 缓存机制以及对应的使用方法！">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python3中的LRU缓存机制">
+<meta property="og:url" content="http://example.com/2020/12/15/2020-12-15-Python3%E7%BC%93%E5%AD%98%E6%9C%BA%E5%88%B6lru_cache/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="缓存是一种将定量数据加以保存以备迎合后续获取需求的处理方式，旨在加快数据获取的速度。数据的生成过程可能需要经过计算，规整，远程获取等操作，如果是同一份数据需要多次使用，每次都重新生成会大大浪费时间。所以，如果将计算或者远程请求等操作获得的数据缓存下来，会加快后续的数据获取需求。 本文接下来会介绍Python3中的 functools.lru_cache 缓存机制以及对应的使用方法！">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-12-14T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-23T10:28:32.059Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="Python">
+<meta property="article:tag" content="缓存">
+<meta property="article:tag" content="Cache">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>Python3中的LRU缓存机制 - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="functools.lru_cache"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2020-12-15 00:00" pubdate>
+          2020年12月15日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          34 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">functools.lru_cache</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>缓存是一种将定量数据加以保存以备迎合后续获取需求的处理方式，旨在加快数据获取的速度。数据的生成过程可能需要经过计算，规整，远程获取等操作，如果是同一份数据需要多次使用，每次都重新生成会大大浪费时间。所以，如果将计算或者远程请求等操作获得的数据缓存下来，会加快后续的数据获取需求。</p>
+<p>本文接下来会介绍Python3中的 <code>functools.lru_cache</code> 缓存机制以及对应的使用方法！</p>
+ <span id="more"></span>
+<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>先来一个简单的例子以了解缓存机制的概念：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># -*- coding: utf-8 -*-</span><br><br><span class="hljs-keyword">import</span> random<br><span class="hljs-keyword">import</span> datetime<br><br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">MyCache</span>:<br>    <span class="hljs-string">&quot;&quot;&quot;缓存类&quot;&quot;&quot;</span><br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self</span>):<br>        <span class="hljs-comment"># 用字典结构以 kv 的形式缓存数据</span><br>        self.cache = &#123;&#125;<br>        <span class="hljs-comment"># 限制缓存的大小，因为缓存的空间有限</span><br>        <span class="hljs-comment"># 所以当缓存太大时，需要将旧的缓存舍弃掉</span><br>        self.max_cache_size = <span class="hljs-number">10</span><br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__contains__</span>(<span class="hljs-params">self, key</span>):<br>        <span class="hljs-string">&quot;&quot;&quot;根据该键是否存在于缓存当中返回 True 或者 False&quot;&quot;&quot;</span><br>        <span class="hljs-keyword">return</span> key <span class="hljs-keyword">in</span> self.cache<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">get</span>(<span class="hljs-params">self, key</span>):<br>        <span class="hljs-string">&quot;&quot;&quot;从缓存中获取数据&quot;&quot;&quot;</span><br>        data = self.cache[key]<br>        data[<span class="hljs-string">&quot;date_accessed&quot;</span>] = datetime.datetime.now()<br>        <span class="hljs-keyword">return</span> data[<span class="hljs-string">&quot;value&quot;</span>]<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">add</span>(<span class="hljs-params">self, key, value</span>):<br>        <span class="hljs-string">&quot;&quot;&quot;更新该缓存字典，如果缓存太大则先删除最早条目&quot;&quot;&quot;</span><br>        <span class="hljs-keyword">if</span> key <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> self.cache <span class="hljs-keyword">and</span> <span class="hljs-built_in">len</span>(self.cache) &gt;= self.max_cache_size:<br>            self.remove_oldest()<br>        self.cache[key] = &#123;<br>            <span class="hljs-string">&#x27;date_accessed&#x27;</span>: datetime.datetime.now(),<br>            <span class="hljs-string">&#x27;value&#x27;</span>: value<br>        &#125;<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">remove_oldest</span>(<span class="hljs-params">self</span>):<br>        <span class="hljs-string">&quot;&quot;&quot;删除具备最早访问日期的输入数据&quot;&quot;&quot;</span><br>        oldest_entry = <span class="hljs-literal">None</span><br><br>        <span class="hljs-keyword">for</span> key <span class="hljs-keyword">in</span> self.cache:<br>            <span class="hljs-keyword">if</span> oldest_entry <span class="hljs-keyword">is</span> <span class="hljs-literal">None</span>:<br>                oldest_entry = key<br>                <span class="hljs-keyword">continue</span><br>            curr_entry_date = self.cache[key][<span class="hljs-string">&#x27;date_accessed&#x27;</span>]<br>            oldest_entry_date = self.cache[oldest_entry][<span class="hljs-string">&#x27;date_accessed&#x27;</span>]<br>            <span class="hljs-keyword">if</span> curr_entry_date &lt; oldest_entry_date:<br>                oldest_entry = key<br><br>        self.cache.pop(oldest_entry)<br><br><span class="hljs-meta">    @property</span><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">size</span>(<span class="hljs-params">self</span>):<br>        <span class="hljs-string">&quot;&quot;&quot;返回缓存容量大小&quot;&quot;&quot;</span><br>        <span class="hljs-keyword">return</span> <span class="hljs-built_in">len</span>(self.cache)<br><br><br><span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&#x27;__main__&#x27;</span>:<br>    <span class="hljs-comment"># 测试缓存功能</span><br>    cache = MyCache()<br>    cache.add(<span class="hljs-string">&quot;test&quot;</span>, <span class="hljs-built_in">sum</span>(<span class="hljs-built_in">range</span>(<span class="hljs-number">100000</span>)))<br>    <span class="hljs-keyword">assert</span> cache.get(<span class="hljs-string">&quot;test&quot;</span>) == cache.get(<span class="hljs-string">&quot;test&quot;</span>)<br><br>    keys = [<br>        <span class="hljs-string">&#x27;red&#x27;</span>, <span class="hljs-string">&#x27;fox&#x27;</span>, <span class="hljs-string">&#x27;fence&#x27;</span>, <span class="hljs-string">&#x27;junk&#x27;</span>, <span class="hljs-string">&#x27;other&#x27;</span>, <span class="hljs-string">&#x27;alpha&#x27;</span>, <span class="hljs-string">&#x27;bravo&#x27;</span>, <span class="hljs-string">&#x27;cal&#x27;</span>,<br>        <span class="hljs-string">&#x27;devo&#x27;</span>, <span class="hljs-string">&#x27;ele&#x27;</span><br>    ]<br>    s = <span class="hljs-string">&#x27;abcdefghijklmnop&#x27;</span><br>    <span class="hljs-keyword">for</span> i, key <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(keys):<br>        <span class="hljs-keyword">if</span> key <span class="hljs-keyword">in</span> cache:<br>            <span class="hljs-keyword">continue</span><br>        <span class="hljs-keyword">else</span>:<br>            value = <span class="hljs-string">&#x27;&#x27;</span>.join([random.choice(s) <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">20</span>)])<br>            cache.add(key, value)<br><br>    <span class="hljs-keyword">assert</span> <span class="hljs-string">&quot;test&quot;</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> cache<br>    <span class="hljs-built_in">print</span>(cache.cache)<br></code></pre></td></tr></table></figure>
+<p>以上示例仅简单的展示了缓存机制的原理，通过用键值对的方式将数据放到字典中，如果下次需要取值时可以直接到字典中获取。该示例在删除旧数据时的实现并不高效，实际应用中可以用别的方式实现。</p>
+<p>在 Python 的 3.2 版本中，引入了一个非常优雅的缓存机制，即 <code>functool</code> 模块中的 <code>lru_cache</code> 装饰器，可以直接将函数或类方法的结果缓存住，后续调用则直接返回缓存的结果。<code>lru_cache</code> 原型如下：</p>
+<blockquote>
+<p>@functools.lru_cache(maxsize=None, typed=False)</p>
+</blockquote>
+<p>使用 functools 模块的 lur_cache 装饰器，可以缓存最多 maxsize 个此函数的调用结果，从而提高程序执行的效率，特别适合于耗时的函数。参数 <code>maxsize</code> 为最多缓存的次数，如果为 None，则无限制，设置为 2 的幂 时，性能最佳；如果 <code>typed=True</code>（注意，在 functools32 中没有此参数），则不同参数类型的调用将分别缓存，例如 f(3) 和 f(3.0)。</p>
+<h1 id="LRU-算法介绍"><a href="#LRU-算法介绍" class="headerlink" title="LRU 算法介绍"></a>LRU 算法介绍</h1><p><strong>LRU (Least Recently Used，最近最少使用)</strong> 算法是一种缓存淘汰策略。其根据数据的历史访问记录来进行淘汰，核心思想是，“如果数据最近被访问过，那么将来被访问的几率也更高”。该算法最初为操作系统中一种内存管理的页面置换算法，主要用于找出内存中较久时间没有使用的内存块，将其移出内存从而为新数据提供空间。其原理就如以上的简单示例。</p>
+<p>那么问题来了，为什么LRU能提高性能？其实这个问题描述本身是错误的——LRU并不总 是能提高性能的，任何实用的缓存算法都不行。LRU基于这样一个前提：越久没被访 问的数据，以后被访问到的概率也越小。比方说，如果你的程序需要<strong>周期性</strong>地处 理不同数据，用LRU可能只会带来周期性的缓存miss从而增加处理器或者IO负担而已， 反而拖慢程序执行速度。</p>
+<p>说到处理器负担，因为LRU要跟踪数据的访问时间/存活时间，通常涉及查找或者哈希 操作，所以需要更多处理器资源，有时候会很可观——</p>
+<h1 id="functools里的LRU实现"><a href="#functools里的LRU实现" class="headerlink" title="functools里的LRU实现"></a>functools里的LRU实现</h1><p>以下为一个简单的 lru_cache 的使用效果：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs routeros"><span class="hljs-keyword">from</span> functools import lru_cache<br><br>@lru_cache(<span class="hljs-attribute">maxsize</span>=32)<br>def <span class="hljs-built_in">add</span>(x, y):<br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;calculating: %s + %s&quot;</span> % (x, y))<br>    return x + y<br><br><span class="hljs-built_in">print</span>(<span class="hljs-built_in">add</span>(1, 2))<br><span class="hljs-built_in">print</span>(<span class="hljs-built_in">add</span>(1, 2))<br><span class="hljs-built_in">print</span>(<span class="hljs-built_in">add</span>(2, 3))<br></code></pre></td></tr></table></figure>
+<p><code>@lru_cache(maxsize=32)</code> 中的 <code>maxsize</code> 参数就是缓存大小了，如果设成<code>None</code>，LRU逻辑会被禁用，变成一个 无限大的缓存；而如果设成<code>0</code>，缓存逻辑会被禁用，变成简单的调用次数统计。</p>
+<p>输出结果：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">calculating</span>: <span class="hljs-number">1</span> + <span class="hljs-number">2</span><br><span class="hljs-attribute">3</span><br><span class="hljs-attribute">3</span><br><span class="hljs-attribute">calculating</span>: <span class="hljs-number">2</span> + <span class="hljs-number">3</span><br><span class="hljs-attribute">5</span><br></code></pre></td></tr></table></figure>
+<p>从结果可以看出，当第二次调用 add(1, 2) 时，并没有真正执行函数体，而是直接返回缓存的结果。</p>
+<h1 id="还有什么需要注意的？"><a href="#还有什么需要注意的？" class="headerlink" title="还有什么需要注意的？"></a>还有什么需要注意的？</h1><ol>
+<li><p>目前的<code>lru_cache</code>是纯Python实现的。</p>
+</li>
+<li><p>底层数据结构是普通的<code>list</code>和<code>dict</code>. <code>list</code>用于实现LRU链表，<code>dict</code>用于 查找已缓存的数据。在缓存已满的情况下，每次调用被缓存的函数时，都要进行 两次字典查找操作和20次以内的列表访问。</p>
+</li>
+<li><p>对缓存的<strong>所有</strong>访问都是加了锁的，所以可以在多线程环境下使用。</p>
+</li>
+<li><p>被 <code>lru_cache</code> 装饰的函数会有 <code>cache_clear</code> 和 <code>cache_info</code> 两个方法，分别用于清除缓存和查看缓存信息。</p>
+<figure class="highlight python-repl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs python-repl"><span class="hljs-meta prompt_">&gt;&gt;&gt;</span> <span class="language-python">add.cache_info()          <span class="hljs-comment"># 缓存信息</span></span><br>CacheInfo(hits=0, misses=0, maxsize=10, currsize=0)<br><span class="hljs-meta prompt_">&gt;&gt;&gt;</span> <span class="language-python">add.cache_clear()         <span class="hljs-comment"># 清除所有缓存内容</span></span><br><span class="hljs-meta prompt_">&gt;&gt;&gt;</span> <span class="language-python">add.__wrapped__           <span class="hljs-comment"># 真正的 read_template 函数</span></span><br>&lt;function add at 0x7f9d0e9766a8&gt;<br><span class="hljs-meta prompt_">&gt;&gt;&gt;</span><br></code></pre></td></tr></table></figure>
+<p>返回访问数（hits）、未访问数（misses）和当前缓存使用量（currsize）、最大容量（maxsize）</p>
+</li>
+<li><p><strong>缓存的使用场景：</strong></p>
+<ul>
+<li>在缓存期内，数据不会更改。</li>
+<li>函数将始终为相同的参数返回相同的值（因此时间和随机对缓存没有意义）。</li>
+<li>函数没有副作用。如果缓存被访问，则永远不会调用该函数，因此请确保不更改其中的任何状态。</li>
+<li><strong>函数不返回不同的可变对象。例如，返回列表的函数不适合缓存，因为将要缓存的是对列表的引用，而不是列表内容</strong>（实际使用时，缓存的可变对象内容正确，不知道为啥？）</li>
+</ul>
+</li>
+</ol>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a target="_blank" rel="noopener" href="http://kuanghy.github.io/2016/04/20/python-cache">Python 缓存机制与 functools.lru_cache</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.theerrorlog.com/simple-lru-cache-in-python-3-zh.html">Python3中的傻瓜式LRU缓存实现</a></p>
+<p><a target="_blank" rel="noopener" href="https://my.oschina.net/u/4260786/blog/4263791">如何让Python程序轻松加速，正确方法详解</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Python/">#Python</a>
+      
+        <a href="/tags/%E7%BC%93%E5%AD%98/">#缓存</a>
+      
+        <a href="/tags/Cache/">#Cache</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Python3中的LRU缓存机制</div>
+      <div>http://example.com/2020/12/15/2020-12-15-Python3缓存机制lru_cache/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>NSX</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2020年12月15日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/12/22/2020-12-22-Pandas%E4%BD%BF%E7%94%A8%E6%93%8D%E4%BD%9C%E6%8C%87%E5%8D%97/" title="Pandas使用操作指南">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Pandas使用操作指南</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/12/14/2020-12-14-Rasa%20Core%20&amp;%20Rasa%20X%20%E8%AF%A6%E8%A7%A3/" title="Rasa Core &amp; Rasa X 详解">
+                        <span class="hidden-mobile">Rasa Core &amp; Rasa X 详解</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,685 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="    NSX">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="转载自《前沿重器[28] | 前沿的向量召回都是怎么做的》  向量召回本身是个新潮的东西，这次给大家小小的总结一下，工业界和科研界中常见的向量召回方案，希望能给大家一些启示吧。 前沿首先，什么是向量召回，核心的流程是什么样的，先介绍下。首先，所谓向量召回，就是把物料和用户query都进行向量表征，物料可以构造索引供query向量进行检索，本质还是在库里检索和query最接近的那些物料，相当于推荐">
+<meta property="og:type" content="article">
+<meta property="og:title" content="     🍊句子表征优化小结">
+<meta property="og:url" content="http://example.com/2021/11/09/2021-11-09-%F0%9F%8D%8A%E5%8F%A5%E5%AD%90%E8%A1%A8%E5%BE%81%E4%BC%98%E5%8C%96%E5%B0%8F%E7%BB%93/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="转载自《前沿重器[28] | 前沿的向量召回都是怎么做的》  向量召回本身是个新潮的东西，这次给大家小小的总结一下，工业界和科研界中常见的向量召回方案，希望能给大家一些启示吧。 前沿首先，什么是向量召回，核心的流程是什么样的，先介绍下。首先，所谓向量召回，就是把物料和用户query都进行向量表征，物料可以构造索引供query向量进行检索，本质还是在库里检索和query最接近的那些物料，相当于推荐">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-11-08T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-24T12:22:05.206Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="句子 embedding">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>     🍊句子表征优化小结 - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="  🍊句子表征优化小结"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-11-09 00:00" pubdate>
+          2021年11月9日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          28 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">  🍊句子表征优化小结</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <blockquote>
+<p>转载自《<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/0_XBOgwkFvxr-i54_yyntw">前沿重器[28] | 前沿的向量召回都是怎么做的</a>》</p>
+</blockquote>
+<p>向量召回本身是个新潮的东西，这次给大家小小的总结一下，工业界和科研界中常见的向量召回方案，希望能给大家一些启示吧。</p>
+<h2 id="前沿"><a href="#前沿" class="headerlink" title="前沿"></a>前沿</h2><p>首先，什么是向量召回，核心的流程是什么样的，先介绍下。首先，所谓向量召回，就是把物料和用户query都进行向量表征，物料可以构造索引供query向量进行检索，本质还是在库里检索和query最接近的那些物料，相当于推荐中的一路召回。</p>
+<p>由于深度学习的逐渐深入，这种泛化的向量表征方式也成为了大家尝试的方向，更有比较激进的在尝试直接跳过字面的召回而直接选择向量召回的方式，可见该方式的热门程度，大家所关注的，就是他对特征的要求低，而且泛化能力强，所以也就成为了“香饽饽”。</p>
+<p>那么，工业界和科研界到底是怎么做的，有没有什么先进的思路可以考虑，本文会分模块地详细总结，并给出一些大家一些思路吧。当然，我对图深度学习、图谱等不太熟悉，本文先不聊，主要就是聊双塔。</p>
+<p>文章整体思路是这样的（懒人目录）：</p>
+<ul>
+<li><strong>NLP技术下的QQ匹配</strong></li>
+<li><strong>工业界Query塔的表征</strong></li>
+<li><strong>工业界物料塔的表征</strong></li>
+<li><strong>难负例的挖掘</strong></li>
+</ul>
+<p>本文是综述，不会把每篇文章都展开讲，也不会列举出这个角度的所有文章，而是大概描述文章的特定亮点，并进行总结，说到的参考资料都会放到文末，并标上序号，大家后续按需深入阅读。</p>
+<h2 id="NLP技术下的QQ匹配"><a href="#NLP技术下的QQ匹配" class="headerlink" title="NLP技术下的QQ匹配"></a>NLP技术下的QQ匹配</h2><p>QQ匹配是最简单而又经典的方案了，在对话系统和传统的搜索系统中非常常见，而且日渐成熟，其本质就是把query和物料放在同一个语义空间下进行训练和推理，专业说法称为语义表征。这方面的研究，我分为3个模块：</p>
+<ul>
+<li><strong>表征层。</strong></li>
+<li><strong>预训练模型引入后的新问题。</strong></li>
+<li><strong>损失函数的优化思路。</strong></li>
+</ul>
+<h3 id="表征层"><a href="#表征层" class="headerlink" title="表征层"></a>表征层</h3><p>表征成的优化相信大家都比较熟悉的，始于DSSM[1]，后续里面的全连接层可以换成CNN，成为CLSM[2]，又可以换成LSTM，成为DSSM-LSTM[3]，而后续又对这块进行了一些总结性的归纳，有了infersent[4]，统一了整个框架，并给出了一些较好的训练方法。（我也在以前有聊过这里的细节，见：<a target="_blank" rel="noopener" href="http://mp.weixin.qq.com/s?__biz=MzIzMzYwNzY2NQ==&amp;mid=2247486225&amp;idx=1&amp;sn=4aca79d060480c301607e3ba722622f3&amp;chksm=e882538fdff5da99ef1440fb2d2c2eff1934e5dab5c8c1d90dcbd9a7171d22f657f87f05bd96&amp;scene=21#wechat_redirect">心法利器[7] | 漫谈语义相似度与语义向量表征</a>）</p>
+<p>而后，就是预训练模型的时代了，最有代表性的是Sentence-BERT[5]和SimBERT[6]，这俩在我看来都是在预训练模型用于语义表征的代表之作，虽然说后续对比学习的引入让预训练在此方面的应用更加优秀了，但这两篇工作，仍旧是很有学习和吸收的价值。</p>
+<blockquote>
+<p>SimBERT = BERT + UniLM + 对比学习</p>
+<p>SimBERT属于有监督训练，训练语料是自行收集到的相似句对（文本1，文本2，label），通过一句来预测另一句的相似句生成任务来构建Seq2Seq部分，然后前面也提到过[CLS]的向量事实上就代表着输入的句向量，所以可以同时用它来训练一个检索任务。换句话说，对于检索任务在努力训练模型“[CLS]的向量事实上就代表着输入的句向量”，如果仅仅从相似度判断来看（相似度判断等价于检索），强制A生成B一定程度上也是在使A的表征和B更逼近。</p>
+<p>我在中文数据集上测试过不少场景，不得不说，simBERT确实是融合了检索和生成的功能，尤其适合于相关性检索，生成的质量还有待提升</p>
+</blockquote>
+<h3 id="预训练模型引入后的问题"><a href="#预训练模型引入后的问题" class="headerlink" title="预训练模型引入后的问题"></a>预训练模型引入后的问题</h3><blockquote>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/497926743">https://zhuanlan.zhihu.com/p/497926743</a></p>
+</blockquote>
+<p>预训练模型直接做语义表征是有问题的。如Google开源的bert模型，Next Sentence作为BERT的Pretrain任务，天然提供了文本匹配的范式。一般取【cls】作为文本的feature extraction，然而，这个【cls】具备语义特征信息的前提是微调，也就是被有监督train过之后才能很好的embedding化句子。</p>
+<p>若是讲仅通过无监督得到句子的【cls】用于匹配任务，尤其是用cos计算相似度时，实验证明即便两条相关度较低的句子依旧可以获得一定相似度得分。在论文REPRESENTATION DEGENERATION PROBLEM IN TRAINING NATURAL LANGUAGE GENERATION MODELS 中提出了了表达退化问题 (Representation degeneration problem)，一定程度上解释了为什么直接用BERT是不可取的。</p>
+<p>第一阶段是直接在预训练的表征后增加一些转化的层，比较有代表性的是bert-flow[8]和bert-whitening[9, 10]，通过映射的方式把预测的结果从有问题的空间转化到正确的空间里去，所谓的正确理解可能会有所不同，个人是比较喜欢bert-whitening对标准正态分布是各向同性的这一理解，用线性的变换的方式就能轻松解决该问题。</p>
+<p>第二阶段，是考虑直接去解决词频和训练的问题，某种程度上说，其实和数据增强类似的思路，从样本或者从训练层面进行增强，从而直接解决预测层间的空间问题，以样本增强为代表的是美团的ConSERT[11]，而在模型层面或训练策略层面的增强，代表之作就是现在大家都比较熟悉的SIMCSE[12]，SIMCSE 在数据集没有标注的情况下，要增强这一数据集总体的语义特性，直接利用模型的Dropout来完成这种目标，又简单又实用。流程：将数据集放入对比训练，无需标签，自监督增强语义信息。以SIMCSE为例，在STS等标准数据集下的效果，是要比作为极限的BERT要好一大截，算是继预训练模型引入之后的又一质变，甚至可以从数据中看到，无监督的方案甚至是能够逼近有监督方案的，这点其实强的蛮离谱的。</p>
+<p>提一下，二阶段的这套思路，其实也很大程度上让NLPer意识到，<strong>对比学习可能是进一步优化语义表征的一大突破口。</strong></p>
+<h3 id="损失函数的优化思路"><a href="#损失函数的优化思路" class="headerlink" title="损失函数的优化思路"></a>损失函数的优化思路</h3><p>与其说对比学习，其实我更想说是损失函数的应用。这块的NLP论文我接触的其实不多，然而是看到了这个东西在CV领域方兴未艾。</p>
+<p>这个关注点，我其实在很久之前的文章就有聊到了，就是这篇：<a target="_blank" rel="noopener" href="http://mp.weixin.qq.com/s?__biz=MzIzMzYwNzY2NQ==&amp;mid=2247486612&amp;idx=1&amp;sn=08e4da8576ac7f3e1be155051ccb3604&amp;chksm=e882540adff5dd1cea793f10f7d9fcaa36299455c7e4f59d6ef683e1f5522d662c59d785c84e&amp;scene=21#wechat_redirect">前沿重器[8] | CV研究启发语义相似和表征</a>，在人脸识别领域，表征这个事情和我们现在聊的非常接近，相似度表征的训练内部其实有大量可以用来进行优化的方式，例如margin的思想能把不同类的尽可能拉开，类间的壁垒得到提高，从而提升预测性能。这块论文不在提了，直接前面我说的那篇文章吧。</p>
+<p>人脸说完，NLP有在用吗，有的，直接给个工业界的例子吧，OPPO的小布助手在这块其实已经有应用并且落了地了，可以参考下[13]，我也写过讲解：<a target="_blank" rel="noopener" href="http://mp.weixin.qq.com/s?__biz=MzIzMzYwNzY2NQ==&amp;mid=2247486580&amp;idx=1&amp;sn=cc108a7c340c20e4a947971cd191503e&amp;chksm=e88254eadff5ddfcecfb7afc36c1f52ce9e15438eca31bb930a2bfd3acdb0257dfb225f2c2d0&amp;scene=21#wechat_redirect">前沿重器[7] | 小布助手登顶百度千言短文本相似度的秘诀</a>。</p>
+<h2 id="工业界Query塔的匹配"><a href="#工业界Query塔的匹配" class="headerlink" title="工业界Query塔的匹配"></a>工业界Query塔的匹配</h2><p>有关Query塔的匹配，我比较想聊的是两篇文章吧，都是KDD21的，淘宝[14]和FB[15]的，这两篇都值得稍微的展开，淘宝那篇文章我专门聊过：<a target="_blank" rel="noopener" href="http://mp.weixin.qq.com/s?__biz=MzIzMzYwNzY2NQ==&amp;mid=2247487695&amp;idx=1&amp;sn=370ac19afbbb2c27a07ed6c3fa8b9b70&amp;chksm=e8824851dff5c1474f522ef37a17661900fd1494c9043ebc1b94426d219fc0053f098538b4b9&amp;scene=21#wechat_redirect">前沿重器[18] | KDD21-淘宝向量检索</a>。<br>略……</p>
+<h2 id="HARD-CASE挖掘"><a href="#HARD-CASE挖掘" class="headerlink" title="HARD CASE挖掘"></a>HARD CASE挖掘</h2><p>HARS CASE挖掘可以说是向量召回领域的一个特色问题，难负例本身对预测的准确性影响巨大，借此机会，分享几个挖掘方案吧。</p>
+<ul>
+<li><strong>用字面检索（如BM25粗排的召回）召回与query相似的样本，赋为负例。</strong></li>
+<li><strong>BATCH内，通过两两相似度矩阵进行粗排挖掘[14]。</strong></li>
+<li><strong>正负例表征加权求和构造负类embedding[13]。</strong></li>
+<li><strong>R-dropout[17]等增强方式。</strong></li>
+</ul>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>上面综述了不少方法，让大家能够了解到前沿的向量召回都是用的什么做表征的，划几个重点：</p>
+<ul>
+<li><strong>工业界和科研界好像尚未有些不同，科研界更多关注语义的表征，预训练模型更多，工业界则更在乎多粒度的语言理解，还有用户行为。</strong></li>
+<li><strong>科研界，在语义表征上，NLP层面预训练模型还是有很大优势。</strong></li>
+<li><strong>多信息的组合，以及日常任务的协作，导致了工业界模型虽然都还偏大，但其实都有分多个模块，然后最终组装的模式。</strong></li>
+<li><strong>attention，因为多模块组合的原因，成了工业界的宠儿。</strong></li>
+</ul>
+<p>当然了，这里也给大家在向量召回上一些使用建议吧。</p>
+<ul>
+<li><strong>预训练模型并不是必须得，可以先考虑多粒度的语义理解并进行融合，这个优先级更高。</strong></li>
+<li><strong>搜索不止有语义信息，无论是query塔还是物料塔，还会有很多信息和特征，前者有用户历史行为，后者有多模态和其他物料特征。</strong></li>
+<li><strong>向量召回不太能是唯一的召回方案，字面召回还是建议保留，这点在[13]的架构图里有体现，我上一篇文章也有聊这个问题：</strong><a target="_blank" rel="noopener" href="http://mp.weixin.qq.com/s?__biz=MzIzMzYwNzY2NQ==&amp;mid=2247488276&amp;idx=1&amp;sn=a2d04351456cec3e6ca471cf91235e90&amp;chksm=e8824b8adff5c29cc7cbbb0cddf2f90857fc93cb6c4f7c6661e8f9f0cd04f13520525997178d&amp;scene=21#wechat_redirect">心法利器[62] | 向量召回和字面召回的选择与权衡</a><strong>。</strong></li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%8F%A5%E5%AD%90-embedding/">#句子 embedding</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>     🍊句子表征优化小结</div>
+      <div>http://example.com/2021/11/09/2021-11-09-🍊句子表征优化小结/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>    NSX</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年11月9日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/11/09/2021-11-09-%E6%B7%B1%E5%BA%A6%E8%AF%AD%E4%B9%89%E5%8C%B9%E9%85%8D/" title="深度语义匹配">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">深度语义匹配</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/11/09/2021-11-09-%F0%9F%86%9A%E5%AF%B9%E6%AF%94%E5%AD%A6%E4%B9%A0/" title="语义匹配前言：对比学习">
+                        <span class="hidden-mobile">语义匹配前言：对比学习</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

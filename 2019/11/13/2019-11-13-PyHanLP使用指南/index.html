@@ -1,0 +1,891 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="NSX">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="PyHanLP 使用指南Hanlp简介HanLP是一系列模型与算法组成的NLP工具包，由大快搜索主导并完全开源，目标是普及自然语言处理在生产环境中的应用。 HanLP主要功能包括分词、词性标注、关键词提取、自动摘要、依存句法分析、命名实体识别、短语提取、拼音转换、简繁转换等等。 Github地址：https:&#x2F;&#x2F;github.com&#x2F;hankcs&#x2F;HanLP 官网地址：http:&#x2F;&#x2F;hanlp.l">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PyHanLP工具包使用指南">
+<meta property="og:url" content="http://example.com/2019/11/13/2019-11-13-PyHanLP%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="PyHanLP 使用指南Hanlp简介HanLP是一系列模型与算法组成的NLP工具包，由大快搜索主导并完全开源，目标是普及自然语言处理在生产环境中的应用。 HanLP主要功能包括分词、词性标注、关键词提取、自动摘要、依存句法分析、命名实体识别、短语提取、拼音转换、简繁转换等等。 Github地址：https:&#x2F;&#x2F;github.com&#x2F;hankcs&#x2F;HanLP 官网地址：http:&#x2F;&#x2F;hanlp.l">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-11-12T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-23T10:28:32.042Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="教程">
+<meta property="article:tag" content="技术">
+<meta property="article:tag" content="Python">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>PyHanLP工具包使用指南 - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="安装和如何使用"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2019-11-13 00:00" pubdate>
+          2019年11月13日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          11k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          95 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">安装和如何使用</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="PyHanLP-使用指南"><a href="#PyHanLP-使用指南" class="headerlink" title="PyHanLP 使用指南"></a>PyHanLP 使用指南</h1><h2 id="Hanlp简介"><a href="#Hanlp简介" class="headerlink" title="Hanlp简介"></a><strong>Hanlp简介</strong></h2><p>HanLP是一系列模型与算法组成的NLP工具包，由大快搜索主导并完全开源，目标是普及自然语言处理在生产环境中的应用。</p>
+<p>HanLP主要功能包括分词、词性标注、关键词提取、自动摘要、依存句法分析、命名实体识别、短语提取、拼音转换、简繁转换等等。</p>
+<p>Github地址：<a target="_blank" rel="noopener" href="https://github.com/hankcs/HanLP">https://github.com/hankcs/HanLP</a></p>
+<p>官网地址：<a target="_blank" rel="noopener" href="http://hanlp.linrunsoft.com/">http://hanlp.linrunsoft.com/</a></p>
+<span id="more"></span>
+<h2 id="PyHanLP安装"><a href="#PyHanLP安装" class="headerlink" title="PyHanLP安装"></a>PyHanLP安装</h2><figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cmake">pip <span class="hljs-keyword">install</span> pyhanlp<br></code></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python3">from pyhanlp import *<br># 首次编译运行时，HanLP会自动构建词典缓存，请稍候……<br><br>Using local c:\users\yuquanle\anaconda3\envs\nlpcoure\lib\site-packages\pyhanlp\static\data-for-1.7.0.zip, ignore http://hanlp.linrunsoft.com/release/data-for-1.7.0.zip<br>Extracting data.zip...<br></code></pre></td></tr></table></figure>
+<p>如果下载速度只有几十K，可以尝试这个链接手动下载：<a target="_blank" rel="noopener" href="http://download.hanlp.com/">http://download.hanlp.com/</a></p>
+<blockquote>
+<p> 可能会报错： <em>ValueError: 配置错误: 数据包 …/Python36/lib/site-packages/pyhanlp/static\data 不存在，请修改配置文件中的root</em></p>
+</blockquote>
+<p><strong>解决方案：</strong></p>
+<ol>
+<li><p><em>建议提前准备好<a target="_blank" rel="noopener" href="http://nlp.hankcs.com/download.php?file=data">data</a>、<a target="_blank" rel="noopener" href="http://nlp.hankcs.com/download.php?file=jar">jar与配置文件</a>，并使用环境变量进行配置</em></p>
+<p>解压之后，放入<code>pyhanlp</code>安装目录的<code>static</code>目录中：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs stylus">pyhanlp<br>├── <span class="hljs-selector-tag">main</span><span class="hljs-selector-class">.py</span><br>└── static<br>    ├── data<br>    ├── data-<span class="hljs-keyword">for</span>-<span class="hljs-number">1.7</span>.<span class="hljs-number">5</span><span class="hljs-selector-class">.zip</span> <br>    ├── hanlp-<span class="hljs-number">1.7</span>.<span class="hljs-number">5</span><span class="hljs-selector-class">.jar</span><br>    ├── hanlp<span class="hljs-selector-class">.properties</span><br>    └── hanlp-<span class="hljs-number">1.7</span>.<span class="hljs-number">5</span>-release<span class="hljs-selector-class">.zip</span><br><br></code></pre></td></tr></table></figure>
+</li>
+<li><p><em>保证 hanlp.properties 中的 root 是指向正确的data路径。</em> 比如：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs routeros"><span class="hljs-built_in">export</span> <span class="hljs-attribute">HANLP_JAR_PATH</span>=/hanlp/hanlp-1.6.0.jar<br><span class="hljs-built_in">export</span> <span class="hljs-attribute">HANLP_STATIC_ROOT</span>=/hanlp<br>tree <span class="hljs-variable">$HANLP_STATIC_ROOT</span> -L 2<br>ll <span class="hljs-variable">$HANLP_JAR_PATH</span><br>cat <span class="hljs-variable">$HANLP_STATIC_ROOT</span>/hanlp.properties | grep root<br></code></pre></td></tr></table></figure>
+<p><em>PS: windows可忽略</em></p>
+</li>
+</ol>
+<h2 id="使用指南"><a href="#使用指南" class="headerlink" title="使用指南"></a>使用指南</h2><h3 id="1-标准分词和词性标注"><a href="#1-标准分词和词性标注" class="headerlink" title="1.标准分词和词性标注"></a>1.标准分词和词性标注</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python3">from pyhanlp import *<br><br>print(HanLP.segment(&#x27;欢迎在Python中调用HanLP的API&#x27;))<br>for term in HanLP.segment(&#x27;欢迎在Python中调用HanLP的API&#x27;):<br>    print(&#x27;&#123;&#125;\t&#123;&#125;&#x27;.format(term.word, term.nature)) # 获取单词与词性<br>    <br>&gt; [欢迎/v, 在/p, Python/nx, 中/f, 调用/v, HanLP/nx, 的/ude1, API/nx]<br></code></pre></td></tr></table></figure>
+<p><strong>说明</strong></p>
+<ul>
+<li>HanLP中有一系列“开箱即用”的静态分词器，以Tokenizer结尾，在接下来的例子中会继续介绍。</li>
+<li>HanLP.segment其实是对StandardTokenizer.segmen的包装。</li>
+<li>分词结果包含词性，每个词性的意思请查阅<a target="_blank" rel="noopener" href="http://www.hankcs.com/nlp/part-of-speech-tagging.html#h2-8">《HanLP词性标注集》</a>。</li>
+</ul>
+<p><strong>算法详解</strong></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="http://www.hankcs.com/nlp/segment/the-word-graph-is-generated.html">《词图的生成》</a></li>
+</ul>
+<h3 id="2-依存句法分析"><a href="#2-依存句法分析" class="headerlink" title="2.依存句法分析"></a>2.依存句法分析</h3><p>它将句子分析成一颗依存句法树，描述出各个词语之间的依存关系。也即指出了词语之间在句法上的搭配关系，这种搭配关系是和语义相关联的。 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs python3">s_dep = HanLP.parseDependency(&#x27;欢迎在Python中调用HanLP的APIs&#x27;)<br>print(s_dep)<br><br>1       欢迎    欢迎    v       v       _       0       核心关系        _       _<br>2       在      在      p       p       _       5       状中结构        _       _<br>3       Python  Python  ws      nx      _       4       定中关系        _       _<br>4       中      中      nd      f       _       2       介宾关系        _       _<br>5       调用    调用    v       v       _       8       定中关系        _       _<br>6       HanLP   HanLP   ws      nx      _       5       动宾关系        _       _<br>7       的      的      u       u       _       5       右附加关系      _       _<br>8       API     API     ws      nx      _       1       动宾关系        _       _<br><br># 可以直接拿到数组，任意顺序或逆序遍历<br>word_array = sentence.getWordArray()<br>for word in word_array:<br>print(&quot;%s --(%s)--&gt; %s&quot; % (word.LEMMA, word.DEPREL, word.HEAD.LEMMA))<br>print()<br></code></pre></td></tr></table></figure>
+<p><strong>算法详解</strong></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="http://www.hankcs.com/nlp/parsing/neural-network-based-dependency-parser.html">《基于神经网络分类模型与转移系统的判决式依存句法分析器》</a></li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://github.com/hankcs/HanLP/issues/464"><strong>依存可视化工具</strong></a></p>
+<ol>
+<li>HanLP在线句法分析并可视化：<a target="_blank" rel="noopener" href="http://hanlp.hankcs.com/?sentence=徐先生还具体帮助他确定了把画雄鹰、松鼠和麻雀作为主攻目标。">http://hanlp.hankcs.com/</a>  </li>
+<li><p>南京大学开发的Dependency Viewer的Windows客户端工具</p>
+<ul>
+<li>下载：<a target="_blank" rel="noopener" href="https://github.com/hankcs/HanLP/files/1035493/DependencyViewer.exe.zip">DependencyViewer.exe.zip</a></li>
+<li>加载CoNLL格式的txt文件</li>
+</ul>
+</li>
+<li><p>web端推荐<a target="_blank" rel="noopener" href="http://spyysalo.github.io/conllu.js/">conllu.js</a>，斯坦福大学也在用这个 </p>
+</li>
+</ol>
+<p><a target="_blank" rel="noopener" href="http://www.hankcs.com/nlp/parsing/neural-network-based-dependency-parser.html"><strong>英文依存标签含义解释</strong></a></p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">Tag</th>
+<th style="text-align:center">关系</th>
+<th style="text-align:center">Description</th>
+<th style="text-align:center">Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">SBV</td>
+<td style="text-align:center">主谓关系</td>
+<td style="text-align:center">subject-verb</td>
+<td style="text-align:center">我送她一束花 (我 &lt;– 送)</td>
+</tr>
+<tr>
+<td style="text-align:center">VOB</td>
+<td style="text-align:center">动宾关系</td>
+<td style="text-align:center">直接宾语，verb-object</td>
+<td style="text-align:center">我送她一束花 (送 –&gt; 花)</td>
+</tr>
+<tr>
+<td style="text-align:center">IOB</td>
+<td style="text-align:center">间宾关系</td>
+<td style="text-align:center">间接宾语，indirect-object</td>
+<td style="text-align:center">我送她一束花 (送 –&gt; 她)</td>
+</tr>
+<tr>
+<td style="text-align:center">FOB</td>
+<td style="text-align:center">前置宾语</td>
+<td style="text-align:center">前置宾语，fronting-object</td>
+<td style="text-align:center">他什么书都读 (书 &lt;– 读)</td>
+</tr>
+<tr>
+<td style="text-align:center">DBL</td>
+<td style="text-align:center">兼语</td>
+<td style="text-align:center">double</td>
+<td style="text-align:center">他请我吃饭 (请 –&gt; 我)</td>
+</tr>
+<tr>
+<td style="text-align:center">ATT</td>
+<td style="text-align:center">定中关系</td>
+<td style="text-align:center">attribute</td>
+<td style="text-align:center">红苹果 (红 &lt;– 苹果)</td>
+</tr>
+<tr>
+<td style="text-align:center">ADV</td>
+<td style="text-align:center">状中结构</td>
+<td style="text-align:center">adverbial</td>
+<td style="text-align:center">非常美丽 (非常 &lt;– 美丽)</td>
+</tr>
+<tr>
+<td style="text-align:center">CMP</td>
+<td style="text-align:center">动补结构</td>
+<td style="text-align:center">complement</td>
+<td style="text-align:center">做完了作业 (做 –&gt; 完)</td>
+</tr>
+<tr>
+<td style="text-align:center">COO</td>
+<td style="text-align:center">并列关系</td>
+<td style="text-align:center">coordinate</td>
+<td style="text-align:center">大山和大海 (大山 –&gt; 大海)</td>
+</tr>
+<tr>
+<td style="text-align:center">POB</td>
+<td style="text-align:center">介宾关系</td>
+<td style="text-align:center">preposition-object</td>
+<td style="text-align:center">在贸易区内 (在 –&gt; 内)</td>
+</tr>
+<tr>
+<td style="text-align:center">LAD</td>
+<td style="text-align:center">左附加关系</td>
+<td style="text-align:center">left adjunct</td>
+<td style="text-align:center">大山和大海 (和 &lt;– 大海)</td>
+</tr>
+<tr>
+<td style="text-align:center">RAD</td>
+<td style="text-align:center">右附加关系</td>
+<td style="text-align:center">right adjunct</td>
+<td style="text-align:center">孩子们 (孩子 –&gt; 们)</td>
+</tr>
+<tr>
+<td style="text-align:center">IS</td>
+<td style="text-align:center">独立结构</td>
+<td style="text-align:center">independent structure</td>
+<td style="text-align:center">两个单句在结构上彼此独立</td>
+</tr>
+<tr>
+<td style="text-align:center">WP</td>
+<td style="text-align:center">标点符号</td>
+<td style="text-align:center">punctuation</td>
+<td style="text-align:center">标点符号</td>
+</tr>
+<tr>
+<td style="text-align:center">HED</td>
+<td style="text-align:center">核心关系</td>
+<td style="text-align:center">head</td>
+<td style="text-align:center">指整个句子的核心</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="3-关键词提取"><a href="#3-关键词提取" class="headerlink" title="3.关键词提取"></a>3.关键词提取</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs python3">document = u&#x27;&#x27;&#x27;<br>自然语言处理是计算机科学领域与人工智能领域中的一个重要方向。<br>它研究能实现人与计算机之间用自然语言进行有效通信的各种理论和方法。<br>自然语言处理是一门融语言学、计算机科学、数学于一体的科学。<br>因此，这一领域的研究将涉及自然语言，即人们日常使用的语言，<br>所以它与语言学的研究有着密切的联系，但又有重要的区别。<br>自然语言处理并不是一般地研究自然语言，<br>而在于研制能有效地实现自然语言通信的计算机系统，<br>特别是其中的软件系统。因而它是计算机科学的一部分。<br>&#x27;&#x27;&#x27;<br>doc_keyword = HanLP.extractKeyword(document, 3)<br>for word in doc_keyword:<br>    print(word)<br>研究<br>自然语言<br>自然语言处理<br></code></pre></td></tr></table></figure>
+<h3 id="4-摘要抽取"><a href="#4-摘要抽取" class="headerlink" title="4.摘要抽取"></a>4.摘要抽取</h3><figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs reasonml">doc_keysentence = <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">HanLP</span>.</span></span>extract<span class="hljs-constructor">Summary(<span class="hljs-params">document</span>, 3)</span><br><span class="hljs-keyword">for</span> key_sentence <span class="hljs-keyword">in</span> doc_keysentence:<br>    print(key_sentence)<br>    <br>自然语言处理并不是一般地研究自然语言<br>自然语言处理是计算机科学领域与人工智能领域中的一个重要方向<br>它研究能实现人与计算机之间用自然语言进行有效通信的各种理论和方法<br></code></pre></td></tr></table></figure>
+<h3 id="5-1感知机词法分析器"><a href="#5-1感知机词法分析器" class="headerlink" title="5.1感知机词法分析器"></a>5.1感知机词法分析器</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash">PerceptronLexicalAnalyzer = JClass(<span class="hljs-string">&#x27;com.hankcs.hanlp.model.perceptron.PerceptronLexicalAnalyzer&#x27;</span>)<br>analyzer = PerceptronLexicalAnalyzer()<br><span class="hljs-built_in">print</span>(analyzer.analyze(<span class="hljs-string">&quot;上海华安工业（集团）公司董事长谭旭光和秘书胡花蕊来到美国纽约现代艺术博物馆参观&quot;</span>))<br><br>&gt; [上海/ns 华安/nz 工业/n （/w 集团/n ）/w 公司/n]/nt 董事长/n 谭旭光/nr 和/c 秘书/n 胡花蕊/nr 来到/v [美国纽约/ns 现代/ntc 艺术/n 博物馆/n]/ns 参观/v<br></code></pre></td></tr></table></figure>
+<p><strong>说明</strong></p>
+<ul>
+<li>NLP分词NLPTokenizer会执行词性标注和命名实体识别，由<a target="_blank" rel="noopener" href="https://github.com/hankcs/HanLP/wiki/结构化感知机标注框架">结构化感知机序列标注框架</a>支撑。</li>
+<li>默认模型训练自9970万字的大型综合语料库，是已知范围内全世界最大的中文分词语料库。语料库规模决定实际效果，面向生产环境的语料库应当在千万字量级。用户可以在自己的语料上<a target="_blank" rel="noopener" href="https://github.com/hankcs/HanLP/wiki/结构化感知机标注框架">训练新模型</a>以适应新领域、识别新的命名实体。</li>
+</ul>
+<h3 id="5-2-CRF-词法分析器"><a href="#5-2-CRF-词法分析器" class="headerlink" title="5.2 CRF 词法分析器"></a>5.2 CRF 词法分析器</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash">CRFLexicalAnalyzer = JClass(<span class="hljs-string">&quot;com.hankcs.hanlp.model.crf.CRFLexicalAnalyzer&quot;</span>)<br>analyzer = CRFLexicalAnalyzer()<br><span class="hljs-built_in">print</span>(analyzer.analyze(<span class="hljs-string">&quot;上海华安工业（集团）公司董事长谭旭光和秘书胡花蕊来到美国纽约现代艺术博物馆参观&quot;</span>))<br><br>&gt; [上海/ns 华安/nz 工业/n （/w 集团/n ）/w 公司/n]/nt 董事长/n 谭旭光/nr 和/c 秘书/n 胡花蕊/nr 来到/v [美国纽约/ns 现代/ntc 艺术/n 博物馆/n]/ns 参观/v<br></code></pre></td></tr></table></figure>
+<p><strong>说明</strong></p>
+<ul>
+<li>调用更底层的API需要参考Java语法用JClass引入更深的类路径。以感知机词法分析器为例，CRF分词的类位于包名<strong>com.hankcs.hanlp.model.crf.CRFLexicalAnalyzer</strong>下，先用<strong>JClass</strong>得到类，然后就可以调用了</li>
+<li>CRF对新词有很好的识别能力，但是开销较大。</li>
+</ul>
+<p><strong>算法详解</strong></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/hankcs/HanLP/wiki/CRF词法分析">《CRF中文分词、词性标注与命名实体识别》</a></li>
+</ul>
+<h3 id="5-3-极速词典分词"><a href="#5-3-极速词典分词" class="headerlink" title="5.3 极速词典分词"></a>5.3 极速词典分词</h3><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs stylus">SpeedTokenizer = <span class="hljs-built_in">JClass</span>(<span class="hljs-string">&quot;com.hankcs.hanlp.tokenizer.SpeedTokenizer&quot;</span>)<br>text = <span class="hljs-string">&quot;江西鄱阳湖干枯，中国最大淡水湖变成大草原&quot;</span><br><span class="hljs-function"><span class="hljs-title">JClass</span><span class="hljs-params">(<span class="hljs-string">&quot;com.hankcs.hanlp.HanLP$Config&quot;</span>)</span></span><span class="hljs-selector-class">.ShowTermNature</span> = False<br><span class="hljs-function"><span class="hljs-title">print</span><span class="hljs-params">(SpeedTokenizer.segment(text)</span></span>)<br></code></pre></td></tr></table></figure>
+<p><strong>说明</strong></p>
+<ul>
+<li>调用更底层的API需要参考Java语法用JClass引入更深的类路径。以感知机词法分析器为例，极速字典分词的类位于包名<strong>com.hankcs.hanlp.tokenizer.SpeedTokenizer</strong>下，先用<strong>JClass</strong>得到类，然后就可以调用了</li>
+<li>极速分词是词典最长分词，速度极其快，精度一般。</li>
+<li>在i7-6700K上跑出了4500万字每秒的速度。</li>
+</ul>
+<p><strong>算法详解</strong></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="http://www.hankcs.com/program/algorithm/aho-corasick-double-array-trie.html">《Aho Corasick自动机结合DoubleArrayTrie极速多模式匹配》</a></li>
+</ul>
+<h3 id="6-中国人名识别"><a href="#6-中国人名识别" class="headerlink" title="6.中国人名识别"></a>6.中国人名识别</h3><figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs gradle">NER = HanLP.newSegment().enableNameRecognize(<span class="hljs-keyword">True</span>)<br>p_name = NER.seg(<span class="hljs-string">&#x27;王国强、高峰、汪洋、张朝阳光着头、韩寒、小四&#x27;</span>)<br><span class="hljs-keyword">print</span>(p_name)<br><br>&gt; [王国强<span class="hljs-regexp">/nr, 、/</span>w, 高峰<span class="hljs-regexp">/n, 、/</span>w, 汪洋<span class="hljs-regexp">/n, 、/</span>w, 张朝阳<span class="hljs-regexp">/nr, 光着头/</span>l, 、<span class="hljs-regexp">/w, 韩寒/</span>nr, 、<span class="hljs-regexp">/w, 小/</span>a, 四/<br></code></pre></td></tr></table></figure>
+<p><strong>说明</strong></p>
+<ul>
+<li>目前分词器基本上都默认开启了中国人名识别，比如HanLP.segment()接口中使用的分词器等等，用户不必手动开启；上面的代码只是为了强调。</li>
+<li>有一定的误命中率，比如误命中关键年，则可以通过在data/dictionary/person/nr.txt加入一条关键年 A 1来排除关键年作为人名的可能性，也可以将关键年作为新词登记到自定义词典中。</li>
+<li><strong>建议NLP用户使用感知机或CRF词法分析器，精度更高。</strong></li>
+</ul>
+<p><strong>算法详解</strong></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="http://www.hankcs.com/nlp/chinese-name-recognition-in-actual-hmm-viterbi-role-labeling.html">《实战HMM-Viterbi角色标注中国人名识别》</a></li>
+</ul>
+<h3 id="7-音译人名识别"><a href="#7-音译人名识别" class="headerlink" title="7.音译人名识别"></a>7.音译人名识别</h3><figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs gradle">sentence = <span class="hljs-string">&#x27;微软的比尔盖茨、Facebook的扎克伯格跟桑德博格、亚马逊的贝索斯、苹果的库克，这些硅谷的科技人&#x27;</span><br>person_ner = HanLP.newSegment().enableTranslatedNameRecognize(<span class="hljs-keyword">True</span>)<br>p_name = person_ner.seg(sentence)<br><span class="hljs-keyword">print</span>(p_name)<br><br>&gt; [微软<span class="hljs-regexp">/ntc, 的/u</span>de1, 比尔盖茨<span class="hljs-regexp">/nrf, 、/</span>w, Facebook<span class="hljs-regexp">/nx, 的/u</span>de1, 扎克伯格<span class="hljs-regexp">/nrf, 跟/</span>p, 桑德博格<span class="hljs-regexp">/nrf, 、/</span>w, <br></code></pre></td></tr></table></figure>
+<p><strong>说明</strong></p>
+<ul>
+<li>目前分词器基本上都默认开启了音译人名识别，用户不必手动开启</li>
+</ul>
+<p><strong>算法详解</strong></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="http://www.hankcs.com/nlp/name-transliteration-cascaded-hidden-markov-model-and-japanese-personal-names-recognition.html">《层叠隐马模型下的音译人名和日本人名识别》</a></li>
+</ul>
+<h3 id="8-短语提取"><a href="#8-短语提取" class="headerlink" title="8.短语提取"></a>8.短语提取</h3><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs stylus">phraseList = HanLP<span class="hljs-selector-class">.extractPhrase</span>(document, <span class="hljs-number">3</span>)<br><span class="hljs-function"><span class="hljs-title">print</span><span class="hljs-params">(phraseList)</span></span><br><span class="hljs-selector-attr">[计算机科学, 中的重要, 之间自然语言]</span><br></code></pre></td></tr></table></figure>
+<h3 id="9-1-汉字转拼音"><a href="#9-1-汉字转拼音" class="headerlink" title="9.1 汉字转拼音"></a>9.1 汉字转拼音</h3><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs stylus">s = <span class="hljs-string">&#x27;重载不是重任&#x27;</span><br>pinyinList = HanLP<span class="hljs-selector-class">.convertToPinyinList</span>(s)<br><span class="hljs-keyword">for</span> pinyin <span class="hljs-keyword">in</span> pinyinList:<br>    <span class="hljs-built_in">print</span>(pinyin<span class="hljs-selector-class">.getPinyinWithoutTone</span>(),pinyin<span class="hljs-selector-class">.getTone</span>(), pinyin, pinyin<span class="hljs-selector-class">.getPinyinWithToneMark</span>())<br>    <br>chong <span class="hljs-number">2</span> chong2 chóng<br>zai <span class="hljs-number">3</span> zai3 zǎ<span class="hljs-selector-tag">i</span><br>bu <span class="hljs-number">2</span> bu2 bú<br>shi <span class="hljs-number">4</span> shi4 shì<br>zhong <span class="hljs-number">4</span> zhong4 zhòng<br>ren <span class="hljs-number">4</span> ren4 rèn<br></code></pre></td></tr></table></figure>
+<h3 id="9-2-拼音转汉字"><a href="#9-2-拼音转汉字" class="headerlink" title="9.2 拼音转汉字"></a>9.2 拼音转汉字</h3><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><code class="hljs routeros">def demo_pinyin_to_chinese():<br>    <span class="hljs-string">&quot;&quot;</span><span class="hljs-string">&quot; HanLP中的数据结构和接口是灵活的，组合这些接口，可以自己创造新功能</span><br><span class="hljs-string"></span><br><span class="hljs-string"></span><br><span class="hljs-string">    [renmenrenweiyalujiangbujian/null, lvse/[滤色, 绿色]]</span><br><span class="hljs-string">    &quot;</span><span class="hljs-string">&quot;&quot;</span><br>    AhoCorasickDoubleArrayTrie = JClass(<br>        <span class="hljs-string">&quot;com.hankcs.hanlp.collection.AhoCorasick.AhoCorasickDoubleArrayTrie&quot;</span>)<br>    StringDictionary = JClass(<br>        <span class="hljs-string">&quot;com.hankcs.hanlp.corpus.dictionary.StringDictionary&quot;</span>)<br>    CommonAhoCorasickDoubleArrayTrieSegment = JClass(<br>        <span class="hljs-string">&quot;com.hankcs.hanlp.seg.Other.CommonAhoCorasickDoubleArrayTrieSegment&quot;</span>)<br>    CommonAhoCorasickSegmentUtil = JClass(<br>        <span class="hljs-string">&quot;com.hankcs.hanlp.seg.Other.CommonAhoCorasickSegmentUtil&quot;</span>)<br>   <span class="hljs-built_in"> Config </span>= JClass(<span class="hljs-string">&quot;com.hankcs.hanlp.HanLP<span class="hljs-variable">$Config</span>&quot;</span>)<br><br>    TreeMap = JClass(<span class="hljs-string">&quot;java.util.TreeMap&quot;</span>)<br>    TreeSet = JClass(<span class="hljs-string">&quot;java.util.TreeSet&quot;</span>)<br><br>    dictionary = StringDictionary()<br>    dictionary.load(Config.PinyinDictionaryPath)<br>    entry = &#123;&#125;<br>    m_map = TreeMap()<br>    <span class="hljs-keyword">for</span> entry <span class="hljs-keyword">in</span> dictionary.entrySet():<br>        pinyins = entry.getValue().replace(<span class="hljs-string">&quot;[\\d,]&quot;</span>, <span class="hljs-string">&quot;&quot;</span>)<br>        words = m_map.<span class="hljs-built_in">get</span>(pinyins)<br>        <span class="hljs-keyword">if</span> words is None:<br>            words = TreeSet()<br>            m_map.put(pinyins, words)<br>        words.<span class="hljs-built_in">add</span>(entry.getKey())<br>    words = TreeSet()<br>    words.<span class="hljs-built_in">add</span>(<span class="hljs-string">&quot;绿色&quot;</span>)<br>    words.<span class="hljs-built_in">add</span>(<span class="hljs-string">&quot;滤色&quot;</span>)<br>    m_map.put(<span class="hljs-string">&quot;lvse&quot;</span>, words)<br><br>    segment = CommonAhoCorasickDoubleArrayTrieSegment(m_map)<br>    <span class="hljs-built_in">print</span>(segment.segment(<span class="hljs-string">&quot;renmenrenweiyalujiangbujianlvse&quot;</span>))<br><br><br><span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&quot;__main__&quot;</span>:<br>    demo_pinyin_to_chinese()<br><br></code></pre></td></tr></table></figure>
+<h3 id="10-繁简转换"><a href="#10-繁简转换" class="headerlink" title="10.繁简转换"></a>10.繁简转换</h3><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs stylus">Jianti = HanLP<span class="hljs-selector-class">.convertToSimplifiedChinese</span>(<span class="hljs-string">&quot;我愛自然語言處理技術！&quot;</span>)<br>Fanti = HanLP<span class="hljs-selector-class">.convertToTraditionalChinese</span>(<span class="hljs-string">&quot;我爱自然语言处理技术！&quot;</span>)<br><span class="hljs-function"><span class="hljs-title">print</span><span class="hljs-params">(Jianti)</span></span><br><span class="hljs-function"><span class="hljs-title">print</span><span class="hljs-params">(Fanti)</span></span><br><br>我爱自然语言处理技术！<br>我愛自然語言處理技術！<br></code></pre></td></tr></table></figure>
+<p><strong>说明</strong></p>
+<ul>
+<li>HanLP能够识别简繁分歧词，比如打印机=印表機。</li>
+<li>支持香港繁体和台湾繁体</li>
+</ul>
+<p><strong>算法详解</strong></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="http://www.hankcs.com/nlp/java-chinese-characters-to-pinyin-and-simplified-conversion-realization.html#h2-17">《汉字转拼音与简繁转换的Java实现》</a></li>
+</ul>
+<h3 id="11-用户自定义词典"><a href="#11-用户自定义词典" class="headerlink" title="11. 用户自定义词典"></a>11. 用户自定义词典</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">print</span>(HanLP.segment(text))<br><br>CustomDictionary = JClass(<span class="hljs-string">&quot;com.hankcs.hanlp.dictionary.CustomDictionary&quot;</span>)<br>CustomDictionary.add(<span class="hljs-string">&quot;攻城狮&quot;</span>)  <span class="hljs-comment"># 动态增加</span><br>CustomDictionary.insert(<span class="hljs-string">&quot;白富美&quot;</span>, <span class="hljs-string">&quot;nz 1024&quot;</span>)  <span class="hljs-comment"># 强行插入</span><br><span class="hljs-comment">#CustomDictionary.remove(&quot;攻城狮&quot;); # 删除词语（注释掉试试）</span><br>CustomDictionary.add(<span class="hljs-string">&quot;单身狗&quot;</span>, <span class="hljs-string">&quot;nz 1024 n 1&quot;</span>)<br><span class="hljs-comment">#print(CustomDictionary.get(&quot;单身狗&quot;))</span><br><br><span class="hljs-built_in">print</span>(HanLP.segment(text))<br><br>&gt; [攻城/vi, 狮/ng, 逆袭/nz, 单身/n, 狗/n, ，/w, 迎娶/v, 白富美/nr, ，/w, 走上/v, 人生/n, 巅峰/n]<br>&gt; [攻城狮/nz, 逆袭/nz, 单身狗/nz, ，/w, 迎娶/v, 白富美/nz, ，/w, 走上/v, 人生/n, 巅峰/n]<br></code></pre></td></tr></table></figure>
+<p><strong>说明</strong></p>
+<ul>
+<li>CustomDictionary是一份全局的用户自定义词典，可以随时增删，影响全部分词器。另外可以在任何分词器中关闭它。通过代码动态增删不会保存到词典文件。</li>
+<li>中文分词≠词典，词典无法解决中文分词，Segment提供高低优先级应对不同场景，请参考<a target="_blank" rel="noopener" href="https://github.com/hankcs/HanLP/wiki/FAQ#为什么修改了词典还是没有效果">FAQ</a>。</li>
+</ul>
+<p><strong>追加词典</strong></p>
+<ul>
+<li>CustomDictionary主词典文本路径是data/dictionary/custom/CustomDictionary.txt，用户可以在此增加自己的词语（不推荐）；也可以单独新建一个文本文件，通过配置文件CustomDictionaryPath=data/dictionary/custom/CustomDictionary.txt; 我的词典.txt;来追加词典<u>（推荐）</u>。</li>
+<li>始终建议将相同词性的词语放到同一个词典文件里，便于维护和分享。</li>
+</ul>
+<p><strong>词典格式</strong></p>
+<ul>
+<li>每一行代表一个单词，格式遵从[单词] [词性A] [A的频次] [词性B] [B的频次] … 如果不填词性则表示采用词典的默认词性。</li>
+<li>词典的默认词性默认是名词n，可以通过配置文件修改：全国地名大全.txt ns;如果词典路径后面空格紧接着词性，则该词典默认是该词性。</li>
+</ul>
+<p><strong>算法详解</strong></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="http://www.hankcs.com/program/java/tire-tree-participle.html">《Trie树分词》</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.hankcs.com/program/algorithm/aho-corasick-double-array-trie.html">《Aho Corasick自动机结合DoubleArrayTrie极速多模式匹配》</a></li>
+</ul>
+<h3 id="12-数词和数量词识别"><a href="#12-数词和数量词识别" class="headerlink" title="12. 数词和数量词识别"></a>12. 数词和数量词识别</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python3">StandardTokenizer = JClass(&quot;com.hankcs.hanlp.tokenizer.StandardTokenizer&quot;)<br>StandardTokenizer.SEGMENT.enableNumberQuantifierRecognize(True)<br>print(StandardTokenizer.segment(sentence))<br><br>[十九元/mq, 套餐/n, 包括/v, 什么/ry]<br>[壹佰块/mq, 都/d, 不/d, 给/p, 我/rr]<br>[９０１２３４５６７８只/mq, 蚂蚁/n]<br></code></pre></td></tr></table></figure>
+<h3 id="13-同义改写"><a href="#13-同义改写" class="headerlink" title="13.  同义改写"></a>13.  同义改写</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python3">CoreSynonymDictionary = JClass(&quot;com.hankcs.hanlp.dictionary.CoreSynonymDictionary&quot;)<br>text = &quot;这个方法可以利用同义词词典将一段文本改写成意思相似的另一段文本，而且差不多符合语法&quot;<br>print(CoreSynonymDictionary.rewrite(text))<br><br>&gt; 其一措施可以使同义词词典将一律段文本改写成意思相似之任何一样段文本，而且大多符合语法<br></code></pre></td></tr></table></figure>
+<h3 id="14-情感分析"><a href="#14-情感分析" class="headerlink" title="14.  情感分析"></a>14.  情感分析</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python3">NaiveBayesClassifier = JClass(&#x27;com.hankcs.hanlp.classification.classifiers.NaiveBayesClassifier&#x27;)<br><br>classifier = NaiveBayesClassifier()<br>#  创建分类器，更高级的功能请参考IClassifier的接口定义<br>classifier.train(chn_senti_corp)<br>#  训练后的模型支持持久化，下次就不必训练了<br>predict(classifier, &quot;前台客房服务态度非常好！早餐很丰富，房价很干净。再接再厉！&quot;)<br></code></pre></td></tr></table></figure>
+<h3 id="15-聚类"><a href="#15-聚类" class="headerlink" title="15.  聚类"></a>15.  聚类</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs python3">ClusterAnalyzer = JClass(&#x27;com.hankcs.hanlp.mining.cluster.ClusterAnalyzer&#x27;)<br><br>analyzer = ClusterAnalyzer()<br>analyzer.addDocument(&quot;赵一&quot;, &quot;流行, 流行, 流行, 流行, 流行, 流行, 流行, 流行, 流行, 流行, 蓝调, 蓝调, 蓝调, 蓝调, 蓝调, 蓝调, 摇滚, 摇滚, 摇滚, 摇滚&quot;)<br>analyzer.addDocument(&quot;钱二&quot;, &quot;爵士, 爵士, 爵士, 爵士, 爵士, 爵士, 爵士, 爵士, 舞曲, 舞曲, 舞曲, 舞曲, 舞曲, 舞曲, 舞曲, 舞曲, 舞曲&quot;)<br>analyzer.addDocument(&quot;张三&quot;, &quot;古典, 古典, 古典, 古典, 民谣, 民谣, 民谣, 民谣&quot;)<br>analyzer.addDocument(&quot;李四&quot;, &quot;爵士, 爵士, 爵士, 爵士, 爵士, 爵士, 爵士, 爵士, 爵士, 金属, 金属, 舞曲, 舞曲, 舞曲, 舞曲, 舞曲, 舞曲&quot;)<br>analyzer.addDocument(&quot;王五&quot;, &quot;流行, 流行, 流行, 流行, 摇滚, 摇滚, 摇滚, 嘻哈, 嘻哈, 嘻哈&quot;)<br>analyzer.addDocument(&quot;马六&quot;, &quot;古典, 古典, 古典, 古典, 古典, 古典, 古典, 古典, 摇滚&quot;)<br>print(analyzer.kmeans(3))<br>print(analyzer.repeatedBisection(3))<br>print(analyzer.repeatedBisection(1.0))  # 自动判断聚类数量k<br></code></pre></td></tr></table></figure>
+<h3 id="16-语义距离"><a href="#16-语义距离" class="headerlink" title="16.  语义距离"></a>16.  语义距离</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs python3">CoreSynonymDictionary = JClass(&quot;com.hankcs.hanlp.dictionary.CoreSynonymDictionary&quot;)<br><br>word_array = [<br>&quot;香蕉&quot;,<br>&quot;苹果&quot;,<br>&quot;白菜&quot;,<br>&quot;水果&quot;,<br>&quot;蔬菜&quot;,<br>&quot;自行车&quot;,<br>&quot;公交车&quot;,<br>&quot;飞机&quot;,<br>&quot;买&quot;,<br>&quot;卖&quot;,<br>&quot;购入&quot;,<br>&quot;新年&quot;,<br>]<br>print(&quot;%-5s\t%-5s\t%-10s\t%-5s\n&quot; % (&quot;词A&quot;, &quot;词B&quot;, &quot;语义距离&quot;, &quot;语义相似度&quot;))<br>for a in word_array:<br>    for b in word_array:<br>        print(&quot;%-5s\t%-5s\t%-15d\t%-5.10f&quot; % (a, b, CoreSynonymDictionary.distance(a, b), CoreSynonymDictionary.similarity(a, b)))<br>        <br>&gt; 返回两两之间的语义距离和语义相似度<br></code></pre></td></tr></table></figure>
+<p><strong>说明</strong></p>
+<ul>
+<li>可以得到给出的词汇之间语义的相似度</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/hankcs/HanLP/wiki/word2vec">word2vec文档</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.hankcs.com/nlp/word2vec.html">《word2vec原理推导与代码分析》</a></li>
+</ul>
+<h4 id="17-文本推荐（类似搜索引擎功能）"><a href="#17-文本推荐（类似搜索引擎功能）" class="headerlink" title="17.  文本推荐（类似搜索引擎功能）"></a>17.  文本推荐（类似搜索引擎功能）</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs python">Suggester = JClass(<span class="hljs-string">&quot;com.hankcs.hanlp.suggest.Suggester&quot;</span>)<br>suggester = Suggester()<br>title_array = [<br>    <span class="hljs-string">&quot;威廉王子发表演说 呼吁保护野生动物&quot;</span>,<br>    <span class="hljs-string">&quot;魅惑天后许佳慧不爱“预谋” 独唱《许某某》&quot;</span>,<br>    <span class="hljs-string">&quot;《时代》年度人物最终入围名单出炉 普京马云入选&quot;</span>,<br>    <span class="hljs-string">&quot;“黑格比”横扫菲：菲吸取“海燕”经验及早疏散&quot;</span>,<br>    <span class="hljs-string">&quot;日本保密法将正式生效 日媒指其损害国民知情权&quot;</span>,<br>    <span class="hljs-string">&quot;英报告说空气污染带来“公共健康危机”&quot;</span><br>]<br><span class="hljs-keyword">for</span> title <span class="hljs-keyword">in</span> title_array:<br>	suggester.addSentence(title)<br><br><span class="hljs-built_in">print</span>(suggester.suggest(<span class="hljs-string">&quot;陈述&quot;</span>, <span class="hljs-number">2</span>))      <span class="hljs-comment"># 语义</span><br><span class="hljs-built_in">print</span>(suggester.suggest(<span class="hljs-string">&quot;危机公关&quot;</span>, <span class="hljs-number">1</span>))  <span class="hljs-comment"># 字符</span><br><span class="hljs-built_in">print</span>(suggester.suggest(<span class="hljs-string">&quot;mayun&quot;</span>, <span class="hljs-number">1</span>))   <span class="hljs-comment"># 拼音</span><br><span class="hljs-built_in">print</span>(suggester.suggest(<span class="hljs-string">&quot;徐家汇&quot;</span>, <span class="hljs-number">1</span>)) <span class="hljs-comment"># 拼音</span><br></code></pre></td></tr></table></figure>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/51419818">自然语言处理基础技术工具篇之HanLP</a></li>
+<li><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/zhuminghui/p/10944090.html">pyhanlp工具超详细介绍</a></p>
+</li>
+<li><p>使用命令<code>hanlp</code>来验证安装，如因网络等原因自动安装失败，可参考<a target="_blank" rel="noopener" href="https://github.com/hankcs/pyhanlp/wiki/手动配置">手动配置</a>或<a target="_blank" rel="noopener" href="https://github.com/hankcs/pyhanlp/wiki/Windows">Windows指南</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/hankcs/pyhanlp/blob/master/tests/demos">pyhanlp Demo</a></p>
+</li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E6%95%99%E7%A8%8B/">#教程</a>
+      
+        <a href="/tags/%E6%8A%80%E6%9C%AF/">#技术</a>
+      
+        <a href="/tags/Python/">#Python</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>PyHanLP工具包使用指南</div>
+      <div>http://example.com/2019/11/13/2019-11-13-PyHanLP使用指南/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>NSX</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2019年11月13日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/11/21/2019-11-21-%E7%AC%AC%E4%B8%80%E5%A4%A9AICon%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD%E5%A4%A7%E4%BC%9A%E8%AE%B0%E5%BD%95/" title="第一天AICon人工智能大会记录">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">第一天AICon人工智能大会记录</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2019/11/08/2019-11-08-bert_as_service%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/" title="bert-as-service使用指南">
+                        <span class="hidden-mobile">bert-as-service使用指南</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

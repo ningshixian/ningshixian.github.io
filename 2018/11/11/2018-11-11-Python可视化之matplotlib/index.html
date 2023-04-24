@@ -1,0 +1,687 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="NSX">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="利用matplotlib对数据进行可视化 简单曲线图 复杂曲线图 子图 柱状图 横向柱状图 高级柱状图 层次柱状图 直方图 饼图 散点图 雷达图">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python可视化之matplotlib">
+<meta property="og:url" content="http://example.com/2018/11/11/2018-11-11-Python%E5%8F%AF%E8%A7%86%E5%8C%96%E4%B9%8Bmatplotlib/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="利用matplotlib对数据进行可视化 简单曲线图 复杂曲线图 子图 柱状图 横向柱状图 高级柱状图 层次柱状图 直方图 饼图 散点图 雷达图">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/%E7%AE%80%E5%8D%95%E6%9B%B2%E7%BA%BF%E5%9B%BE.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/%E5%A4%8D%E6%9D%82%E6%9B%B2%E7%BA%BF%E5%9B%BE.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/%E5%AD%90%E5%9B%BE.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/%E6%9F%B1%E7%8A%B6%E5%9B%BE.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/%E6%A8%AA%E5%90%91%E6%9F%B1%E7%8A%B6%E5%9B%BE.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/%E9%AB%98%E7%BA%A7%E6%9F%B1%E7%8A%B6%E5%9B%BE.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/%E5%B1%82%E6%AC%A1%E6%9F%B1%E7%8A%B6%E5%9B%BE.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/%E7%9B%B4%E6%96%B9%E5%9B%BE.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/%E9%A5%BC%E5%9B%BE.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/%E6%95%A3%E7%82%B9%E5%9B%BE.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/%E9%9B%B7%E8%BE%BE%E5%9B%BE.png">
+<meta property="article:published_time" content="2018-11-10T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-23T10:28:32.034Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="教程">
+<meta property="article:tag" content="技术">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ningshixian.github.io/resources/images/%E7%AE%80%E5%8D%95%E6%9B%B2%E7%BA%BF%E5%9B%BE.png">
+  
+  
+  
+  <title>Python可视化之matplotlib - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="利用matplotlib对数据进行可视化"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2018-11-11 00:00" pubdate>
+          2018年11月11日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          8.8k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          74 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">利用matplotlib对数据进行可视化</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="利用matplotlib对数据进行可视化"><a href="#利用matplotlib对数据进行可视化" class="headerlink" title="利用matplotlib对数据进行可视化"></a>利用matplotlib对数据进行可视化</h2><ul>
+<li>简单曲线图</li>
+<li>复杂曲线图</li>
+<li>子图</li>
+<li>柱状图</li>
+<li>横向柱状图</li>
+<li>高级柱状图</li>
+<li>层次柱状图</li>
+<li>直方图</li>
+<li>饼图</li>
+<li>散点图</li>
+<li>雷达图</li>
+</ul>
+<span id="more"></span>
+<h4 id="导包"><a href="#导包" class="headerlink" title="导包"></a>导包</h4><figure class="highlight elm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs elm"><span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np<br><span class="hljs-keyword">import</span> matplotlib<br><span class="hljs-keyword">import</span> matplotlib.mlab <span class="hljs-keyword">as</span> mlab<br><span class="hljs-keyword">import</span> matplotlib.pyplot <span class="hljs-keyword">as</span> plt<br><span class="hljs-keyword">import</span> matplotlib.font_manager <span class="hljs-keyword">as</span> fm<br></code></pre></td></tr></table></figure>
+<h4 id="1、简单曲线图"><a href="#1、简单曲线图" class="headerlink" title="1、简单曲线图"></a>1、简单曲线图</h4><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs routeros">def simple_plot():<br>    <span class="hljs-string">&quot;&quot;</span><span class="hljs-string">&quot;</span><br><span class="hljs-string">    simple plot</span><br><span class="hljs-string">    &quot;</span><span class="hljs-string">&quot;&quot;</span><br>    # 生成测试数据<br>    x = np.linspace(-np.pi, np.pi, 256, <span class="hljs-attribute">endpoint</span>=<span class="hljs-literal">True</span>)<br>    y_cos, y_sin = np.cos(x), np.sin(x)<br><br>    # 生成画布，并设定标题<br>    plt.figure(figsize=(8, 6), <span class="hljs-attribute">dpi</span>=80)<br>    plt.title(<span class="hljs-string">&quot;简单曲线图&quot;</span>, <span class="hljs-attribute">fontproperties</span>=myfont)<br>    plt.grid(<span class="hljs-literal">True</span>)<br><br>    # 设置X轴<br>    plt.xlabel(<span class="hljs-string">&quot;X轴&quot;</span>, <span class="hljs-attribute">fontproperties</span>=myfont)<br>    plt.xlim(-4.0, 4.0)<br>    plt.xticks(np.linspace(-4, 4, 9, <span class="hljs-attribute">endpoint</span>=<span class="hljs-literal">True</span>))<br><br>    # 设置Y轴<br>    plt.ylabel(<span class="hljs-string">&quot;Y轴&quot;</span>, <span class="hljs-attribute">fontproperties</span>=myfont)<br>    plt.ylim(-1.0, 1.0)<br>    plt.yticks(np.linspace(-1, 1, 9, <span class="hljs-attribute">endpoint</span>=<span class="hljs-literal">True</span>))<br><br>    # 画两条曲线<br>    plt.plot(x, y_cos, <span class="hljs-string">&quot;b--&quot;</span>, <span class="hljs-attribute">linewidth</span>=2.0, <span class="hljs-attribute">label</span>=<span class="hljs-string">&quot;cos示例&quot;</span>)<br>    plt.plot(x, y_sin, <span class="hljs-string">&quot;g-&quot;</span>, <span class="hljs-attribute">linewidth</span>=2.0, <span class="hljs-attribute">label</span>=<span class="hljs-string">&quot;sin示例&quot;</span>)<br><br>    # 设置图例位置,loc可以为[upper, lower, left, right, center]<br>    plt.legend(<span class="hljs-attribute">loc</span>=<span class="hljs-string">&quot;upper left&quot;</span>, <span class="hljs-attribute">prop</span>=myfont, <span class="hljs-attribute">shadow</span>=<span class="hljs-literal">True</span>)<br><br>    # 图形显示<br>    plt.show()<br>    return<br></code></pre></td></tr></table></figure>
+<p><img src="https://ningshixian.github.io/resources/images/简单曲线图.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<h4 id="2、复杂曲线图"><a href="#2、复杂曲线图" class="headerlink" title="2、复杂曲线图"></a>2、复杂曲线图</h4><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><code class="hljs routeros">def simple_advanced_plot():<br>    <span class="hljs-string">&quot;&quot;</span><span class="hljs-string">&quot;</span><br><span class="hljs-string">    simple advanced plot</span><br><span class="hljs-string">    &quot;</span><span class="hljs-string">&quot;&quot;</span><br>    # 生成测试数据<br>    x = np.linspace(-np.pi, np.pi, 256, <span class="hljs-attribute">endpoint</span>=<span class="hljs-literal">True</span>)<br>    y_cos, y_sin = np.cos(x), np.sin(x)<br><br>    # 生成画布, 并设定标题<br>    plt.figure(figsize=(8, 6), <span class="hljs-attribute">dpi</span>=80)<br>    plt.title(<span class="hljs-string">&quot;复杂曲线图&quot;</span>, <span class="hljs-attribute">fontproperties</span>=myfont)<br>    plt.grid(<span class="hljs-literal">True</span>)<br><br>    # 画图的另外一种方式<br>    ax_1 = plt.subplot(111)<br>    ax_1.plot(x, y_cos, <span class="hljs-attribute">color</span>=<span class="hljs-string">&quot;blue&quot;</span>, <span class="hljs-attribute">linewidth</span>=2.0, <span class="hljs-attribute">linestyle</span>=<span class="hljs-string">&quot;--&quot;</span>, <span class="hljs-attribute">label</span>=<span class="hljs-string">&quot;左cos&quot;</span>)<br>    ax_1.legend(<span class="hljs-attribute">loc</span>=<span class="hljs-string">&quot;upper left&quot;</span>, <span class="hljs-attribute">prop</span>=myfont, <span class="hljs-attribute">shadow</span>=<span class="hljs-literal">True</span>)<br><br>    # 设置Y轴(左边)<br>    ax_1.set_ylabel(<span class="hljs-string">&quot;左cos的y轴&quot;</span>, <span class="hljs-attribute">fontproperties</span>=myfont)<br>    ax_1.set_ylim(-1.0, 1.0)<br>    ax_1.set_yticks(np.linspace(-1, 1, 9, <span class="hljs-attribute">endpoint</span>=<span class="hljs-literal">True</span>))<br><br>    # 画图的另外一种方式<br>    ax_2 = ax_1.twinx()<br>    ax_2.plot(x, y_sin, <span class="hljs-attribute">color</span>=<span class="hljs-string">&quot;green&quot;</span>, <span class="hljs-attribute">linewidth</span>=2.0, <span class="hljs-attribute">linestyle</span>=<span class="hljs-string">&quot;-&quot;</span>, <span class="hljs-attribute">label</span>=<span class="hljs-string">&quot;右sin&quot;</span>)<br>    ax_2.legend(<span class="hljs-attribute">loc</span>=<span class="hljs-string">&quot;upper right&quot;</span>, <span class="hljs-attribute">prop</span>=myfont, <span class="hljs-attribute">shadow</span>=<span class="hljs-literal">True</span>)<br><br>    # 设置Y轴(右边)<br>    ax_2.set_ylabel(<span class="hljs-string">&quot;右sin的y轴&quot;</span>, <span class="hljs-attribute">fontproperties</span>=myfont)<br>    ax_2.set_ylim(-2.0, 2.0)<br>    ax_2.set_yticks(np.linspace(-2, 2, 9, <span class="hljs-attribute">endpoint</span>=<span class="hljs-literal">True</span>))<br><br>    # 设置X轴(共同)<br>    ax_1.set_xlabel(<span class="hljs-string">&quot;x轴&quot;</span>, <span class="hljs-attribute">fontproperties</span>=myfont)<br>    ax_1.set_xlim(-4.0, 4.0)<br>    ax_1.set_xticks(np.linspace(-4, 4, 9, <span class="hljs-attribute">endpoint</span>=<span class="hljs-literal">True</span>))<br><br>    # 图形显示<br>    plt.show()<br>    return<br></code></pre></td></tr></table></figure>
+<p><img src="https://ningshixian.github.io/resources/images/复杂曲线图.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<h4 id="3、子图"><a href="#3、子图" class="headerlink" title="3、子图"></a>3、子图</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">subplot_plot</span>():<br>    <span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">    subplot plot</span><br><span class="hljs-string">    &quot;&quot;&quot;</span><br>    <span class="hljs-comment"># 子图的style列表</span><br>    style_list = [<span class="hljs-string">&quot;g+-&quot;</span>, <span class="hljs-string">&quot;r*-&quot;</span>, <span class="hljs-string">&quot;b.-&quot;</span>, <span class="hljs-string">&quot;yo-&quot;</span>]<br><br>    <span class="hljs-comment"># 依次画图</span><br>    <span class="hljs-keyword">for</span> num <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">4</span>):<br>        <span class="hljs-comment"># 生成测试数据</span><br>        x = np.linspace(<span class="hljs-number">0.0</span>, <span class="hljs-number">2</span>+num, num=<span class="hljs-number">10</span>*(num+<span class="hljs-number">1</span>))<br>        y = np.sin((<span class="hljs-number">5</span>-num) * np.pi * x)<br><br>        <span class="hljs-comment"># 子图的生成方式</span><br>        plt.subplot(<span class="hljs-number">2</span>, <span class="hljs-number">2</span>, num+<span class="hljs-number">1</span>)<br>        plt.title(<span class="hljs-string">&quot;子图 %d&quot;</span> % (num+<span class="hljs-number">1</span>), fontproperties=myfont)<br>        plt.plot(x, y, style_list[num])<br><br>    <span class="hljs-comment"># 图形显示</span><br>    plt.show()<br>    <span class="hljs-keyword">return</span><br></code></pre></td></tr></table></figure>
+<p><img src="https://ningshixian.github.io/resources/images/子图.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<h4 id="4、柱状图"><a href="#4、柱状图" class="headerlink" title="4、柱状图"></a>4、柱状图</h4><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><code class="hljs routeros">def bar_plot():<br>    <span class="hljs-string">&quot;&quot;</span><span class="hljs-string">&quot;</span><br><span class="hljs-string">    bar plot</span><br><span class="hljs-string">    &quot;</span><span class="hljs-string">&quot;&quot;</span><br>    # 生成测试数据<br>    means_men = (20, 35, 30, 35, 27)<br>    means_women = (25, 32, 34, 20, 25)<br><br>    # 设置标题<br>    plt.title(<span class="hljs-string">&quot;柱状图&quot;</span>, <span class="hljs-attribute">fontproperties</span>=myfont)<br><br>    # 设置相关参数<br>    index = np.arange(len(means_men))<br>    bar_width = 0.35<br><br>    # 画柱状图<br>    plt.bar(index, means_men, <span class="hljs-attribute">width</span>=bar_width, <span class="hljs-attribute">alpha</span>=0.2, <span class="hljs-attribute">color</span>=<span class="hljs-string">&quot;b&quot;</span>, <span class="hljs-attribute">label</span>=<span class="hljs-string">&quot;男生&quot;</span>)<br>    plt.bar(index+bar_width, means_women, <span class="hljs-attribute">width</span>=bar_width, <span class="hljs-attribute">alpha</span>=0.8, <span class="hljs-attribute">color</span>=<span class="hljs-string">&quot;r&quot;</span>, <span class="hljs-attribute">label</span>=<span class="hljs-string">&quot;女生&quot;</span>)<br>    plt.legend(<span class="hljs-attribute">loc</span>=<span class="hljs-string">&quot;upper right&quot;</span>, <span class="hljs-attribute">prop</span>=myfont, <span class="hljs-attribute">shadow</span>=<span class="hljs-literal">True</span>)<br><br>    # 设置柱状图标示<br>    <span class="hljs-keyword">for</span> x, y <span class="hljs-keyword">in</span> zip(index, means_men):<br>        plt.text(x, y+0.3, y, <span class="hljs-attribute">ha</span>=<span class="hljs-string">&quot;center&quot;</span>, <span class="hljs-attribute">va</span>=<span class="hljs-string">&quot;bottom&quot;</span>)<br>    <span class="hljs-keyword">for</span> x, y <span class="hljs-keyword">in</span> zip(index, means_women):<br>        plt.text(x+bar_width, y+0.3, y, <span class="hljs-attribute">ha</span>=<span class="hljs-string">&quot;center&quot;</span>, <span class="hljs-attribute">va</span>=<span class="hljs-string">&quot;bottom&quot;</span>)<br><br>    # 设置刻度范围/坐标轴名称等<br>    plt.ylim(0, 45)<br>    plt.xlabel(<span class="hljs-string">&quot;分组Group&quot;</span>, <span class="hljs-attribute">fontproperties</span>=myfont)<br>    plt.ylabel(<span class="hljs-string">&quot;得分Scores&quot;</span>, <span class="hljs-attribute">fontproperties</span>=myfont)<br>    plt.xticks(index+(bar_width/2), (<span class="hljs-string">&quot;A组&quot;</span>, <span class="hljs-string">&quot;B组&quot;</span>, <span class="hljs-string">&quot;C组&quot;</span>, <span class="hljs-string">&quot;D组&quot;</span>, <span class="hljs-string">&quot;E组&quot;</span>), <span class="hljs-attribute">fontproperties</span>=myfont)<br><br>    # 图形显示<br>    plt.show()<br>    return<br></code></pre></td></tr></table></figure>
+<p><img src="https://ningshixian.github.io/resources/images/柱状图.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<h4 id="5、横向柱状图"><a href="#5、横向柱状图" class="headerlink" title="5、横向柱状图"></a>5、横向柱状图</h4><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><code class="hljs routeros">def barh_plot():<br>    <span class="hljs-string">&quot;&quot;</span><span class="hljs-string">&quot;</span><br><span class="hljs-string">    barh plot</span><br><span class="hljs-string">    &quot;</span><span class="hljs-string">&quot;&quot;</span><br>    # 生成测试数据<br>    means_men = (20, 35, 30, 35, 27)<br>    means_women = (25, 32, 34, 20, 25)<br><br>    # 设置标题<br>    plt.title(<span class="hljs-string">&quot;横向柱状图&quot;</span>, <span class="hljs-attribute">fontproperties</span>=myfont)<br><br>    # 设置相关参数<br>    index = np.arange(len(means_men))<br>    bar_height = 0.35<br><br>    # 画柱状图(水平方向)<br>    plt.barh(index, means_men, <span class="hljs-attribute">height</span>=bar_height, <span class="hljs-attribute">alpha</span>=0.2, <span class="hljs-attribute">color</span>=<span class="hljs-string">&quot;b&quot;</span>, <span class="hljs-attribute">label</span>=<span class="hljs-string">&quot;Men&quot;</span>)<br>    plt.barh(index+bar_height, means_women, <span class="hljs-attribute">height</span>=bar_height, <span class="hljs-attribute">alpha</span>=0.8, <span class="hljs-attribute">color</span>=<span class="hljs-string">&quot;r&quot;</span>, <span class="hljs-attribute">label</span>=<span class="hljs-string">&quot;Women&quot;</span>)<br>    plt.legend(<span class="hljs-attribute">loc</span>=<span class="hljs-string">&quot;upper right&quot;</span>, <span class="hljs-attribute">shadow</span>=<span class="hljs-literal">True</span>)<br><br>    # 设置柱状图标示<br>    <span class="hljs-keyword">for</span> x, y <span class="hljs-keyword">in</span> zip(index, means_men):<br>        plt.text(y+0.3, x, y, <span class="hljs-attribute">ha</span>=<span class="hljs-string">&quot;left&quot;</span>, <span class="hljs-attribute">va</span>=<span class="hljs-string">&quot;center&quot;</span>)<br>    <span class="hljs-keyword">for</span> x, y <span class="hljs-keyword">in</span> zip(index, means_women):<br>        plt.text(y+0.3, x+bar_height, y, <span class="hljs-attribute">ha</span>=<span class="hljs-string">&quot;left&quot;</span>, <span class="hljs-attribute">va</span>=<span class="hljs-string">&quot;center&quot;</span>)<br><br>    # 设置刻度范围/坐标轴名称等<br>    plt.xlim(0, 45)<br>    plt.xlabel(<span class="hljs-string">&quot;Scores&quot;</span>)<br>    plt.ylabel(<span class="hljs-string">&quot;Group&quot;</span>)<br>    plt.yticks(index+(bar_height/2), (<span class="hljs-string">&quot;A&quot;</span>, <span class="hljs-string">&quot;B&quot;</span>, <span class="hljs-string">&quot;C&quot;</span>, <span class="hljs-string">&quot;D&quot;</span>, <span class="hljs-string">&quot;E&quot;</span>))<br><br>    # 图形显示<br>    plt.show()<br>    return<br></code></pre></td></tr></table></figure>
+<p><img src="https://ningshixian.github.io/resources/images/横向柱状图.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<h4 id="6、高级柱状图"><a href="#6、高级柱状图" class="headerlink" title="6、高级柱状图"></a>6、高级柱状图</h4><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><code class="hljs routeros">def bar_advanced_plot():<br>    <span class="hljs-string">&quot;&quot;</span><span class="hljs-string">&quot;</span><br><span class="hljs-string">    bar advanced plot</span><br><span class="hljs-string">    &quot;</span><span class="hljs-string">&quot;&quot;</span><br>    # 生成测试数据<br>    means_men = np.array((20, 35, 30, 35, 27, 25, 32, 34, 20, 25))<br>    means_women = np.array((25, 32, 34, 20, 25, 20, 35, 30, 35, 27))<br><br>    # 设置标题<br>    plt.title(<span class="hljs-string">&quot;高级柱状图&quot;</span>, <span class="hljs-attribute">fontproperties</span>=myfont)<br><br>    # 设置相关参数<br>    index = np.arange(len(means_men))<br>    bar_width = 0.8<br><br>    # 画柱状图(两种:X轴以上/X轴以下)<br>    plt.bar(index, means_men, <span class="hljs-attribute">width</span>=bar_width, <span class="hljs-attribute">alpha</span>=0.4, <span class="hljs-attribute">color</span>=<span class="hljs-string">&quot;b&quot;</span>, <span class="hljs-attribute">label</span>=<span class="hljs-string">&quot;Men&quot;</span>)<br>    plt.bar(index, -means_women, <span class="hljs-attribute">width</span>=bar_width, <span class="hljs-attribute">alpha</span>=0.4, <span class="hljs-attribute">color</span>=<span class="hljs-string">&quot;r&quot;</span>, <span class="hljs-attribute">label</span>=<span class="hljs-string">&quot;Women&quot;</span>)<br><br>    # 画折线图(两种,和柱状图对应)<br>    plt.plot(index, means_men, <span class="hljs-attribute">marker</span>=<span class="hljs-string">&quot;o&quot;</span>, <span class="hljs-attribute">linestyle</span>=<span class="hljs-string">&quot;-&quot;</span>, <span class="hljs-attribute">color</span>=<span class="hljs-string">&quot;r&quot;</span>, <span class="hljs-attribute">label</span>=<span class="hljs-string">&quot;Men line&quot;</span>)<br>    plt.plot(index, -means_women, <span class="hljs-attribute">marker</span>=<span class="hljs-string">&quot;.&quot;</span>, <span class="hljs-attribute">linestyle</span>=<span class="hljs-string">&quot;--&quot;</span>, <span class="hljs-attribute">color</span>=<span class="hljs-string">&quot;b&quot;</span>, <span class="hljs-attribute">label</span>=<span class="hljs-string">&quot;Women line&quot;</span>)<br><br>    # 设置图形标示(两种,和柱状图对应)<br>    <span class="hljs-keyword">for</span> x, y <span class="hljs-keyword">in</span> zip(index, means_men):<br>        plt.text(x, y+1, y, <span class="hljs-attribute">ha</span>=<span class="hljs-string">&quot;center&quot;</span>, <span class="hljs-attribute">va</span>=<span class="hljs-string">&quot;bottom&quot;</span>)<br>    <span class="hljs-keyword">for</span> x, y <span class="hljs-keyword">in</span> zip(index, means_women):<br>        plt.text(x, -y-1, y, <span class="hljs-attribute">ha</span>=<span class="hljs-string">&quot;center&quot;</span>, <span class="hljs-attribute">va</span>=<span class="hljs-string">&quot;top&quot;</span>)<br><br>    # 设置Y轴和图例位置<br>    plt.ylim(-45, 80)<br>    plt.legend(<span class="hljs-attribute">loc</span>=<span class="hljs-string">&quot;upper left&quot;</span>, <span class="hljs-attribute">shadow</span>=<span class="hljs-literal">True</span>)<br><br>    # 图形显示<br>    plt.show()<br>    return<br></code></pre></td></tr></table></figure>
+<p><img src="https://ningshixian.github.io/resources/images/高级柱状图.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<h4 id="7、层次柱状图"><a href="#7、层次柱状图" class="headerlink" title="7、层次柱状图"></a>7、层次柱状图</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">table_plot</span>():<br>    <span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">    table plot</span><br><span class="hljs-string">    &quot;&quot;&quot;</span><br>    <span class="hljs-comment"># 生成测试数据</span><br>    data = np.array([<br>        [<span class="hljs-number">1</span>, <span class="hljs-number">4</span>, <span class="hljs-number">2</span>, <span class="hljs-number">5</span>, <span class="hljs-number">2</span>],<br>        [<span class="hljs-number">2</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">3</span>, <span class="hljs-number">6</span>],<br>        [<span class="hljs-number">5</span>, <span class="hljs-number">3</span>, <span class="hljs-number">6</span>, <span class="hljs-number">4</span>, <span class="hljs-number">1</span>]<br>    ])<br><br>    <span class="hljs-comment"># 设置标题</span><br>    plt.title(<span class="hljs-string">&quot;层次柱状图&quot;</span>, fontproperties=myfont)<br><br>    <span class="hljs-comment"># 设置相关参数</span><br>    index = np.arange(<span class="hljs-built_in">len</span>(data[<span class="hljs-number">0</span>]))<br>    color_index = [<span class="hljs-string">&quot;r&quot;</span>, <span class="hljs-string">&quot;g&quot;</span>, <span class="hljs-string">&quot;b&quot;</span>]<br><br>    <span class="hljs-comment"># 声明底部位置</span><br>    bottom = np.array([<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>])<br><br>    <span class="hljs-comment"># 依次画图,并更新底部位置</span><br>    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-built_in">len</span>(data)):<br>        plt.bar(index, data[i], width=<span class="hljs-number">0.5</span>, color=color_index[i], bottom=bottom, alpha=<span class="hljs-number">0.7</span>, label=<span class="hljs-string">&quot;标签 %d&quot;</span> % i)<br>        bottom += data[i]<br><br>    <span class="hljs-comment"># 设置图例位置</span><br>    plt.legend(loc=<span class="hljs-string">&quot;upper left&quot;</span>, prop=myfont, shadow=<span class="hljs-literal">True</span>)<br><br>    <span class="hljs-comment"># 图形显示</span><br>    plt.show()<br>    <span class="hljs-keyword">return</span><br></code></pre></td></tr></table></figure>
+<p><img src="https://ningshixian.github.io/resources/images/层次柱状图.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<h4 id="8、直方图"><a href="#8、直方图" class="headerlink" title="8、直方图"></a>8、直方图</h4><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs routeros">def histograms_plot():<br>    <span class="hljs-string">&quot;&quot;</span><span class="hljs-string">&quot;</span><br><span class="hljs-string">    histograms plot</span><br><span class="hljs-string">    &quot;</span><span class="hljs-string">&quot;&quot;</span><br>    # 生成测试数据<br>    mu, sigma = 100, 15<br>    x = mu + sigma * np.random.randn(10000)<br><br>    # 设置标题<br>    plt.title(<span class="hljs-string">&quot;直方图&quot;</span>, <span class="hljs-attribute">fontproperties</span>=myfont)<br><br>    # 画直方图, 并返回相关结果<br>    n, bins, patches = plt.hist(x, <span class="hljs-attribute">bins</span>=50, <span class="hljs-attribute">normed</span>=1, <span class="hljs-attribute">cumulative</span>=<span class="hljs-literal">False</span>, <span class="hljs-attribute">color</span>=<span class="hljs-string">&quot;green&quot;</span>, <span class="hljs-attribute">alpha</span>=0.6, <span class="hljs-attribute">label</span>=<span class="hljs-string">&quot;直方图&quot;</span>)<br><br>    # 根据直方图返回的结果, 画折线图<br>    y = mlab.normpdf(bins, mu, sigma)<br>    plt.plot(bins, y, <span class="hljs-string">&quot;r--&quot;</span>, <span class="hljs-attribute">label</span>=<span class="hljs-string">&quot;线条&quot;</span>)<br><br>    # 设置图例位置<br>    plt.legend(<span class="hljs-attribute">loc</span>=<span class="hljs-string">&quot;upper left&quot;</span>, <span class="hljs-attribute">prop</span>=myfont, <span class="hljs-attribute">shadow</span>=<span class="hljs-literal">True</span>)<br><br>    # 图形显示<br>    plt.show()<br>    return<br></code></pre></td></tr></table></figure>
+<p><img src="https://ningshixian.github.io/resources/images/直方图.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<h4 id="9、饼图"><a href="#9、饼图" class="headerlink" title="9、饼图"></a>9、饼图</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">pie_plot</span>():<br>    <span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">    pie plot</span><br><span class="hljs-string">    &quot;&quot;&quot;</span><br>    <span class="hljs-comment"># 生成测试数据</span><br>    sizes = [<span class="hljs-number">15</span>, <span class="hljs-number">30</span>, <span class="hljs-number">45</span>, <span class="hljs-number">10</span>]<br>    labels = [<span class="hljs-string">&quot;Frogs&quot;</span>, <span class="hljs-string">&quot;中文&quot;</span>, <span class="hljs-string">&quot;Dogs&quot;</span>, <span class="hljs-string">&quot;Logs&quot;</span>]<br>    colors = [<span class="hljs-string">&quot;yellowgreen&quot;</span>, <span class="hljs-string">&quot;gold&quot;</span>, <span class="hljs-string">&quot;lightskyblue&quot;</span>, <span class="hljs-string">&quot;lightcoral&quot;</span>]<br><br>    <span class="hljs-comment"># 设置标题</span><br>    plt.title(<span class="hljs-string">&quot;饼图&quot;</span>, fontproperties=myfont)<br><br>    <span class="hljs-comment"># 设置突出参数</span><br>    explode = [<span class="hljs-number">0</span>, <span class="hljs-number">0.05</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>]<br><br>    <span class="hljs-comment"># 画饼状图</span><br>    patches, l_text, p_text = plt.pie(sizes, explode=explode, labels=labels, colors=colors, autopct=<span class="hljs-string">&quot;%1.1f%%&quot;</span>, shadow=<span class="hljs-literal">True</span>, startangle=<span class="hljs-number">90</span>)<br>    <span class="hljs-keyword">for</span> text <span class="hljs-keyword">in</span> l_text:<br>        text.set_fontproperties(myfont)<br>    plt.axis(<span class="hljs-string">&quot;equal&quot;</span>)<br><br>    <span class="hljs-comment"># 图形显示</span><br>    plt.show()<br>    <span class="hljs-keyword">return</span><br></code></pre></td></tr></table></figure>
+<p><img src="https://ningshixian.github.io/resources/images/饼图.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<h4 id="10、散点图"><a href="#10、散点图" class="headerlink" title="10、散点图"></a>10、散点图</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">scatter_plot</span>():<br>    <span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">    scatter plot</span><br><span class="hljs-string">    &quot;&quot;&quot;</span><br>    <span class="hljs-comment"># 生成测试数据</span><br>    point_count = <span class="hljs-number">1000</span><br>    x_index = np.random.random(point_count)<br>    y_index = np.random.random(point_count)<br><br>    <span class="hljs-comment"># 设置标题</span><br>    plt.title(<span class="hljs-string">&quot;散点图&quot;</span>, fontproperties=myfont)<br><br>    <span class="hljs-comment"># 设置相关参数</span><br>    color_list = np.random.random(point_count)<br>    scale_list = np.random.random(point_count) * <span class="hljs-number">100</span><br><br>    <span class="hljs-comment"># 画散点图</span><br>    plt.scatter(x_index, y_index, s=scale_list, c=color_list, marker=<span class="hljs-string">&quot;o&quot;</span>)<br><br>    <span class="hljs-comment"># 图形显示</span><br>    plt.show()<br>    <span class="hljs-keyword">return</span><br></code></pre></td></tr></table></figure>
+<p><img src="https://ningshixian.github.io/resources/images/散点图.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<h4 id="11、雷达图"><a href="#11、雷达图" class="headerlink" title="11、雷达图"></a>11、雷达图</h4><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs routeros">def radar_plot():<br>    <span class="hljs-string">&quot;&quot;</span><span class="hljs-string">&quot;</span><br><span class="hljs-string">    radar plot</span><br><span class="hljs-string">    &quot;</span><span class="hljs-string">&quot;&quot;</span><br>    # 生成测试数据<br>    labels = np.array([<span class="hljs-string">&quot;A组&quot;</span>, <span class="hljs-string">&quot;B组&quot;</span>, <span class="hljs-string">&quot;C组&quot;</span>, <span class="hljs-string">&quot;D组&quot;</span>, <span class="hljs-string">&quot;E组&quot;</span>, <span class="hljs-string">&quot;F组&quot;</span>])<br>    data = np.array([68, 83, 90, 77, 89, 73])<br>    theta = np.linspace(0, 2*np.pi, len(data), <span class="hljs-attribute">endpoint</span>=<span class="hljs-literal">False</span>)<br><br>    # 数据预处理<br>    data = np.concatenate((data, [data[0]]))<br>    theta = np.concatenate((theta, [theta[0]]))<br><br>    # 画图方式<br>    plt.subplot(111, <span class="hljs-attribute">polar</span>=<span class="hljs-literal">True</span>)<br>    plt.title(<span class="hljs-string">&quot;雷达图&quot;</span>, <span class="hljs-attribute">fontproperties</span>=myfont)<br><br>    # 设置<span class="hljs-string">&quot;theta grid&quot;</span>/<span class="hljs-string">&quot;radar grid&quot;</span><br>    plt.thetagrids(theta*(180/np.pi), <span class="hljs-attribute">labels</span>=labels, <span class="hljs-attribute">fontproperties</span>=myfont)<br>    plt.rgrids(np.arange(20, 100, 20), <span class="hljs-attribute">labels</span>=np.arange(20, 100, 20), <span class="hljs-attribute">angle</span>=0)<br>    plt.ylim(0, 100)<br><br>    # 画雷达图,并填充雷达图内部区域<br>    plt.plot(theta, data, <span class="hljs-string">&quot;bo-&quot;</span>, <span class="hljs-attribute">linewidth</span>=2)<br>    plt.fill(theta, data, <span class="hljs-attribute">color</span>=<span class="hljs-string">&quot;red&quot;</span>, <span class="hljs-attribute">alpha</span>=0.25)<br><br>    # 图形显示<br>    plt.show()<br>    return<br></code></pre></td></tr></table></figure>
+<p><img src="https://ningshixian.github.io/resources/images/雷达图.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<h2 id="数据可视化的库推荐"><a href="#数据可视化的库推荐" class="headerlink" title="数据可视化的库推荐"></a>数据可视化的库推荐</h2><p>这里推荐几个比较常用的：</p>
+<ul>
+<li>Matplotlib</li>
+<li>Plotly</li>
+<li><a target="_blank" rel="noopener" href="http://seaborn.pydata.org/tutorial.html">Seaborn 教程</a></li>
+<li>Ggplot</li>
+<li>Bokeh</li>
+<li>Pyechart</li>
+<li>Pygal</li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E6%95%99%E7%A8%8B/">#教程</a>
+      
+        <a href="/tags/%E6%8A%80%E6%9C%AF/">#技术</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Python可视化之matplotlib</div>
+      <div>http://example.com/2018/11/11/2018-11-11-Python可视化之matplotlib/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>NSX</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2018年11月11日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2018/11/12/2018-11-12-%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E7%94%A8Python%E6%90%AD%E5%BB%BA%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" title="从零开始用Python搭建神经网络">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">从零开始用Python搭建神经网络</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2018/11/05/2018-11-05-allennlp%E5%AE%89%E8%A3%85/" title="AllenNLP安装">
+                        <span class="hidden-mobile">AllenNLP安装</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

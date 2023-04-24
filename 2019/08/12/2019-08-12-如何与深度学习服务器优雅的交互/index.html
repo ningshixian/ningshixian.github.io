@@ -1,0 +1,810 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="NSX">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="如何与Linux服务器优雅的交互 远程连接Linux客户端 ssh免密快速登录 内网穿透（跨网段访问服务器） 文件传输与同步 syncthing 多开发环境管理 Anaconda 多任务管理 nohup screen 睡觉调参模式 python-fire jupyter notebook 单任务全霸占模式 run-one">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何与Linux服务器优雅的交互">
+<meta property="og:url" content="http://example.com/2019/08/12/2019-08-12-%E5%A6%82%E4%BD%95%E4%B8%8E%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%BC%98%E9%9B%85%E7%9A%84%E4%BA%A4%E4%BA%92/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="如何与Linux服务器优雅的交互 远程连接Linux客户端 ssh免密快速登录 内网穿透（跨网段访问服务器） 文件传输与同步 syncthing 多开发环境管理 Anaconda 多任务管理 nohup screen 睡觉调参模式 python-fire jupyter notebook 单任务全霸占模式 run-one">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic1.zhimg.com/80/v2-4caf762d4648f366adcb23dc05fdad94_720w.jpg">
+<meta property="og:image" content="https://pic2.zhimg.com/80/v2-505040d0a11a5d5ba45af596377e5e91_720w.jpg">
+<meta property="og:image" content="https://pic4.zhimg.com/80/v2-65c4751a21d99fc1f642d3446414bf3b_720w.jpg">
+<meta property="og:image" content="https://pic3.zhimg.com/80/v2-e777f00637e4c3fa6ce06cc1a710416a_720w.jpg">
+<meta property="og:image" content="https://pic2.zhimg.com/80/v2-5c6c877a01a7cde6e398854b921253c9_720w.jpg">
+<meta property="article:published_time" content="2019-08-11T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-23T10:28:32.038Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="技术">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://pic1.zhimg.com/80/v2-4caf762d4648f366adcb23dc05fdad94_720w.jpg">
+  
+  
+  
+  <title>如何与Linux服务器优雅的交互 - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="ssh免密快速登录 &amp; 内网穿透 &amp; 文件传输与同步等"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2019-08-12 00:00" pubdate>
+          2019年8月12日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          6.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          54 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">ssh免密快速登录 &amp; 内网穿透 &amp; 文件传输与同步等</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="如何与Linux服务器优雅的交互"><a href="#如何与Linux服务器优雅的交互" class="headerlink" title="如何与Linux服务器优雅的交互"></a>如何与Linux服务器优雅的交互</h1><ol>
+<li>远程连接Linux客户端</li>
+<li>ssh免密快速登录</li>
+<li>内网穿透（跨网段访问服务器）</li>
+<li>文件传输与同步 syncthing</li>
+<li>多开发环境管理 Anaconda</li>
+<li>多任务管理 nohup screen</li>
+<li>睡觉调参模式 python-fire</li>
+<li>jupyter notebook</li>
+<li>单任务全霸占模式 run-one</li>
+</ol>
+<span id="more"></span>
+<h2 id="0-远程连接Linux客户端"><a href="#0-远程连接Linux客户端" class="headerlink" title="0. 远程连接Linux客户端"></a>0. 远程连接Linux客户端</h2><p>主要介绍 <strong>MobaXterm</strong>、XManager、secureCRT、Putty、Cygwin、FileZilla.</p>
+<p><strong>1. MobaXterm</strong></p>
+<p>MobaXterm：远程计算的终极工具箱。</p>
+<p>它提供了所有重要的远程网络工具 （如SSH、 X11、 RDP、 VNC、 FTP、 MOSH 等等），<br>以及 Windows 桌面上的 Unix 命令（bash、 ls、 cat、sed、 grep、 awk、 rsync等等），而这些都是由一个开箱即用的单一的便携程序所提供。<br>MobaXterm 对个人使用免费，你可以在<a target="_blank" rel="noopener" href="http://mobaxterm.mobatek.net/download.html">这里</a>下载 MobaXterm （单文件纯绿色软件，下载过来exe包直接运行即可，不需要任何的安装过程）。</p>
+<p>参考 <a target="_blank" rel="noopener" href="https://www.freebuf.com/column/163631.html">免费开源SSH客户端神器MobaXterm，是时候puttty、Xshell和SecureCRT说Byebye了</a></p>
+<ul>
+<li>多协议，多Session管理<ul>
+<li>传输协议上支持SSH, X11, RDP, VNC, FTP,MOSH, … 等大量远程网络协议；</li>
+<li>而且所有协议统一session管理，打开一个终端，所有功能都可以直接使用免登陆。</li>
+</ul>
+</li>
+<li>RDP 连接Windows远程桌面</li>
+<li>图形化的SSH隧道管理</li>
+<li>Linux shell小工具<ul>
+<li>MobaXterm引入很多Linux shell的小工具直接在Windows使用</li>
+</ul>
+</li>
+<li>SFTP传输<ul>
+<li>SSH登陆后左边会自动列出sftp文件传输窗口，可以随手进行文件上传和下载；</li>
+</ul>
+</li>
+<li>多窗口和分屏<ul>
+<li>MXterm也支持内置多标签页、横向纵向2分屏和田字形4分屏，用于一个窗口内管理多个连接</li>
+</ul>
+</li>
+</ul>
+<p><strong>2. XManager</strong></p>
+<p>Xmanager是一个工具集合，里面包括了xshell，xftp，xbrowser,xstart,xlpd等等功能，<br>其中最常用的就是xshell和xftp，我个人认为xshell是最好用的ssh工具，这也是我目前每天使用的工具。</p>
+<p>网址：<a target="_blank" rel="noopener" href="http://www.netsarang.com/products/xmg_detail.html">http://www.netsarang.com/products/xmg_detail.html</a></p>
+<p>Xshell4-Xftp4整合绿色便携版，免安装直接运行使用【亲测好用】-<a target="_blank" rel="noopener" href="http://download.csdn.net/download/chenchunlin526/9990854">CSDN下载</a></p>
+<p><em>* 注意：不要用盗版汉化版的ssh软件，可能植入木马，窃取你的用户名密码，证书 </em></p>
+<p>优点：</p>
+<ol>
+<li>xshell的设计简洁，支持多标签模式，默认可以进行自动登录，方便进行快速设置主题，字体等，</li>
+<li>可以一键连接xftp工具。</li>
+</ol>
+<p>缺点：</p>
+<ol>
+<li>收费（home and school users可以申请免费使用xshell与xftp）</li>
+<li>只有windows版本。</li>
+</ol>
+<p><strong>3. secureCRT</strong></p>
+<p>SecureCRT也是一款功能强大的工具，比较好用。但是也是收费的（钱不是白收的），同时支持windows，mac，linux，iOS等多系统平台。是mac用户的首选。<br>SecureCRT除了包括一般工具都有的特点之外，还包括自动注册、对不同主机保持不同的特性、打印功能、颜色设置、可变屏幕尺寸、用户定义的键位图等等功能。</p>
+<p>网址：<a target="_blank" rel="noopener" href="https://www.vandyke.com/products/securecrt/">https://www.vandyke.com/products/securecrt/</a></p>
+<p><strong>4. Putty</strong></p>
+<p>putty是最简单的SSH工具，无需安装，支持多系统版本，下载后就可以直接使用</p>
+<p>网址：<a target="_blank" rel="noopener" href="https://www.putty.org/">https://www.putty.org/</a></p>
+<p>网址：<a target="_blank" rel="noopener" href="https://www.chiark.greenend.org.uk/~sgtatham/putty/">https://www.chiark.greenend.org.uk/~sgtatham/putty/</a></p>
+<p>缺点：</p>
+<ol>
+<li>不支持标签模式；</li>
+<li>默认设置不友好，很多功能都需要额外配置才行，例如自动登录功能；</li>
+<li>不能传输文件；</li>
+<li>没有X11，需要配置Xming工具；</li>
+<li>默认keepalives没有设置，一段时间不操作后会断开。</li>
+</ol>
+<p><strong>5. Cygwin</strong></p>
+<p>Cygwin 是一款 GNU 和开源工具的大杂烩，提供的功能近似于一个 Windows 平台下的 Linux。</p>
+<p><strong>6. FileZilla</strong></p>
+<p>接下来的一个工具是FileZilla，这个工具主要方便我们将本机上的文件传输到服务器端。FileZilla使用起来也十分容易。</p>
+<p>只需在上面输入相应的主机名、用户名和密码就行了，端口还是输入22，使用sftp</p>
+<h3 id="通过堡垒机登陆Linux服务器"><a href="#通过堡垒机登陆Linux服务器" class="headerlink" title="通过堡垒机登陆Linux服务器"></a>通过堡垒机登陆Linux服务器</h3><p>最近公司线上服务器都换上了堡垒机登陆，这样每个开发人员都只分配堡垒机账号，然后运维人员划分对应的权限机器就好了。</p>
+<p><strong>相比之前的登陆有很多优点：</strong></p>
+<ul>
+<li>只需给开发人员分配一个账号和密码，避免机器过多账号繁多的情况；</li>
+<li>运维人员分配机器权限便捷，只需给开发人员账号分配权限机器即可；</li>
+<li>相对跳板机来说更安全，堡垒机登陆到线上服务器后，可以记录每个用户的所有操作记录；</li>
+</ul>
+<p><strong>大概说下堡垒机的使用机制：</strong></p>
+<ul>
+<li>开发人员使用自己的账号登陆堡垒机，输入账号和密码</li>
+<li>登陆成功后，堡垒机会列出该账户下有权限可操作的服务器列表，每个服务器对应一个数字</li>
+<li>开发人员输入对应的服务器数字或者选择搜索选项搜索服务器</li>
+<li>如果是直接选择了服务器，则会列出可用的账户，如果是搜索服务器，则需输入服务器IP</li>
+<li>然后堡垒机会列出可用的账号列表，每个账户对应一个数字</li>
+<li>输入账户对应的数字，选择使用哪个账户操作服务器，进入服务器，登陆完成</li>
+</ul>
+<p>也就是说我进入一台线上服务器，需要输入账号密码-&gt;选择/搜索服务器-&gt;选择操作账户-&gt;登陆成功这几个步骤。</p>
+<p><strong>具体步骤</strong></p>
+<p>使用XShell连接服务器<a target="_blank" rel="noopener" href="https://blog.csdn.net/h8178/article/details/78250710">图解</a></p>
+<ol>
+<li>点击新建会话，填写堡垒机的地址与端口号</li>
+<li>点击用户身份验证，填写堡垒机的用户名与密码</li>
+<li>保存会话连接</li>
+<li>连接堡垒机，输入OTP动态密码，选择相应的服务器</li>
+</ol>
+<h2 id="1-ssh免密快速登录"><a href="#1-ssh免密快速登录" class="headerlink" title="1. ssh免密快速登录"></a>1. ssh免密快速登录</h2><p>实现快速远程登录服务器，可以将你的服务器信息写入ssh配置文件中：</p>
+<ul>
+<li><p>ssh配置文件位于：~/.ssh/config </p>
+</li>
+<li><p>修改文件内容</p>
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs crmsh">Host test<br>	<span class="hljs-keyword">User</span> <span class="hljs-title">lhadmin</span><br>	Hostname <span class="hljs-number">10.231</span>.<span class="hljs-number">135.146</span><br>	Port <span class="hljs-number">22</span><br><br>Host github.com<br>	HostName github.com<br>	<span class="hljs-keyword">User</span> <span class="hljs-title">ningshixian</span><br>	IdentityFile /Users/xxx/.ssh/id_rsa<br></code></pre></td></tr></table></figure>
+<p>Host后面你自己起个名；</p>
+<p>User后面是你的服务器用户名；</p>
+<p>Hostname是服务器IP；</p>
+<p>Port是端口号；</p>
+</li>
+<li><p>保存后 <code>source ~/.bash_profile*</code> 或者 <code>*source ~/.bashrc*</code> 激活一下启动脚本</p>
+</li>
+<li>快捷登录：ssh test</li>
+</ul>
+<p>然后，经过第一步后，只需要再敲密码就可以进入啦。如何实现免密登录呢？也很简单，把你PC端的ssh公钥写入服务器的ssh信任列表里就可以啦。首先用<code>ssh-keygen</code>命令生成rsa密钥对（生成一只私钥和一只公钥），一路enter即可，但是注意：</p>
+<p><img src="https://pic1.zhimg.com/80/v2-4caf762d4648f366adcb23dc05fdad94_720w.jpg" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p><em>之前有已经生成过的同学在此处就选择n吧，没有生成过的同学就一路next～</em></p>
+<p>然后去 <em>~/.ssh/</em> 文件夹下将公钥发送到服务器上的某文件夹里：</p>
+<p><img src="https://pic2.zhimg.com/80/v2-505040d0a11a5d5ba45af596377e5e91_720w.jpg" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>然后去服务器上，把你PC端的公钥丢进ssh信任列表：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">cat</span> id_rsa.pub &gt;&gt; ~/.ssh/authorized_keys<br></code></pre></td></tr></table></figure>
+<p>好啦～搞定啦，再回到你的PC端登录试试吧，是不是连输入密码都省掉啦。</p>
+<h2 id="2-内网穿透（跨网段访问服务器）"><a href="#2-内网穿透（跨网段访问服务器）" class="headerlink" title="2. 内网穿透（跨网段访问服务器）"></a>2. 内网穿透（跨网段访问服务器）</h2><p>但是注意哦，如果你的服务器是在局域网内，那你的PC离开这个局域网的时候当然就找不到你的服务器啦。想要在家里用GPU服务器？很简单，小夕教你分分钟内网穿透！</p>
+<p>在内网穿透方面，小夕试了好几种方案后，感觉还是<strong><a href="https://link.zhihu.com/?target=https%3A//hsk.oray.com/download/">花生壳</a></strong>对新手最友好也最稳定。我们的内网穿透只需要将服务器内网ip以及22端口号（即ssh端口号）映射到外网ip的某个端口号。这个过程使用花生壳非常简单，在网上有很多教程，小夕就不啰嗦啦。之后我们要做的就是将这个外网ip和端口号也封装成一条命令，比如花生壳分配给我们的外网ip是103.44.145.240，端口是12560，那么只需要把这个写入客户端shell启动脚本：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">alias</span> sshdlnlp_remote=<span class="hljs-string">&quot;ssh -p 12560 dlnlp@103.44.145.240&quot;</span><br>（别忘用<span class="hljs-built_in">source</span>刷新启动脚本）<br></code></pre></td></tr></table></figure>
+<p>之后就可以在世界各地用一条命令访问你的gpu服务器啦。</p>
+<p>—— 10.19 更新 ——</p>
+<p>放弃花生壳了，改用更稳定并且开源免费的<a href="https://link.zhihu.com/?target=https%3A//github.com/fatedier/frp">frp</a>了，当然这个需要你事先有一台外网服务器，推荐阿里云（学生每月10元）。在你的外网服务器上用frp搭一个反向代理超级容易，傻子都能学会，去frp的github看一下吧～亲测比花生壳好用最少一万倍，并且超级稳定。</p>
+<h2 id="3-文件传输与同步"><a href="#3-文件传输与同步" class="headerlink" title="3. 文件传输与同步"></a>3. 文件传输与同步</h2><p>对于一次性的文件传输，这方面最简单的当然还是直接使用scp命令啦，文件夹和文件都能轻松传输。</p>
+<p>但是我们做深度学习的话，在服务器端大面积改代码、重量级调试的话还是不方便，毕竟服务器上没有图形界面，大部分人还是用不惯vim的，那么能不能在PC端用漂亮的编辑器修改代码，将修改结果实时的同步到服务器端呢？当然可以！这里小夕推荐文件同步神器<strong><a href="https://link.zhihu.com/?target=https%3A//syncthing.net/">syncthing</a></strong>。</p>
+<p>剩下的就是傻瓜式配置啦。<strong>记得要更改文件夹刷新频率哦</strong>（默认是60秒，我们可以改的短一点，比如3秒），这样在客户端我们用漂亮的文本编辑器对代码的改动就能实时的同步到服务器上啦，在服务器端就只需要负责运行就可以咯。</p>
+<h2 id="4-多开发环境管理"><a href="#4-多开发环境管理" class="headerlink" title="4. 多开发环境管理"></a><strong>4. 多开发环境管理</strong></h2><p>如果不幸你的GPU服务器并不是你一个人用，那么这时多人（尤其是混入小白多话）经常把服务器默认的python环境弄的乌烟瘴气，比如有人用python2，有人用python3，有人用tensorflow1.3，有人用0.12等…最后导致大家的程序全跑崩了。</p>
+<p>所以在服务器端管理深度学习的开发环境是极其必要的，这里<strong><a href="https://link.zhihu.com/?target=https%3A//anaconda.org/">anaconda</a></strong>直接搞定！每个人建立和管理自己的开发环境，包括python版本、各种库的版本等，互不干扰。而且在发布project时，也方便直接将环境导出为requirements文件，免得自己去手写啦。</p>
+<h2 id="5-多任务管理（并行调参）"><a href="#5-多任务管理（并行调参）" class="headerlink" title="5. 多任务管理（并行调参）"></a><strong>5. 多任务管理（并行调参）</strong></h2><p>如果你的服务器上有多个GPU，或者你的任务消耗GPU资源不多，那么并行的训练模型调参数是极大提高开发效率的！这里小夕给出几种场景下的常用方案：</p>
+<p>1、比如我们在服务器上除了训练还要接着干别的事情（比如还要捣鼓一下贪吃蛇什么的），那么我们就可以直接将训练任务挂后台。具体如下。</p>
+<p>在linux中，在命令后面加上 <em>&amp;</em> 符号可以将命令在后台执行，为了能看到训练日志，我们当时还需要输出重定向（否则会打印到屏幕上干扰正常工作的），所以比如我们调batchsize参数时可以这样：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">dlnlp@ubuntu:~$ python train.py --batchsize=16 &gt; log_batch16.txt &amp;<br></code></pre></td></tr></table></figure>
+<p>当然再挂上其他batchsize大小，如：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">dlnlp@ubuntu:~$ python train.py --batchsize=16 &gt; log_batch16.txt &amp;<br>dlnlp@ubuntu:~$ python train.py --batchsize=64 &gt; log_batch64.txt &amp;<br>dlnlp@ubuntu:~$ python train.py --batchsize=128 &gt; log_batch128.txt &amp;<br></code></pre></td></tr></table></figure>
+<p>通过 <em>jobs</em> 命令可以看到后台任务的运行状况（running、stopped等），通过 <em>bg [任务号]</em> 可以让后台stopped的命令继续running，通过 <em>fg [任务号]</em> 可以让后台的任务来前台执行。对于前台已经执行起来的任务，可以 <em>ctrl+z</em> 来丢进后台（丢后台时stop了的话用bg让其run起来）。</p>
+<blockquote>
+<p>感谢微信用户A Bad Candy在微信订阅号后台留言提醒上面的丢后台方法会在ssh断开连接后进程终止，因此：</p>
+</blockquote>
+<p>如果我们还不希望ssh断开后导致训练任务终止，那么需要再在命令前面加上 <em>nohup 。如：</em></p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">dlnlp@ubuntu:~$ nohup python train.py --batchsize=16 &gt; log_batch16.txt &amp;<br></code></pre></td></tr></table></figure>
+<p>2、如果我们特别着急，不仅要并行挂着很多训练任务，而且都要实时的监控它们的训练进展，那么使用 <em>screen</em>命令吧，这个命令就相当于可以让你同时开很多个窗口（就像桌面上那样，你可以开很多应用程序的很多窗口），而且多个窗口之间可以轻松切换，同样这种方法不会因为ssh的断开而停止训练任务。</p>
+<p>具体的操作可以直接在linux下 <em>man screen</em> 来查看screen命令的帮助文档。英文恐惧症的童鞋可以看本文参考文献[1]。</p>
+<h2 id="6-睡觉调参模式（串行调参）"><a href="#6-睡觉调参模式（串行调参）" class="headerlink" title="6. 睡觉调参模式（串行调参）"></a><strong>6. 睡觉调参模式（串行调参）</strong></h2><p>大部分场合下我们没有那么多充裕的GPU可以用，我们一般只能一次挂一个任务，但是我们又有很重的调参任务，那怎么办呢？</p>
+<p>依然很简单啦，首先，装好<strong><a href="https://link.zhihu.com/?target=https%3A//github.com/google/python-fire">python-fire</a></strong>这个工具。</p>
+<p>它可以非常轻松的将你的python程序变成命令行程序，并且可以轻松的将你要调的参数封装成命令行参数的形式。</p>
+<p>然后，写一个调参shell脚本，把你要调的参数全都写进去！比如就像这样：</p>
+<p><img src="https://pic4.zhimg.com/80/v2-65c4751a21d99fc1f642d3446414bf3b_720w.jpg" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>（当然别忘在代码里将训练的summary写到某个文件里）</p>
+<p>然后就可以挂上这个脚本去睡觉啦～睡到天亮发现各个最优参数都找到了，超级开心有木有。</p>
+<h2 id="7-关于jupyter-notebook"><a href="#7-关于jupyter-notebook" class="headerlink" title="7. 关于jupyter notebook"></a><strong>7. 关于jupyter notebook</strong></h2><p><strong><a href="https://link.zhihu.com/?target=http%3A//jupyter.org/">jupyter notebook</a></strong>这个神器小夕在历史文章中写过啦，也是一个重量级调参神器！或者直接可以说深度学习神器！在服务器端依然犀利的无可替代，只需要如下的tricks。</p>
+<p>1、服务器端开启jupyter notebook后</p>
+<p><img src="https://pic3.zhimg.com/80/v2-e777f00637e4c3fa6ce06cc1a710416a_720w.jpg" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>然后复制最后那一行的 <em>token=xxx</em> ，这个token就是远程访问的密码！同时记下 <em>最后那行显示的端口号</em> 8888（因为如果服务器上同时开多个的话，端口号就不一定是8888了哦），然后去PC端做一个端口映射！即通过ssh隧道来将服务器端的8888端口号映射到本地（PC端）的某个端口（如1234）：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">ssh -L 1234:localhost:8888 dlnlp@102.10.60.23<br></code></pre></td></tr></table></figure>
+<p>（这个操作同样可以用于远程监视服务器端tensorboard）</p>
+<p>这时就可以在PC端的浏览器</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">http://localhost:1234<br></code></pre></td></tr></table></figure>
+<p>直接访问服务器上的jupyter notebook啦～当然，访问时会让你输入密码，这时就输入之前记下的那个token哦。</p>
+<p>2、让jupyer notebook跟anaconda开发环境融合。</p>
+<p>默认的情况下jupyter notebook是运行在系统默认环境里的，如果要让它运行在我们自己用ananconda创建的环境中，要进入那个环境中，然后安装 <em>nb_conda</em> 这个库：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">conda install nb_conda<br></code></pre></td></tr></table></figure>
+<p>这时再开启jupyter notebook就能选择在我们这个环境里运行代码啦。</p>
+<h2 id="8-单任务全霸占模式"><a href="#8-单任务全霸占模式" class="headerlink" title="8. 单任务全霸占模式"></a><strong>8. 单任务全霸占模式</strong></h2><p>有时我们的训练任务非常重要且急迫，且绝对不允许被别人挤崩，或者我们明知要占用全部GPU资源了，那么这时我们就可以。。。emmm事先说明，非必要时刻请勿频繁使用哦：</p>
+<p>使用linux中的 <em>run-one</em> 命令，这个命令可以保证同一条命令最多同时运行一个。比如 run-one python xxx 就会只允许运行一个python程序，后来的python程序在这个python程序执行完毕前是得不到执行的（一执行就会出错返回）。所以我们可以写入.bashrc：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">alias</span> python=<span class="hljs-string">&#x27;run-one python&#x27;</span><br></code></pre></td></tr></table></figure>
+<p>（别忘source激活哦）</p>
+<p>这时</p>
+<p><img src="https://pic2.zhimg.com/80/v2-5c6c877a01a7cde6e398854b921253c9_720w.jpg" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>看，我通过将第一个python挂到后台了，后面的python完全执行不起来。除非前一个python结束。（所以其他小伙伴可能以为自己的程序出问题了，然后emmm陷入了无尽的困惑）</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/32496193">如何与深度学习服务器优雅的交互？（长期更新）</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/h8178/article/details/78250710">使用Xshell通过堡垒机登陆Linux</a></p>
+<p><a target="_blank" rel="noopener" href="http://kaito-kidd.com/2016/04/06/expect/">堡垒机Expect登陆服务器</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E6%8A%80%E6%9C%AF/">#技术</a>
+      
+        <a href="/tags/Linux/">#Linux</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>如何与Linux服务器优雅的交互</div>
+      <div>http://example.com/2019/08/12/2019-08-12-如何与深度学习服务器优雅的交互/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>NSX</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2019年8月12日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/08/12/2019-08-12-%E4%BC%98%E9%9B%85%E9%83%A8%E7%BD%B2python%E4%BB%A3%E7%A0%81/" title="优雅部署python代码">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">优雅部署python代码</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2019/08/11/2019-08-11-linux%E7%9A%84%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" title="linux的常用命令">
+                        <span class="hidden-mobile">linux的常用命令</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

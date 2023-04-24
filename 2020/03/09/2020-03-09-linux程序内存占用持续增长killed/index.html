@@ -1,0 +1,724 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="NSX">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="最近在CentOS上运行自己写的程序，程序运行时间久一点就被killed，需要分析原因并找到解决方法.  首先可能原因是：  内存不够 程序出错  内存不够问题查看linux 系统日志. 1vi &#x2F;var&#x2F;log&#x2F;messages 如果出现 kernel: Out of memory: Kill process 意味着整个系统的内存已经不足，如果不杀死进程的话，就会导致系统的崩溃. 用free命令">
+<meta property="og:type" content="article">
+<meta property="og:title" content="linux程序内存占用持续增长killed">
+<meta property="og:url" content="http://example.com/2020/03/09/2020-03-09-linux%E7%A8%8B%E5%BA%8F%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E6%8C%81%E7%BB%AD%E5%A2%9E%E9%95%BFkilled/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="最近在CentOS上运行自己写的程序，程序运行时间久一点就被killed，需要分析原因并找到解决方法.  首先可能原因是：  内存不够 程序出错  内存不够问题查看linux 系统日志. 1vi &#x2F;var&#x2F;log&#x2F;messages 如果出现 kernel: Out of memory: Kill process 意味着整个系统的内存已经不足，如果不杀死进程的话，就会导致系统的崩溃. 用free命令">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-03-08T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-23T10:28:32.044Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="内存占用">
+<meta property="article:tag" content="killed">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>linux程序内存占用持续增长killed - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="linux程序内存占用持续增长killed"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2020-03-09 00:00" pubdate>
+          2020年3月9日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          35 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">linux程序内存占用持续增长killed</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>最近在CentOS上运行自己写的程序，程序运行时间久一点就被killed，需要分析原因并找到解决方法. </p>
+<p>首先可能原因是：</p>
+<ol>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/ktigerhero3/article/details/80004315">内存不够</a></li>
+<li>程序出错</li>
+</ol>
+<h1 id="内存不够问题"><a href="#内存不够问题" class="headerlink" title="内存不够问题"></a>内存不够问题</h1><p>查看linux 系统日志.</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs vim"><span class="hljs-keyword">vi</span> /var/<span class="hljs-built_in">log</span>/<span class="hljs-keyword">messages</span><br></code></pre></td></tr></table></figure>
+<p>如果出现 <code>kernel: Out of memory: Kill process</code> 意味着整个系统的内存已经不足，如果不杀死进程的话，就会导致系统的崩溃.</p>
+<p>用free命令查看虚拟内存</p>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ebnf"><span class="hljs-attribute">free -h</span><br></code></pre></td></tr></table></figure>
+<p>查看某个进程的内存使用情况，使用top命令</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs css"><span class="hljs-attribute">top</span> -<span class="hljs-selector-tag">p</span> `pidof rviz`<br><span class="hljs-attribute">top</span> -<span class="hljs-selector-tag">p</span> id<br><span class="hljs-attribute">top</span> -u username<br></code></pre></td></tr></table></figure>
+<p>出现如下情况</p>
+<blockquote>
+<p><em>监控系统报警生产服务进程出现，内存使用率达到 90% 以上</em></p>
+</blockquote>
+<p>python程序在长时间(较大负载)运行一段时间后, python 进程的系统占用内存持续升高:</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs apache">  <span class="hljs-attribute">PID</span> USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND<br><span class="hljs-attribute">14781</span> root      <span class="hljs-number">20</span>   <span class="hljs-number">0</span>   <span class="hljs-number">10</span>.<span class="hljs-number">3</span>g   <span class="hljs-number">2</span>.<span class="hljs-number">2</span>g   <span class="hljs-number">7124</span> S   <span class="hljs-number">0</span>.<span class="hljs-number">0</span> <span class="hljs-number">14</span>.<span class="hljs-number">5</span>   <span class="hljs-number">4</span>:<span class="hljs-number">57</span>.<span class="hljs-number">13</span> java<br><span class="hljs-attribute">17522</span> lhadmin   <span class="hljs-number">20</span>   <span class="hljs-number">0</span> <span class="hljs-number">5915228</span>   <span class="hljs-number">1</span>.<span class="hljs-number">7</span>g  <span class="hljs-number">87264</span> S   <span class="hljs-number">0</span>.<span class="hljs-number">0</span> <span class="hljs-number">10</span>.<span class="hljs-number">6</span>   <span class="hljs-number">1</span>:<span class="hljs-number">37</span>.<span class="hljs-number">36</span> python3<br><span class="hljs-comment">#                               ~~~~~~</span><br><span class="hljs-comment">#                               1.7g 内存占用</span><br></code></pre></td></tr></table></figure>
+<p>这里的python进程在经历大量请求处理过程中, 内存持续升高, 直至最终被killed.</p>
+<span id="more"></span>
+<h2 id="查证过程"><a href="#查证过程" class="headerlink" title="查证过程"></a>查证过程</h2><p>昨天有7个record没有返回数据的情况，查日志均是 ==ASR/Slot timeout== 的原因导致。猜测是线程之间发生死锁，gc不能回收，使得多个线程全部挂起，导致内存一直在增长 以及 record服务超时！</p>
+<p>具体查证过程如下：</p>
+<h3 id="top-查看-CPU-和内存占用"><a href="#top-查看-CPU-和内存占用" class="headerlink" title="top 查看 CPU 和内存占用"></a>top 查看 CPU 和内存占用</h3><figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs 1c"><span class="hljs-meta"># top</span><br></code></pre></td></tr></table></figure>
+<h3 id="strace-查看系统调用"><a href="#strace-查看系统调用" class="headerlink" title="strace 查看系统调用"></a>strace 查看系统调用</h3><figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs 1c"><span class="hljs-meta"># strace -p 6325</span><br></code></pre></td></tr></table></figure>
+<h3 id="ltrace-查看库函数调用"><a href="#ltrace-查看库函数调用" class="headerlink" title="ltrace 查看库函数调用"></a>ltrace 查看库函数调用</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">ltrace -<span class="hljs-built_in">cp</span> 6325</span><br></code></pre></td></tr></table></figure>
+<h3 id="gcore-生成-coredump-文件"><a href="#gcore-生成-coredump-文件" class="headerlink" title="gcore 生成 coredump 文件"></a>gcore 生成 coredump 文件</h3><p>为了避免 <code>gdb attach</code> 进程造成的其他影响（比如可能出现进程异常退出，死锁突然恢复，影响线上服务等），最好将进程生成一个 coredump 文件，然后再慢慢分析。</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-comment"># gcore 6325</span><br><span class="hljs-comment"># ls -lsh core.6325</span><br><span class="hljs-attribute">2</span>.<span class="hljs-number">7</span>G -rw-r--r-- <span class="hljs-number">1</span> root root <span class="hljs-number">2</span>.<span class="hljs-number">7</span>G <span class="hljs-number">4</span>月  <span class="hljs-number">14</span> <span class="hljs-number">00</span>:<span class="hljs-number">56</span> core.<span class="hljs-number">6325</span><br></code></pre></td></tr></table></figure>
+<h3 id="gdb-分析-coredump-文件"><a href="#gdb-分析-coredump-文件" class="headerlink" title="gdb 分析 coredump 文件"></a>gdb 分析 coredump 文件</h3><p>定位异常：确定python在做什么，是否有大内存消耗任务正在运行，或出现死锁等异常行为</p>
+<p>接入gdb</p>
+<figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs crystal"><span class="hljs-comment"># gdb python core.6325</span><br><span class="hljs-comment"># gdb python2.7 core.6325</span><br><span class="hljs-variable">$ </span>gdb python &lt;pid&gt;<br></code></pre></td></tr></table></figure>
+<p>使用 <code>info threads</code> 查看当前进程的线程列表，发现大部分都在 <code>wait</code> 信号，只有25号线程在做其他事情，切换到25号线程，分析调用栈：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs awk">(gdb) info threads<br>  Id   Target Id         Frame<br>  <span class="hljs-number">18</span>   Thread <span class="hljs-number">0</span>x7f561ae6b740 (LWP <span class="hljs-number">9363</span>) <span class="hljs-number">0</span>x00007f561a76520d <span class="hljs-keyword">in</span> poll () at ..<span class="hljs-regexp">/sysdeps/u</span>nix/syscall-template.S:<span class="hljs-number">81</span><br>  <span class="hljs-number">17</span>   Thread <span class="hljs-number">0</span>x7f5589b17780 (LWP <span class="hljs-number">9463</span>) pthread_cond_wait@@GLIBC_2.<span class="hljs-number">3.2</span> ()<br>    at ..<span class="hljs-regexp">/nptl/</span>sysdeps<span class="hljs-regexp">/unix/</span>sysv<span class="hljs-regexp">/linux/</span>x86_64/pthread_cond_wait.S:<span class="hljs-number">185</span><br>...<br>一般加锁、死锁情况存在时，会有线程卡在xx_wait等函数上。<br>...<br>如果发现某线程有问题，切换到此线程上<br>...<br>(gdb) thread <span class="hljs-number">25</span><br></code></pre></td></tr></table></figure>
+<p>查看线程栈信息，</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs routeros">(gdb) <span class="hljs-built_in">info</span> stack<br></code></pre></td></tr></table></figure>
+<p>info stack，这个命令只能查看当前正在运行的某个线程的栈信息</p>
+<p>使用原始 <code>bt</code> 来分析（添加 <code>full</code> 参数可以看更详细的内容）：</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs mipsasm">(gdb) <span class="hljs-keyword">bt </span>full<br>(gdb) thread apply all <span class="hljs-keyword">bt	</span><span class="hljs-comment"># gdb会让所有线程都执行这个命令</span><br></code></pre></td></tr></table></figure>
+<p>分析 <code>Frame # 7</code> 发现当前线程正在执行 <code>./service/recall/newuser.py, line 49, in get_gametype_anchor_by_sn</code> 方法。</p>
+<p>找到对应的源代码。通过仔细分析代码，发现在某种情况下确实会出现死循环情况，至此问题解决。</p>
+<h3 id="死锁解决办法："><a href="#死锁解决办法：" class="headerlink" title="死锁解决办法："></a>死锁解决办法：</h3><ol>
+<li>尝试用锁加以隔离</li>
+<li>取消多线程</li>
+<li>手动释放内存：对大的变量存储对象，在使用完成后先del掉，然后在return之前，统一gc.collect()垃圾回收一下</li>
+</ol>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><ol>
+<li>遇到线上问题时，优先使用 <code>gcore PID</code> 来保存现场</li>
+<li>再<a target="_blank" rel="noopener" href="http://rdcqii.hundsun.com/portal/article/597.html">使用strace、ltrace</a>和 <code>gdb</code> 分析</li>
+<li>如果没有什么线索，可以尝试 <a target="_blank" rel="noopener" href="https://pyrasite.readthedocs.io/en/latest/Shell.html">pyrasite-shell</a> 或 <a target="_blank" rel="noopener" href="https://github.com/khamidou/lptrace">lptrace</a></li>
+<li><code>gdb</code>调试 <code>Python</code> 进程的时候，运行进程的 <code>Python</code> 版本和 python-dbg 一定要匹配</li>
+</ol>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a target="_blank" rel="noopener" href="https://seealso.cn/debug/endless-loop-causes-cpu-full-problems">查证微服务死循环导致 CPU 100%问题</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/28031057">Python 进程内存增长解决方案</a></p>
+<h1 id="附录：gdb-amp-tracemalloc"><a href="#附录：gdb-amp-tracemalloc" class="headerlink" title="附录：gdb&amp;tracemalloc"></a>附录：gdb&amp;tracemalloc</h1><p>python本身是有垃圾回收的, 但python有如下几种情况可能出现内存泄露（即导致对象无法被回收）:</p>
+<ol>
+<li>循环引用</li>
+<li>循环引用的链上某个对象定义了<code>__del__</code>方法.</li>
+<li>对象一直被全局变量所引用, 全局变量生命周期长.</li>
+<li>垃圾回收机被禁用或者设置成debug状态, 垃圾回收的内存不会被释放.</li>
+<li>引用对象未释放（数据库连接等）</li>
+</ol>
+<p><strong>gdb安装教程</strong></p>
+<p>详细信息可以参考 <a target="_blank" rel="noopener" href="https://wiki.python.org/moin/DebuggingWithGdb">debug-with-gdb</a></p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs awk">touch <span class="hljs-regexp">/etc/yum</span>.repos.d/CentOS-Debuginfo.repo<br>vi <span class="hljs-regexp">/etc/yum</span>.repos.d/CentOS-Debuginfo.repo<br></code></pre></td></tr></table></figure>
+<p>添加以下内容至文件中：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs ini"><span class="hljs-comment"># CentOS-Debug.repo</span><br><span class="hljs-comment">#</span><br><span class="hljs-comment"># The mirror system uses the connecting IP address of the client and the</span><br><span class="hljs-comment"># update status of each mirror to pick mirrors that are updated to and</span><br><span class="hljs-comment"># geographically close to the client.  You should use this for CentOS updates</span><br><span class="hljs-comment"># unless you are manually picking other mirrors.</span><br><span class="hljs-comment">#</span><br><br><span class="hljs-comment"># All debug packages from all the various CentOS-5 releases</span><br><span class="hljs-comment"># are merged into a single repo, split by BaseArch</span><br><span class="hljs-comment">#</span><br><span class="hljs-comment"># <span class="hljs-doctag">Note:</span> packages in the debuginfo repo are currently not signed</span><br><span class="hljs-comment">#</span><br><br><span class="hljs-section">[debug]</span><br><span class="hljs-attr">name</span>=CentOS-<span class="hljs-number">7</span> - Debuginfo<br><span class="hljs-attr">baseurl</span>=http://debuginfo.centos.org/<span class="hljs-number">7</span>/<span class="hljs-variable">$basearch</span>/<br><span class="hljs-attr">gpgcheck</span>=<span class="hljs-number">1</span><br><span class="hljs-attr">gpgkey</span>=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-Debug-<span class="hljs-number">7</span><br><span class="hljs-attr">enabled</span>=<span class="hljs-number">1</span><br></code></pre></td></tr></table></figure>
+<p>安装依赖</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs cmake">sudo yum <span class="hljs-keyword">install</span> yum-utils<br>sudo debuginfo-<span class="hljs-keyword">install</span> glibc<br>sudo yum <span class="hljs-keyword">install</span> gdb python-debuginfo<br></code></pre></td></tr></table></figure>
+<p>完成！</p>
+<p><strong>查看python内存泄露的工具</strong></p>
+<ul>
+<li><p>tracemalloc —- 跟踪内存分配: 究极强, 可以直接看到哪个(哪些)对象占用了最大的空间（内存块）, 这些对象是谁, 调用栈是啥样的, python3直接内置, python2如果安装的话需要编译. 它提供以下信息：</p>
+<ul>
+<li>Traceback where an object was allocated</li>
+<li>每个文件名和每行号分配的内存块的统计信息：分配的内存块的总大小，数量和平均大小</li>
+<li><p>计算两个快照之间的差异以检测内存泄漏</p>
+</li>
+<li><p>显示前10项</p>
+</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs bash">import tracemalloc<br><br>tracemalloc.start()<br><br><span class="hljs-comment"># ... run your application ...</span><br><br>snapshot = tracemalloc.take_snapshot()<br>top_stats = snapshot.statistics(<span class="hljs-string">&#x27;lineno&#x27;</span>)<br><br><span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;[ Top 10 ]&quot;</span>)<br><span class="hljs-keyword">for</span> <span class="hljs-built_in">stat</span> <span class="hljs-keyword">in</span> top_stats[:10]:<br>    <span class="hljs-built_in">print</span>(<span class="hljs-built_in">stat</span>)<br></code></pre></td></tr></table></figure>
+<ul>
+<li>计算差异</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs bash">import tracemalloc<br>tracemalloc.start()<br><span class="hljs-comment"># ... start your application ...</span><br><br>snapshot1 = tracemalloc.take_snapshot()<br><span class="hljs-comment"># ... call the function leaking memory ...</span><br>snapshot2 = tracemalloc.take_snapshot()<br><br>top_stats = snapshot2.compare_to(snapshot1, <span class="hljs-string">&#x27;lineno&#x27;</span>)<br><br><span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;[ Top 10 differences ]&quot;</span>)<br><span class="hljs-keyword">for</span> <span class="hljs-built_in">stat</span> <span class="hljs-keyword">in</span> top_stats[:10]:<br>    <span class="hljs-built_in">print</span>(<span class="hljs-built_in">stat</span>)<br></code></pre></td></tr></table></figure>
+<ul>
+<li>显示最大内存块的回溯的代码：</li>
+</ul>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs livecodeserver">import tracemalloc<br><br><span class="hljs-comment"># Store 25 frames</span><br>tracemalloc.<span class="hljs-built_in">start</span>(<span class="hljs-number">25</span>)<br><br><span class="hljs-comment"># ... run your application ...</span><br><br>snapshot = tracemalloc.take_snapshot()<br>top_stats = snapshot.statistics(<span class="hljs-string">&#x27;traceback&#x27;</span>)<br><br><span class="hljs-comment"># pick the biggest memory block</span><br>stat = top_stats[<span class="hljs-number">0</span>]<br>print(<span class="hljs-string">&quot;%s memory blocks: %.1f KiB&quot;</span> % (stat.count, stat.size / <span class="hljs-number">1024</span>))<br><span class="hljs-keyword">for</span> <span class="hljs-built_in">line</span> <span class="hljs-keyword">in</span> stat.traceback.<span class="hljs-built_in">format</span>():<br>    print(<span class="hljs-built_in">line</span>)<br></code></pre></td></tr></table></figure>
+</li>
+<li><p>pyrasite: 牛逼的第三方库, 可以渗透进入正在运行的python进程动态修改里边的数据和代码(其实修改代码就是通过修改数据实现)</p>
+</li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Linux/">#Linux</a>
+      
+        <a href="/tags/%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8/">#内存占用</a>
+      
+        <a href="/tags/killed/">#killed</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>linux程序内存占用持续增长killed</div>
+      <div>http://example.com/2020/03/09/2020-03-09-linux程序内存占用持续增长killed/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>NSX</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2020年3月9日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/03/09/2020-03-09-linux%E7%A8%8B%E5%BA%8F%E5%B4%A9%E6%BA%83%E7%94%9F%E6%88%90core%E6%96%87%E4%BB%B6/" title="linux程序崩溃生成core文件">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">linux程序崩溃生成core文件</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/01/20/2020-01-20-%E6%96%B0%E8%AF%8D%E5%8F%91%E7%8E%B0/" title="新词发现">
+                        <span class="hidden-mobile">新词发现</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

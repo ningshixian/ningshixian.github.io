@@ -1,0 +1,929 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="NSX">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="基础知识 什么是进程&#x2F;线程&#x2F;二者的关系 并发和并行有啥区别？同步和异步有啥区别？ GIL是什么？   多线程 threading.Thread   线程池 ThreadPoolExecutor   多进程 multiprocessing.Process   进程池 multiprocessing.Pool() 以及ProcessPoolExecutor   异步IO 协程、多线程、多进程的区别？">
+<meta property="og:type" content="article">
+<meta property="og:title" content="python并发编程">
+<meta property="og:url" content="http://example.com/2019/10/30/2019-10-30-Python%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%EF%BC%88%E7%BA%BF%E7%A8%8B%20vs%20%E8%BF%9B%E7%A8%8B%EF%BC%89/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="基础知识 什么是进程&#x2F;线程&#x2F;二者的关系 并发和并行有啥区别？同步和异步有啥区别？ GIL是什么？   多线程 threading.Thread   线程池 ThreadPoolExecutor   多进程 multiprocessing.Process   进程池 multiprocessing.Pool() 以及ProcessPoolExecutor   异步IO 协程、多线程、多进程的区别？">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/%E5%B9%B6%E5%8F%91vs%E5%B9%B6%E8%A1%8C.png">
+<meta property="og:image" content="https://images2015.cnblogs.com/blog/986023/201609/986023-20160918171840449-1089010426.png">
+<meta property="og:image" content="https://hub.zhuanfou.com/5119_1562418835_9220.jpg">
+<meta property="article:published_time" content="2019-10-29T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-23T10:28:32.041Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="多线程多进程">
+<meta property="article:tag" content="python并发">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ningshixian.github.io/resources/images/%E5%B9%B6%E5%8F%91vs%E5%B9%B6%E8%A1%8C.png">
+  
+  
+  
+  <title>python并发编程 - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="多线程-多进程-线程池-进程池"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2019-10-30 00:00" pubdate>
+          2019年10月30日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          13k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          110 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">多线程-多进程-线程池-进程池</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <ul>
+<li>基础知识<ul>
+<li>什么是进程/线程/二者的关系</li>
+<li>并发和并行有啥区别？同步和异步有啥区别？</li>
+<li>GIL是什么？</li>
+</ul>
+</li>
+<li>多线程<ul>
+<li>threading.Thread</li>
+</ul>
+</li>
+<li>线程池<ul>
+<li>ThreadPoolExecutor</li>
+</ul>
+</li>
+<li>多进程<ul>
+<li>multiprocessing.Process</li>
+</ul>
+</li>
+<li>进程池<ul>
+<li>multiprocessing.Pool() 以及ProcessPoolExecutor</li>
+</ul>
+</li>
+<li>异步IO<ul>
+<li>协程、多线程、多进程的区别？</li>
+</ul>
+</li>
+</ul>
+<span id="more"></span>
+<h2 id="导读"><a href="#导读" class="headerlink" title="导读"></a>导读</h2><p>进程是系统进行资源分配的最小单位，线程是系统进行调度执行的最小单位；</p>
+<p>一个应用程序至少包含一个进程，一个进程至少包含一个线程；</p>
+<p>每个进程在执行过程中拥有独立的内存空间，而一个进程中的线程之间是共享该进程的内存空间的；</p>
+<ul>
+<li>计算机的核心是CPU，它承担了所有的计算任务。它就像一座工厂，时刻在运行。</li>
+<li>假定工厂的电力有限，一次只能供给一个车间使用。也就是说，一个车间开工的时候，其他车间都必须停工。背后的含义就是，单个CPU一次只能运行一个任务。编者注: 多核的CPU就像有了多个发电厂，使多工厂(多进程)实现可能。</li>
+<li>进程就好比工厂的车间，它代表CPU所能处理的单个任务。任一时刻，CPU总是运行一个进程，其他进程处于非运行状态。</li>
+<li>一个车间里，可以有很多工人。他们协同完成一个任务。</li>
+<li>线程就好比车间里的工人。一个进程可以包括多个线程。</li>
+<li>车间的空间是工人们共享的，比如许多房间是每个工人都可以进出的。这象征一个进程的内存空间是共享的，每个线程都可以使用这些共享内存。</li>
+<li>可是，每间房间的大小不同，有些房间最多只能容纳一个人，比如厕所。里面有人的时候，其他人就不能进去了。这代表一个线程使用某些共享内存时，其他线程必须等它结束，才能使用这一块内存。</li>
+<li>一个防止他人进入的简单方法，就是门口加一把锁。先到的人锁上门，后到的人看到上锁，就在门口排队，等锁打开再进去。这就叫”互斥锁”（Mutual exclusion，缩写 Mutex），防止多个线程同时读写某一块内存区域。</li>
+<li>还有些房间，可以同时容纳n个人，比如厨房。也就是说，如果人数大于n，多出来的人只能在外面等着。这好比某些内存区域，只能供给固定数目的线程使用。</li>
+<li>这时的解决方法，就是在门口挂n把钥匙。进去的人就取一把钥匙，出来时再把钥匙挂回原处。后到的人发现钥匙架空了，就知道必须在门口排队等着了。这种做法叫做”信号量”（Semaphore），用来保证多个线程不会互相冲突。</li>
+<li>不难看出，mutex是semaphore的一种特殊情况（n=1时）。也就是说，完全可以用后者替代前者。但是，因为mutex较为简单，且效率高，所以在必须保证资源独占的情况下，还是采用这种设计。</li>
+</ul>
+<p><strong>一些示例来阐明线程或进程更合适用在哪：</strong></p>
+<ul>
+<li><p>多线程使用场景：<strong>IO操作密集</strong>的场景，比如爬虫，<strong>web访问</strong>等，需要频繁从网络、硬盘、内存等<strong>读写数据</strong>。这种情况 下，因为单线程下的IO操作会有IO等待，造成不必要的时间浪费，因此采用多线程就能在线程A等待时，开启线程B的操作。</p>
+</li>
+<li><p>多进程使用场景：<strong>CPU计算密集</strong>的场景，比如科学计算、<strong>转换或清洗大型数据集</strong>、循环处理等。这些场景因为计算工作量大，由于 GIL 加锁和释放问题，多线程相比单线程更慢</p>
+</li>
+<li><p>请记住，由于线程的<a target="_blank" rel="noopener" href="https://python.hamel.dev/concurrency/#how-threads-work">工作方式不同，它们可能</a>比进程具有更高的内存效率。因此，在不需要时使用大量进程会导致内存膨胀。</p>
+</li>
+</ul>
+<p><strong>最重要的是</strong>，请尽量避免考虑尽可能的进程和线程，并尽可能使用<a target="_blank" rel="noopener" href="https://numpy.org/">numpy</a>等科学计算库并编写<a target="_blank" rel="noopener" href="https://realpython.com/numpy-array-programming/">矢量化的</a>操作。始终需要了解正在使用的库或框架（尤其是数值计算库和其他数据科学库）中可用的并发工具，并在适当时考虑使用它们。</p>
+<h2 id="1-基础知识"><a href="#1-基础知识" class="headerlink" title="1. 基础知识"></a>1. 基础知识</h2><h3 id="什么是进程？"><a href="#什么是进程？" class="headerlink" title="什么是进程？"></a>什么是进程？</h3><p>进程（Process）是计算机中的程序关于某数据集合上的一次运行活动，是系统进行<strong>资源分配和调度的基本单位</strong>，是操作系统结构的基础。</p>
+<h3 id="什么是线程？"><a href="#什么是线程？" class="headerlink" title="什么是线程？"></a>什么是线程？</h3><p>线程也叫轻量级进程，它是一个基本的CPU执行单元，也是程序执行过程中的最小单元，由线程ID、程序计数器、寄存器集合和堆栈共同组成。线程的引入减小了进程并发执行的开销，提高了操作系统的并发性能，线程没有自己的系统资源。</p>
+<h3 id="进程和线程的关系"><a href="#进程和线程的关系" class="headerlink" title="进程和线程的关系"></a>进程和线程的关系</h3><ul>
+<li>资源分配给进程，同一进程的所有线程共享该进程的所有资源。</li>
+<li>一个线程只能属于一个进程，而一个进程可以有多个线程，但至少有一个线程。</li>
+</ul>
+<h3 id="并发-vs-并行"><a href="#并发-vs-并行" class="headerlink" title="并发 vs. 并行"></a>并发 vs. 并行</h3><p>并发和并行是对孪生兄弟，概念经常混淆。并发是指能够多任务处理，并行则是是能够<strong>同时</strong>多任务处理。</p>
+<ul>
+<li>并发：是伪并行，即看起来是同时运行，实际是单个CPU+多道技术；</li>
+<li>并行：同时运行，只有具备多个CPU才能实现并行；</li>
+</ul>
+<p><img src="https://ningshixian.github.io/resources/images/并发vs并行.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<h3 id="同步-vs-异步"><a href="#同步-vs-异步" class="headerlink" title="同步 vs. 异步"></a>同步 vs. 异步</h3><p>同步就是指一个进程在执行某个请求的时候，若该请求需要一段时间才能返回信息，那么这个进程将会一直等待下去，直到收到返回信息才继续执行下去。</p>
+<p>异步是指进程不需要一直等下去，而是继续执行下面的操作，不管其他进程的状态。当有消息返回时系统会通知进程进行处理，这样可以提高执行的效率。</p>
+<h3 id="GIL是什么？"><a href="#GIL是什么？" class="headerlink" title="GIL是什么？"></a>GIL是什么？</h3><ul>
+<li>GIL(Global Interpreter Lock)是最流程的 CPython 解释器中的一个技术术语，中文译为全局解释器锁。</li>
+<li>GIL 的功能是：在 CPython 解释器中执行的每一个 Python 线程，都会先锁住自己，以阻止别的线程执行。</li>
+</ul>
+<p>无论启动多少个线程，有多少个CPU，Python在执行一个进程的时候在同一时刻只允许一个线程运行。 所以，Python是无法利用多核CPU实现多线程的。因此，Python的多线程不适用于CPU密集型任务，但在IO密集型任务上能够节省时间。</p>
+<p><strong>为什么需要GIL ？</strong></p>
+<p>因为Python的线程是调用操作系统的原生线程，这个原生线程是用C语言写的。CPython启动线程的时候调用的C语言的接口。</p>
+<p>每个线程在执行的过程中，Python解释器是控制不了的，只能等结果。如果多个线程一起执行，那结果就不一定正确了。有了GIL，就可以在同一时间只有一个线程能够工作，可以为了避免出错。</p>
+<p>需要注意的是，GIL并不是Python的特性，Python完全可以不依赖于GIL，很多Python解释器是没有GIL的。</p>
+<h2 id="2-多线程"><a href="#2-多线程" class="headerlink" title="2. 多线程"></a>2. 多线程</h2><p>Python中实现多线程的并发需要使用threading模块。</p>
+<h3 id="线程对象的创建"><a href="#线程对象的创建" class="headerlink" title="线程对象的创建"></a>线程对象的创建</h3><ul>
+<li>Thread类直接创建</li>
+</ul>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs mipsasm">import threading<br><br>if __name__ == <span class="hljs-string">&#x27;__main__&#x27;</span>:<br>    <span class="hljs-comment">#初始化线程</span><br>    <span class="hljs-built_in">t1</span> = threading.Thread(target=task_thread, args=(<span class="hljs-number">3</span>,))<br>    <span class="hljs-comment">#开启线程</span><br>    <span class="hljs-built_in">t1</span>.start()<br>    <span class="hljs-comment">#等待运行结束</span><br>    <span class="hljs-built_in">t1</span>.<span class="hljs-keyword">join()</span><br></code></pre></td></tr></table></figure>
+<ul>
+<li>Thread类继承式创建，重写run方法</li>
+</ul>
+<p>重写 Thread 类 <code>run()</code> 方法来实现逻辑，这个方法是线程的入口。线程被创建之后并不会马上运行，需要手动调用 <code>start()</code> ， <code>join()</code> 让调用它的线程一直等待直到执行结束（即阻塞调用它的主线程， t 线程执行结束，主线程才会继续执行）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> threading<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">MyThreading</span>(threading.Thread):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self,func,arg</span>):<br>        <span class="hljs-built_in">super</span>(MyThreading,self).__init__()<br>        self.func = func<br>        self.arg = arg<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">run</span>(<span class="hljs-params">self</span>):<br>        self.func(self.arg)<br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;%s say hello&#x27;</span> % self.name)<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">f1</span>(<span class="hljs-params">args</span>):<br>    <span class="hljs-built_in">print</span>(args)<br><br><span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&#x27;__main__&#x27;</span>:<br>    obj = MyThreading(f1, <span class="hljs-number">123</span>)<br>    obj.start()<br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;主线程&#x27;</span>)<br></code></pre></td></tr></table></figure>
+<h3 id="线程对象的实例方法和属性"><a href="#线程对象的实例方法和属性" class="headerlink" title="线程对象的实例方法和属性"></a>线程对象的实例方法和属性</h3><ul>
+<li><p>t.start()：激活线程，线程被CPU调度后会自动执行t.run()，run方法不要手动调用</p>
+</li>
+<li><p>t.join()：父线程阻塞直到该子线程执行结束</p>
+</li>
+<li><p>t.daemon：声明为守护线程，需在start方法前调用，默认为False。值为True时主进程结束后子线程一起结束，为False时主进程会等待子线程结束后才退出</p>
+</li>
+<li><p>t.is_alive()：判断线程是否为激活状态</p>
+</li>
+<li><p>t.getName()：获取线程的名称</p>
+</li>
+<li><p>t.setName()：设置线程的名称</p>
+</li>
+</ul>
+<h3 id="线程锁Lock"><a href="#线程锁Lock" class="headerlink" title="线程锁Lock"></a>线程锁Lock</h3><blockquote>
+<p><strong>加锁是为了对锁内资源（变量）进行锁定，避免其他线程篡改已被锁定的资源，以达到我们预期的效果</strong></p>
+</blockquote>
+<p>CPU执行任务时，在线程之间是进行随机调度的，并且每个线程可能只执行n条代码后就转而执行另外一条线程。由于在一个进程中的多个线程之间是共享资源和数据的，这就容易造成资源抢夺或脏数据，于是就有了锁的概念，限制某一时刻只有一个线程能访问某个指定的数据。锁通常被用来实现对共享资源的同步访问。</p>
+<p>python在 <code>threading</code> 模块中定义了几种线程锁类，分别是：</p>
+<ul>
+<li><code>Lock</code> 普通锁（不可嵌套）</li>
+<li><code>RLock</code> 普通锁（可嵌套）</li>
+<li><code>Semaphore</code> 信号量</li>
+<li><code>event</code> 事件</li>
+<li><code>condition</code> 条件</li>
+</ul>
+<p><strong>代码示例</strong></p>
+<p>为每一个共享资源创建一个 <code>Lock</code> 对象，当你需要访问该资源时，调用<code>acquire</code>方法来获取锁对象（如果其它线程已经获得了该锁，则当前线程需等待其被释放），待资源访问完后，再调用<code>release</code>方法释放锁。==未加锁部分并发执行，加锁部分串行执行==，举例说明：</p>
+<figure class="highlight maxima"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><code class="hljs maxima">import threading<br>import <span class="hljs-built_in">time</span><br><br><span class="hljs-built_in">num</span> = <span class="hljs-number">100</span><br><br>def fun_sub():<br>    #未加锁的代码并发运行<br>    <span class="hljs-built_in">time</span>.sleep(<span class="hljs-number">3</span>)<br>    global <span class="hljs-built_in">num</span><br>    <span class="hljs-built_in">print</span>(&#x27;现在操作共享资源的线程名字是:&#x27;,t.name)<br>    #加锁的代码串行运行<br>    lock.acquire()<br>    num2 = <span class="hljs-built_in">num</span><br>    <span class="hljs-built_in">time</span>.sleep(<span class="hljs-number">0.001</span>)<br>    <span class="hljs-built_in">num</span> = num2-<span class="hljs-number">1</span><br>    lock.release()<br><br><span class="hljs-keyword">if</span> __name__ == &#x27;__main__&#x27;:<br>    <span class="hljs-built_in">print</span>(&#x27;开始测试同步锁 <span class="hljs-built_in">at</span> <span class="hljs-built_in">%s</span>&#x27; <span class="hljs-symbol">%</span> <span class="hljs-built_in">time</span>.ctime())<br><br>    lock = threading.Lock() #创建一把同步锁<br><br>    thread_list = []<br>    <span class="hljs-keyword">for</span> thread <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">100</span>):<br>        t = threading.Thread(target=fun_sub)<br>        t.start()<br>        thread_list.<span class="hljs-built_in">append</span>(t)<br><br>    <span class="hljs-keyword">for</span> t <span class="hljs-keyword">in</span> thread_list:<br>        t.<span class="hljs-built_in">join</span>()<br>    <span class="hljs-built_in">print</span>(&#x27;<span class="hljs-built_in">num</span> <span class="hljs-built_in">is</span> %d&#x27; <span class="hljs-symbol">%</span> <span class="hljs-built_in">num</span>)	# <span class="hljs-number">0</span><br>    <span class="hljs-built_in">print</span>(&#x27;结束测试同步锁 <span class="hljs-built_in">at</span> <span class="hljs-built_in">%s</span>&#x27; <span class="hljs-symbol">%</span> <span class="hljs-built_in">time</span>.ctime())<br></code></pre></td></tr></table></figure>
+<p>注意的是，<code>lock.acquire()</code> 和 <code>lock.release()</code> 必须成对出现。否则就有可能造成死锁！</p>
+<p>很多时候，我们虽然知道，他们必须成对出现，但是还是难免会有忘记的时候。为了规避这个问题。我推荐使用使用<strong>上下文管理器 with</strong>来加锁。<code>with</code> 语句更加优雅，也更不容易出错，会在这个代码块执行前自动获取锁，在执行结束后自动释放锁。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> threading<br><br>lock = threading.Lock()<br><span class="hljs-keyword">with</span> lock:<br>    <span class="hljs-comment"># 这里写自己的代码</span><br>    <span class="hljs-keyword">pass</span><br></code></pre></td></tr></table></figure>
+<h3 id="GIL-VS-Lock"><a href="#GIL-VS-Lock" class="headerlink" title="GIL VS Lock"></a>GIL VS Lock</h3><p><img src="https://images2015.cnblogs.com/blog/986023/201609/986023-20160918171840449-1089010426.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<ul>
+<li><p>锁（Lock）是指一个进程对内存资源进行排他占用的状态；</p>
+</li>
+<li><p>死锁（Deadlock）两个或两个以上的进程或线程在执行过程中，因争夺资源而造成的一种互相等待的现象，若无外力作用，它们都将无法推进下去。此时称系统处于死锁状态或系统产生了死锁;</p>
+</li>
+</ul>
+<p>两个或两个以上的进程或线程在执行过程中，因争夺资源而造成的一种互相等待的现象，若无外力作用，它们都将无法推进下去。此时称系统处于死锁状态或系统产生了死锁，这些永远在互相等待的进程称为 <strong>死锁进程</strong>.</p>
+<h3 id="线程间通信"><a href="#线程间通信" class="headerlink" title="线程间通信"></a>线程间通信</h3><p>线程的一个关键特性是每个线程都是独立运行且状态不可预测。在某些场景下，需要进行线程间的通信。</p>
+<p>threading.Event()：包含一个可由线程设置的信号标志，它允许线程等待某些事件的发生。在初始情况下，Event对象中的信号标志被设置为False。如果有线程等待一个Event对象，那么这个线程将会被一直阻塞直至该标志为True。</p>
+<p>threading.Semaphore()：可用于设置最大并发数。Semaphore管理一个内置的计数器，每当调用acquire()时内置计数器-1，调用release() 时内置计数器+1，计数器不能小于0；当计数器为0时，acquire()将阻塞线程直到其他线程调用release()。</p>
+<p>threading.Condition()：一个条件变量对象允许一个或多个线程在被其它线程所通知之前进行等待。</p>
+<p><strong>代码示例-略</strong></p>
+<ol>
+<li>先说不使用<code>Queue</code>获取多线程的返回值的方法（<a target="_blank" rel="noopener" href="https://www.cnblogs.com/hujq1029/p/7219163.html">参考博客</a>）</li>
+<li>使用<code>Queue</code>获取多线程的返回值的方法</li>
+</ol>
+<h2 id="3-线程池"><a href="#3-线程池" class="headerlink" title="3. 线程池"></a>3. 线程池</h2><blockquote>
+<p> 参考：<a target="_blank" rel="noopener" href="https://juejin.im/post/5cf913cfe51d45105d63a4d0">《Python线程池 ThreadPoolExecutor 的用法及实战》</a> <a target="_blank" rel="noopener" href="https://blog.csdn.net/wsp_1138886114/article/details/90139970">python 多线程与线程池</a></p>
+</blockquote>
+<p>线程池中的线程可以得到重用，避免了频繁的创建新的线程，同时线程数量也是可控的。</p>
+<p>从Python3.2开始，标准库为我们提供了 <code>concurrent.futures</code> 模块，该模块提供异步执行可调用对象高层接口，是Python的原生模块，提供了线程池 ThreadPoolExecutor 和进程池 ProcessPoolExecutor 的实现。</p>
+<p><code>ThreadPoolExecutor(max_workers=None, thread_name_prefix=&#39;&#39;, initializer=None, initargs=())</code>：Executor 子类使用最多 max_workers 个线程的线程池来异步执行调用（默认值是 CPU 个数的 5 倍！）。以下是它的方法：</p>
+<ul>
+<li><p><code>submit(fn, *args, **kwargs)</code>：调度可调用对象 fn，以 <code>fn(*args **kwargs)</code> 方式执行并返回 Future 对象。</p>
+</li>
+<li><p><code>map(func, *iterables, timeout=None, chunksize=1)</code>：类似于 <code>map(func, *iterables)</code></p>
+</li>
+<li><p><code>shutdown(wait=True)</code>：当待执行的期程完成执行后向执行者发送信号，它就会释放正在使用的任何资源。</p>
+</li>
+</ul>
+<p><strong>优点：</strong></p>
+<ol>
+<li>主线程可以获取某一个线程（或者任务的）的状态，以及返回值。</li>
+<li>当一个线程完成的时候，主线程能够立即知道。</li>
+<li>让多线程和多进程的编码接口一致。</li>
+</ol>
+<h3 id="线程池的基本使用"><a href="#线程池的基本使用" class="headerlink" title="线程池的基本使用"></a>线程池的基本使用</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># coding: utf-8</span><br><span class="hljs-keyword">from</span> concurrent.futures <span class="hljs-keyword">import</span> ThreadPoolExecutor<br><span class="hljs-keyword">import</span> time<br><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">spider</span>(<span class="hljs-params">page</span>):<br>    time.sleep(page)<br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;crawl task<span class="hljs-subst">&#123;page&#125;</span> finished&quot;</span>)<br>    <span class="hljs-keyword">return</span> page<br><br><span class="hljs-keyword">with</span> ThreadPoolExecutor(max_workers=<span class="hljs-number">5</span>) <span class="hljs-keyword">as</span> t:  <span class="hljs-comment"># 创建一个最大容纳数量为5的线程池</span><br>    task1 = t.submit(spider, <span class="hljs-number">1</span>)<br>    task2 = t.submit(spider, <span class="hljs-number">2</span>)  <span class="hljs-comment"># 通过submit提交执行的函数到线程池中</span><br>    task3 = t.submit(spider, <span class="hljs-number">3</span>)<br>    <br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;task1: <span class="hljs-subst">&#123;task1.done()&#125;</span>&quot;</span>)<br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;task2: <span class="hljs-subst">&#123;task2.done()&#125;</span>&quot;</span>)<br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;task3: <span class="hljs-subst">&#123;task3.done()&#125;</span>&quot;</span>)<br>    <br>    time.sleep(<span class="hljs-number">2.5</span>)<br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;task1: <span class="hljs-subst">&#123;task1.done()&#125;</span>&quot;</span>)<br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;task2: <span class="hljs-subst">&#123;task2.done()&#125;</span>&quot;</span>)<br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;task3: <span class="hljs-subst">&#123;task3.done()&#125;</span>&quot;</span>)<br>    <br>    <span class="hljs-keyword">try</span>:<br>        <span class="hljs-keyword">def</span> <span class="hljs-title function_">get_result</span>(<span class="hljs-params">future</span>):<br>            <span class="hljs-built_in">print</span>(future.result())  <span class="hljs-comment"># 通过result来获取返回值</span><br>        <span class="hljs-comment"># 为task添加线程完成的回调函数</span><br>        task1.add_done_callback(get_result)      <br>        task2.add_done_callback(get_result)<br>        task3.add_done_callback(get_result)<br>    <span class="hljs-keyword">except</span> Exception <span class="hljs-keyword">as</span> e:<br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;raise an exception: &#123;&#125;&#x27;</span>.<span class="hljs-built_in">format</span>(e))<br></code></pre></td></tr></table></figure>
+<p><strong>代码讲解：</strong></p>
+<ol>
+<li>使用 with 语句 ，通过 ThreadPoolExecutor 构造实例，同时传入 max_workers 参数来设置线程池中最多能同时运行的线程数目。</li>
+<li>使用 submit 函数来提交线程需要执行的任务到线程池中，并返回该任务的句柄（类似于文件、画图），注意 submit() 不是阻塞的，而是立即返回。</li>
+<li>通过使用 done() 方法判断该任务是否结束。上面的例子可以看出，提交任务后立即判断任务状态，显示四个任务都未完成。在延时2.5后，task1 和 task2 执行完毕，task3 仍在执行中。</li>
+<li>使用 result() 方法可以获取任务的返回值。</li>
+<li>使用 add_done_callback() 方法来获取线程任务的返回值</li>
+</ol>
+<h3 id="线程池的主要方法"><a href="#线程池的主要方法" class="headerlink" title="线程池的主要方法"></a>线程池的主要方法</h3><p><strong>map</strong></p>
+<p>concurrent.futures.ThreadPoolExecutor，在提交任务的时候，有两种方式，一种是submit（）函数，另一种是map（）函数，两者的主要区别在于：</p>
+<ul>
+<li>map可以保证输出的顺序, submit输出的顺序是乱的</li>
+<li>如果你要提交的任务的函数是一样的，就可以简化成map。但是假如提交的任务函数是不一样的，或者执行的过程之可能出现异常（使用map执行过程中发现问题会直接抛出错误）就要用到submit（）</li>
+<li>submit和map的参数是不同的，submit每次都需要提交一个目标函数和对应的参数，map只需要提交一次目标函数，目标函数的参数放在一个迭代器（列表，字典）里就可以。</li>
+</ul>
+<figure class="highlight nim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs nim"><span class="hljs-keyword">with</span> <span class="hljs-type">ProcessPoolExecutor</span>(max_workers=<span class="hljs-number">3</span>) <span class="hljs-keyword">as</span> executor:<br>    <span class="hljs-keyword">for</span> <span class="hljs-built_in">result</span> <span class="hljs-keyword">in</span> executor.map(<span class="hljs-keyword">func</span>, [<span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">1</span>, <span class="hljs-number">4</span>]):	<span class="hljs-comment"># 返回线程执行的结果</span><br>        print(<span class="hljs-built_in">result</span>)<br></code></pre></td></tr></table></figure>
+<p><strong>wait</strong></p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs routeros"><span class="hljs-keyword">from</span> concurrent.futures import ThreadPoolExecutor, wait, FIRST_COMPLETED, ALL_COMPLETED<br>import time<br><br>def spider(page):<br>    time.sleep(page)<br>    <span class="hljs-built_in">print</span>(f<span class="hljs-string">&quot;crawl task&#123;page&#125; finished&quot;</span>)<br>    return<span class="hljs-built_in"> page</span><br><span class="hljs-built_in"></span><br>with ThreadPoolExecutor(<span class="hljs-attribute">max_workers</span>=5) as t: <br>    all_task = [t.submit(spider, page) <span class="hljs-keyword">for</span><span class="hljs-built_in"> page </span><span class="hljs-keyword">in</span> range(1, 5)]<br>    wait(all_task, <span class="hljs-attribute">return_when</span>=FIRST_COMPLETED)<br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;finished&#x27;</span>)<br>    <span class="hljs-built_in">print</span>(wait(all_task, <span class="hljs-attribute">timeout</span>=2.5))<br></code></pre></td></tr></table></figure>
+<ol>
+<li>代码中返回的条件是：当完成第一个任务的时候，就停止等待，继续主线程任务</li>
+<li>由于设置了延时， 可以看到最后只有 task4 还在运行中</li>
+</ol>
+<p><strong>√as_completed</strong></p>
+<p>上面虽然提供了判断任务是否结束的方法，但是不能在主线程中一直判断啊。最好的方法是当某个任务结束了，就给主线程返回结果，而不是一直判断每个任务是否结束。</p>
+<p>ThreadPoolExecutor 中 的 as_completed() 就是这样一个方法，当子线程中的任务执行完后，直接用 result() 获取返回结果。用法如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># coding: utf-8</span><br><span class="hljs-keyword">from</span> concurrent.futures <span class="hljs-keyword">import</span> ThreadPoolExecutor, as_completed<br><span class="hljs-keyword">import</span> time<br><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">spider</span>(<span class="hljs-params">page</span>):<br>    time.sleep(page)<br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;crawl task<span class="hljs-subst">&#123;page&#125;</span> finished&quot;</span>)<br>    <span class="hljs-keyword">return</span> page<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">main</span>():<br>    <span class="hljs-keyword">with</span> ThreadPoolExecutor(max_workers=<span class="hljs-number">20</span>) <span class="hljs-keyword">as</span> t:<br>        obj_list = []<br>        <span class="hljs-keyword">for</span> page <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">1</span>, <span class="hljs-number">5</span>):<br>            obj = t.submit(spider, page)<br>            obj_list.append(obj)<br><br>        <span class="hljs-keyword">for</span> future <span class="hljs-keyword">in</span> as_completed(obj_list):<br>            data = future.result()<br>            <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;main: <span class="hljs-subst">&#123;data&#125;</span>&quot;</span>)<br>            <br><span class="hljs-comment"># 执行结果</span><br>crawl task1 finished<br>main: <span class="hljs-number">1</span><br>crawl task2 finished<br>main: <span class="hljs-number">2</span><br>crawl task3 finished<br>main: <span class="hljs-number">3</span><br>crawl task4 finished<br>main: <span class="hljs-number">4</span><br></code></pre></td></tr></table></figure>
+<p>as_completed() 方法是一个生成器，在没有任务完成的时候，会一直阻塞，除非设置了 timeout。</p>
+<p>当有某个任务完成的时候，会 yield 这个任务，就能执行 for 循环下面的语句，然后继续阻塞住，循环到所有的任务结束。同时，先完成的任务会先返回给主线程。</p>
+<h2 id="4-多进程"><a href="#4-多进程" class="headerlink" title="4. 多进程"></a>4. 多进程</h2><p>multiprocessing 是一个用与 threading 模块相似API的支持产生进程的包。 multiprocessing 包同时提供本地和远程并发，使用子进程代替线程，有效避免GIL带来的影响。</p>
+<h3 id="4-1-进程对象的创建"><a href="#4-1-进程对象的创建" class="headerlink" title="4.1 进程对象的创建"></a>4.1 进程对象的创建</h3><p>Process类直接创建</p>
+<p>Process类继承式创建，重写run方法</p>
+<h3 id="4-2-进程对象的实例方法和属性"><a href="#4-2-进程对象的实例方法和属性" class="headerlink" title="4.2 进程对象的实例方法和属性"></a>4.2 进程对象的实例方法和属性</h3><p>p.start()：启动进程</p>
+<p>p.join([timeout])：父进程阻塞直到该子进程执行结束</p>
+<p>p.is_alive()：判断进程是否为激活状态</p>
+<p>p.terminate/kill()：终止进程</p>
+<p>p.daemon：声明为守护进程，需在start方法前调用，默认为False。值为True时进程结束后子进程一起结束，为False时主进程会等待子进程结束后才退出</p>
+<p>p.pid：返回进程ID</p>
+<p>p.exitcode：返回进程退出代码</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs stylus">import multiprocessing as mp<br><br><span class="hljs-selector-tag">p</span> = mp<span class="hljs-selector-class">.Process</span>(target=task, args=(<span class="hljs-selector-tag">i</span>,))<br><span class="hljs-selector-tag">p</span><span class="hljs-selector-class">.start</span>()<br><span class="hljs-selector-tag">p</span><span class="hljs-selector-class">.join</span>()<br></code></pre></td></tr></table></figure>
+<h3 id="4-3-multiprocessing模块提供的方法"><a href="#4-3-multiprocessing模块提供的方法" class="headerlink" title="4.3 multiprocessing模块提供的方法"></a>4.3 multiprocessing模块提供的方法</h3><p>multiprocessing.current_process()：返回与当前进程相对应的 Process 对象</p>
+<p>multiprocessing.active_children()：返回当前进程存活的子进程的列表</p>
+<p>multiprocessing.set_executable()：设置在启动子进程时使用的 Python 解释器路径</p>
+<h3 id="4-4-进程间通信"><a href="#4-4-进程间通信" class="headerlink" title="4.4 进程间通信"></a>4.4 进程间通信</h3><ul>
+<li><p>multiprocessing.Event()：发送事件信号，与threading.Event()类似。</p>
+</li>
+<li><p>multiprocessing.Semaphore()：可控制最大并发数，类似于threading.Semaphore。</p>
+</li>
+<li><p>multiprocessiong.Queue()：主要用来在多个进程之间实现通信。Queue是多进程安全队列，Queue通过put和get方法来实现多进程之间的数据传递。</p>
+</li>
+<li><p>multiprocessiong.Pipe()：Pipe常用来在两个进程之间实现通信。该方法返回一个二元元组 (conn1,conn2)，代表一个管道的两端。Pipe方法有个duplex参数，默认为True，表示该管道处于全双工模式下，conn1和conn2都可以进行收发。当其为False时，表示该管道处于半双工模式下，conn1只能进行接收消息，conn2只能发送消息。send和recv方法分别是发送和接收消息的方法。</p>
+</li>
+<li><p>共享内存：multiprocessing.Value()，multiprocessing.Array()。可以使用 multiprocessing.sharedctypes 模块，该模块支持创建从共享内存分配的任意ctypes对象。</p>
+</li>
+<li><p>multiprocessing.Manager()：数据管理器，控制一个服务器进程，该进程保存Python对象并允许其他进程使用代理操作它们。</p>
+</li>
+</ul>
+<h2 id="5-进程池"><a href="#5-进程池" class="headerlink" title="5. 进程池"></a>5. 进程池</h2><p>进程池可以减少进程创建和释放的开销。multiprocessing.Pool() 描述了一个工作进程池，常用方法有：</p>
+<ul>
+<li><p>apply(func[, args[, kwds]])：使用arg和kwds参数调用func函数，结果返回前会一直阻塞，且func函数仅被pool中的一个进程运行。</p>
+</li>
+<li><p>apply_async(func[,args[,kwds[,callback[,error_callback]]]])：apply()方法的一个变体，会返回一个结果对象。如果callback被指定，那么callback可以接收一个参数然后被调用，当结果准备好回调时会调用callback，调用失败时，则用error_callback替换callback。 callback应被立即完成，否则处理结果的线程会被阻塞。</p>
+</li>
+<li><p>close()：阻止更多的任务提交到pool，待任务完成后，工作进程会退出。</p>
+</li>
+<li><p>terminate()：不管任务是否完成，立即停止工作进程。在对pool对象进程垃圾回收的时候，会立即调用terminate()。</p>
+</li>
+<li><p>join()：wait工作线程的退出，在调用join()前，必须调用close()或terminate()。</p>
+</li>
+<li><p>map(func, iterable[, chunksize])</p>
+</li>
+<li><p>map_async(func, iterable[, chunksize[, callback[, error_callback]]])</p>
+</li>
+</ul>
+<p>除此之外，还可以使用concurrent.futures.ProcessPoolExecutor()，接口与ThreadPoolExecutor线程池相同。</p>
+<h4 id="ProcessPoolExecutor的基本使用"><a href="#ProcessPoolExecutor的基本使用" class="headerlink" title="ProcessPoolExecutor的基本使用"></a>ProcessPoolExecutor的基本使用</h4><p>从Python3.2开始，标准库为我们提供了 <code>concurrent.futures</code> 模块，它提供了 <code>ThreadPoolExecutor</code> (线程池)和 <code>ProcessPoolExecutor</code> (进程池)两个类，是对 threading 和 multiprocessing 的进行了高级别的抽象， 暴露出统一的接口，帮助开发者非常方便的实现异步调用。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># coding: utf-8</span><br><span class="hljs-keyword">from</span> concurrent.futures <span class="hljs-keyword">import</span> ProcessPoolExecutor<br><span class="hljs-keyword">import</span> time<br><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">spider</span>(<span class="hljs-params">page</span>):<br>    time.sleep(page)<br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;crawl task<span class="hljs-subst">&#123;page&#125;</span> finished&quot;</span>)<br>    <span class="hljs-keyword">return</span> page<br><br><span class="hljs-keyword">with</span> ProcessPoolExecutor() <span class="hljs-keyword">as</span> p:  <span class="hljs-comment">#不填则默认为cpu的个数</span><br>    task1 = p.submit(spider, <span class="hljs-number">1</span>)<br>    task2 = p.submit(spider, <span class="hljs-number">2</span>)  <span class="hljs-comment"># 通过submit提交执行的函数到线程池中</span><br>    task3 = p.submit(spider, <span class="hljs-number">3</span>)<br>    <br>    <span class="hljs-keyword">try</span>:<br>        <span class="hljs-keyword">def</span> <span class="hljs-title function_">get_result</span>(<span class="hljs-params">future</span>):<br>            <span class="hljs-built_in">print</span>(future.result())  <span class="hljs-comment"># 通过result来获取返回值</span><br>        <span class="hljs-comment"># 为task添加线程完成的回调函数</span><br>        task1.add_done_callback(get_result)      <br>        task2.add_done_callback(get_result)<br>        task3.add_done_callback(get_result)<br>    <span class="hljs-keyword">except</span> Exception <span class="hljs-keyword">as</span> e:<br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;raise an exception: &#123;&#125;&#x27;</span>.<span class="hljs-built_in">format</span>(e))<br></code></pre></td></tr></table></figure>
+<h2 id="6-异步IO"><a href="#6-异步IO" class="headerlink" title="6. 异步IO"></a>6. 异步IO</h2><blockquote>
+<p>参考资料：</p>
+<p><a target="_blank" rel="noopener" href="https://madmalls.com/blog/post/io-models/">《第1章：I/O Models 阻塞/非阻塞 同步/异步》</a></p>
+<p><a target="_blank" rel="noopener" href="https://madmalls.com/blog/post/concurrent-programming-for-python/">《第2章：Python 并发编程》</a></p>
+<p><a target="_blank" rel="noopener" href="https://madmalls.com/blog/post/asyncio-howto-in-python3/">《第8章：使用 asyncio 模块实现并发》</a></p>
+<p><a target="_blank" rel="noopener" href="https://madmalls.com/blog/post/aiohttp-howto-in-python3/">《第9章：使用 asyncio + aiohttp 并发下载》</a></p>
+</blockquote>
+<p>首先我们看一下多进程、多线程、异步 IO 这三者的区别，以请求一个网页为例，如下图所示，把这类任务抽象成3部分，<strong>绿色部分</strong>代表请求前以及请求前的相关运算处理工作；<strong>白色部分</strong>代表请求中，等待远程服务器返回结果；<strong>蓝色部分</strong>代表得到服务器返回结果，并进行相关处理。</p>
+<h3 id="协程、多线程、多进程的区别？"><a href="#协程、多线程、多进程的区别？" class="headerlink" title="协程、多线程、多进程的区别？"></a>协程、多线程、多进程的区别？</h3><p><img src="https://hub.zhuanfou.com/5119_1562418835_9220.jpg" srcset="/img/loading.gif" lazyload alt="img"></p>
+<ul>
+<li><strong>单线程</strong>的网络IO部分，是会阻塞程序的运行；发出请求到请求返回的这段时间，该程序会占着CPU的该线程的坑位。（注：所谓的单线程就是一个进程只开一个线程）</li>
+</ul>
+<p>如上所示，<strong>单线程</strong>的网络IO部分，是会阻塞程序的运行；发出请求到请求返回的这段时间，该程序会占着CPU的该线程的坑位。（注：所谓的单线程就是一个进程只开一个线程）</p>
+<ul>
+<li><p><strong>多进程</strong></p>
+<ul>
+<li>是 <code>抢占式多任务（preemptive）</code>，同步并行的，由操作系统调度</li>
+<li>多进程是三种并发模式中唯一可以使用多核 CPU 的模式</li>
+</ul>
+</li>
+<li><p><strong>多线程</strong></p>
+<ul>
+<li>是 <code>抢占式多任务（preemptive）</code>，同步并行的，由操作系统调度</li>
+<li>Python 默认的解释器 CPython 由于 <code>GIL</code> 的存在，不能使用多核 CPU，只能运行在一个核心上</li>
+<li>线程是不安全的，线程会是挂的，经常你争我夺，当然会没有那么稳定；</li>
+<li>每个线程也具有独立的资源，比如栈、寄存器等；</li>
+<li>另外线程之间的切换也会造成额外资源的开销</li>
+</ul>
+</li>
+<li><p><strong>协程★★</strong></p>
+<ul>
+<li><strong>协程</strong>，又称为<strong>微线程</strong>，英文名为<strong>Coroutine</strong>，<strong>它的本质还是一个单线程</strong>，在单线程内实现调度，而不是在CPU层面切换线程，从而避免不必要的开销。</li>
+<li>异步是指在 <code>单线程</code> 中 <code>并发</code> 执行多个任务。当一个任务在等待数据时，它会释放 CPU 资源，转而执行其它任务，通过程序员自己主动切换任务来最小化空闲时间（IO等待的时间），这就是所谓的<strong>异步非阻塞</strong>。</li>
+</ul>
+</li>
+</ul>
+<h3 id="异步-I-O-操作"><a href="#异步-I-O-操作" class="headerlink" title="异步 I/O 操作"></a>异步 I/O 操作</h3><p><code>多进程</code> 或 <code>多线程</code> 方案中，操作系统不可能无上限地增加进程或线程，一方面会占用大量内存，影响系统稳定性；另一方面 <code>上下文切换</code> 的开销也很大，一旦进程或线程的数量过多时，CPU 的大部分时间就花在 <code>上下文切换</code> 上了，真正运行代码的时间就少了，结果是导致性能严重下降。</p>
+<p>那么，有没有什么办法可以减少大量进程或者线程的创建产生的大量内存占用？其实是有的，就是利用所谓的<strong>线程池</strong>或者<strong>进程池</strong>；既然减少了创建和销毁对象产生的开销，那么进程或者线程切换的开销有没有办法减少呢？其实是有的，我们直接使用 <strong>异步 IO</strong> 就可以了。</p>
+<p>异步 I/O 框架中，使用 <code>单线程</code>，利用 <code>事件循环</code>，不断地重复 <strong>“监控到事件发生 —&gt; 处理事件”</strong> 这一过程。同时，还要把每个 <code>阻塞型操作（blocking operation ）</code> 替换成 <code>非阻塞的异步调用（non-blocking asynchronous call）</code>，当某个任务中遇到耗时的 I/O 操作时，才会把控制权 <code>交还</code> 给 <code>事件循环</code>，然后 <code>事件循环</code> 会执行另一个任务。这样就可以避免阻塞型调用中止整个应用程序的进程，合理地解决了 CPU 高速执行能力和 I/O 设备的龟速严重不匹配问题。</p>
+<p><strong><code>异步 I/O 操作</code> 是指，你发起一个 I/O 操作（比如，等待网络图片数据的到来），却不用等它结束，你可以继续去做其它的事情，当它结束时，你会得到通知，然后再回来接着处理这个 I/O 后续的操作。而 <code>同步 I/O 操作</code> 则会被阻塞在 I/O 操作上直到它完成，这期间 CPU 做了很多事，只是没有运行你的程序</strong></p>
+<p>Python 的异步 IO 相关模块非常多</p>
+<ul>
+<li>比如 aiohttp、gevent……这里主要介绍 aiohttp 模块</li>
+</ul>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://morvanzhou.github.io/tutorials/python-basic/threading/">莫烦-多线程</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/zhangphil/article/details/88577091">Python等待所有线程任务完成</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/Hgp-x-T3ss4IiVk2_4VUrA">一篇文章搞懂Python多线程简单实现和GIL</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/RZSBe2MG9tsbUVZLHxK9NA">一篇文章理清Python多线程同步锁，死锁和递归锁</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.codeceo.com/article/python-thread-process.html">Python线程、进程和协程详解</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/zingp/p/5878330.html">python中的多线程、多进程</a></li>
+<li><a target="_blank" rel="noopener" href="http://aaronxu.eagleslab.com/index.php/Programming/206.html">python 并发编程：线程</a></li>
+<li><a target="_blank" rel="noopener" href="https://morvanzhou.github.io/tutorials/python-basic/multiprocessing/">莫烦-多进程</a></li>
+<li><a target="_blank" rel="noopener" href="https://juejin.im/post/5b17f4305188257d6b5cff6f">Python并发编程之谈谈线程中的“锁机制”（三）</a></li>
+<li><a target="_blank" rel="noopener" href="https://python-parallel-programmning-cookbook.readthedocs.io/zh_CN/latest/index.html">Python并行编程 中文版</a></li>
+<li><a target="_blank" rel="noopener" href="https://python3-cookbook.readthedocs.io/zh_CN/latest/chapters/p12_concurrency.html">Python Cookbook 3rd Edition Documentation</a></li>
+</ul>
+<ul>
+<li><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzI2OTQxMTM4OQ==&amp;mid=2247491746&amp;idx=2&amp;sn=f8c2b67600ff911d6d78556dc7369dca&amp;chksm=eae215f0dd959ce6bc112fcfc4f852fa6ded57ea981b80fd30273067e08d6936a4ad23b7b20e&amp;scene=0&amp;xtrack=1#rd">15分钟读懂进程线程、同步异步、阻塞非阻塞、并发并行，太实用了！</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://python.hamel.dev/concurrency/">Python Concurrency: The Tricky Bits</a>                  </p>
+</li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%A4%9A%E8%BF%9B%E7%A8%8B/">#多线程多进程</a>
+      
+        <a href="/tags/python%E5%B9%B6%E5%8F%91/">#python并发</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>python并发编程</div>
+      <div>http://example.com/2019/10/30/2019-10-30-Python并发编程（线程 vs 进程）/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>NSX</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2019年10月30日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/10/31/2019-10-31-Atexit%E7%A8%8B%E5%BA%8F%E9%80%80%E5%87%BA%E5%89%8D%E6%89%A7%E8%A1%8C%E6%93%8D%E4%BD%9C/" title="Atexit程序退出前执行操作">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Atexit程序退出前执行操作</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2019/10/24/2019-10-24-%E2%9C%8B%F0%9F%8F%BB%E6%89%8B%E6%8A%8A%E6%89%8B%E6%90%AD%E5%BB%BA%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%8E%AF%E5%A2%83/" title="✋🏻手把手搭建深度学习环境">
+                        <span class="hidden-mobile">✋🏻手把手搭建深度学习环境</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

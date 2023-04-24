@@ -1,0 +1,877 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="NSX">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="在现实生活中很多机器学习问题有上千维，甚至上万维特征，这不仅影响了训练速度，通常还很难找到比较好的解。这样的问题成为维数灾难（curse of dimensionality） 幸运的是，理论上降低维度是可行的。比如MNIST数据集大部分的像素总是白的，因此可以去掉这些特征；相邻的像素之间是高度相关的，如果变为一个像素，相差也并不大。 需要注意：降低维度肯定会损失一些信息，这可能会让表现稍微变差。因">
+<meta property="og:type" content="article">
+<meta property="og:title" content="降维方法总结">
+<meta property="og:url" content="http://example.com/2021/09/06/2021-09-06-%E9%99%8D%E7%BB%B4%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="在现实生活中很多机器学习问题有上千维，甚至上万维特征，这不仅影响了训练速度，通常还很难找到比较好的解。这样的问题成为维数灾难（curse of dimensionality） 幸运的是，理论上降低维度是可行的。比如MNIST数据集大部分的像素总是白的，因此可以去掉这些特征；相邻的像素之间是高度相关的，如果变为一个像素，相差也并不大。 需要注意：降低维度肯定会损失一些信息，这可能会让表现稍微变差。因">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2021/09/06/2021-09-06-%E9%99%8D%E7%BB%B4%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/1648195969917-17bb0c87-ce35-4463-9441-0b0506e4400e.png">
+<meta property="og:image" content="http://example.com/2021/09/06/2021-09-06-%E9%99%8D%E7%BB%B4%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/1648196040951-1f0406fa-1043-477c-b9db-50c66c2717a2.png">
+<meta property="og:image" content="http://example.com/2021/09/06/2021-09-06-%E9%99%8D%E7%BB%B4%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/1648196100345-56959b49-39d0-459e-86ae-5b6de1491436.png">
+<meta property="og:image" content="http://example.com/2021/09/06/2021-09-06-%E9%99%8D%E7%BB%B4%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/1648201775329-75435461-081a-4673-a2c2-4487a6aa86cb.png">
+<meta property="og:image" content="http://example.com/2021/09/06/2021-09-06-%E9%99%8D%E7%BB%B4%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/1656001669878-683e2a0e-c607-4265-afb8-cb2faeba385e.jpeg">
+<meta property="og:image" content="http://example.com/2021/09/06/2021-09-06-%E9%99%8D%E7%BB%B4%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/1656001674355-b18523b2-2fae-4e84-b44f-3a05287976bc.jpeg">
+<meta property="og:image" content="http://example.com/2021/09/06/2021-09-06-%E9%99%8D%E7%BB%B4%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/1648196475472-a9a91bb5-b28f-4373-88f1-42bbd772740b.png">
+<meta property="og:image" content="http://example.com/2021/09/06/2021-09-06-%E9%99%8D%E7%BB%B4%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/1648199755739-a02c9a2d-f521-4b56-b82a-e6e50fbed83a.png">
+<meta property="og:image" content="http://example.com/2021/09/06/2021-09-06-%E9%99%8D%E7%BB%B4%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/1648196677697-1b2a959e-c9f4-46ef-8ac1-8dcd4db5d35e.webp">
+<meta property="og:image" content="http://example.com/2021/09/06/2021-09-06-%E9%99%8D%E7%BB%B4%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/1648196685367-a789e9a7-f683-47cd-b660-55be81231ca7.webp">
+<meta property="og:image" content="http://example.com/2021/09/06/2021-09-06-%E9%99%8D%E7%BB%B4%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/1676455452673-306af021-4987-43c9-b566-3240d2537f30.png">
+<meta property="og:image" content="http://example.com/2021/09/06/2021-09-06-%E9%99%8D%E7%BB%B4%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/1648200901363-0109c0c9-94c1-49c3-9564-19478afc91bc.png">
+<meta property="og:image" content="http://example.com/2021/09/06/2021-09-06-%E9%99%8D%E7%BB%B4%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/1648200909064-be9f7a41-1a5e-459a-be5f-7b70992c9420.png">
+<meta property="og:image" content="http://example.com/2021/09/06/2021-09-06-%E9%99%8D%E7%BB%B4%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/1648201508319-732c41bd-bd60-488f-ab66-fc4413e56374.png">
+<meta property="article:published_time" content="2021-09-05T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-24T10:51:35.706Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="降维">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2021/09/06/2021-09-06-%E9%99%8D%E7%BB%B4%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/1648195969917-17bb0c87-ce35-4463-9441-0b0506e4400e.png">
+  
+  
+  
+  <title>降维方法总结 - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="降维方法总结"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-09-06 00:00" pubdate>
+          2021年9月6日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          9.3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          78 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">降维方法总结</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>在现实生活中很多机器学习问题有上千维，甚至上万维特征，这不仅影响了训练速度，通常还很难找到比较好的解。这样的问题成为<strong>维数灾难（curse of dimensionality）</strong></p>
+<p>幸运的是，理论上降低维度是可行的。比如MNIST数据集大部分的像素总是白的，因此可以去掉这些特征；相邻的像素之间是高度相关的，如果变为一个像素，相差也并不大。</p>
+<p>需要注意：降低维度肯定会损失一些信息，这可能会让表现稍微变差。因此应该先在原维度训练一次，如果训练速度太慢再选择降维。虽然有时候降为能去除噪声和一些不必要的细节，但通常不会，主要是能加快训练速度。</p>
+<p><strong>降维除了能提高训练速度以外，还能用于数据可视化。</strong>把高维数据降到2维或3维，然后就能把特征在2维空间（3维空间）表示出来，能直观地发现一些规则。</p>
+<h2 id="1-降维的主要方法"><a href="#1-降维的主要方法" class="headerlink" title="1.降维的主要方法"></a>1.降维的主要方法</h2><p>降维的方法主要为两种：<strong>projection 和 Manifold Learning</strong>。</p>
+<h3 id="1-1-投影（Projection）"><a href="#1-1-投影（Projection）" class="headerlink" title="1.1 投影（Projection）"></a>1.1 投影（Projection）</h3><p>在大多数的真实问题，训练样例都不是均匀分散在所有的维度，许多特征都是固定的，同时还有一些特征是强相关的。因此所有的训练样例实际上可以投影在高维空间中的低维子空间中，下面看一个例子。</p>
+<img src="/2021/09/06/2021-09-06-%E9%99%8D%E7%BB%B4%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/1648195969917-17bb0c87-ce35-4463-9441-0b0506e4400e.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>可以看到3维空间中的训练样例其实都分布在同一个2维平面，因此我们能够将所有样例都投影在2维平面。对于更高维的空间可能能投影到低维的子空间中。</p>
+<p>然而投影（projection）不总是降维最好的方法在，比如许多情况下，空间可以扭转，如著名的瑞士卷（Swiss roll）数据。</p>
+<img src="/2021/09/06/2021-09-06-%E9%99%8D%E7%BB%B4%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/1648196040951-1f0406fa-1043-477c-b9db-50c66c2717a2.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>如果简单的使用投影（project）降维（例如通过压平第3维），那么会变成如下左图的样子，不同类别的样例都混在了一起，而我们的预想是变成右下图的形式。</p>
+<img src="/2021/09/06/2021-09-06-%E9%99%8D%E7%BB%B4%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/1648196100345-56959b49-39d0-459e-86ae-5b6de1491436.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<h3 id="1-2-流形学习（Manifold-Learning）"><a href="#1-2-流形学习（Manifold-Learning）" class="headerlink" title="1.2 流形学习（Manifold Learning）"></a>1.2 流形学习（Manifold Learning）</h3><blockquote>
+<p>降维方法知多少？<a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1080918">https://cloud.tencent.com/developer/article/1080918</a></p>
+</blockquote>
+<p>从降维的角度来看，流形学习是除了核方法之外实现非线性降维的另一类重要手段。流形学习的一个基本假设是样本分布在一个潜在的流形之上，所以尽管输入空间的维数很高，但流形的内在维度一般不是很高。如图4所示，左图是三维空间中的一个S曲面流形，其内在维度是二维。中间图是对流形进行采样而来，右图是经流形学习算法局部线性嵌入把流形展在二维平面所得到的结果。</p>
+<p>在等度规映射和局部线性嵌入之后，出现了一系列流形学习算法，主要包括拉普拉斯特征映射（Laplacian Eigenmaps，LE）、最大方差延展（Maximum Variance Unfolding，MVU）和局部正切空间对齐（Local TangentSpace Alignment， LTSA）等。相比传统线性降维算法，流形学习尽管能有效处理非线性问题，但多数流形算法存在计算效率低下、不能推广到Out-of-sample等问题。后续算法针对上述问题分别做出了许多改进，其中有代表性的是何（X.He）等人所提出的局部保持投影（Local Preserving Projection，LPP）。它实际上是拉普拉斯特征映射的线性化版本。在局部保持投影之外，出现了很多局部化的降维算法，这些方法中都利用了局部保持的思想，即在高维空间中相邻的样本在投影后的低维空间中也应该相邻，一般是通过k近邻（K-NearestNeighbor，k-NN）或ε邻域来度量近邻关系并用一个图来刻画，因而上述方法又可归为一类基于图的降维。之后，人们又将在支持向量机中关键的类间隔（Margin）思想引入其中，相应地发展出了近邻判别分析的降维算法（所谓类间隔是指类间的最小距离，直觉上，最大化该间隔能保证有好的判别性能）。与局部保持投影等无监督方法不同，近邻判别分析不仅综合了类别信息，而且通过同时构建类内及类间k近邻关系图定义出优化目标，进而优化该目标，以获得具有良好判别能力的数据降维。最近，严（S.Yan）等人提出的图嵌入的一般降维框架成为了一个典型的范例，它将上述多数降维方法纳入到该框架之中。在基于图的嵌入降维方法中，图的构建和参数的选取是其非常关键的步骤。</p>
+<img src="/2021/09/06/2021-09-06-%E9%99%8D%E7%BB%B4%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/1648201775329-75435461-081a-4673-a2c2-4487a6aa86cb.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>下面介绍几种投影降维方法</p>
+<h2 id="2-PCA-主成分分析"><a href="#2-PCA-主成分分析" class="headerlink" title="2.PCA 主成分分析"></a>2.PCA 主成分分析</h2><blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/wj-1314/p/8032780.html">Python机器学习笔记：主成分分析（PCA）算法</a></p>
+</blockquote>
+<p>主成分分析（Principal components analysis，以下简称PCA）是最重要的降维方法之一。在数据压缩消除冗余和数据噪音消除等领域都有广泛的应用。</p>
+<h3 id="2-1-原理："><a href="#2-1-原理：" class="headerlink" title="2.1 原理："></a>2.1 原理：</h3><p>PCA是一种把握事物主要性质的多元统计分析方法。它将原始变量变换为一小部分反映事物主要性质的变量（称之为主分量），从而将高维数据投影到了低维空间，并且保证投影后的低维数据在最小平方意义下最优地表征原有高维数据。</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th><img src="/2021/09/06/2021-09-06-%E9%99%8D%E7%BB%B4%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/1656001669878-683e2a0e-c607-4265-afb8-cb2faeba385e.jpeg" srcset="/img/loading.gif" lazyload class="" title="主成分分析 1.jpg"></th>
+<th><img src="/2021/09/06/2021-09-06-%E9%99%8D%E7%BB%B4%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/1656001674355-b18523b2-2fae-4e84-b44f-3a05287976bc.jpeg" srcset="/img/loading.gif" lazyload class="" title="主成分分析 2.jpg"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>它具有如下性质：</p>
+<ol>
+<li>保留方差是最大的<ol>
+<li>首先需要选择一个好的超平面。先看下图的例子，需要将2D降为1D，选择不同的平面得到右图不一样的结果，第1个投影以后方差最大，第3个方差最小，选择最大方差的一个感觉上应该是比较合理的，因为这样能保留更多的信息。</li>
+<li>另外一种判断的方式是：通过最小化原数据和投影后的数据之间的均方误差。</li>
+</ol>
+</li>
+<li>最终的重构误差（从变换后回到原始情况）是最小的</li>
+</ol>
+<img src="/2021/09/06/2021-09-06-%E9%99%8D%E7%BB%B4%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/1648196475472-a9a91bb5-b28f-4373-88f1-42bbd772740b.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<h3 id="2-2-算法步骤"><a href="#2-2-算法步骤" class="headerlink" title="2.2 算法步骤"></a>2.2 算法步骤</h3><p>主要步骤如下：</p>
+<p>（1）计算数据样本的协方差矩阵；</p>
+<p>（2）求解该协方差矩阵的特征向量，按照相应的特征值从大到小排序，选择排在前面的<strong>部分</strong>特征向量作为投影向量；</p>
+<p>（3）将原高维数据投影到子空间中以达到降维的目的，即将数据转换到上述N个特征向量构建的新的空间中</p>
+<p>补充资料：协方差矩阵计算公式：</p>
+<img src="/2021/09/06/2021-09-06-%E9%99%8D%E7%BB%B4%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/1648199755739-a02c9a2d-f521-4b56-b82a-e6e50fbed83a.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>两个特征的协方差计算例子：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python">Xi <span class="hljs-number">1.1</span> <span class="hljs-number">1.9</span> <span class="hljs-number">3</span><br>Yi <span class="hljs-number">5.0</span> <span class="hljs-number">10.4</span> <span class="hljs-number">14.6</span><br><br>E(X) = (<span class="hljs-number">1.1</span>+<span class="hljs-number">1.9</span>+<span class="hljs-number">3</span>)/<span class="hljs-number">3</span>=<span class="hljs-number">2</span><br>E(Y) = (<span class="hljs-number">5.0</span>+<span class="hljs-number">10.4</span>+<span class="hljs-number">14.6</span>)/<span class="hljs-number">3</span>=<span class="hljs-number">10</span><br>E(XY)=(<span class="hljs-number">1.1</span>×<span class="hljs-number">5.0</span>+<span class="hljs-number">1.9</span>×<span class="hljs-number">10.4</span>+<span class="hljs-number">3</span>×<span class="hljs-number">14.6</span>)/<span class="hljs-number">3</span>=<span class="hljs-number">23.02</span><br>Cov(X,Y)=E(XY)-E(X)E(Y)=<span class="hljs-number">23.02</span>-<span class="hljs-number">2</span>×<span class="hljs-number">10</span>=<span class="hljs-number">3.02</span><br></code></pre></td></tr></table></figure></p>
+<ul>
+<li>协方差矩阵的特征值和特征向量计算：</li>
+</ul>
+<p>一个向量v是方阵A的特征向量，将一定可以表示成下面的形式：</p>
+<img src="/2021/09/06/2021-09-06-%E9%99%8D%E7%BB%B4%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/1648196677697-1b2a959e-c9f4-46ef-8ac1-8dcd4db5d35e.webp" srcset="/img/loading.gif" lazyload class="">
+<p>其中A为方阵，v 是特征向量，λ是特征值。λ为特征向量 v 对应的特征值。<br>特征值分解是将一个矩阵分解为如下形式：</p>
+<img src="/2021/09/06/2021-09-06-%E9%99%8D%E7%BB%B4%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/1648196685367-a789e9a7-f683-47cd-b660-55be81231ca7.webp" srcset="/img/loading.gif" lazyload class="">
+<p>Q是这个矩阵A的特征向量组成的矩阵，Σ是一个对角矩阵，每一个对角线元素就是一个特征值，里面的特征值是由大到小排列。特征值表示的是这个特征到底有多重要，而特征向量表示这个特征是什么</p>
+<h3 id="2-3-代码实现"><a href="#2-3-代码实现" class="headerlink" title="2.3 代码实现"></a>2.3 代码实现</h3><p>numpy中实现PCA<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np<br><br><span class="hljs-comment">#读取文件</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">loadDataSet</span>(<span class="hljs-params">fileName, delim=<span class="hljs-string">&#x27;\t&#x27;</span></span>):<br>    fr = <span class="hljs-built_in">open</span>(fileName)<br>    stringArr = [line.strip().split(delim) <span class="hljs-keyword">for</span> line <span class="hljs-keyword">in</span> fr.readlines()]<br>    datArr = [<span class="hljs-built_in">map</span>(<span class="hljs-built_in">float</span>,line) <span class="hljs-keyword">for</span> line <span class="hljs-keyword">in</span> stringArr]<br>    <span class="hljs-keyword">return</span> mat(datArr)<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">pca</span>(<span class="hljs-params">dataMat, topNfeat=n</span>):<br>    meanVals = np.mean(dataMat, axis=<span class="hljs-number">0</span>) <br>    <span class="hljs-comment">#（axis=0）按列求均值</span><br>    meanRemoved = dataMat - meanVals <br>    <span class="hljs-comment">#减去均值</span><br>    covMat = np.cov(meanRemoved, rowvar=<span class="hljs-number">0</span>)  <br>    <span class="hljs-comment">#计算协方差矩阵，rowvar为0，</span><br>    <span class="hljs-comment">#一行为一个样本，不为0一列为一个样本</span><br>    eigVals,eigVects = np.linalg.eig(mat(covMat))<br>    <span class="hljs-comment">#求特征值和特征向量,</span><br>    <span class="hljs-comment">#特征向量是按列放的，即一列代表一个特征向量 。</span><br>    <span class="hljs-comment">#eigVals以行向量形式存放特征值。</span><br>    <span class="hljs-comment">#eigVects存放特征向量，每一列代表一个特征向量。</span><br>    eigValInd = np.argsort(eigVals)            <br>    <span class="hljs-comment">#对特征值从小到大排序 ,函数argsort()返回从小到大排序的index</span><br>    eigValInd = eigValInd[:-(topNfeat+<span class="hljs-number">1</span>):-<span class="hljs-number">1</span>]  <br>    <span class="hljs-comment">#列表逆序以后，从头到位取前topNfeat个特征值index,</span><br>    <span class="hljs-comment">#即最大的n个特征值的index （python里面，list[a:b:c]代表从下标a开始到b，</span><br>    <span class="hljs-comment">#步长为c。list[::-1]可以看作是列表逆序）</span><br>    redEigVects = eigVects[:,eigValInd]       <br>    <span class="hljs-comment">#最大的n个特征值对应的特征向量  </span><br>    lowDDataMat = meanRemoved * redEigVects<br>    <span class="hljs-comment">#低维特征空间的数据 </span><br>    reconMat = (lowDDataMat * redEigVects.T) + meanVals<br>    <span class="hljs-comment">#把数据转换到新空间</span><br>    <span class="hljs-keyword">return</span> lowDDataMat, reconMat<br></code></pre></td></tr></table></figure><br>调用sklearn中的PCA</p>
+<img src="/2021/09/06/2021-09-06-%E9%99%8D%E7%BB%B4%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/1676455452673-306af021-4987-43c9-b566-3240d2537f30.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>sklearn.<strong>PCA参数说明：</strong></p>
+<ul>
+<li>n_components:<br>意义：PCA算法中所要保留的主成分个数n，也即保留下来的特征个数n<br>类型：int 或者 string，缺省时默认为None，所有成分被保留。</li>
+<li>copy:<br>类型：bool，True或者False，默认为True。意义：表示是否在运行算法时，将原始训练数据复制一份。若为True，则运行PCA算法后，原始训练数据的值不会有任何改变，因为是在原始数据的副本上进行运算；若为False，则运行PCA算法后，原始训练数据的值会改，因为是在原始数据上进行降维计算。</li>
+<li>whiten:<br>类型：bool，默认为False<br>意义：白化，使得每个特征具有相同的方差。就是对降维后的数据的每个特征进行归一化，一般不需要白化。</li>
+</ul>
+<p><strong>PCA对象的属性:</strong></p>
+<ul>
+<li>components_ ：返回具有最大方差的成分。</li>
+<li>explained_variance_：所保留的n个成分各自的方差</li>
+<li>explained_variance_ratio_：返回 所保留的n个成分各自的方差百分比。</li>
+<li>n_components_：返回所保留的成分个数n。</li>
+<li>noise variance：噪声方差大小</li>
+<li>mean_:特征均值</li>
+</ul>
+<p><strong>PCA对象的方法：</strong></p>
+<ul>
+<li>fit(X,y=None)<br>fit()是scikit-learn中通用的方法。因为PCA是无监督学习算法，此处y等于None。<br>fit(X)，表示用数据X来训练PCA模型。</li>
+<li>fit_transform(X)<br>用X来训练PCA模型，同时返回降维后的数据。</li>
+<li>inverse_transform()<br>将降维后的数据转换成原始数据，X=pca.inverse_transform(newX)</li>
+<li>transform(X)<br>将数据X转换成降维后的数据。</li>
+</ul>
+<h3 id="2-4-PCA小结"><a href="#2-4-PCA小结" class="headerlink" title="2.4 PCA小结"></a>2.4 PCA小结</h3><p>作为一个非监督学习的降维方法，它只需要特征值分解，就可以对数据进行压缩，去噪。因此在实际场景应用很广泛。为了克服PCA的一些缺点，出现了很多PCA的变种，比如为解决非线性降维的KPCA，还有解决内存限制的增量PCA方法Incremental PCA，以及解决稀疏数据降维的PCA方法Sparse PCA等。</p>
+<p>PCA算法的主要优点有：</p>
+<ul>
+<li>仅仅需要以方差衡量信息量，不受数据集以外的因素影响。 </li>
+<li>各主成分之间正交，可消除原始数据成分间的相互影响的因素。</li>
+<li>计算方法简单，主要运算是特征值分解，易于实现。</li>
+</ul>
+<p>PCA算法的主要缺点有：</p>
+<ul>
+<li>主成分各个特征维度的含义具有一定的模糊性，不如原始样本特征的解释性强。</li>
+<li>方差小的非主成分也可能含有对样本差异的重要信息，因降维丢弃可能对后续数据处理有影响。</li>
+</ul>
+<h2 id="3-T-SNE（t-分布邻域嵌入算法）"><a href="#3-T-SNE（t-分布邻域嵌入算法）" class="headerlink" title="3. T-SNE（t-分布邻域嵌入算法）"></a>3. T-SNE（t-分布邻域嵌入算法）</h2><p>t-Distributed Stochastic Neighbor Embedding (t-SNE) ，简单来说是一种「降维」的计算方法，同时也可以用于展示（可视化）高维数据。</p>
+<h3 id="3-1-基本原理"><a href="#3-1-基本原理" class="headerlink" title="3.1 基本原理"></a>3.1 基本原理</h3><p>SNE是通过仿射(affinitie)变换将数据点映射到概率分布上，主要包括两个步骤：</p>
+<ol>
+<li>SNE构建一个高维对象之间的概率分布，使得相似的对象有更高的概率被选择，而不相似的对象有较低的概率被选择。</li>
+<li>SNE在低维空间里在构建这些点的概率分布，使得这两个概率分布之间尽可能的相似。</li>
+</ol>
+<p>我们看到t-SNE模型是非监督的降维，他跟kmeans等不同，他不能通过训练得到一些东西之后再用于其它数据（比如kmeans可以通过训练得到k个点，再用于其它数据集，而t-SNE只能单独的对数据做操作，也就是说他只有fit_transform，而没有fit操作）</p>
+<h3 id="3-2-算法流程"><a href="#3-2-算法流程" class="headerlink" title="3.2 算法流程"></a>3.2 算法流程</h3><p>有空再补</p>
+<h3 id="3-3-代码实现"><a href="#3-3-代码实现" class="headerlink" title="3.3 代码实现"></a>3.3 代码实现</h3><blockquote>
+<p>参考《<a target="_blank" rel="noopener" href="https://mortis.tech/2019/11/program_note/664/">Python – 如何使用t-SNE 进行降维</a>》</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np<br><span class="hljs-keyword">import</span> matplotlib.pyplot <span class="hljs-keyword">as</span> plt<br><span class="hljs-keyword">from</span> sklearn <span class="hljs-keyword">import</span> manifold, datasets<br><br><span class="hljs-comment">#Prepare the data</span><br>digits = datasets.load_digits(n_class=<span class="hljs-number">6</span>)<br>X, y = digits.data, digits.target<br>n_samples, n_features = X.shape<br>n = <span class="hljs-number">20</span>  <br>img = np.zeros((<span class="hljs-number">10</span> * n, <span class="hljs-number">10</span> * n))<br><span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(n):<br>    ix = <span class="hljs-number">10</span> * i + <span class="hljs-number">1</span><br>    <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(n):<br>        iy = <span class="hljs-number">10</span> * j + <span class="hljs-number">1</span><br>        img[ix:ix + <span class="hljs-number">8</span>, iy:iy + <span class="hljs-number">8</span>] = X[i * n + j].reshape((<span class="hljs-number">8</span>, <span class="hljs-number">8</span>))<br>plt.figure(figsize=(<span class="hljs-number">8</span>, <span class="hljs-number">8</span>))<br>plt.imshow(img, cmap=plt.cm.binary)<br>plt.xticks([])<br>plt.yticks([])<br>plt.show()<br><br><span class="hljs-comment">#t-SNE</span><br>X_tsne = manifold.TSNE(n_components=<span class="hljs-number">2</span>, init=‘random’, random_state=<span class="hljs-number">5</span>, verbose=<span class="hljs-number">1</span>).fit_transform(X)<br><br><span class="hljs-comment">#Data Visualization</span><br>x_min, x_max = X_tsne.<span class="hljs-built_in">min</span>(<span class="hljs-number">0</span>), X_tsne.<span class="hljs-built_in">max</span>(<span class="hljs-number">0</span>)<br>X_norm = (X_tsne – x_min) / (x_max – x_min)  <span class="hljs-comment">#Normalize</span><br>plt.figure(figsize=(<span class="hljs-number">8</span>, <span class="hljs-number">8</span>))<br><span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(X_norm.shape[<span class="hljs-number">0</span>]):<br>    plt.text(X_norm[i, <span class="hljs-number">0</span>], X_norm[i, <span class="hljs-number">1</span>], <span class="hljs-built_in">str</span>(y[i]), color=plt.cm.Set1(y[i]), <br>             fontdict=&#123;‘weight’: ‘bold’, ‘size’: <span class="hljs-number">9</span>&#125;)<br>plt.xticks([])<br>plt.yticks([])<br>plt.show()<br></code></pre></td></tr></table></figure>
+<p>TSNE()这个函数里各个参数的含义：</p>
+<ul>
+<li>n_components：你想要降成几维，一维填1、二维填2、三维填3，没有别的选择了。 </li>
+<li>perplexity：你的资料量越大，就越大。预设是30，建议值是5-50，但你可以不要采纳。 </li>
+<li>n_iter：你想要迭代的次数，预设是1000。 </li>
+<li>init：最初投影，两个选择“random” 或是“pca” (t-SNE里面有PCA噢!) </li>
+<li>verbose：要不要看训练过程 </li>
+<li>random_state：控制随机数的生成 </li>
+<li>method：不用改，除非你的数据量很小，才改成“exact” </li>
+</ul>
+<p>执行完之后应该会出现两张图：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th><img src="/2021/09/06/2021-09-06-%E9%99%8D%E7%BB%B4%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/1648200901363-0109c0c9-94c1-49c3-9564-19478afc91bc.png" srcset="/img/loading.gif" lazyload class="" title="image.png"></th>
+<th><img src="/2021/09/06/2021-09-06-%E9%99%8D%E7%BB%B4%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/1648200909064-be9f7a41-1a5e-459a-be5f-7b70992c9420.png" srcset="/img/loading.gif" lazyload class="" title="image.png"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="3-4-PCA-vs-T-SNE"><a href="#3-4-PCA-vs-T-SNE" class="headerlink" title="3.4 PCA vs. T-SNE"></a>3.4 PCA vs. T-SNE</h3><p>PCA和T-SNE同为降维工具，主要区别在于：机制和原理不同</p>
+<p>T-SNE 运行极慢，PCA 则相对较快；</p>
+<p>因此通常来说，T-SNE只能用于展示（可视化）高维数据，由于速度慢常常先用 PCA 进行降维，再使用 tsne：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> sklearn.manifold <span class="hljs-keyword">import</span> TSNE<br><span class="hljs-keyword">from</span> sklearn.decomposition <span class="hljs-keyword">import</span> PCA<br>data_pca = PCA(n_components=<span class="hljs-number">50</span>).fit_transform(data)<br>data_pca_tsne = TSNE(n_components=<span class="hljs-number">2</span>).fit_transform(data_pca)<br></code></pre></td></tr></table></figure>
+<h2 id="4-MDS-多维标度法"><a href="#4-MDS-多维标度法" class="headerlink" title="4. MDS:多维标度法"></a>4. MDS:多维标度法</h2><p>MDS类似T-SNE，经常用于数据可视化，维度大多是时候是2-3，他在降维的同时尽可能保留样本间的相对距离。<br>具体介绍略….直接看代码…</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> sklearn.manifold <span class="hljs-keyword">import</span> MDS<br>mds = manifold.MDS(n_components=<span class="hljs-number">3</span>)<br>Xtrans = mds.fit_transform(X)<br></code></pre></td></tr></table></figure>
+<p>多维标度法解决的问题是：当n个对象（object）中各对对象之间的相似性（或距离）给定时，确定这些对象在低维空间中的表示，并使其尽可能与原先的相似性（或距离）“大体匹配”，使得由降维所引起的任何变形达到最小。</p>
+<p>多维空间中排列的每一个点代表一个对象，因此点间的距离与对象间的相似性高度相关。也就是说，两个相似的对象由多维空间中两个距离相近的点表示，而两个不相似的对象则由多维空间两个距离较远的点表示。多维空间通常为二维或三维的欧氏空间，但也可以是非欧氏三维以上空间。</p>
+<h2 id="5-SVD-矩阵分解-奇异值分解"><a href="#5-SVD-矩阵分解-奇异值分解" class="headerlink" title="5. SVD 矩阵分解/奇异值分解"></a>5. SVD 矩阵分解/奇异值分解</h2><blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.6aiq.com/article/1586815086168">贝壳找房【语言模型系列】原理篇一：从 one-hot 到 Word2vec</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/wj-1314/p/10304676.html">Python机器学习笔记：奇异值分解（SVD）算法</a><br>⭐️<a href="Singular Value Decomposition as Simply as Possible">Singular Value Decomposition as Simply as Possible</a></p>
+</blockquote>
+<h3 id="5-1-原理"><a href="#5-1-原理" class="headerlink" title="5.1. 原理"></a>5.1. 原理</h3><p>奇异值分解 (SVD) 是将矩阵 _A_ 进行分解，$A=UΣV^T$，其中 _A_ 是 _m_∗_n_ 的矩阵，_U_是 _m_∗_n_ 的矩阵，Σ 是 _m_∗_n_ 的矩阵，_V_ 是 _n_∗_n_ 的矩阵，如何求解得到这三个矩阵呢？</p>
+<p>首先回顾一下特征值和特征向量的定义：</p>
+<p>$Ax=λx$</p>
+<p>其中，A 是 _m_∗_m_ 实对称矩阵，_x_ 是一个 _n_ 维向量，则称 _λ_ 是一个特征值，_x_ 是矩阵 _A_ 的特征值 _λ_ 对应的一个特征向量。如果我们求出了 _n_ 个特征值 $λ_1,λ_2…λ_n$及其对应的特征向量 $x_1,x_2…x_n$，如果这 _n_ 个特征向量线性无关，那么矩阵 _A_ 就可以表示为</p>
+<p>$A=XΣX^{−1}$</p>
+<p>其中，_X_ 是有 _n_ 个特征向量组成的 _n_∗_n_ 的矩阵，Σ 是由 _n_ 个特征值为主对角线的 _n_∗_n_ 维矩阵。一般会将 _X_ 进行标准化，即 $∣∣xi∣∣_2=1,x_ix_i^T=1,XX^T=I$，也就是得到了 $X^T=X^{−1}$，那么 _A_ 就可以表示为</p>
+<p>$A=XΣX^T$</p>
+<p>需要注意的是，直接进行特征分解的矩阵 _A_ 是方阵，而在 SVD 中的矩阵 _A_ 不一定是方阵，这时需要再做一些推导。</p>
+<p>$AA^T=UΣV^TVΣ^TU^T$</p>
+<p>由于 $V^TV=I$，所以</p>
+<p>$AA^T=UΣ^2U^T$</p>
+<p>因为$AA^T$是一个 _m_∗_m_ 的方阵，所以通过求解$AA^T$的特征向量，就可以得到矩阵 _U_。同理，通过求解$A^TA$的特征向量，就可以得到矩阵 _V_，通过对$AA^T$的特征值矩阵求平方根，就可以得到矩阵 _A_ 的奇异值矩阵 Σ。至此，我们得到了矩阵 A 的分解。</p>
+<p>值得注意的是，奇异值是从大到小排列的，通常前 10% 甚至 1% 的奇异值的和就占了所有奇异值和的 99% 以上，奇异值在集合意义上代表了特征的权重，所以我们一般不会选择将整个 _U_ 矩阵作为词向量矩阵，而是选择前 k 维，最终的词向量表大小就是 _m_∗_k_ ,_m_ 是词表达小，_k_ 是词向量维度。</p>
+<p>基于 SVD 的方法得到了稠密的词向量，相比于之前的 one-hot 有了一定提升，能够表现单词之间一定的语义关系，但是这种方法也存在很多问题：</p>
+<ul>
+<li>矩阵过于稀疏。因为在构建共现矩阵时，必然有很多词是没有共现的</li>
+<li>分解共现矩阵的复杂度很高</li>
+<li>高频无意义的词影响共现矩阵分解的效果，如 is，a</li>
+<li>一词多义问题，即同一个词具有不同含义却被表示为一个向量，比如 bank 既有银行的意思，也有岸边的意思，但在这里被表示为统一的向量</li>
+</ul>
+<h3 id="5-2-使用"><a href="#5-2-使用" class="headerlink" title="5.2. 使用"></a>5.2. 使用</h3><p>numpy中调用方式和求特征值特征向量类似。实际上特征分解是一种特殊的奇异值分解，特征分解只能分解方阵，奇异值分解可以分解任意矩阵，pca中的特征分解通常会使用svd。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np<br>U,Sigma,VT = linalg.svd(matrix)<br></code></pre></td></tr></table></figure></p>
+<h3 id="5-3-降维"><a href="#5-3-降维" class="headerlink" title="5.3. 降维"></a>5.3. 降维</h3><p>利用SVD降维实际上是用来简化数据，使用了奇异值分解以后仅需保留着三个比较小的矩阵，就能表示原矩阵，不仅节省存储量，在计算的时候更是减少了计算量。SVD在信息检索（隐性语义索引）、图像压缩、推荐系统等等领域中都有应用。【TruncatedSVD（截断SVD）】sklearn中的pca就是使用svd分解，再选取三个在矩阵中间的对角矩阵中最大的一部分值，再还原这个矩阵。</p>
+<h2 id="6-LDA-线性判别分析"><a href="#6-LDA-线性判别分析" class="headerlink" title="6. LDA 线性判别分析"></a>6. LDA 线性判别分析</h2><blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/wj-1314/p/10234256.html">Python机器学习笔记：线性判别分析（LDA）算法</a></p>
+</blockquote>
+<p>PCA是一种无监督的数据降维方法，与之不同的是：LDA是一种有监督的数据降维方法。我们知道即使在训练样本上，我们提供了类别标签，在使用PCA模型的时候，我们是不利于类别标签的，而LDA在进行数据降维的时候是利用数据的类别标签提供的信息的。</p>
+<p>从几何的角度来看，PCA和LDA都是将数据投影到新的相互正交的坐标轴上。只不过在投影的过程中他们使用的约束是不同的，也可以说目标是不同的。PCA是将数据投影到方差最大的几个相互正交的方向上，以期待保留最多的样本信息。样本的方差越大表示样本的多样性越好，在训练模型的时候，我们当然希望数据的差别越大越好。否则即使样本很多但是他们彼此相似或者相同，提供的样本信息将相同，相当于只有很少的样本提供信息是有用的。样本信息不足将导致模型性能不够理想。这就是PCA降维的目的：将数据投影到方差最大的几个相互正交的方向上。</p>
+<p>由于PCA与LDA的动机不同，前者着眼于降维数据对原有高维数据保真度的优化，而后者更关心降维数据对不同类数据判别性的优化。因此对于相同的数据，它们求解出的投影方向（向量）也截然不同（见图1）。下图中，假设一组二维数据样本，分为两类（ClassⅠ与ClassⅡ），PCA选择方差最大的方向作为投影方向（图中以实线表示），目的是使得投影的数据能在最小平方意义下尽可能地表征原数据。这样做投影确实方差最大，但是是不是有其他问题。聪明的你发现了，这样做投影之后两类数据样本将混合在一起，将不再线性可分，甚至是不可分的。这对我们来说简直是地狱，本来线性可分的样本被我们亲手变得不再可分。而我们发现，如果使用图中虚线，向这条直线做投影即能使数据降维，同时还能保证两类数据仍然是线性可分的，这其实就是LDA的思想：不同类数据之间区别将被最大化，同类别样本之间的区别将达到最小化，从而显著提高了各类别之间的可分性。</p>
+<img src="/2021/09/06/2021-09-06-%E9%99%8D%E7%BB%B4%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/1648201508319-732c41bd-bd60-488f-ab66-fc4413e56374.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>LDA将带有标签的数据降维，投影到低维空间同时满足三个条件：</p>
+<ul>
+<li>尽可能多的保留数据样本的信息（即选择最大的特征是对应的特征向量所代表的方向）。</li>
+<li>寻找使样本尽可能好分的最佳投影方向。</li>
+<li>投影后使得同类样本尽可能近，不同类样本尽可能远。</li>
+</ul>
+<h3 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h3><ul>
+<li>可参考《<a target="_blank" rel="noopener" href="https://blog.csdn.net/TiffanyRabbit/article/details/76445909">利用sklearn训练LDA主题模型及调参详解</a>》</li>
+</ul>
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><p>【机器学习系统设计】<br>【机器学习—周志华】<br>【机器学习实战】<br><a target="_blank" rel="noopener" href="http://blog.csdn.net/baimafujinji/article/details/79407478">详解多维标度法（MDS，Multidimensional scaling）</a><br>《<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/75e805ff247c">各类降维方法总结-简书</a>》</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E9%99%8D%E7%BB%B4/">#降维</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>降维方法总结</div>
+      <div>http://example.com/2021/09/06/2021-09-06-降维方法总结/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>NSX</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年9月6日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/09/06/2021-09-06-%E9%98%BF%E9%87%8C%E4%BA%91%E6%90%9C%E7%B4%A2%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/" title="阿里云es内部技术分享摘要">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">阿里云es内部技术分享摘要</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/08/30/2021-08-30-Dropout%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/" title="【转载】深度学习中Dropout原理解析">
+                        <span class="hidden-mobile">【转载】深度学习中Dropout原理解析</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

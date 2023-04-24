@@ -1,0 +1,731 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="NSX">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Visual Studio Code（简称VS Code）是一个由微软开发，同时支持Windows 、 Linux和macOS等操作系统且开放源代码的代码编辑器  如何配置VSCode 插件推荐 利用VS Code进行远程开发  如何配置VSCodeCommand&#x2F;Ctrl + ,：就进入了用户配置。在这里是 ui 化的配置，也可以进入 JSON 来配置。  Command + Shift + P">
+<meta property="og:type" content="article">
+<meta property="og:title" content="VSCode IDE使用指南">
+<meta property="og:url" content="http://example.com/2019/08/30/2019-08-30-VSCode%20IDE%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="Visual Studio Code（简称VS Code）是一个由微软开发，同时支持Windows 、 Linux和macOS等操作系统且开放源代码的代码编辑器  如何配置VSCode 插件推荐 利用VS Code进行远程开发  如何配置VSCodeCommand&#x2F;Ctrl + ,：就进入了用户配置。在这里是 ui 化的配置，也可以进入 JSON 来配置。  Command + Shift + P">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2019/08/30/2019-08-30-VSCode%20IDE%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/640-20230424174322629">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/ceNmtYOhbMRCYaSbicLwbVopKvMTVnRI2h8icWGwx8E3kYk4ZhWDWbWntEOsgniacbiae3olepAWhyUzeDeliaYfdLg/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1">
+<meta property="og:image" content="http://example.com/2019/08/30/2019-08-30-VSCode%20IDE%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/640-20230424174322615">
+<meta property="og:image" content="http://example.com/2019/08/30/2019-08-30-VSCode%20IDE%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/640-20230424174322667">
+<meta property="og:image" content="http://example.com/2019/08/30/2019-08-30-VSCode%20IDE%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/640-20230424174322612">
+<meta property="og:image" content="http://example.com/2019/08/30/2019-08-30-VSCode%20IDE%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/1679288275416-2cd9cbcd-9daa-4e04-b731-7a7d07ddebc7.png">
+<meta property="article:published_time" content="2019-08-29T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-24T09:43:31.805Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="远程开发">
+<meta property="article:tag" content="VSCode">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2019/08/30/2019-08-30-VSCode%20IDE%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/640-20230424174322629">
+  
+  
+  
+  <title>VSCode IDE使用指南 - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="利用VS Code进行远程开发"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2019-08-30 00:00" pubdate>
+          2019年8月30日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.6k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          31 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">利用VS Code进行远程开发</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>Visual Studio Code（简称VS Code）是一个由微软开发，同时支持Windows 、 Linux和macOS等操作系统且开放源代码的代码编辑器</p>
+<ul>
+<li>如何配置VSCode</li>
+<li>插件推荐</li>
+<li>利用VS Code进行远程开发</li>
+</ul>
+<h2 id="如何配置VSCode"><a href="#如何配置VSCode" class="headerlink" title="如何配置VSCode"></a>如何配置VSCode</h2><p>Command/Ctrl + ,：就进入了用户配置。在这里是 ui 化的配置，也可以进入 JSON 来配置。 </p>
+<p>Command + Shift + P：搜索 JSON ，可以进入 JSON 来实现配置的变更。</p>
+<p>在工程目录里，同样的操作会多一个选项，则是打开工作区配置。当你打开的一瞬间，会在你的工作区建立一个 .vscode 文件夹，此处的配置会覆盖用户配置。一般都是工程专属的内容，比如 python的虚拟环境等。用户级的功能和插件的功能都是通过这个 JSON 文件去实现的。建议在安装插件之前把默认配置可以看一看。</p>
+<h2 id="插件推荐"><a href="#插件推荐" class="headerlink" title="插件推荐"></a>插件推荐</h2><p>我最喜欢的是它的插件能力，几乎想要啥功能都能找到插件支持，应该不用我安利你们都会喜欢的。工欲善其事必先利其器，开发前先把所以提升效率的利器搭好会让今后慢慢的编程长路舒服很多！</p>
+<h3 id="一、主题及图标"><a href="#一、主题及图标" class="headerlink" title="一、主题及图标"></a>一、主题及图标</h3><ul>
+<li><a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=PKief.material-icon-theme">Material Icon Theme</a>：扁平化的主题<a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=图标库&amp;spm=1001.2101.3001.7020">图标库</a></li>
+<li><a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=vscode-icons-team.vscode-icons">vscode-icons</a>：VSCode官方出品的图标库</li>
+</ul>
+<h3 id="二、功能强化"><a href="#二、功能强化" class="headerlink" title="二、功能强化"></a>二、功能强化</h3><ul>
+<li><a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=WakaTime.vscode-wakatime">wakatime</a>：编程时间及行为跟踪统计（需注册）</li>
+<li><a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=pnp.polacode">Polacode</a>：代码截图</li>
+<li><a href="https://link.zhihu.com/?target=https%3A//marketplace.visualstudio.com/items%3FitemName%3Dgo-home.go-home">go-home</a>：倒计时还有多久下班。默认是早 9 晚 6</li>
+<li>韭菜盒子：实时股票信息</li>
+<li>filesize：一款在左下角显示文件大小的插件 </li>
+<li>Code Runner：右键里有在终端中直接运行Python文件，并对输出给与颜色标注，方便观看 </li>
+<li><a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=MS-CEINTL.vscode-language-pack-zh-hans">Chinese (Simplified) Language Pack for Visual Studio Code</a>：中文语言包</li>
+<li>Settings Sync：同步你的vscode设置，包括setting文件，插件等（built-in）</li>
+</ul>
+<p>右键 Settings Sync 点击扩展设置，复制GitHub gist ID，再 Command + p搜索&gt;sync 再选择 Sync: Upload / Update Settings 会自动上传你当前的插件及设置信息；最后在新的vs code下粘贴GitHub gist ID，再 Command + p搜索&gt;sync 再选择 Sync: Download Settings 自动下载插件和回复之前的配置！！ </p>
+<h3 id="三、Git-集成插件"><a href="#三、Git-集成插件" class="headerlink" title="三、Git 集成插件"></a>三、Git 集成插件</h3><ul>
+<li>GitLens：可以快速查看代码的编写者、轻松导航和探索 Git 存储库、通过丰富的可视化效果和强大的比较命令获取有效信息，以及执行更多操作</li>
+</ul>
+<h3 id="四、数据库"><a href="#四、数据库" class="headerlink" title="四、数据库"></a>四、数据库</h3><ul>
+<li><a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=cweijan.vscode-mysql-client2">MySQL</a>：支持 MySQL/<a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=MariaDB&amp;spm=1001.2101.3001.7020">MariaDB</a>, Microsoft SQL Server, PostgreSQL, Redis, and ElasticSearch</li>
+</ul>
+<h3 id="五、编程美化"><a href="#五、编程美化" class="headerlink" title="五、编程美化"></a>五、编程美化</h3><ul>
+<li><p>Markdown all in one：在 VSCode 里编写 Markdown，支持预览</p>
+</li>
+<li><p>indent-rainbow：多个缩进以不同颜色进行高亮显示， 提示代码缩进是否到位 </p>
+</li>
+</ul>
+<h3 id="六、开发效率"><a href="#六、开发效率" class="headerlink" title="六、开发效率"></a>六、开发效率</h3><ul>
+<li><a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=EditorConfig.EditorConfig">EditorConfig for VS Code</a>：代码风格统一</li>
+<li><a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode">Prettier - Code formatter</a>：自动格式化代码</li>
+<li><a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=andyyaldoo.vscode-json">vscode-json</a>：操作美化 json</li>
+<li>LeetCode with labuladong：刷题利器</li>
+<li>Sourcery：它会自动审查和实时重构你的 Python 代码</li>
+<li>Thunder Client：Rest API 客户端，可以卸载臃肿的 PostMan</li>
+<li>autoDocstring：自动创建函数文档格式 docstring，需手动修改</li>
+<li>Mintlify Doc Writer：利用人工智能技术帮你自动写文档</li>
+<li>Python：让VS Code支持python编程，提供了 IntelliSense (Pylance)，linting，调试，代码导航，代码格式化、重构、变量资源管理器等功能</li>
+<li>Pylance：微软推出的代码补全工具。具有Docstrings、参数提示、自动导入、代码补全、代码诊断、引用和跳转、代码大纲、类型检查、支持多工作区、带有类型信息的签名帮助、兼容 IntelliCode 和 Jupyter notebook。需要在settings.json 里进行设置  “python.languageServer”: “Pylance”  , 才能使用</li>
+</ul>
+<p>命令面板→首选项: 打开用户设置→搜索language server→选择 Pylance</p>
+<ul>
+<li>Python Indent：让 VSCode 更好地缩进 Python 代码，代码会更容易观看和书写。</li>
+<li>Python Snippets：在你编写Python代码的时候自动补全代码片段，提高编写效率。如内置字符串、列表、集合、元组和字典片段和代码示例。</li>
+<li>Jupyter: Jupyter是 Jupyter Notebook 的支持插件</li>
+</ul>
+<h3 id="七、AI辅助编程工具"><a href="#七、AI辅助编程工具" class="headerlink" title="七、AI辅助编程工具"></a>七、AI辅助编程工具</h3><ul>
+<li>微软 IntelliCode：一种在 GitHub 项目样本上训练的实验性 AI 编码辅助工具。 您的完成列表由 IntelliCode 确定优先级，以便您最有可能使用的项目位于最前面。</li>
+<li>GitHub Copilot：实时代码补全、注释生成（$10/per month）</li>
+<li>CodeGeeX：中国原创的AI辅助编程工具，完全免费，开源开放。拥有代码生成、代码翻译、代码逐行添加注释功能√</li>
+<li>Tabnine：基本是全语言的，但是根本不看语法，只靠推算，即装即用（cpu 消耗大，笨重）</li>
+<li>Kite：实时Python代码补全，需要下载模型，Kite 的下载量要远大于 Tabnine ！</li>
+<li>CodeGPT：提问、重构代码、归档代码、查找代码中的问题</li>
+<li>Amazon <a target="_blank" rel="noopener" href="https://aws.amazon.com/cn/codewhisperer/">CodeWhisperer</a>：亚马逊云科技推出实时AI编程助手Amazon CodeWhisperer Individual，供所有开发人员免费使用，帮助开发者基于注释生成代码，追踪开源参考，扫描查找漏洞。此外，还可以帮助开发者创建代码胜任如下场景，比如常规、耗时的无差别任务，或是在使用不熟悉的API或SDK时构建示例代码等。</li>
+</ul>
+<h2 id="利用VS-Code进行远程开发"><a href="#利用VS-Code进行远程开发" class="headerlink" title="利用VS Code进行远程开发"></a>利用VS Code进行远程开发</h2><p>微软在 PyCon 2019 大会上发布了VS Code Remote ，从 1.35.0 版本正式提供可以在本地编辑远程开发环境的文件的功能。VS Code 使用远程开发插件，不论在哪里，只要有电脑都能方便的打开云端开发环境，非常的方便，是一个大幅提升生产力的好工具！</p>
+<h3 id="远程开发配置"><a href="#远程开发配置" class="headerlink" title="远程开发配置"></a>远程开发配置</h3><p><strong>配置SSH环境变量</strong></p>
+<p>由于Git自带SSH客户端程序，如果你还没装Git的话，这里要先安装 Git，所以配置 Git 的 bin目录到环境变量的 PATH 变量下，这样VS Code连接的时候就能找到它了。</p>
+<p><strong>安装远程开发插件</strong></p>
+<p>要能连上远程主机，首先我们需要下载VS Code远程开发插件，VS Code其实是提供了一个远程开发插件包，包括：</p>
+<ul>
+<li>Remote - SSH - 通过使用 SSH 链接虚拟或者实体Linux主机。</li>
+<li>Remote - Containers – 连接 Docker 开发容器。</li>
+<li>Remote - WSL - 连接 Windows Subsystem for Linux （Linux子系统）</li>
+</ul>
+<p>打开软件的扩展界面，搜索 <code>Remote</code> 开头的插件，也能看到这三个的不同远程开发插件，我们这里连接的是云主机，选择安装 Remote - SSH 插件安装即可。</p>
+<h3 id="配置远程连接"><a href="#配置远程连接" class="headerlink" title="配置远程连接"></a>配置远程连接</h3><p>1、首先点侧边栏的「远程资源管理器」之后点击「设置按钮」，进入远程机器配置界面。<br><img src="/2019/08/30/2019-08-30-VSCode%20IDE%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/640-20230424174322629" srcset="/img/loading.gif" lazyload class="" title="img"> </p>
+<p> 2、修改 ssh 配置文件，用于登录远程机器，各项含义在图中有说明。<br><img src="https://mmbiz.qpic.cn/mmbiz_png/ceNmtYOhbMRCYaSbicLwbVopKvMTVnRI2h8icWGwx8E3kYk4ZhWDWbWntEOsgniacbiae3olepAWhyUzeDeliaYfdLg/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" srcset="/img/loading.gif" lazyload alt="img"> </p>
+<p>3、点击连接，登录远程服务器，需要输入几次远程服务器的密码（后面会教你怎么免密登录），输入确认即可。第一次连接会做VS Code Server的初始化工作比较慢，耐心等待。<br><img src="/2019/08/30/2019-08-30-VSCode%20IDE%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/640-20230424174322615" srcset="/img/loading.gif" lazyload class="" title="img"> </p>
+<p>4、登录成功，即可像操作本地环境一样，在VS Code客户端操作远程云主机上的文件。注意，下图中的「打开文件夹」已经是远端机器上的目录结构了。<br><img src="/2019/08/30/2019-08-30-VSCode%20IDE%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/640-20230424174322667" srcset="/img/loading.gif" lazyload class="" title="img"> </p>
+<p>5、给远程VS Code 安装插件。安装的插件是在云服务器的VS Code上，对本机的VS Code没有影响，插件在远端提供功能，比如代码审查、自动补齐等等，而这所有的一切就像在本地操作一样，对文件的更改也是直接操作的云主机上的文件，丝滑连接。 </p>
+<p>6、代码编辑与远程终端调试。打开文件编辑的是云服务器的文件，同时可以打开云服务终端，直接在终端操作编译或者查看云服务器信息。<br><img src="/2019/08/30/2019-08-30-VSCode%20IDE%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/640-20230424174322612" srcset="/img/loading.gif" lazyload class="" title="img"></p>
+<h3 id="SSH免密登录配置"><a href="#SSH免密登录配置" class="headerlink" title="SSH免密登录配置"></a>SSH免密登录配置</h3><p>按照上面的配置步骤，每次连接到远程服务器，都需要输入服务器登录密码很麻烦，可以配置SSH免密登录，免去每次输入密码的烦恼，具体操作步骤如下：</p>
+<ol>
+<li>打开win cmd终端，输入 ssh-keygen -t rsa 生成秘钥对 </li>
+<li>打开生成的秘钥保存路径，拷贝 <code>~/.ssh/id_rsa.pub</code> 内容，添加到到云服务器的 <code>~/.ssh/authorized_keys</code> 文件后面。 </li>
+<li>尝试再次连接，不用输密码了，enjoy！ </li>
+</ol>
+<h3 id="选择远程服务器的虚拟环境"><a href="#选择远程服务器的虚拟环境" class="headerlink" title="选择远程服务器的虚拟环境"></a><a target="_blank" rel="noopener" href="https://blog.csdn.net/ssunshining/article/details/123583519">选择远程服务器的虚拟环境</a></h3><ol>
+<li>Ctrl + Shift + P 打开命令面板，</li>
+<li>输入 select…，</li>
+<li>选择需要使用的虚拟环境即可</li>
+</ol>
+<img src="/2019/08/30/2019-08-30-VSCode%20IDE%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/1679288275416-2cd9cbcd-9daa-4e04-b731-7a7d07ddebc7.png" srcset="/img/loading.gif" lazyload class="" title="img">
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p> <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/73452541">工具篇-vscode效率提升插件</a> </p>
+<p> <a target="_blank" rel="noopener" href="https://www.leiphone.com/news/201911/ESeY1uZvYRdP5V43.html">新版 Kite：实时补全代码，Python 之父都发声力挺！</a> </p>
+<p> <a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzUyNjQxNjYyMg==&amp;mid=2247494803&amp;idx=3&amp;sn=03608ca1e275414bba356780ebaa86a8&amp;chksm=fa0d8312cd7a0a041d550e20e9b1e9c2be1e87ba23a71a15e73c9eec5f999b1b9cee5782efb8&amp;scene=126&amp;sessionid=1604029083&amp;key=a6a963ce8dc9af21e4278ddbc10ce6143fb180b87c87924bd6cc36ac923408a2c26d85e0e7ba3e2857137a15559d2599e10cc8d7d51a6c5fc2e735397d01d68ccf310f661fd42bb4c02bd91705c76bebcafa63c44341883589c59f26a988bb9c25db32e946bb4f7ee273d5327e572969a3c4325bfa607682c6816ea92b10def7&amp;ascene=1&amp;uin=MjM2MDA1NjcyMQ%3D%3D&amp;devicetype=Windows+10+x64&amp;version=6300002f&amp;lang=zh_CN&amp;exportkey=A6uPvof82tWGpt6NxM5SR%2F4%3D&amp;pass_ticket=r5dszQk2lRNNteX%2BZmX6%2B1wF2g3D57o1FKmEWEXG6IdPb9qLFiUO6rf4TKQjjajJ&amp;wx_header=0">利用VS Code进行远程开发，就问你香不香？</a> </p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E8%BF%9C%E7%A8%8B%E5%BC%80%E5%8F%91/">#远程开发</a>
+      
+        <a href="/tags/VSCode/">#VSCode</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>VSCode IDE使用指南</div>
+      <div>http://example.com/2019/08/30/2019-08-30-VSCode IDE使用指南/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>NSX</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2019年8月30日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/09/04/2019-09-04-%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/" title="正则表达式">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">正则表达式</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2019/08/13/2019-08-13-python%E7%88%AC%E8%99%AB%E7%AC%94%E8%AE%B0/" title="python爬虫笔记">
+                        <span class="hidden-mobile">python爬虫笔记</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

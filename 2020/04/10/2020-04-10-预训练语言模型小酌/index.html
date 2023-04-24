@@ -1,0 +1,1401 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="BY NSX">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="预训练原理 语言表示学习 神经上下文编码器 为什么预训练 预训练任务 应用于下游任务 开放资源   预训练模型 Transformer介绍 GPT (2018) BERT (2018) UniLM (2019) Transformer-XL (2019) XLNet (2019) MASS (2019) RoBERTa (2019) BART (2019) T5 (2019) ERNIE (Ba">
+<meta property="og:type" content="article">
+<meta property="og:title" content="预训练语言模型小酌">
+<meta property="og:url" content="http://example.com/2020/04/10/2020-04-10-%E9%A2%84%E8%AE%AD%E7%BB%83%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%B0%8F%E9%85%8C/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="预训练原理 语言表示学习 神经上下文编码器 为什么预训练 预训练任务 应用于下游任务 开放资源   预训练模型 Transformer介绍 GPT (2018) BERT (2018) UniLM (2019) Transformer-XL (2019) XLNet (2019) MASS (2019) RoBERTa (2019) BART (2019) T5 (2019) ERNIE (Ba">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://leovan.me/images/cn/2020-03-28-pre-trained-model-for-nlp/convolutional-model.png">
+<meta property="og:image" content="https://leovan.me/images/cn/2020-03-28-pre-trained-model-for-nlp/sequential-model.png">
+<meta property="og:image" content="https://leovan.me/images/cn/2020-03-28-pre-trained-model-for-nlp/fully-connected-graph-based-model.png">
+<meta property="og:image" content="https://leovan.me/images/cn/2020-03-28-pre-trained-model-for-nlp/ptms.png">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/v1JN0W4OpXjr1iaicSWjfKiasqX6Af1z4ibPUoLrpSwvmUUSX7mmCtZu1vRkjcQxser5UGW8wd4Q6esqD7yYVWn2xQ/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gwfrkul6pxj316f0u0dmb.jpg">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/transformer_architecture.jpg">
+<meta property="og:image" content="https://leovan.me/images/cn/2020-03-28-pre-trained-model-for-nlp/gpt.png">
+<meta property="og:image" content="https://p0.meituan.net/travelcube/890083d95e1dc89888296e0991437dc7646898.png">
+<meta property="og:image" content="https://p0.meituan.net/travelcube/348d5d3e5bcaec1b569f2af209ac62fd450645.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/bert-fine-tune.jpg">
+<meta property="og:image" content="https://p1.meituan.net/travelcube/5e5258267b2ca37cbbe662a4d415e021110023.png">
+<meta property="og:image" content="https://p0.meituan.net/travelcube/54ffe0cbac52e59af8e8abd349476e47345216.jpg">
+<meta property="og:image" content="https://leovan.me/images/cn/2020-03-28-pre-trained-model-for-nlp/unilm.png">
+<meta property="og:image" content="https://leovan.me/images/cn/2020-03-28-pre-trained-model-for-nlp/transformer-xl-vanilla-model.png">
+<meta property="og:image" content="https://leovan.me/images/cn/2020-03-28-pre-trained-model-for-nlp/transformer-xl-model.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/xlnet.jpg">
+<meta property="og:image" content="https://leovan.me/images/cn/2020-03-28-pre-trained-model-for-nlp/mass.png">
+<meta property="og:image" content="https://leovan.me/images/cn/2020-03-28-pre-trained-model-for-nlp/mass-k.png">
+<meta property="og:image" content="https://leovan.me/images/cn/2020-03-28-pre-trained-model-for-nlp/bart-transformations.png">
+<meta property="og:image" content="https://leovan.me/images/cn/2020-03-28-pre-trained-model-for-nlp/t5-text-to-text-framework.gif">
+<meta property="og:image" content="https://leovan.me/images/cn/2020-03-28-pre-trained-model-for-nlp/ernie-2-framework.png">
+<meta property="og:image" content="https://img2018.cnblogs.com/blog/1335117/201910/1335117-20191021203334818-1964061977.png">
+<meta property="og:image" content="https://img2018.cnblogs.com/blog/1335117/201910/1335117-20191021203510033-2086026974.png">
+<meta property="og:image" content="https://img2018.cnblogs.com/blog/1335117/201910/1335117-20191021203915782-991212363.png">
+<meta property="og:image" content="https://img2018.cnblogs.com/blog/1335117/201910/1335117-20191021203952259-282949758.png">
+<meta property="og:image" content="https://img2018.cnblogs.com/blog/1335117/201910/1335117-20191021204121158-50391823.png">
+<meta property="og:image" content="https://img2018.cnblogs.com/blog/1335117/201910/1335117-20191021204217779-1151054318.png">
+<meta property="og:image" content="https://img2018.cnblogs.com/blog/1335117/201910/1335117-20191021204526288-613006885.png">
+<meta property="og:image" content="https://img2018.cnblogs.com/blog/1335117/201910/1335117-20191021204817154-512271389.png">
+<meta property="og:image" content="https://img2018.cnblogs.com/blog/1335117/201910/1335117-20191021204919585-809627388.png">
+<meta property="og:image" content="https://img2018.cnblogs.com/blog/1335117/201910/1335117-20191021205104456-89074411.png">
+<meta property="og:image" content="http://fancyerii.github.io/img/bert-imp/1.png">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/1599653-ac9cc602bc22d081.png?imageMogr2/auto-orient/strip|imageView2/2/w/882/format/webp">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200509120335669.png">
+<meta property="article:published_time" content="2020-04-09T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-23T10:28:32.045Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="预训练">
+<meta property="article:tag" content="语言模型">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://leovan.me/images/cn/2020-03-28-pre-trained-model-for-nlp/convolutional-model.png">
+  
+  
+  
+  <title>预训练语言模型小酌 - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="预训练语言模型小酌🍺"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2020-04-10 00:00" pubdate>
+          2020年4月10日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          20k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          171 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">预训练语言模型小酌🍺</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <ul>
+<li>预训练原理<ul>
+<li><a target="_blank" rel="noopener" href="https://leovan.me/cn/2020/03/pre-trained-model-for-nlp/#语言表示学习">语言表示学习</a></li>
+<li><a target="_blank" rel="noopener" href="https://leovan.me/cn/2020/03/pre-trained-model-for-nlp/#神经上下文编码器">神经上下文编码器</a></li>
+<li><a target="_blank" rel="noopener" href="https://leovan.me/cn/2020/03/pre-trained-model-for-nlp/#为什么预训练">为什么预训练</a></li>
+<li><a target="_blank" rel="noopener" href="https://leovan.me/cn/2020/03/pre-trained-model-for-nlp/#预训练任务">预训练任务</a></li>
+<li><a target="_blank" rel="noopener" href="https://leovan.me/cn/2020/03/pre-trained-model-for-nlp/#应用于下游任务">应用于下游任务</a></li>
+<li><a target="_blank" rel="noopener" href="https://leovan.me/cn/2020/03/pre-trained-model-for-nlp/#开放资源">开放资源</a></li>
+</ul>
+</li>
+<li>预训练模型<ul>
+<li>Transformer介绍</li>
+<li><a target="_blank" rel="noopener" href="https://leovan.me/cn/2020/03/pre-trained-model-for-nlp/#gpt-2018-radford2018improving">GPT (2018)</a></li>
+<li><a target="_blank" rel="noopener" href="https://leovan.me/cn/2020/03/pre-trained-model-for-nlp/#bert-2018-devlin2018bert">BERT (2018)</a></li>
+<li><a target="_blank" rel="noopener" href="https://leovan.me/cn/2020/03/pre-trained-model-for-nlp/#unilm-2019-dong2019unified">UniLM (2019)</a></li>
+<li><a target="_blank" rel="noopener" href="https://leovan.me/cn/2020/03/pre-trained-model-for-nlp/#transformer-xl-2019-dai2019transformer">Transformer-XL (2019)</a></li>
+<li><a target="_blank" rel="noopener" href="https://leovan.me/cn/2020/03/pre-trained-model-for-nlp/#xlnet-2019-yang2019xlnet">XLNet (2019)</a></li>
+<li><a target="_blank" rel="noopener" href="https://leovan.me/cn/2020/03/pre-trained-model-for-nlp/#mass-2019-song2019mass">MASS (2019)</a></li>
+<li><a target="_blank" rel="noopener" href="https://leovan.me/cn/2020/03/pre-trained-model-for-nlp/#roberta-2019-liu2019roberta">RoBERTa (2019)</a></li>
+<li><a target="_blank" rel="noopener" href="https://leovan.me/cn/2020/03/pre-trained-model-for-nlp/#bart-2019-lewis2019bart">BART (2019)</a></li>
+<li><a target="_blank" rel="noopener" href="https://leovan.me/cn/2020/03/pre-trained-model-for-nlp/#t5-2019-raffel2019exploring">T5 (2019)</a></li>
+<li><a target="_blank" rel="noopener" href="https://leovan.me/cn/2020/03/pre-trained-model-for-nlp/#ernie-baidu-2019-sun2019ernie-sun2019ernie2">ERNIE (Baidu, 2019)</a></li>
+<li>Albert</li>
+<li>BERT 拓展</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>本文为 Pre-trained Models for Natural Language Processing: A Survey 和相关模型的笔记</p>
+</blockquote>
+<p>在当下的 NLP 研究领域，随着计算机算力的不断增强，越来越多的通用语言表征的预训练模型（Pre-trained Models，PTMs）逐渐涌现出来。这对下游的 NLP 任务非常有帮助，可以避免大量从零开始训练新的模型。PTM 大致可以分为两代：</p>
+<ul>
+<li>第一代 PTM 旨在学习词嵌入。由于下游任务不在需要这些模型，因此为了计算效率，这些模型往往采用浅层模型，例如 Skip-Gram，GloVe等。尽管这些模型可以捕获词的语义，但由于未基于上下文环境，因此不能够捕捉到更深层次的概念，例如：句法结构，语义角色，指代等等。</li>
+<li>第二代 PTM 专注于学习基于上下文的词嵌入，例如 CoVe <a target="_blank" rel="noopener" href="https://leovan.me/cn/2020/03/pre-trained-model-for-nlp/#fn:mccann2017learned">4</a>，ELMo <a target="_blank" rel="noopener" href="https://leovan.me/cn/2020/03/pre-trained-model-for-nlp/#fn:peters2018deep">5</a>，OpenAI GPT <a target="_blank" rel="noopener" href="https://leovan.me/cn/2020/03/pre-trained-model-for-nlp/#fn:radford2018improving">6</a> 和 BERT <a target="_blank" rel="noopener" href="https://leovan.me/cn/2020/03/pre-trained-model-for-nlp/#fn:devlin2018bert">7</a> 等。这些学习到的编码器在下游任务中仍会用于词在上下文中的语义表示。</li>
+</ul>
+<span id="more"></span>
+<h1 id="预训练原理"><a href="#预训练原理" class="headerlink" title="预训练原理"></a>预训练原理</h1><h2 id="语言表示学习"><a href="#语言表示学习" class="headerlink" title="语言表示学习"></a>语言表示学习</h2><blockquote>
+<p>参考<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/Jyqwf0_cfPiTdjb6tnDANw">《语言模型：过去、现在、未来》</a></p>
+</blockquote>
+<ul>
+<li><p><strong>独热编码（One-hot Encoding）</strong>：最简单的一种单词表示法，一个单词用长度为n的向量表示，其中只有一个位置为1，其余位置为0，n为语料中词库的大小。</p>
+</li>
+<li><p><strong>马尔可夫与语言模型</strong>：人类历史上第一个对语言模型进行研究，他提出n元模型(n-gram model)，假设序列上每个位置的单词只依赖于前n−1个位置的单词 $p(w1,w2,…,w_n)=\prod_{i=1}^np(w_i|w_{i-n+1},w_{i-n+2},…,w_{i-1})$​ </p>
+</li>
+<li><p><strong>香农与语言模型</strong>：假设语言（单词序列）是由一个随机过程产生的数据，n元模型的熵的定义为：$H_n(p,q)=-\sum{p(w1,w2,…,w_n)·q(w1,w2,…,w_n)}$​ ，这里p表示生成数据的真实概率分布。熵表示一个概率分布的不确定性，交叉熵表示一个概率分布相对于另一个概率分布的不确定性。熵是交叉熵的下界。如果一个语言模型比另一个语言模型能更准确地预测单词序列数据，那么它就应该有更小的交叉熵。香农的研究为语言模型学习提供了评价工具。</p>
+</li>
+<li><p><strong>神经语言模型</strong>：n元模型的表示和学习能力是有限的。传统的方法是从语料中统计n元模型中的条件概率，对未见过的n元组的概率通过平滑的方法估算。模型的参数个数是指数级的 $O(V^n)$，其中 $V$ 是词表的大小。当$n$ 增大时，无法准确地学到模型的参数。Bengio等人的神经语言模型从两个方面对n元模型予以改进。一是用一个低维的实值向量表示一个单词或单词的组合；二是在使用词向量的基础上，通过神经网络来表示语言模型，大幅减少模型的参数.  $p(w_i|w_{i-n+1},w_{i-n+2},…,w_{i-1})=f_\theta(w_{i-n+1},w_{i-n+2},…,w_{i-1})$​ </p>
+</li>
+<li><p><strong>预训练语言模型</strong>：上述类型的嵌入主要有两个缺陷：一是嵌入是静态的，词在不同的上下文中的嵌入表示是相同的，因此无法处理一词多义；二是未登录词（out-of-vocabulary，OOV）问题。为了解决上述问题，基于上下文的动态词嵌入出现了。优势：可作为初始词向量、解决处理一词多义问题、能增强模型的泛化能力</p>
+</li>
+</ul>
+<h2 id="神经上下文编码器"><a href="#神经上下文编码器" class="headerlink" title="神经上下文编码器"></a>神经上下文编码器</h2><p>神经上下文编码器大致可以分为 3 类：</p>
+<ol>
+<li><p>基于卷积的模型：基于卷积的模型通过卷积操作从一个词的邻居中聚合局部信息来捕获这个词的含义</p>
+<p><img src="https://leovan.me/images/cn/2020-03-28-pre-trained-model-for-nlp/convolutional-model.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+</li>
+<li><p>基于序列的模型：基于序列的模型采用 RNNs（LSTM和 GRU） 来捕获词的上下文信息。实际中，我们采用双向的 RNNs 从词的两端收集信息，不过整体效果容易收到长期依赖问题的影响。</p>
+<p><img src="https://leovan.me/images/cn/2020-03-28-pre-trained-model-for-nlp/sequential-model.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+</li>
+<li><p>基于图的模型：基于图的模型将字作为图中的一个节点来学习上下文表示，这个图通常是一个词之间预定义的语言结构，例如：语法结构或语义关系。尽管基于语言学的图结构能提供有用的信息，但如何构建一个好的图结构则成为了难题。除此之外，基于语言学的图结构需要依赖专家知识和外部工具，例如：依存句法分析等。事实上，我们会采用一个更直接的方式去学习任意两个词之间的关系，通常连接的权重可以通过自注意力机制自动计算得出。Transformer是一个采用了全链接自注意力架构的实现，同时也采用了位置嵌入（positional embedding），层标准化（layer normalization）和残差连接（residual connections）等网络设计理念。</p>
+<p><img src="https://leovan.me/images/cn/2020-03-28-pre-trained-model-for-nlp/fully-connected-graph-based-model.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+</li>
+</ol>
+<h2 id="为什么预训练"><a href="#为什么预训练" class="headerlink" title="为什么预训练"></a>为什么预训练</h2><p>对于大多数的 NLP 任务，构建一个大规模的有标签的数据集是一项很大的挑战。相反，大规模的无标签语料是相对容易构建的，为了充分利用这些无标签数据，我们可以先利用它们获取一个好的语言表示，再将这些表示用于其他任务。预训练的好处如下：</p>
+<ol>
+<li>预训练可以从大规模语料中学习得到通用的语言表示，并用于下游任务。</li>
+<li>预训练提供了更优的模型初始化方法，有助于提高模型的泛化能力和加速模型收敛。</li>
+<li>预训练可以当作是在小数据集上一种避免过拟合的正则化方法。</li>
+</ol>
+<h2 id="预训练任务"><a href="#预训练任务" class="headerlink" title="预训练任务"></a>预训练任务</h2><p>预训练任务对于学习语言的通用表示来说至关重要。通常情况下，预训练任务具有挑战性，同时需要大量训练数据。我们将预训练任务划分为 3 类：</p>
+<ol>
+<li><strong>监督学习</strong>，即从包含输入输出对的训练数据中学习一个由输入到输出的映射函数。</li>
+<li><strong>非监督学习</strong>，即从无标签数据获取一些固有的知识，例如：聚类，密度，潜在表征等。</li>
+<li><strong>自监督学习</strong>，是监督学习和非监督学习的混合体，核心思想是对于输入的一部分利用其他部分进行预测。</li>
+</ol>
+<p>下图展示了预训练模型的分类和部分代表模型：</p>
+<p><img src="https://leovan.me/images/cn/2020-03-28-pre-trained-model-for-nlp/ptms.png" srcset="/img/loading.gif" lazyload alt="预训练模型分类及代表性模型"></p>
+<h2 id="应用于下游任务"><a href="#应用于下游任务" class="headerlink" title="应用于下游任务"></a>应用于下游任务</h2><h3 id="选择合适的预训练任务，模型架构和语料"><a href="#选择合适的预训练任务，模型架构和语料" class="headerlink" title="选择合适的预训练任务，模型架构和语料"></a>选择合适的预训练任务，模型架构和语料</h3><p>不同的 PTMs 在相同的下游任务上有着不同的效果，这是因为 PTMs 有着不同的预训练任务，模型架构和语料。</p>
+<ol>
+<li>目前，语言模型是最流行的预训练任务，同时也可以有效地解决很多 NLP 问题。但是不同的预训练任务有着自己的侧重，在不同的任务上会有不同的效果。例如：NSP 任务使得 PTM 可以理解两句话之间的关系，因此 PTM 可以在例如问答（Question Answering，QA）和自然语言推理（Natural Language Inference，NLI）等下游任务上表现更好。</li>
+<li>PTM 的网络架构对下游任务也至关重要。例如：尽管 BERT 可以处理大多数自然语言理解任务，对其很难生成语言。</li>
+<li>下游任务的数据分布应该和 PTM 训练所用语料相似。目前，大量现成的 PTM 仅可以快速地用于特定领域或特定语言的下游任务上。</li>
+</ol>
+<h3 id="选择合适的网络层"><a href="#选择合适的网络层" class="headerlink" title="选择合适的网络层"></a>选择合适的网络层</h3><p>给定一个预训练的模型，不同的网络层捕获了不同的信息，例如：词性标记（POS tagging），语法（parsing），长期依赖（long-term dependencies），语义角色（semantic roles），指代（coreference）等。Tenney <a target="_blank" rel="noopener" href="https://leovan.me/cn/2020/03/pre-trained-model-for-nlp/#fn:tenney2019bert">22</a> 等人发现 BERT 表示方式类似传统的 NLP 流程：基础的句法信息出现在浅层的网络中，高级的语义信息出现在更高的层级中。</p>
+<p>令 H(l)(1≤l≤L) 表示共 L 层的预训练模型的第 l 层表示，g(⋅) 表示用于特定任务的的模型。一般有 3 中情况选择表示：</p>
+<ol>
+<li>Embedding Only：一种情况是仅选用预训练模型的静态嵌入，模型的其他部分仍需作为一个任务从头训练。这种情况不能够获取到一些有用的深层信息，词嵌入仅能够捕获词的语义信息。</li>
+<li>Top Layer：最简单有效的方式是将网络的顶层表示输入到模型中 g(H(L))。</li>
+<li>All Layers：另一种更灵活的方式是自动选择最合适的层，例如 ELMo：(5)rt=γ∑l=1Lαlht(l)其中 αl 是层 l 的 softmax 归一的权重，γ 是用于缩放预训练模型输出向量的一个标量值，再将不同层的混合输出输入到后续模型中 g(rt)。</li>
+</ol>
+<h3 id="是否微调"><a href="#是否微调" class="headerlink" title="是否微调"></a>是否微调</h3><p>目前，主要有两种方式进行模型迁移：特征提取（预训练模型的参数是固定的）和模型微调（预训练模型的参数是经过微调的）。当采用特征提取时，预训练模型可以被看作是一个特征提取器。除此之外，我们应该采用内部层作为特征，因为他们通常是最适合迁移的特征。尽管两种不同方式都能对大多数 NLP 任务效果有显著提升，但以特征提取的方式需要更复杂的特定任务的架构。因此，微调是一种更加通用和方便的处理下游任务的方式。</p>
+<h2 id="开放资源"><a href="#开放资源" class="headerlink" title="开放资源"></a>开放资源</h2><h3 id="PTMs-开源实现："><a href="#PTMs-开源实现：" class="headerlink" title="PTMs 开源实现："></a>PTMs 开源实现：</h3><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>框架</th>
+<th>PTMs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/tmikolov/word2vec">word2vec</a></td>
+<td>-</td>
+<td>CBOW, Skip-Gram</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://nlp.stanford.edu/projects/glove">GloVe</a></td>
+<td>-</td>
+<td>Pre-trained word vectors</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/facebookresearch/fastText">FastText</a></td>
+<td>-</td>
+<td>Pre-trained word vectors</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/huggingface/transformers">Transformers</a></td>
+<td><em>PyTorch</em> &amp; <em>TF</em></td>
+<td>BERT, GPT-2, RoBERTa, XLNet, etc.</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/pytorch/fairseq">Fairseq</a></td>
+<td><em>PyTorch</em></td>
+<td>English LM, German LM, RoBERTa, etc.</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/ﬂairNLP/ﬂair">Flair</a></td>
+<td><em>PyTorch</em></td>
+<td>BERT, ELMo, GPT, RoBERTa, XLNet, etc.</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/allenai/allennlp">AllenNLP</a></td>
+<td><em>PyTorch</em></td>
+<td>ELMo, BERT, GPT-2, etc.</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/fastnlp/fastNLP">FastNLP</a></td>
+<td><em>PyTorch</em></td>
+<td>BERT, RoBERTa, GPT, etc.</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/ymcui/Chinese-BERT-wwm">Chinese-BERT</a></td>
+<td>-</td>
+<td>BERT, RoBERTa, etc. (for Chinese)</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/google-research/bert">BERT</a></td>
+<td><em>TF</em></td>
+<td>BERT, BERT-wwm</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/pytorch/fairseq/tree/master/examples/roberta">RoBERTa</a></td>
+<td><em>PyTorch</em></td>
+<td></td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/zihangdai/xlnet">XLNet</a></td>
+<td><em>TF</em></td>
+<td></td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/google-research/ALBERT">ALBERT</a></td>
+<td><em>TF</em></td>
+<td></td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/google-research/text-to-text-transfer-transformer">T5</a></td>
+<td><em>TF</em></td>
+<td></td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/thunlp/ERNIE">ERNIE(THU)</a></td>
+<td><em>PyTorch</em></td>
+<td></td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/PaddlePaddle/ERNIE">ERNIE(Baidu)</a></td>
+<td>PaddlePaddle</td>
+<td></td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/huggingface/transformers">Hugging Face</a></td>
+<td><em>PyTorch</em> &amp; <em>TF</em></td>
+<td>很多…</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="论文列表和-PTMs-相关资源："><a href="#论文列表和-PTMs-相关资源：" class="headerlink" title="论文列表和 PTMs 相关资源："></a>论文列表和 PTMs 相关资源：</h3><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>资源</th>
+<th>URL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>论文列表</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/thunlp/PLMpapers">https://github.com/thunlp/PLMpapers</a></td>
+</tr>
+<tr>
+<td>论文列表</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/tomohideshibata/BERT-related-papers">https://github.com/tomohideshibata/BERT-related-papers</a></td>
+</tr>
+<tr>
+<td>论文列表</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/cedrickchee/awesome-bert-nlp">https://github.com/cedrickchee/awesome-bert-nlp</a></td>
+</tr>
+<tr>
+<td>Bert Lang Street</td>
+<td><a target="_blank" rel="noopener" href="https://bertlang.unibocconi.it/">https://bertlang.unibocconi.it</a></td>
+</tr>
+<tr>
+<td>BertViz</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/jessevig/bertviz">https://github.com/jessevig/bertviz</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h1 id="预训练模型"><a href="#预训练模型" class="headerlink" title="预训练模型"></a>预训练模型</h1><h2 id="1-Transformer-💡"><a href="#1-Transformer-💡" class="headerlink" title="1. Transformer 💡"></a>1. Transformer 💡</h2><blockquote>
+<p> 参考《 <a target="_blank" rel="noopener" href="https://kexue.fm/archives/4765">Attention is All You Need》浅读（简介+代码）</a>》、<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/345680792">Self-attenstion</a>、 [Transformer中的Self-attenstion、<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/347709112">Transformer实现细节</a>、<a target="_blank" rel="noopener" href="http://nlp.seas.harvard.edu/2018/04/03/attention.html">The Annotated Transformer</a> “带注释”版本的pytorch代码详细走读</p>
+</blockquote>
+<p>① Transformer摆脱了nlp任务对于rnn，lstm的依赖，在长距离上的建模能力更强；② 使用了 <code>self-attention</code> 可以并行化地对上下文进行建模，提高了训练和推理的速度；③ Transformer也是后续更强大的nlp预训练模型的基础（bert系列使用了transformer的encoder，gpt系列transformer的decoder）</p>
+<p>为了方便学习，我将编码器分为 <code>4</code> 个部分，依次讲解。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/v1JN0W4OpXjr1iaicSWjfKiasqX6Af1z4ibPUoLrpSwvmUUSX7mmCtZu1vRkjcQxser5UGW8wd4Q6esqD7yYVWn2xQ/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" srcset="/img/loading.gif" lazyload alt="图片"></p>
+<h3 id="1-1-Position-Embedding"><a href="#1-1-Position-Embedding" class="headerlink" title="1.1 Position Embedding"></a>1.1 Position Embedding</h3><blockquote>
+<p><a target="_blank" rel="noopener" href="https://kexue.fm/archives/8130">让研究人员绞尽脑汁的Transformer位置编码</a></p>
+</blockquote>
+<p>我们知道，文字的先后顺序，很重要。</p>
+<p>比如<code>吃饭没</code>、<code>没吃饭</code>、<code>没饭吃</code>、<code>饭吃没</code>、<code>饭没吃</code>，同样三个字，顺序颠倒，所表达的含义就不同了。</p>
+<p>文字的位置信息很重要，<code>Tranformer</code> 没有类似 <code>RNN</code> 的循环结构，没有捕捉顺序序列的能力。</p>
+<blockquote>
+<p>注：因为self-attention是位置无关的，无论句子的顺序是什么样的，通过self-attention计算的token的hidden embedding都是一样的，导致模型<strong>并不能捕捉序列的顺序</strong>！</p>
+</blockquote>
+<p>为了保留这种位置信息交给 <code>Tranformer</code> 学习，我们需要用到<strong>位置嵌入</strong>。</p>
+<p>加入位置信息的方式非常多，最简单的可以是直接将绝对坐标 <code>0,1,2</code> 编码。</p>
+<p><code>Tranformer</code> 采用的是 <code>sin-cos</code> 规则，使用了 <code>sin</code> 和 <code>cos</code> 函数的线性变换来提供给模型位置信息：</p>
+<script type="math/tex; mode=display">
+\begin{aligned} P E_{(\text {pos}, 2 i)} &=\sin \left(\text {pos} / 10000^{2 i / d_{\text {model }}}\right) \\ P E_{(\text {pos}, 2 i+1)} &=\cos \left(\text {pos} / 10000^{2 i / d_{\text {model }}}\right) \end{aligned}</script><p>上式中 <code>pos</code> 指的是句中字的位置，取值范围是 <code>[0, 𝑚𝑎𝑥 𝑠𝑒𝑞𝑢𝑒𝑛𝑐𝑒 𝑙𝑒𝑛𝑔𝑡ℎ)</code>，<code>i</code> 指的是字嵌入的维度, 取值范围是 <code>[0, 𝑒𝑚𝑏𝑒𝑑𝑑𝑖𝑛𝑔 𝑑𝑖𝑚𝑒𝑛𝑠𝑖𝑜𝑛)</code>。 就是 <code>𝑒𝑚𝑏𝑒𝑑𝑑𝑖𝑛𝑔 𝑑𝑖𝑚𝑒𝑛𝑠𝑖𝑜𝑛</code> 的大小。</p>
+<p>上面有 <code>sin</code> 和 <code>cos</code> 一组公式，也就是对应着 <code>𝑒𝑚𝑏𝑒𝑑𝑑𝑖𝑛𝑔 𝑑𝑖𝑚𝑒𝑛𝑠𝑖𝑜𝑛</code> 维度的一组奇数和偶数的序号的维度，从而产生不同的周期性变化。</p>
+<p>可以用代码，简单看下效果。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 导入依赖库</span><br><span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np<br><span class="hljs-keyword">import</span> matplotlib.pyplot <span class="hljs-keyword">as</span> plt<br><span class="hljs-keyword">import</span> seaborn <span class="hljs-keyword">as</span> sns<br><span class="hljs-keyword">import</span> math<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">get_positional_encoding</span>(<span class="hljs-params">max_seq_len, embed_dim</span>):<br>    <span class="hljs-comment"># 初始化一个positional encoding</span><br>    <span class="hljs-comment"># embed_dim: 字嵌入的维度</span><br>    <span class="hljs-comment"># max_seq_len: 最大的序列长度</span><br>    positional_encoding = np.array([<br>        [pos / np.power(<span class="hljs-number">10000</span>, <span class="hljs-number">2</span> * i / embed_dim) <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(embed_dim)]<br>        <span class="hljs-keyword">if</span> pos != <span class="hljs-number">0</span> <span class="hljs-keyword">else</span> np.zeros(embed_dim) <span class="hljs-keyword">for</span> pos <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(max_seq_len)])<br>    positional_encoding[<span class="hljs-number">1</span>:, <span class="hljs-number">0</span>::<span class="hljs-number">2</span>] = np.sin(positional_encoding[<span class="hljs-number">1</span>:, <span class="hljs-number">0</span>::<span class="hljs-number">2</span>])  <span class="hljs-comment"># dim 2i 偶数</span><br>    positional_encoding[<span class="hljs-number">1</span>:, <span class="hljs-number">1</span>::<span class="hljs-number">2</span>] = np.cos(positional_encoding[<span class="hljs-number">1</span>:, <span class="hljs-number">1</span>::<span class="hljs-number">2</span>])  <span class="hljs-comment"># dim 2i+1 奇数</span><br>    <span class="hljs-comment"># 归一化, 用位置嵌入的每一行除以它的模长</span><br>    <span class="hljs-comment"># denominator = np.sqrt(np.sum(position_enc**2, axis=1, keepdims=True))</span><br>    <span class="hljs-comment"># position_enc = position_enc / (denominator + 1e-8)</span><br>    <span class="hljs-keyword">return</span> positional_encoding<br>    <br>positional_encoding = get_positional_encoding(max_seq_len=<span class="hljs-number">100</span>, embed_dim=<span class="hljs-number">16</span>)<br>plt.figure(figsize=(<span class="hljs-number">10</span>,<span class="hljs-number">10</span>))<br>sns.heatmap(positional_encoding)<br>plt.title(<span class="hljs-string">&quot;Sinusoidal Function&quot;</span>)<br>plt.xlabel(<span class="hljs-string">&quot;hidden dimension&quot;</span>)<br>plt.ylabel(<span class="hljs-string">&quot;sequence length&quot;</span>)<br></code></pre></td></tr></table></figure>
+<p>最后，将字向量和 <code>位置嵌入</code> 相加，送给下一层。</p>
+<blockquote>
+<p>绝对位置编码 vs. 相对位置编码</p>
+<ul>
+<li>绝对位置编码是相对简单的一种方案，①可以直接将位置编码当作可训练参数，比如最大长度为512，编码维度为768，那么就初始化一个512×768的矩阵作为位置向量，让它随着训练过程更新。现在的BERT、GPT等模型所用的就是这种位置编码；②三角函数式位置编码，一般也称为Sinusoidal位置编码，Transformer所使用的方法；③先接一层RNN学习位置信息，然后再接Transformer，那么理论上就不需要加位置编码了。</li>
+<li>相对位置并没有完整建模每个输入的位置信息，而是在算Attention的时候考虑当前位置与被Attention的位置的相对距离，由于自然语言一般更依赖于相对位置，所以相对位置编码通常也有着优秀的表现。对于相对位置编码来说，它的灵活性更大，更加体现出了研究人员的“天马行空”。</li>
+</ul>
+</blockquote>
+<h3 id="1-1-Attention层"><a href="#1-1-Attention层" class="headerlink" title="1.1 Attention层"></a>1.1 Attention层</h3><p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gwfrkul6pxj316f0u0dmb.jpg" srcset="/img/loading.gif" lazyload alt="CFQz0to"></p>
+<p><strong>Attention层的好处是能够==一步到位捕捉到全局的联系==，因为它直接把序列两两比较（代价是计算量变为 $O(n^2)$，当然由于是纯矩阵运算，这个计算量相当也不是很严重）；相比之下，RNN需要一步步递推才能捕捉到，而CNN则需要通过层叠来扩大感受野，这是Attention层的明显优势。</strong> </p>
+<p>Google给出的Attention的定义:</p>
+<script type="math/tex; mode=display">
+{Attention}(Q, K, V)=softmax(\frac{QK^T}{\sqrt{d_k}})V</script><p>逐个向量来看:</p>
+<script type="math/tex; mode=display">
+Attention \left(\boldsymbol{q}_{t}, \boldsymbol{K}, \boldsymbol{V}\right)=\sum_{s=1}^{m} \frac{1}{Z} \exp \left(\frac{\left\langle\boldsymbol{q}_{t}, \boldsymbol{k}_{s}\right\rangle}{\sqrt{d_{k}}}\right) \boldsymbol{v}_{s}</script><p>其中，$\boldsymbol{Q} \in \mathbb{R}^{n \times d_{k}}, \boldsymbol{K} \in \mathbb{R}^{m \times d_{k}}, \boldsymbol{V} \in \mathbb{R}^{m \times d_{v}} , Z是归一化因子 $</p>
+<p>过程：$q,k,v$ 分别是 $query,key,value$ 的简写，$K,V$ 是一一对应的，它们就像是key-value的关系，那么上式的意思就是==通过 $qt$ 这个query，通过与各个 $ks$ 内积的并softmax的方式，来得到 $qt$ 与各个$vs$ 的相似度，然后加权求和，得到一个 $dv$ 维的向量==。其中因子 $\sqrt{d_k}$ 起到调节作用，使得内积不至于太大（太大的话softmax后就非0即1了，不够“soft”了）。 </p>
+<p>结果：将$n×d_k$的序列$Q$编码成了一个新的$n×dv$​的序列.</p>
+<p>所谓Self Attention，其实就是$Attention(X,X,X)$，$X$ 就是前面说的输入序列。也就是说，<u>在序列内部做Attention，寻找序列内部的联系</u>。 </p>
+<h3 id="1-2-Multi-Head-Attention"><a href="#1-2-Multi-Head-Attention" class="headerlink" title="1.2 Multi-Head Attention"></a>1.2 Multi-Head Attention</h3><p>把$Q,K,V$ 通过参数矩阵映射一下，然后再做 Attention，把这个过程重复做 $h$ 次，结果拼接起来: </p>
+<script type="math/tex; mode=display">
+{head}_{i} = {Attention}(Q W_{i}^{Q}, K W_{i}^{K}, V W_{i}^{V})
+\\
+{MultiHead}(Q, K, V) ={Concat}({head}_{1}, \cdots, {head}_{h})</script><p>最后得到一个 $n×(hd_v)$ 的序列。==<strong>所谓“多头”（Multi-Head），就是只多做几次同样的事情（参数不共享），然后把结果拼接</strong>== </p>
+<h3 id="Transformer-Encoder-的具体流程"><a href="#Transformer-Encoder-的具体流程" class="headerlink" title="Transformer Encoder 的具体流程"></a>Transformer Encoder 的具体流程</h3><p><img src="https://ningshixian.github.io/resources/images/transformer_architecture.jpg" srcset="/img/loading.gif" lazyload alt=""></p>
+<ol>
+<li><p>Inputs是经过padding的输入数据，大小是 <em>[batch size, max seq length]</em></p>
+</li>
+<li><p>初始化embedding matrix，通过==embedding lookup==将Inputs映射成token embedding，大小是<em>[batch size, max seq length, embedding size]</em></p>
+</li>
+<li><p>通过sin和cos函数构造位置编码，并加到token embedding中，然后dropout。</p>
+</li>
+<li><p>多头注意力机制</p>
+<ol>
+<li><p>输入token embedding $X$，通过Dense生成 $Q，K，V$，大小是[<em>batch size, max seq length, embedding size]</em>，然后按第2维<em>split</em>成heads的个数，并按第0维拼接，生成新的 $Q，K，V$，大小是<em>[num heads\</em>batch size, max seq length, embedding size/num heads]*，完成多头的操作</p>
+</li>
+<li><p>将 $K$ 的第1维和第2维进行转置，然后 $Q$ 和转置后的 $K$ 的进行点积，结果的大小是 <em>[num heads \</em>batch size, max seq length, max seq length]*</p>
+</li>
+<li><p>将<4.2>的结果除以hidden size的开方(<u>在transformer中，hidden size=embedding size</u>)，完成scale的操作。</p>
+<script type="math/tex; mode=display">
+a_{1,i}=q^1k^i/\sqrt{d}</script></li>
+<li><p>将<4.3>中padding的点积结果置成一个很小的数 $(-2^{32}+1)$，完成mask操作，后续softmax对padding的结果就可以忽略不计了 √</p>
+</li>
+<li><p>将经过mask的结果进行softmax操作:</p>
+</li>
+</ol>
+</li>
+</ol>
+<script type="math/tex; mode=display">
+a`_{1,i}=exp(a_{1,i})/\sum_j{exp(a_{1,j})}</script><ul>
+<li><ol>
+<li>将softmax的结果和 $V$ 进行点积，得到attention的结果，大小是 <em>[num heads\</em>batch size, max seq length, hidden size/num heads]*:</li>
+</ol>
+<script type="math/tex; mode=display">
+b^1=\sum_i{a`_{1,i}v^i}</script></li>
+</ul>
+<ol>
+<li>将attention的结果按第0维split成heads的个数，并按第2维concat，生成multi-head attention的结果，大小是 <em>[batch size, max seq length, hidden size]</em>:</li>
+</ol>
+<script type="math/tex; mode=display">
+{head}_{i} = {Attention}(Q W_{i}^{Q}, K W_{i}^{K}, V W_{i}^{V})
+  \\
+  {MultiHead}(Q, K, V) ={Concat}({head}_{1}, \cdots, {head}_{h})</script><ol>
+<li>将token embedding和multi-head attention的结果相加（残差），并进行Layer Normalization。</li>
+<li>将<5>的结果经过2层Dense，其中第1层的 <code>activation=relu</code>，第2层 <code>activation=None</code>。</li>
+</ol>
+<h3 id="transformer一问一答"><a href="#transformer一问一答" class="headerlink" title="transformer一问一答"></a><strong>transformer一问一答</strong></h3><ul>
+<li><p>Q：为什么存在Positional Embedding？在该结构中以何种形式表示？</p>
+<p>A：Attention机制与CNN结构一样，无法表示文本的时序型，因此相比于LSTM结构，在NLP领域效果要差一些，而加入位置信息，相当于给予了时序特性。</p>
+</li>
+<li><p>Q：为什么<4.2>在做attention时，需要进行Scale？</p>
+<p>QK进行点击之后，值之间的方差会较大，也就是大小差距会较大；如果直接通过Softmax操作，会导致大的更大，小的更小；进行缩放，会使参数更平滑，训练效果更好。</p>
+</li>
+<li><p>Q：为什么<5>要将multi-head attention的输入和输出相加？</p>
+<p>类似于resnet中的残差学习单元，有ensemble的思想在里面，解决网络退化问题</p>
+</li>
+<li><p>Q：为什么multi-head attention后面要加一个ffn？</p>
+<p>类比cnn网络中，cnn block和fc交替连接，效果更好。相比于单独的multi-head attention，在后面加一个ffn，可以提高整个block的<u>非线性变换</u>的能力。</p>
+</li>
+</ul>
+<h2 id="2-GPT-2018"><a href="#2-GPT-2018" class="headerlink" title="2. GPT (2018)"></a>2. GPT (2018)</h2><blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.bookstack.cn/read/huaxiaozhuan-ai/spilt.4.8c42358a11926b2f.md">https://www.bookstack.cn/read/huaxiaozhuan-ai/spilt.4.8c42358a11926b2f.md</a></p>
+<p>gpt在bert之前就发表了，使用了transformer decoder作为预训练的框架。在看到了decoder只能get上文信息，不能get下文信息的缺点之后，bert改用了transformer encoder作为预训练的框架，能够同时get上下文信息，获得了巨大的成功。</p>
+</blockquote>
+<p>给定一个语料 $U={u_1,…,u_n}$，使用标准的语言建模目标来最大化如下似然：</p>
+<script type="math/tex; mode=display">
+L_1(U)=∑_ilog⁡P(u_i∣u_{i−k},…,u_{i−1};Θ)</script><p>其中，k 为上下文窗口的大小，条件概率 P 通过参数为 Θ 的神经网络进行建模。GPT 中使用了一个多层的 Transformer Decoder 作为语言模型。模型首先对输入上下文词条应用多头自注意力机制，再通过按位置的前馈层产生目标词条的输出分布：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+h_0=UW_e+W_p \\ 
+h_l=transformer_black(h_{l−1}),∀i∈[1,n] \\ 
+P(u)=softmax(h_nW_e^⊤)
+\end{aligned}</script><p>其中，$U=(u_{−k},…,u_{−1})$​ 为词条的上下文向量，n 为网络层数，$W_e$ 为词条的嵌入矩阵，$W_p$ 为位置嵌入矩阵。</p>
+<p>给定一个有标签的数据集 C，其中包含了输入词条序列 $x_1,…,x_m$ 和对应的标签 y。利用上述预训练的模型获得输入对应的最后一个 Transformer 的激活输出 $h_l^m$，之后再将其输入到一个参数为 $W_y$ 的线性输入层中预测 y：</p>
+<script type="math/tex; mode=display">
+P(y∣x_1,…,_xm)=softmax(h_l^mW_y)</script><p>模型通过最小化如下损失进行优化：</p>
+<script type="math/tex; mode=display">
+L_2(C)=∑_{(x,y)}log⁡P(y∣x_1,…,x_m)</script><p>研究还发现将语言建模作为微调的附加目标可以帮助提高模型的泛化能力，同时可以加速模型收敛。GPT 中采用如下的优化目标：</p>
+<script type="math/tex; mode=display">
+L_3(C)=L_2(C)+λL_1(C)</script><p>GPT 网络架构示意图如下：</p>
+<p><img src="https://leovan.me/images/cn/2020-03-28-pre-trained-model-for-nlp/gpt.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<h2 id="3-BERT-2018-💡"><a href="#3-BERT-2018-💡" class="headerlink" title="3. BERT (2018) 💡"></a>3. BERT (2018) 💡</h2><blockquote>
+<p> <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/46833276">https://zhuanlan.zhihu.com/p/46833276</a></p>
+<ul>
+<li>BERT BASE：L=12,H=768,A=12，参数总量为 100 M</li>
+<li>BERT LARGE：L=24,H=1024,A=16，参数总量为 340 M</li>
+</ul>
+</blockquote>
+<h4 id="前言"><a href="#前言" class="headerlink" title="前言"></a><strong>前言</strong></h4><ul>
+<li><p>BERT 是一种语境化的词（字）嵌入模型  </p>
+</li>
+<li><p>BERT 是基于Transformer的深度双向语言表征模型</p>
+</li>
+<li><p>BERT预训练过程包含两个不同的预训练任务，分别是<strong>Masked Language Model和Next Sentence Prediction</strong>任务。</p>
+<ul>
+<li><p>Masked Language Model（MLM）</p>
+<p>通过随机掩盖一些词（替换为统一标记符[MASK]），然后预测这些被遮盖的词来训练双向语言模型</p>
+</li>
+<li><p>Next Sentence Prediction（NSP）</p>
+<p>为了训练一个理解句子间关系的模型，引入一个下一句预测任务。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="模型结构"><a href="#模型结构" class="headerlink" title="模型结构"></a>模型结构</h4><p><img src="https://p0.meituan.net/travelcube/890083d95e1dc89888296e0991437dc7646898.png" srcset="/img/loading.gif" lazyload alt="图2 BERT及Transformer网络结构示意图" style="zoom: 25%;" /></p>
+<h4 id="两个预训练任务"><a href="#两个预训练任务" class="headerlink" title="两个预训练任务"></a>两个预训练任务</h4><p>在预训练阶段，BERT 采用了两个无监督预测任务：</p>
+<h5 id="1-Masked-Language-Model"><a href="#1-Masked-Language-Model" class="headerlink" title="1. Masked Language Model"></a>1. Masked Language Model</h5><p>不同于一般的仅利用 <code>[MASK]</code> 进行遮挡，BERT 选择采用 80% 的 <code>[MASK]</code>，10% 的随机词和 10% 保留原始词的方式对随机选择的 15% 的词条进行遮挡处理。由于编码器不知会预测哪个词或哪个词被随机替换了，这迫使其必须保留每个输入词条的分布式上下文表示。同时 1.5% 的随机替换也不会过多的损害模型的理解能力。</p>
+<ul>
+<li>80%的时间中：将选中的词用[MASK]token来代替，例如</li>
+</ul>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">my dog is hairy → my dog is [MASK]<br></code></pre></td></tr></table></figure>
+<ul>
+<li>10%的时间中：将选中的词用任意的词来进行代替，例如</li>
+</ul>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">my dog is hairy → my dog is apple<br></code></pre></td></tr></table></figure>
+<ul>
+<li>10%的时间中：选中的词不发生变化，例如</li>
+</ul>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">my dog is hairy → my dog is hairy<br></code></pre></td></tr></table></figure>
+<p>这样存在另一个问题在于在训练过程中只有15%的token被预测，正常的语言模型实际上是预测每个token的，因此Masked LM相比正常LM会收敛地慢一些，后面的实验也的确证实了这一点。</p>
+<h5 id="2-Next-Sentence-Prediction"><a href="#2-Next-Sentence-Prediction" class="headerlink" title="2. Next Sentence Prediction"></a>2. Next Sentence Prediction</h5><p>一些重要的下游任务，例如问答（Question Answering，QA）和自然语言推断（Natural Language Inference，NLI）是基于两个句子之间关系的理解，这是语言建模无法直接捕获的。BERT 通过训练一个预测是否为下一个句子的二分类任务来实现，对于一个句子对 A 和 B，50% 的 B 是句子 A 真实的下一句，剩余 50% 为随机抽取的。</p>
+<h4 id="输入表示"><a href="#输入表示" class="headerlink" title="输入表示"></a>输入表示</h4><p>BERT 的输入表示既可以表示一个单独的文本序列，也可以表示一对文本序列（例如：问题和答案）。对于一个给定的词条，其输入表示由对应的词条嵌入，分割嵌入和位置嵌入三部分加和构成，如下图所示：</p>
+<ol>
+<li>Token embedding 表示当前词的embedding</li>
+<li>Segment Embedding 表示当前词所在句子的index embedding</li>
+<li>Position Embedding 表示当前词所在位置的index embedding</li>
+</ol>
+<p><img src="https://p0.meituan.net/travelcube/348d5d3e5bcaec1b569f2af209ac62fd450645.png" srcset="/img/loading.gif" lazyload alt="图3 BERT模型的输入表示"></p>
+<p>为了一个输入能够针对两个任务，输入构造规则如下：</p>
+<ol>
+<li>为了能够同时表示单句子和句子对，多句子(例如QA中的Q/A)需要进行拼接作为单个句子，用segment embedding和[SEG]来进行区分</li>
+<li>句子第一个token总是有特殊含义，例如分类问题中是类别，如果不是分类问题那么就忽略</li>
+<li>三个embedding进行sum得到输入的向量</li>
+</ol>
+<h4 id="模型训练"><a href="#模型训练" class="headerlink" title="模型训练"></a>模型训练</h4><p>BERT预训练对于算力有着极大要求:</p>
+<ul>
+<li>开启混合精度实现训练加速；</li>
+<li>在通用中文语料基础上加入领域业务语料进行模型预训练，完成领域迁移；</li>
+<li>预训练过程中尝试融入知识图谱中的实体信息，采用全词MASK训练策略；</li>
+<li><p>通过在业务数据上进行微调，支持不同类型的业务需求。</p>
+</li>
+<li><p>基于Horovod的分布式训练方案…..</p>
+</li>
+<li>模型轻量化<ul>
+<li>低精度量化。在模型训练和推理中使用低精度（FP16甚至INT8、二值网络）表示取代原有精度（FP32）表示。</li>
+<li>模型裁剪和剪枝。减少模型层数和参数规模。</li>
+<li>模型蒸馏。通过知识蒸馏方法[22]基于原始BERT模型蒸馏出符合上线要求的小模型。</li>
+</ul>
+</li>
+</ul>
+<h4 id="模型fine-tune"><a href="#模型fine-tune" class="headerlink" title="模型fine-tune"></a>模型fine-tune</h4><p>这里fine-tuning之前对模型的修改非常简单，例如针对sequence-level classification problem(例如情感分析)，取第一个token的输出表示，喂给一个softmax层得到分类结果输出；对于token-level classification(例如NER)，取所有token的最后层transformer输出，喂给softmax层做分类。总之不同类型的任务需要对模型做不同的修改，但是修改都是非常简单的，最多加一层神经网络即可。如下图所示</p>
+<p><img src="https://ningshixian.github.io/resources/images/bert-fine-tune.jpg" srcset="/img/loading.gif" lazyload style="zoom:50%;" /></p>
+<h4 id="Bert和transformer在embedding上的差异"><a href="#Bert和transformer在embedding上的差异" class="headerlink" title="Bert和transformer在embedding上的差异"></a>Bert和transformer在embedding上的差异</h4><ol>
+<li><p>transformer的embedding由<strong>2部分</strong>构成：</p>
+<ul>
+<li>一个是token embedding，通过embedding matrix lookup到token_ids上生成表示token的向量；</li>
+<li>一个是position embedding，是通过sin和cos函数创建的定值向量。</li>
+</ul>
+<p>而bert的embedding由<strong>3部分</strong>构成：</p>
+<ul>
+<li>第一个同样是token embedding，通过embedding matrix lookup到token_ids上生成表示token的向量；</li>
+<li>第二个是segment embedding，用来表达当前token是来自于第一个segment，还是第二个segment，因此segment vocab size是2；</li>
+<li>第三个是position embedding，与transformer不同的是，bert创建了一个position embedding matrix，通过position embedding matrix lookup到token_ids的位置上生成表示token位置的位置向量。</li>
+</ul>
+</li>
+<li><p>transformer在embedding之后跟了一个dropout，但是bert在embedding之后先跟了一个layer normalization，再跟了一个dropout。</p>
+</li>
+<li><p>bert在token序列之前加了一个特定的token<code>“[cls]”</code>，这个token对应的向量后续会用在分类任务上；如果是句子对的任务，那么两个句子间使用特定的token“[seq]”来分割。</p>
+</li>
+</ol>
+<h4 id="Bert和transformer在loss上的差异"><a href="#Bert和transformer在loss上的差异" class="headerlink" title="Bert和transformer在loss上的差异"></a>Bert和transformer在loss上的差异</h4><ol>
+<li><p>transformer的loss是在decoder阶段计算的，loss的计算方式是transformer的<19>。<br>bert预训练的loss由2部分构成，</p>
+<ul>
+<li>一部分是==NSP==的loss，就是token“[cls]”经过1层Dense，然后接一个二分类的loss，其中0表示segment B是segment A的下一句，1表示segment A和segment B来自2篇不同的文本；</li>
+<li>另一部分是==MLM==的loss，segment中<strong>每个token都有15%的概率被mask，而被mask的token有80%的概率用“<mask>”表示，有10%的概率随机替换成某一个token，有10%的概率保留原来的token</strong>，被mask的token经过encoder后乘以embedding matrix的转置会生成在vocab上的分布，然后计算分布和真实的token的one-hot形式的cross entropy，最后sum起来当作loss。</li>
+</ul>
+<p>这两部分loss相加起来当作bert的 total loss，利用adam进行训练。bert fine-tune的loss会根据任务性质来设计，例如分类任务中就是token“[cls]”经过1层Dense，然后接了一个二分类的loss；例如问题回答任务中会在paragraph上的token中预测一个起始位置，一个终止位置，然后以起始位置和终止位置的预测分布和真实分布为基础设计loss；例如序列标注，预测每一个token的词性，然后以每一个token在词性的预测分布和真实分布为基础设计loss。</p>
+</li>
+<li><p>bert在encoder之后，在计算NSP和MLM的loss之前，分别对NSP和MLM的输入加了一个Dense操作，这部分参数只对预训练有用，对fine-tune没用。而transformer在decoder之后就直接计算loss了，中间没有Dense操作。</p>
+</li>
+</ol>
+<h4 id="Bert的技术细节"><a href="#Bert的技术细节" class="headerlink" title="Bert的技术细节"></a>Bert的技术细节</h4><ul>
+<li>为什么bert需要额外的segment embedding?</li>
+</ul>
+<p>  因为bert预训练的其中一个任务是判断segment A和segment B之间的关系，这就需要embedding中能包含当前token属于哪个segment的信息，然而无论是token embedding，还是position embedding都无法表示出这种信息，因此额外创建一个segment embedding matrix用来表示当前token属于哪个segment的信息，segment vocab size就是2，其中index=0表示token属于segment A，index=1表示token属于segment B。</p>
+<ul>
+<li>为什么transformer的embedding后面接了一个dropout，而bert是先接了一个layer normalization，再接dropout?</li>
+</ul>
+<p>  LN是为了解决梯度消失的问题，dropout是为了解决过拟合的问题。在embedding后面加LN有利于embedding matrix的收敛。</p>
+<ul>
+<li>为什么在multi-head attention中，bert不仅会concat<4.6>的attention的结果，还会把前N-1个encoder block中attention的结果都concat进来？</li>
+</ul>
+<p>  有ensemble的思路在里面，比起单纯只用第N个encoder block中的attention结果，将前N个encoder block中的attention结果concat起来显然能够get到更多的信息，而下一步的linear操作又将结果的大小重新变回[batch size, max seq length, hidden size]。该问题和transformer的问题3.4的本质是一样的，通过ensemble可以得到更多的信息。</p>
+<ul>
+<li><p>为什么token被mask的概率是15%？为什么被mask后，还要分3种情况？</p>
+<p>15%的概率是通过实验得到的最好的概率，xlnet也是在这个概率附近，说明在这个概率下，既能有充分的mask样本可以学习，又不至于让segment的信息损失太多，以至于影响mask样本上下文信息的表达。然而因为在下游任务中不会出现token“<mask>”，所以预训练和fine-tune出现了不一致，为了减弱不一致性给模型带来的影响，被mask的token有80%的概率用“<mask>”表示，有10%的概率随机替换成某一个token，有10%的概率保留原来的token，这3个百分比也是多次实验得到的最佳组合，在这3个百分比的情况下，下游任务的fine-tune可以达到最佳的实验结果。</p>
+</li>
+</ul>
+<h4 id="BERT-可以用在哪？"><a href="#BERT-可以用在哪？" class="headerlink" title="BERT 可以用在哪？"></a>BERT 可以用在哪？</h4><ul>
+<li>Just take it as a kind of embedding (contextualized)</li>
+<li>Wherever you use word embedding， use BERT instead!</li>
+<li>Eg. Text classifacation, seqence labeling, sentence generation，machine reading comprehension， natural language inference …</li>
+</ul>
+<p><img src="https://p1.meituan.net/travelcube/5e5258267b2ca37cbbe662a4d415e021110023.png" srcset="/img/loading.gif" lazyload alt="图4 MT-BERT整体技术框架"></p>
+<p>细粒度情感分析</p>
+<p><img src="https://p0.meituan.net/travelcube/54ffe0cbac52e59af8e8abd349476e47345216.jpg" srcset="/img/loading.gif" lazyload alt="图9 基于MT-BERT的多任务细粒度情感分析模型架构"></p>
+<h4 id="BERT的总结"><a href="#BERT的总结" class="headerlink" title="BERT的总结"></a>BERT的总结</h4><ol>
+<li>BERT采用Masked LM + Next Sentence Prediction作为pre-training tasks, 完成了真正的Bidirectional LM</li>
+<li>BERT模型能够很容易地Fine-tune，并且效果很好，并且BERT as additional feature效果也很好</li>
+<li>模型足够泛化，覆盖了足够多的NLP tasks</li>
+</ol>
+<h2 id="4-UniLM-2019"><a href="#4-UniLM-2019" class="headerlink" title="4. UniLM (2019)"></a>4. UniLM (2019)</h2><p><img src="https://leovan.me/images/cn/2020-03-28-pre-trained-model-for-nlp/unilm.png" srcset="/img/loading.gif" lazyload alt="img" style="zoom: 50%;" /></p>
+<p><strong>Q：UniLM模型介绍</strong></p>
+<p>A：通过不同的掩码来控制预测单词的可见上下文词语数量，实现不同的语言模型的联合训练。</p>
+<p>单向语言模型：分为从左到右和从右向左两种，从左到右，即仅通过被掩蔽token的左侧所有本文来预测被掩蔽的token；从右到左，则是仅通过被掩蔽token的右侧所有本文来预测被掩蔽的token。</p>
+<p>双向语言模型：与BERT模型一致，在预测被掩蔽token时，可以观察到所有的token。</p>
+<p>序列到序列语言模型：如果被掩蔽token在第一个文本序列中，那么仅可以使用第一个文本序列中所有token，不能使用第二个文本序列的任何信息；如果被掩蔽token在第二个文本序列中，那么使用一个文本序列中所有token和第二个文本序列中被掩蔽token的左侧所有token预测被掩蔽token。</p>
+<p><strong>Q：UniLM模型如何掩码？</strong></p>
+<p>A：token掩码的概率为15%，在被掩掉的token中，有80%使用[MASK]替换，10%使用字典中随机词进行替换，10%保持原来token不变，与BERT模型一致。此外，在80%的情况下，每次随机掩掉一个token，在剩余的20%情况下，掩掉一个二元token组或三元token组。</p>
+<p><strong>Q：如何训练UniLM模型？</strong></p>
+<p>A：使用1/3的数据进行双向语言模型优化，1/3的数据进行序列到序列语言模型优化，1/6的数据进行从左向右的单向语言模型优化，1/6的数据进行从右向左的单向语言模型优化</p>
+<p><strong>Q：如何实现训练代码？</strong></p>
+<p>A：每个batch为一个任务，2个双向语言模型任务，2个序列到序列语言模型任务，1个左向右的单向语言模型任务，1个从右向左的单向语言模型，每跑一个任务进行一次累计梯度，跑完一轮所有任务，执行一次反向传播。</p>
+<p>UniLM论文见：<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1905.03197">https://arxiv.org/abs/1905.03197</a></p>
+<p>UniLM论文解读见：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/113380840">https://zhuanlan.zhihu.com/p/113380840</a></p>
+<h2 id="5-Transformer-XL-2019"><a href="#5-Transformer-XL-2019" class="headerlink" title="5. Transformer-XL (2019)"></a>5. Transformer-XL (2019)</h2><p>将 Transformer 或注意力机制应用到语言建模中的核心问题是如何训练 Transformer 使其有效地将一个任意长文本编码为一个固定长度的表示。Transformer-XL 将整个语料拆分为较短的段落，仅利用每段进行训练并忽略之前段落的上下文信息。这种方式称之为 Vanilla Model <a target="_blank" rel="noopener" href="https://leovan.me/cn/2020/03/pre-trained-model-for-nlp/#fn:airfou2019character">27</a>，如下图所示：</p>
+<p><img src="https://leovan.me/images/cn/2020-03-28-pre-trained-model-for-nlp/transformer-xl-vanilla-model.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>在这种训练模式下，无论是前向还是后向信息都不会跨越分割的段落进行传导。利用固定长度的上下文主要有两个弊端：</p>
+<ol>
+<li>这限制了最大依赖的长度，虽然自注意力机制不会像 RNN 一样受到梯度弥散的影响，但 Vanilla Model 也不能完全利用到这个优势。</li>
+<li>虽然可以利用补全操作来实现句子或其他语义的分割，但实际上通常会简单的将一个长文本截断成一个固定长度的分割，这样会产生上下文分裂破碎的问题。</li>
+</ol>
+<p>为了解决这个问题，Transformer-XL 采用了一种循环机制的 Transformer。在训练阶段，在处理新的分割段落时，之前分割分部分的隐含状态序列将被<strong>固定（fixed）</strong>和<strong>缓存（cached）</strong>下来作为一个扩展的上下文被复用参与计算，如下图所示：</p>
+<p><img src="https://leovan.me/images/cn/2020-03-28-pre-trained-model-for-nlp/transformer-xl-model.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>虽然梯度仍仅限于这个分割段落内部，但网络可以从历史中获取信息，从而实现对长期依赖的建模。令两个长度为 L 的连续分割段落为 $\mathbf{s}_{\tau} = \left[x_{\tau, 1}, \dotsc, x_{\tau, L}\right]$ 和 $\mathbf{s}_{\tau + 1} = \left[x_{\tau + 1, 1}, \dotsc, x_{\tau + 1, L}\right]$，第 τ 段分割 sτ 的第 n 层隐含状态为 $\mathbf{h}^n_{\tau} \in \mathbb{R}^{L \times d}$，其中 d 为隐含维度。则对于分割段落 $s_{τ+1}$ 的第 n 层隐含状态通过如下方式进行计算：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\tilde{\mathbf{h}}^{n-1}_{\tau + 1} &= \left[\text{SG} \left(\mathbf{h}^{n-1}_{\tau}\right) \circ \mathbf{h}^{n-1}_{\tau + 1} \right] \\
+\mathbf{q}^{n}_{\tau + 1}, \mathbf{k}^{n}_{\tau + 1}, \mathbf{v}^{n}_{\tau + 1} &= \mathbf{h}^{n-1}_{\tau + 1} \mathbf{W}^{\top}_{q}, \tilde{\mathbf{h}}^{n-1}_{\tau + 1} \mathbf{W}^{\top}_{k}, \tilde{\mathbf{h}}^{n-1}_{\tau + 1} \mathbf{W}^{\top}_{v} \\
+\mathbf{h}^{n}_{\tau + 1} &= \text{Transformer-Layer} \left(\mathbf{q}^{n}_{\tau + 1}, \mathbf{k}^{n}_{\tau + 1}, \mathbf{v}^{n}_{\tau + 1}\right)
+\end{aligned}</script><p>其中，$SG(⋅)$ 表示停止梯度，$\left[\mathbf{h}_u \circ \mathbf{h}_v\right]$ 表示将两个隐含序列按照长度维度进行拼接，W 为模型的参数。与一般的 Transformer 相比，最大的不同在于 $\mathbf{k}^n_{\tau + 1}$ 和 $\mathbf{v}^n_{\tau + 1}$ 不仅依赖于 $\tilde{\mathbf{h}}^{n-1}_{\tau - 1}$ 还依赖于之前分割段落的 $\mathbf{h}^{n-1}_{\tau}$ 缓存。</p>
+<p>在标准的 Transformer 中，序列的顺序信息通过位置嵌入$\mathbf{U} \in \mathbb{R}^{L_{\max} \times d}$ 提供，其中第 i 行 $U_i$ 对应一个分割文本内部的第 i 个<strong>绝对</strong>位置，$L_max$ 为最大可能长度。在 Transformer-XL 中则是通过一种<strong>相对</strong>位置信息对其进行编码，构建一个相对位置嵌入 $\mathbf{R} \in \mathbb{R} ^{L_{\max} \times d}$，其中第 i 行 $R_i$ 表示两个位置之间相对距离为 i 的嵌入表示。</p>
+<p>对于一般的 Transformer，一个分割段落内部的 qi 和 kj 之间的注意力分数可以分解为：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\mathbf{A}_{i, j}^{\mathrm{abs}} &=\underbrace{\mathbf{E}_{x_{i}}^{\top} \mathbf{W}_{q}^{\top} \mathbf{W}_{k} \mathbf{E}_{x_{j}}}_{(a)}+\underbrace{\mathbf{E}_{x_{i}}^{\top} \mathbf{W}_{q}^{\top} \mathbf{W}_{k} \mathbf{U}_{j}}_{(b)} \\
+&+\underbrace{\mathbf{U}_{i}^{\top} \mathbf{W}_{q}^{\top} \mathbf{W}_{k} \mathbf{E}_{x_{j}}}_{(c)}+\underbrace{\mathbf{U}_{i}^{\top} \mathbf{W}_{q}^{\top} \mathbf{W}_{k} \mathbf{U}_{j}}_{(d)}
+\end{aligned}</script><p>利用相对位置思想，变化如下：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\mathbf{A}_{i, j}^{\mathrm{rel}} &=\underbrace{\mathbf{E}_{x_{i}}^{\top} \mathbf{W}_{q}^{\top} \mathbf{W}_{k, E} \mathbf{E}_{x_{j}}}_{(a)}+\underbrace{\mathbf{E}_{x_{i}}^{\top} \mathbf{W}_{q}^{\top} \mathbf{W}_{k, R} \textcolor{blue}{\mathbf{R}_{i-j}}}_{(b)} \\
+&+\underbrace{\textcolor{red}{u^{\top}} \mathbf{W}_{k, E} \mathbf{E}_{x_{j}}}_{(c)}+\underbrace{\textcolor{red}{v^{\top}} \mathbf{W}_{k, R} \textcolor{blue}{\mathbf{R}_{i-j}}}_{(d)}
+\end{aligned}</script><ol>
+<li>首先，利用相对位置 $R_{i−j}$ 替代绝对位置嵌入 Uj，这里 R 采用的是无需学习的 sinusoid 编码矩阵 <a target="_blank" rel="noopener" href="https://leovan.me/cn/2020/03/pre-trained-model-for-nlp/#fn:vaswani2017attention">14</a>。</li>
+<li>其次，引入了一个可训练的参数 $\textcolor{red}{u} \in \mathbb{R}^d$ 用于替换 $\mathbf{U}^{\top}_i \mathbf{W}^{\top}_q$。类似的，对于$\mathbf{U}^{\top} \mathbf{W}^{\top}_q$ 使用一个可训练的 $\textcolor{red}{v} \in \mathbb{R}^d$ 替换。</li>
+<li>最后，有意地划分了两个权重矩阵 $\mathbf{W}_{k, E}$ 和 $\mathbf{W}_{k, R}$ 用于生成基于内容的 Key 向量和基于位置的 Key 向量。</li>
+</ol>
+<p>这样，(a) 代表了基于内容的位置信息，(b) 捕获了内容无关的位置偏置，(c) 表示了一个全局的内容偏置，(d) 捕获了一个全局的位置偏置。</p>
+<p>利用一个自注意力头计算 N 层的 Transformer-XL 的过程如下，对于 n=1,…,N 有：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\widetilde{\mathbf{h}}_{\tau}^{n-1}=&\left[\mathrm{SG}\left(\mathbf{m}_{\tau}^{n-1}\right) \circ \mathbf{h}_{\tau}^{n-1}\right] \\
+\mathbf{q}_{\tau}^{n}, \mathbf{k}_{\tau}^{n}, \mathbf{v}_{\tau}^{n}=& \mathbf{h}_{\tau}^{n-1} {\mathbf{W}_{q}^{n}}^{\top}, \widetilde{\mathbf{h}}_{\tau}^{n-1} {\mathbf{W}_{k, E}^{n}}^{\top}, \widetilde{\mathbf{h}}_{\tau}^{n-1} {\mathbf{W}_{v}^{n}}^{\top} \\
+\mathbf{A}_{\tau, i, j}^{n}=& {\mathbf{q}_{\tau, i}^{n}}^{\top} \mathbf{k}_{\tau, j}^{n} + {\mathbf{q}_{\tau, i}^{n}}^{\top} \mathbf{W}_{k, R}^{n} \mathbf{R}_{i-j} \\
+&+u^{\top} \mathbf{k}_{\tau, j}+v^{\top} \mathbf{W}_{k, R}^{n} \mathbf{R}_{i-j} \\
+\mathbf{a}_{\tau}^{n}=& \text { Masked-Softmax }\left(\mathbf{A}_{\tau}^{n}\right) \mathbf{v}_{\tau}^{n} \\
+\mathbf{o}_{\tau}^{n}=& \text { LayerNorm } \left(\text{Linear}\left(\mathbf{a}_{\tau}^{n}\right)+\mathbf{h}_{\tau}^{n-1}\right) \\
+\mathbf{h}_{\tau}^{n}=& \text { Positionwise-Feed-Forward }\left(\mathbf{o}_{\tau}^{n}\right)
+\end{aligned}</script><h2 id="6-XLNet-2019"><a href="#6-XLNet-2019" class="headerlink" title="6. XLNet (2019)"></a>6. XLNet (2019)</h2><p><a target="_blank" rel="noopener" href="https://www.bookstack.cn/read/huaxiaozhuan-ai/spilt.7.8c42358a11926b2f.md">https://www.bookstack.cn/read/huaxiaozhuan-ai/spilt.7.8c42358a11926b2f.md</a></p>
+<p>目前语言预训练模型的模式主要有2种，第一种是像gpt这种的auto-regressive自回归模型，每个时刻都依据之前所有时刻的token来预测下一个token，auto-regressive的loss的定义如下：</p>
+<script type="math/tex; mode=display">
+\max _{\theta} \log p_{\theta}(\mathbf{x})=\sum_{t=1}^{T} \log p_{\theta}\left(x_{t} | \mathbf{x}_{<t}\right)=\sum_{t=1}^{T} \log \frac{\exp \left(h_{\theta}\left(\mathbf{x}_{1: t-1}\right)^{\top} e\left(x_{t}\right)\right)}{\sum_{x^{\prime}} \exp \left(h_{\theta}\left(\mathbf{x}_{1: t-1}\right)^{\top} e\left(x^{\prime}\right)\right)}</script><p>第二种是像bert这种的auto-encoder自编码模型，随机mask掉句子中若干个token，然后依据上下文预测被mask掉的token，auto-encoder的loss的定义如下：</p>
+<script type="math/tex; mode=display">
+\max _{\theta} \quad \log p_{\theta}(\overline{\mathbf{x}} | \hat{\mathbf{x}}) \approx \sum_{t=1}^{T} m_{t} \log p_{\theta}\left(x_{t} | \hat{\mathbf{x}}\right)=\sum_{t=1}^{T} m_{t} \log \frac{\exp \left(H_{\theta}(\hat{\mathbf{x}})_{t}^{\top} e\left(x_{t}\right)\right)}{\sum_{x^{\prime}} \exp \left(H_{\theta}(\hat{\mathbf{x}})_{t}^{\top} e\left(x^{\prime}\right)\right)}</script><p>两种不同的预训练目标的优劣势如下：</p>
+<ol>
+<li><strong>独立假设</strong>：BERT 中联合条件概率 $p(\overline{\mathbf{x}} | \hat{\mathbf{x}})$ 假设在给定的 x^ 下，遮挡的词条 $\overline{\mathbf{x}}$ 是相关独立的，而 AR(auto-regressive) 语言模型则没有这样的假设。</li>
+<li><strong>输入噪声</strong>：BERT 在预训练是使用了特殊标记 <code>[MASK]</code>，在下游任务微调时不会出现，而 AR 语言模型则不会存在这个问题。</li>
+<li><strong>上下文依赖</strong>：AR 语言模型仅考虑了词条左侧的上下文，而 BERT 则可以捕获两个方向的上下文。</li>
+</ol>
+<p>为了利用 AR 语言模型和 BERT 的优点，XLNet 提出了排序语言模型。对于一个长度为 T 序列 x，共有 $T!$​ 种不同的方式进行 AR 分解，如果模型共享不同分解顺序的参数，那么模型就能学习到两侧所有位置的信息。令 $Z_T$ 为长度为 T 的索引序列 $[1,2,…,T]$​ 的所有可能排列，$z_t$ 和 $z_{&lt;t}$ 分别表示一个排列 $z∈Z_T$ 第 t 个和前 t−1 个元素。则排列语言模型的优化目标为：</p>
+<script type="math/tex; mode=display">
+\max_{\theta} \quad \mathbb{E}_{\mathbf{z} \sim \mathcal{Z}_{T}}\left[\sum_{t=1}^{T} \log p_{\theta}\left(x_{z_{t}} | \mathbf{x}_{\mathbf{z}_{<t}}\right)\right]</script><p>根据标准的 Transformer，下一个词条的分布 $p_{\theta}\left(X_{z_{t}} | \mathbf{x}_{\mathbf{z}&lt;t}\right)$ 为：</p>
+<script type="math/tex; mode=display">
+p_{\theta}\left(X_{z_{t}} = x | \mathbf{x}_{\mathbf{z}<t}\right)=\frac{\exp \left(e(x)^{\top} h_{\theta}\left(\mathbf{x}_{\mathbf{z}<t}\right)\right)}{\sum_{x^{\prime}} \exp \left(e\left(x^{\prime}\right)^{\top} h_{\theta}\left(\mathbf{x}_{\mathbf{z}<t}\right)\right)}</script><p>其中，$h_{\theta}\left(\mathbf{x}_{\mathbf{z}&lt;t}\right)$​ 表示通过共享的 Transformer 产生的 $X_{Z&lt;t}$ 的隐含表示。该表示并不依赖于所预测的位置，为了避免这个问题，我们将位置 zt 加入到模型中：</p>
+<script type="math/tex; mode=display">
+p_{\theta}\left(X_{z_{t}}=x | \mathbf{x}_{z_{<t}}\right)=\frac{\exp \left(e(x)^{\top} g_{\theta}\left(\mathbf{x}_{\mathbf{z}<t}, z_{t}\right)\right)}{\sum_{x^{\prime}} \exp \left(e\left(x^{\prime}\right)^{\top} g_{\theta}\left(\mathbf{x}_{\mathbf{z}<t}, z_{t}\right)\right)}</script><p>对于 $g_{\theta}\left(\mathbf{x}_{\mathbf{z}&lt;t}, z_{t}\right)$ 进行建模需要满足如下两个要求：</p>
+<ol>
+<li>预测 $x_{zt}$ 时，$g_{\theta}\left(\mathbf{x}_{\mathbf{z}&lt;t}, z_{t}\right)$ 只能使用位置信息 zt 而不能使用内容信息 $x_{zt}$。</li>
+<li>在预测 $x_{zt}$ 之后的词条时，$g_{\theta}\left(\mathbf{x}_{\mathbf{z}&lt;t}, z_{t}\right)$  又必须包含 $x_{zt}$ 的语义信息。</li>
+</ol>
+<p>为了解决这个问题，XLNet 提供了两种隐含表示：</p>
+<ol>
+<li>内容隐含表示 $h_{\theta}\left(\mathbf{x}_{\mathbf{z} \leq t}\right)$，简写为 hzt，它和标准的 Transformer 一样，既编码上下文也编码 xzt 的内容。</li>
+<li>查询隐含表示 $g_{\theta}\left(\mathbf{x}_{\mathbf{z}&lt;t}, z_{t}\right)$，简写为 gzt，它仅编码上下文信息 XZ&lt;t 和位置信息 zt，不编码内容 xzt。</li>
+</ol>
+<p>模型的整个计算过程如下图所示：</p>
+<p><img src="https://ningshixian.github.io/resources/images/xlnet.jpg" srcset="/img/loading.gif" lazyload alt=""></p>
+<p>虽然排列语言模型有很多优点，但是由于计算量很大，模型很难进行优化，因此我们通过仅预测一个句子后面的一些词条解决这个问题。将 z 分为两部分：非目标子序列 $\mathbf{z}_{\leq c}$ 和目标子序列 $z_{&gt;c}$，其中 c 为切分点。同时会设置一个超参数 K，表示仅 1/K 的词条会被预测，有 $|\mathbf{z}| /(|\mathbf{z}|-c) \approx K$。对于未被选择的词条，其查询隐状态无需被计算，从而节省计算时间和资源。</p>
+<h2 id="7-MASS-2019"><a href="#7-MASS-2019" class="headerlink" title="7. MASS (2019)"></a>7. MASS (2019)</h2><p>MASS 是一个专门针对序列到序列的自然语言任务设计的预训练方法，对于一个给定的原始句子 $x∈X$，令 $x^{\setminus u:v}$ 表示将 x 从 u 到 v 位置进行遮挡处理，$k=v−u+1$ 为被遮挡词条的个数，$x^{u:v}$ 为从 u 到 v 位置被遮挡的部分。MASS 利用被遮挡的序列 $x^{\setminus u:v}$ 预测被遮挡的部分 $x^{u:v}$ ，目标函数的对数似然如下：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+L(\theta ; \mathcal{X}) &=\frac{1}{|\mathcal{X}|} \Sigma_{x \in \mathcal{X}} \log P\left(x^{u: v} | x^{\setminus u: v} ; \theta\right) \\
+&=\frac{1}{|\mathcal{X}|} \Sigma_{x \in \mathcal{X}} \log \prod_{t=u}^{v} P\left(x_{t}^{u: v} | x_{<t}^{u: v}, x^{\setminus u: v} ; \theta\right)
+\end{aligned}</script><p>对于一个具有 8 个词条的序列，$x_3 x_4 x_5 x_6$ 被遮挡的示例如下：</p>
+<p><img src="https://leovan.me/images/cn/2020-03-28-pre-trained-model-for-nlp/mass.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>模型仅预测遮挡的部分 $x_3 x_4 x_5 x_6$ ，对于解码器中位置 4−6 利用 $x_3 x_4 x_5$  作为输入，利用特殊遮挡符号 $\left[\mathbb{M}\right]$ 作为其他位置的输入。对于不同长度 k，MASS 包含了上文中提到的两种预训练模型：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>长度</th>
+<th>概率</th>
+<th>模型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>k=1</td>
+<td>$P\left(x^{u} \mid x^{\setminus u} ; \theta\right)$</td>
+<td>masked LM in BERT</td>
+</tr>
+<tr>
+<td>k=m</td>
+<td>$P\left(x^{1:m} \mid x^{\setminus 1:m} ; \theta\right)$</td>
+<td>masked LM in GPT</td>
+</tr>
+<tr>
+<td>k∈(1,m)</td>
+<td>$P\left(x^{u:v} \mid x^{\setminus u:v} ; \theta\right)$</td>
+<td>两种之间</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>对于不同 k 值，实验发现当 k 处于 m 的 50% 至 70% 之间时下游任务性能最优。</p>
+<p><img src="https://leovan.me/images/cn/2020-03-28-pre-trained-model-for-nlp/mass-k.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>当 $k=0.5m$​ 时，MASS 可以很好地平衡编码器和解码器的预训练。过度地偏向编码器（k=1，masked LM in BERT）和过度地偏向解码器（k=m，masked LM in GPT）均不能在下游的自然语言生成任务中取得很好的效果。</p>
+<h2 id="8-RoBERTa-2019"><a href="#8-RoBERTa-2019" class="headerlink" title="8. RoBERTa (2019)"></a>8. RoBERTa (2019)</h2><p>Facebook的<a target="_blank" rel="noopener" href="https://arxiv.org/pdf/1907.11692">RoBERTa: A Robustly Optimized BERT Pretraining Approach</a>，主要工作是复现 <code>BERT</code>，然后对 <code>BERT</code> 的模型架构、训练目标、训练细节（如数据集大小、训练时间）的重要性进行探索，从而提出了改进方案，这个改进方案称为 <code>RoBERTa</code> 。</p>
+<p>roberta的创新点主要有4点：</p>
+<ol>
+<li>第1点是动态mask，之前bert使用的是静态mask，就是数据预处理的时候完成mask操作，之后训练的时候同一个样本都是相同的mask结果，动态mask就是在训练的时候每输入一个样本都要重新mask，动态mask相比静态mask有更多不同mask结果的数据用于训练，效果很好。</li>
+<li>模型去掉了 NSP 任务，修改了样本的构造方式，发现可以略微提升下游任务的性能。将输入2个segment修改为从一个文本中连续sample句子直到塞满512的长度。当到达文本的末尾且未塞满512的长度时，先增加一个“[sep]”，再从另一个文本接着sample，直到塞满512的长度。</li>
+<li>更大的训练数据（从16G变成了160G）和更大的 Batch 大小（256改为2K甚至8K）</li>
+<li>原始 BERT 采用一个 30K 的 BPE 词表，RoBERTa 采用了一个更大的 50K 的词表 <a target="_blank" rel="noopener" href="https://leovan.me/cn/2020/03/pre-trained-model-for-nlp/#fn:radford2019language">28</a>。</li>
+</ol>
+<h2 id="9-BART-2019"><a href="#9-BART-2019" class="headerlink" title="9. BART (2019)"></a>9. BART (2019)</h2><p>BART 采用了一个标准的 Seq2Seq Transformer 结构，类似 GPT 将 ReLU 激活函数替换为 GeLUs。对于基线模型，采用了一个 6 层的编码和解码器，对于更大模型采用了 12 层的结构。相比于 BERT 的架构主要有以下两点不同：</p>
+<ol>
+<li>解码器的每一层叠加了对编码器最后一个隐含层的注意力。</li>
+<li>BERT 在预测之前采用了一个前馈的网络，而 BART 没有。</li>
+</ol>
+<p>BART 采用了最小化破坏后的文档和原始文档之间的重构误差的方式进行预训练。不同于其他的一些去噪自编码器，BART 可以使用任意类型的文档破坏方式。极端情况下，当源文档的所有信息均丢失时，BART 就等价与一个语言模型。BART 中采用的文本破坏方式有：字符遮罩，字符删除，文本填充，句子重排，文档旋转，如下图所示：</p>
+<p><img src="https://leovan.me/images/cn/2020-03-28-pre-trained-model-for-nlp/bart-transformations.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<h2 id="10-T5-2019"><a href="#10-T5-2019" class="headerlink" title="10. T5 (2019)"></a>10. T5 (2019)</h2><p>T5（Text-to-Text Transfer Transformer） 提出了一种 text-to-text 的框架，旨在利用相同的模型，损失函数和超参数等对机器翻译，文档摘要，问答和分类（例如：情感分析）等任务进行统一建模。我们甚至可以利用 T5 通过预测一个数字的文本表示而不是数字本身来建模一个回归任务。模型及其输入输出如下图所示：</p>
+<p><img src="https://leovan.me/images/cn/2020-03-28-pre-trained-model-for-nlp/t5-text-to-text-framework.gif" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>Google 的这项研究并不是提出一种新的方法，而是从全面的视角来概述当前 NLP 领域迁移学习的发展现状。T5 还公开了一个名为 C4（Colossal Clean Crawled Corpus）的数据集，该数据集是一个比 Wikipedia 大两个数量级的 Common Crawl 的清洗后版本的数据。更多模型的细节请参见源论文和 Google 的 <a target="_blank" rel="noopener" href="https://ai.googleblog.com/2020/02/exploring-transfer-learning-with-t5.html">官方博客</a>。</p>
+<h2 id="11-ERNIE-Baidu-2019"><a href="#11-ERNIE-Baidu-2019" class="headerlink" title="11. ERNIE (Baidu, 2019)"></a>11. ERNIE (Baidu, 2019)</h2><p>ERNIE 1.0 <a target="_blank" rel="noopener" href="https://leovan.me/cn/2020/03/pre-trained-model-for-nlp/#fn:sun2019ernie">29</a> 通过建模海量数据中的词、实体及实体关系，学习真实世界的语义知识。相较于 BERT 学习原始语言信号，ERNIE 直接对先验语义知识单元进行建模，增强了模型语义表示能力。例如：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs css">BERT ：哈 <span class="hljs-selector-attr">[mask]</span> 滨是 <span class="hljs-selector-attr">[mask]</span> 龙江的省会，<span class="hljs-selector-attr">[mask]</span> 际冰 <span class="hljs-selector-attr">[mask]</span> 文化名城。<br>ERNIE：<span class="hljs-selector-attr">[mask]</span> <span class="hljs-selector-attr">[mask]</span> <span class="hljs-selector-attr">[mask]</span> 是黑龙江的省会，国际 <span class="hljs-selector-attr">[mask]</span> <span class="hljs-selector-attr">[mask]</span> 文化名城。<br></code></pre></td></tr></table></figure>
+<p>在 BERT 模型中，我们通过『哈』与『滨』的局部共现，即可判断出『尔』字，模型没有学习与『哈尔滨』相关的任何知识。而 ERNIE 通过学习词与实体的表达，使模型能够建模出『哈尔滨』与『黑龙江』的关系，学到『哈尔滨』是 『黑龙江』的省会以及『哈尔滨』是个冰雪城市。</p>
+<p>训练数据方面，除百科类、资讯类中文语料外，ERNIE 还引入了论坛对话类数据，利用 DLM（Dialogue Language Model）建模 Query-Response 对话结构，将对话 Pair 对作为输入，引入 Dialogue Embedding 标识对话的角色，利用 Dialogue Response Loss 学习对话的隐式关系，进一步提升模型的语义表示能力。</p>
+<p>ERNIE 2.0 <a target="_blank" rel="noopener" href="https://leovan.me/cn/2020/03/pre-trained-model-for-nlp/#fn:sun2019ernie2">30</a> 是基于持续学习的语义理解预训练框架，使用多任务学习增量式构建预训练任务。ERNIE 2.0 中，新构建的预训练任务类型可以无缝的加入训练框架，持续的进行语义理解学习。 通过新增的实体预测、句子因果关系判断、文章句子结构重建等语义任务，ERNIE 2.0 语义理解预训练模型从训练数据中获取了词法、句法、语义等多个维度的自然语言信息，极大地增强了通用语义表示能力。</p>
+<p><img src="https://leovan.me/images/cn/2020-03-28-pre-trained-model-for-nlp/ernie-2-framework.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<h1 id="轻量化BERT"><a href="#轻量化BERT" class="headerlink" title="轻量化BERT"></a>轻量化BERT</h1><h2 id="1-Albert"><a href="#1-Albert" class="headerlink" title="1. Albert"></a>1. Albert</h2><p>增大预训练模型的大小通常能够提高预训练模型的推理能力，但是当预训练模型增大到一定程度之后，会碰到<em>GPU/TPU memory</em>的限制。因此，作者==在bert中加入了2项减少参数的技术==，能够缩小bert的大小，并且修改了bert NSP的loss，在和bert有相同参数量的前提之下，有更强的推理能力。 </p>
+<h3 id="albert的流程"><a href="#albert的流程" class="headerlink" title="albert的流程"></a>albert的流程</h3><h4 id="词向量矩阵的分解"><a href="#词向量矩阵的分解" class="headerlink" title="词向量矩阵的分解"></a>词向量矩阵的分解</h4><p>在bert以及诸多bert的改进版中，embedding size都是等于hidden size的，这不一定是最优的。因为<u>bert的token embedding是上下文无关的，而经过multi-head attention+ffn后的hidden embedding是上下文相关的</u>，bert预训练的目的是提供更准确的hidden embedding，而不是token embedding，因此token embedding没有必要和hidden embedding一样大。albert将token embedding进行了分解，首先降低embedding size的大小，然后用一个Dense操作将低维的token embedding映射回hidden size的大小。bert的 <em>embedding size=hidden size</em>，因此词向量的参数量是<em>vocab size \</em> hidden size<em>，进行分解后的参数量是 </em>vocab size * embedding size + embedding size * hidden size*，==只要embedding size &lt;&lt; hidden size，就能起到减少参数的效果==。</p>
+<h4 id="参数共享"><a href="#参数共享" class="headerlink" title="参数共享"></a>参数共享</h4><p>bert的12层transformer encoder block是串行在一起的，每个block虽然长得一模一样，但是参数是不共享的。albert==将transformer encoder block进行了参数共享，这样可以极大地减少整个模型的参数量==。</p>
+<h4 id="sentence-order-prediction-SOP"><a href="#sentence-order-prediction-SOP" class="headerlink" title="sentence order prediction(SOP)"></a>sentence order prediction(SOP)</h4><p>在auto-encoder的loss之外，bert使用了NSP的loss，用来提高bert在句对关系推理任务上的推理能力。而albert放弃了NSP的loss，使用了SOP的loss。NSP的loss是判断segment A和segment B之间的关系，其中0表示segment B是segment A的下一句，1表示segment A和segment B来自2篇不同的文本。SOP的loss是判断segment A和segment B的的顺序关系，0表示segment B是segment A的下一句，1表示segment A是segment B的下一句。</p>
+<h3 id="albert的技术细节"><a href="#albert的技术细节" class="headerlink" title="albert的技术细节"></a>albert的技术细节</h3><h4 id="参数减少技术"><a href="#参数减少技术" class="headerlink" title="参数减少技术"></a>参数减少技术</h4><p>albert使用了2项参数减少的技术，但是2项技术对于参数减少的贡献是不一样的，第1项是词向量矩阵的分解，当embedding size从768降到64时，可以节省21M的参数量，但是模型的推理能力也会随之下降。第2项是multi-head attention+ffn的参数共享，在embedding size=128时，可以节省77M的参数量，模型的推理能力同样会随之下降。虽然参数减少会导致了模型推理能力的下降，但是可以通过增大模型使得参数量变回和bert一个量级，这时模型的推理能力就超过了bert (🐮🍺)。</p>
+<p>现在<strong>学术界发论文有2种常见的套路</strong>，第1种是往死里加参数加数据量，然后提高模型的推理能力；第2种是减参数，然后使模型的推理能力不怎么降。albert使用的参数减少技术看似是第2种，实则是第1种。当bert从large变到xlarge时，虽然模型变大到了1270M，但是模型出现了退化现象，推理能力下跌了一大截，说明在bert的框架下，large已经是模型推理能力的极限了。albert使用了参数减少技术，相比于bert的large是334M，albert的large只有18M，虽然推理能力比bert差，但是参数减少后的albert还有成长空间，将albert从large变到xlarge，甚至是xxlarge时，模型的推理能力又得到了提高，并且超过了bert最好的模型。</p>
+<h4 id="loss"><a href="#loss" class="headerlink" title="loss"></a>loss</h4><p>在albert之前，很多bert的改进版都对NSP的loss提出了质疑。structbert在NSP的loss上进行了修改，有1/3的概率是segment B是segment A的下一句，有1/3的概率是segment A是segment B的下一句，有1/3的概率是segment A和segment B来自2篇不同的文本。roberta则是直接放弃了NSP的loss，修改了样本的构造方式，将输入2个segment修改为从一个文本中连续sample句子直到塞满512的长度。当到达文本的末尾且未塞满512的长度时，先增加一个“[sep]”，再从另一个文本接着sample，直到塞满512的长度。</p>
+<p>albert在structbert的基础之上又抛弃了segment A和segment B来自2篇不同的文本的做法，只剩下1/2的概率是segment B是segment A的下一句，1/2的概率是segment A是segment B的下一句。论文中给出了这么做的解释，NSP的loss包含了2部分功能：topic prediction和coherence prediction，其中topic prediction要比coherence prediction更容易学习，而MLM的loss也包含了topic prediction的功能，因此bert难以学到coherence prediction的能力。albert的SOP loss抛弃了segment A和segment B来自2篇不同的文本的做法，让loss更关注于coherence prediction，这样就能提高模型在句对关系推理上的能力。</p>
+<h3 id="albert的总结"><a href="#albert的总结" class="headerlink" title="albert的总结"></a>albert的总结</h3><p>albert然减少参数量，但是并不会减少推理时间，推理的过程只不过是从串行计算12个transformer encoder block变成了循环计算transformer encoder block 12次。albert最大的贡献在于使模型具备了比原始的bert更强的成长性，在模型变向更大的时候，推理能力还能够得到提高。</p>
+<h2 id="2-DistillBert"><a href="#2-DistillBert" class="headerlink" title="2. DistillBert"></a>2. DistillBert</h2><p>　　<strong>论文：DistilBERT, a distilled version of BERT: smaller, faster, cheaper and lighter</strong> </p>
+<p>　　DistillBert是在bert的基础上用知识蒸馏技术训练出来的小型化bert。整体上来说这篇论文还是非常简单的，只是引入了知识蒸馏技术来训练一个小的bert。具体做法如下：</p>
+<p>　　1）给定原始的bert-base作为teacher网络。</p>
+<p>　　2）在bert-base的基础上将网络层数减半（也就是从原来的12层减少到6层）。</p>
+<p>　　3）利用teacher的软标签和teacher的隐层参数来训练student网络。</p>
+<p>　　训练时的损失函数定义为三种损失函数的线性和，三种损失函数分别为：</p>
+<p>　　1）𝐿𝑐𝑒Lce。这是teacher网络softmax层输出的概率分布和student网络softmax层输出的概率分布的交叉熵（注：MLM任务的输出）。</p>
+<p>　　2）𝐿𝑚𝑙𝑚Lmlm。这是student网络softmax层输出的概率分布和真实的one-hot标签的交叉熵</p>
+<p>　　3）𝐿𝑐𝑜𝑠Lcos。这是student网络隐层输出和teacher网络隐层输出的余弦相似度值，在上面我们说student的网络层数只有6层，teacher网络的层数有12层，因此个人认为这里在计算该损失的时候是用student的第1层对应teacher的第2层，student的第2层对应teacher的第4层，以此类推。</p>
+<p>　　作者对student的初始化也做了些工作，作者用teacher的参数来初始化student的网络参数，做法和上面类似，用teacher的第2层初始化student的第1层，teacher的第4层初始化student的第2层。</p>
+<p>　　作者也解释了为什么减小网络的层数，而不减小隐层大小，作者认为在现代线性代数框架中，在张量计算中，降低最后一维（也就是隐层大小）的维度对计算效率提升不大，反倒是减小层数，也提升计算效率。</p>
+<p>　　另外作者在这里移除了句子向量和pooler层，在这里也没有看到NSP任务的损失函数，因此个人认为作者也去除了NSP任务（主要是很多人证明该任务并没有什么效果）。</p>
+<p>　　整体上来说虽然方法简单，但是效果还是很不错的，模型大小减小了40%（66M），推断速度提升了60%，但性能只降低了约3%。</p>
+<h2 id="3-TINYBERT"><a href="#3-TINYBERT" class="headerlink" title="3. TINYBERT"></a>3. TINYBERT</h2><p>　　<strong>论文：TINYBERT: DISTILLING BERT FOR NATURAL LANGUAGE UNDERSTANDING</strong></p>
+<p>　　<strong>GitHub：暂无</strong></p>
+<p>　　TINYBERT也是采用了知识蒸馏的方法来压缩模型的，只是在设计上较distillBert做了更多的工作，作者提出了两个点：针对Transformer结构的知识蒸馏和针对pre-training和fine-tuning两阶段的知识蒸馏。</p>
+<p>　　作者在这里构造了四类损失函数来对模型中各层的参数进行约束来训练模型，具体模型结构如下：</p>
+<p>　　　　<img src="https://img2018.cnblogs.com/blog/1335117/201910/1335117-20191021203334818-1964061977.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p> 　作者构造了四类损失，分别针对embedding layer，attention 权重矩阵，隐层输出，predict layer。可以将这个统一到一个损失函数中：</p>
+<p>　　　　<img src="https://img2018.cnblogs.com/blog/1335117/201910/1335117-20191021203510033-2086026974.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p> 　上面式子中𝜆𝑚λm表示每一层对应的系数，𝑆𝑚Sm表示studnet网络的第m层，𝑇𝑔(𝑚)Tg(m)表示teacher网络的第n层，其中𝑛=𝑔(𝑚)n=g(m)。并且有𝑔(0)=0g(0)=0，𝑔(𝑀+1)=𝑁+1g(M+1)=N+1，0表示embedding layer，M+1和N+1表示perdict layer。</p>
+<p>　　针对上面四层具体的损失函数表达式如下：</p>
+<p>　　<strong>attention 权重矩阵</strong></p>
+<p>　　　　<img src="https://img2018.cnblogs.com/blog/1335117/201910/1335117-20191021203915782-991212363.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p> 　h为multi attention中头数</p>
+<p>　　<strong>隐层输出</strong></p>
+<p>　　　　<img src="https://img2018.cnblogs.com/blog/1335117/201910/1335117-20191021203952259-282949758.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p> 　因为student网络的隐层大小通常会设置的比teacher的小，因此为了在计算时维度一致，这里用一个矩阵𝑊ℎWh将student的隐层向量线性映射到和teacher同样的空间下。</p>
+<p>　　<strong>embedding layer</strong></p>
+<p>　　　　<img src="https://img2018.cnblogs.com/blog/1335117/201910/1335117-20191021204121158-50391823.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p> 　𝑊𝑠Ws同理上。</p>
+<p>　　以上三种损失函数都采用了MSE，主要是为了将模型的各项参数对齐。</p>
+<p>　　<strong>predict layer</strong></p>
+<p>　　　　<img src="https://img2018.cnblogs.com/blog/1335117/201910/1335117-20191021204217779-1151054318.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p> 　predict layer也就是softmax层，在这里的损失函数是交叉熵，t是温度参数，在这里设置为1。</p>
+<p>　　以上四种损失函数是作者针对transformer提出的知识蒸馏方法。除此之外作者认为除了对pre-training蒸馏之外，在fine-tuning时也利用teacher的知识来训练模型可以取得在下游任务更好的效果。因此作者提出了两阶段知识蒸馏，如下图所示：</p>
+<p>　　　　<img src="https://img2018.cnblogs.com/blog/1335117/201910/1335117-20191021204526288-613006885.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p> 　本质上就是在pre-training蒸馏一个general TinyBERT，然后再在general TinyBERT的基础上利用task-bert上再蒸馏出fine-tuned TinyBERT。</p>
+<p>　　作者给出了TinyBERT的效果：</p>
+<p>　　　　<img src="https://img2018.cnblogs.com/blog/1335117/201910/1335117-20191021204817154-512271389.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p> 　另外作者也给出了四种损失对最终结果的贡献：</p>
+<p>　　　　<img src="https://img2018.cnblogs.com/blog/1335117/201910/1335117-20191021204919585-809627388.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p> 　还有就是关于𝑛=𝑔(𝑚)n=g(m)这个式子中𝑔(𝑚)g(m)怎么选择，假设student的层数为4层，这里的𝑛=𝑔(𝑚)=3𝑚n=g(m)=3m，作者将这种称为Uniform-strategy。另外作者还和其他的𝑔(𝑚)g(m)做了对比：</p>
+<p>　　　　<img src="https://img2018.cnblogs.com/blog/1335117/201910/1335117-20191021205104456-89074411.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p> 　Top-strategy指用teacher最后4层，Bottom-strategy指用前面4层，其实这里的映射函数，我感觉可能还有更优的方案，例如取平均，或者用attention来做，可能效果会更好。</p>
+<h1 id="BERT-扩展-💡"><a href="#BERT-扩展-💡" class="headerlink" title="BERT 扩展 💡"></a>BERT 扩展 💡</h1><p><a target="_blank" rel="noopener" href="https://www.bookstack.cn/read/huaxiaozhuan-ai/spilt.9.8c42358a11926b2f.md">https://www.bookstack.cn/read/huaxiaozhuan-ai/spilt.9.8c42358a11926b2f.md</a></p>
+<h2 id="BERT-wwm-ext"><a href="#BERT-wwm-ext" class="headerlink" title="BERT-wwm-ext"></a>BERT-wwm-ext</h2><p>原始版本的 <code>BERT</code> 采用了<code>WordPiece tokenize</code> 来预处理，即把每个单词拆解一些 <code>wordpiece token</code> 。在Pretraining的时候是随机Mask这些WordPiece的，这就可能出现只Mask一个词的一部分的情况，比如下面的例子：</p>
+<p><img src="http://fancyerii.github.io/img/bert-imp/1.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>==为了解决这个问题，很自然的想法就是词作为一个整体要么都Mask要么都不Mask，这就是所谓的 <strong>Whole Word Masking</strong>==。这是一个很简单的想法，对于BERT的代码修改也非常少，只是修改一些Mask的那段代码。对于英文来说，分词是一个(相对)简单的问题。哈工大与科大讯飞的论文对Wiki的<a target="_blank" rel="noopener" href="https://dumps.wikimedia.org/zhwiki/latest/">中文dump</a>进行了分词，然后做了一些实验。</p>
+<ul>
+<li>Whole Word Masking</li>
+<li>替换BERT的AdamWeightDecayOptimizer为LAMB优化器</li>
+</ul>
+<h2 id="Sentence-Bert"><a href="#Sentence-Bert" class="headerlink" title="Sentence-Bert"></a>Sentence-Bert</h2><blockquote>
+<p> <a target="_blank" rel="noopener" href="https://www.jianshu.com/p/20c93094d4e9">文本匹配利器：从Siamse孪生网络到Sentence-BERT综述</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43922901/article/details/106014964">语义相似度、句向量生成超强模型之SBERT</a> ★★★</p>
+</blockquote>
+<p><strong>Bert的缺点:</strong></p>
+<ul>
+<li><p>BERT不适合语义相似度搜索，也不适合非监督任务，比如聚类。</p>
+<p>解决聚类和语义搜索的一种常见方法是将每个句子映射到一个向量空间，使得语义相似的句子很接近。</p>
+<p>于是，也有人尝试向BERT输入单句，得到固定大小的sentene embedding。最常用的方法是，平均BERT输出层或使用第一个token（[CLS]的token）的输出。但这却产生了非常不好的sentence embedding，常常还不如averaging GloVe embeddings</p>
+</li>
+<li><p>语义相似度计算巨大开销。</p>
+<p>Bert有1.1亿参数量（base版本）使得预测、推理速度明显比CNN等传统网络慢了不止一个量级，对资源要求更高，也不适合处理某些任务。例如，从10000条句子中找到最相似的一对句子，由于可能的组合众多，需要完成49,995,000次推理计算；在一块现代V00GPU上使用Bert计算，将消耗65小时。</p>
+</li>
+</ul>
+<p><strong>解决方法：</strong></p>
+<ul>
+<li><p><strong>Sentence-Bert模型（以下简称SBert）</strong></p>
+<p>SBert对预训练的BERT进行修改：使用孪生(Siamese)和三级(triplet)网络结构来获得语义上有意义的句子embedding，以此获得定长的sentence embedding，使用余弦相似度或Manhatten/Euclidean距离等进行比较找到语义相似的句子。前面所述的从10000条句子找最相似pair的任务，SBert仅需5秒就能完成！通过这样的方法得到的SBERT模型，在文本语义相似度等句子对的回归任务上吊打BERT , RoBERTa 拿到sota。</p>
+</li>
+</ul>
+<p><strong>SBert的优势：</strong></p>
+<ul>
+<li><p>SBert<strong>充分利用了孪生网络的优点和预训练语言模型强大的特征抽取优势</strong>，在众多匹配任务上取得了最优实验结果。</p>
+</li>
+<li><p>SBert直接使用Bert的原始权重进行初始化，在具体数据集上微调，训练过程和传统Siamse Network差异不大。但是这种训练方式能让Bert更好的捕捉句子之间的关系，<strong>生成更优质的句向量</strong>。</p>
+</li>
+<li><strong>在评估测试阶段，SBert直接使用余弦相似度来比较两个句向量之间的相似度</strong>，极大提升了推理速度；</li>
+<li>同时，得益于生成的高质量句嵌入特征，SBert在语义检索、信息搜索、文本聚类、新FAQ发现等工作中预计会有不错表现。</li>
+</ul>
+<p><strong>SBert的网络结构：</strong></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1599653-ac9cc602bc22d081.png?imageMogr2/auto-orient/strip|imageView2/2/w/882/format/webp" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p><strong>SBert训练</strong></p>
+<p>使用SNLI和NLI数据集对Bert和Roberta进行fine-tune，得到SBERT预训练模型。</p>
+<ul>
+<li><p><strong>Polling策略</strong></p>
+<p>① mean：将句子的所有token在token维度上计算平均，这样就可以得到768(base)/1024(large)维度向量；<br>② max：将句子的所有token在token维度上的最大那个值，即做max_over_time，这里多解释下max_over_time，就是比如x = torch.randn(2, 10, 20)，就是取x.max(1)；<br>③ CLS：就是原始Bert做分类的方法，取句子的第一个token的向量。</p>
+<p>作者发现，使用mean的效果最好，max最差。</p>
+</li>
+<li><p><strong>loss函数</strong></p>
+<p>① 回归任务：softmax，均方差损失函数；<br>② 分类任务：softmax， 交叉熵损失函数；<br>③ Wikipedia section triplets dataset (Dor et al., 2018)(三句分类任务)：这个数据集是一些书中的句子，每一条数据有三句话，其中两句来自同一个章节的句子，另外一句是这本书的另外一个章节。<br><img src="https://img-blog.csdnimg.cn/20200509120335669.png" srcset="/img/loading.gif" lazyload alt="在这里插入图片描述"><br>其中 ε设为1，||a, b||表示a和b的距离。求该损失函数的目的就是使得，a和p的距离小于a和n的距离</p>
+</li>
+</ul>
+<p><strong>SBERT的相关资源</strong></p>
+<p><strong>SBert开源地址</strong>：<a target="_blank" rel="noopener" href="https://github.com/UKPLab/sentence-transformers">https://github.com/UKPLab/sentence-transformers</a></p>
+<p><strong>SBert多语预训练模型下载地址</strong>：<a target="_blank" rel="noopener" href="https://public.ukp.informatik.tu-darmstadt.de/reimers/sentence-transformers/v0.2/">https://public.ukp.informatik.tu-darmstadt.de/reimers/sentence-transformers/v0.2/</a></p>
+<p><strong>code</strong> adapted from  <a target="_blank" rel="noopener" href="https://github.com/UKPLab/sentence-transformers/blob/master/examples/applications/semantic_search.py">https://github.com/UKPLab/sentence-transformers/blob/master/examples/applications/semantic_search.py</a></p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzI3MTA0MTk1MA==&amp;mid=2652057750&amp;idx=4&amp;sn=799877cde18a3a4ce259a1a1654c9dfc&amp;chksm=f1204467c657cd71891649bbf14ecf20549a76911fcd087b5b0e6406ff5717f052d672d5db8b&amp;mpshare=1&amp;scene=23&amp;srcid=&amp;sharer_sharetime=1573370368071&amp;sharer_shareid=5f83a05212e1b63a8a185c7ff5d2a2be#rd">绝对干货！NLP预训练模型：从transformer到albert</a></p>
+<p> <a target="_blank" rel="noopener" href="https://kexue.fm/archives/4765">《Attention is All You Need》浅读（简介+代码）</a> </p>
+<p><a target="_blank" rel="noopener" href="https://tech.meituan.com/2019/11/14/nlp-bert-practice.html">美团BERT的探索和实践</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.bookstack.cn/books/huaxiaozhuan-ai">💡 AI算法工程师手册</a></p>
+<p><a target="_blank" rel="noopener" href="https://leovan.me/cn/2020/03/pre-trained-model-for-nlp/">预训练自然语言模型 (Pre-trained Models for NLP)-范叶亮</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E9%A2%84%E8%AE%AD%E7%BB%83/">#预训练</a>
+      
+        <a href="/tags/%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B/">#语言模型</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>预训练语言模型小酌</div>
+      <div>http://example.com/2020/04/10/2020-04-10-预训练语言模型小酌/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>BY NSX</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2020年4月10日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/04/20/2020-04-20-linux%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C%EF%BC%88nohup&amp;screen%EF%BC%89/" title="linux后台运行（nohup&amp;screen）">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">linux后台运行（nohup&amp;screen）</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/04/02/2020-04-02-python%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1/" title="python定时任务">
+                        <span class="hidden-mobile">python定时任务</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

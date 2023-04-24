@@ -1,0 +1,940 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="NSX">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="bert-as-service服务Github地址  Using BERT model as a sentence encoding service, i.e. mapping a variable-length sentence to a fixed-length vector.   bert_as_service 是什么BERT是Google为预训练语言表示而开发的NLP模型。它利用了在网络上">
+<meta property="og:type" content="article">
+<meta property="og:title" content="bert-as-service使用指南">
+<meta property="og:url" content="http://example.com/2019/11/08/2019-11-08-bert_as_service%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="bert-as-service服务Github地址  Using BERT model as a sentence encoding service, i.e. mapping a variable-length sentence to a fixed-length vector.   bert_as_service 是什么BERT是Google为预训练语言表示而开发的NLP模型。它利用了在网络上">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://github.com/hanxiao/bert-as-service/raw/master/.github/demo.gif?raw=true">
+<meta property="article:published_time" content="2019-11-07T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-23T10:28:32.041Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="教程">
+<meta property="article:tag" content="技术">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://github.com/hanxiao/bert-as-service/raw/master/.github/demo.gif?raw=true">
+  
+  
+  
+  <title>bert-as-service使用指南 - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="手把手教你部署bert-as-service服务"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2019-11-08 00:00" pubdate>
+          2019年11月8日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.5k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          38 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">手把手教你部署bert-as-service服务</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="bert-as-service服务"><a href="#bert-as-service服务" class="headerlink" title="bert-as-service服务"></a>bert-as-service服务</h1><p><a target="_blank" rel="noopener" href="https://github.com/hanxiao/bert-as-service">Github地址</a></p>
+<blockquote>
+<p>Using BERT model as a sentence encoding service, i.e. mapping a variable-length sentence to a fixed-length vector.</p>
+</blockquote>
+<p><img src="https://github.com/hanxiao/bert-as-service/raw/master/.github/demo.gif?raw=true" srcset="/img/loading.gif" lazyload alt="img"></p>
+<h2 id="bert-as-service-是什么"><a href="#bert-as-service-是什么" class="headerlink" title="bert_as_service 是什么"></a>bert_as_service 是什么</h2><p>BERT是Google为预训练语言表示而开发的NLP模型。它利用了在网络上公开提供的大量纯文本数据，并且以无人监督的方式进行了培训。<br>对于每种语言，预训练BERT模型是一个相当昂贵但一次性的过程。幸运的是，Google发布了一些经过预先训练的模型，<a target="_blank" rel="noopener" href="https://github.com/google-research/bert#pre-trained-models">您可以从此处下载</a>。</p>
+<p><code>bert-as-service</code> 使用BERT作为句子编码器，并通过ZeroMQ将其托管为服务，从而使您可以仅用两行代码将句子映射为定长表示形式</p>
+<span id="more"></span>
+<h2 id="bert-as-service-特点"><a href="#bert-as-service-特点" class="headerlink" title="bert_as_service 特点"></a>bert_as_service 特点</h2><ul>
+<li>🔭 最新技术：以Google AI发布的经过预训练的12/24层BERT模型为基础，这是NLP社区中的一个里程碑。</li>
+<li>🐣 易于使用：只需两行代码即可获得句子/令牌级别的编码。</li>
+<li>⚡️ 快速：单个Tesla M40 24GB上每秒900句。低延迟，针对速度进行了优化。参见基准。</li>
+<li>🐙 可扩展：可在多个GPU和多个客户端上顺利流畅地扩展，而无需担心并发性。参见基准。</li>
+<li>💎 可靠：经过数十亿个句子的测试；连续几天运行，没有间断或OOM或任何令人讨厌的异常。</li>
+</ul>
+<h1 id="开始使用📖"><a href="#开始使用📖" class="headerlink" title="开始使用📖"></a>开始使用📖</h1><h2 id="bert-as-service-安装"><a href="#bert-as-service-安装" class="headerlink" title="bert_as_service 安装"></a>bert_as_service 安装</h2><figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">pip</span> install bert_serving<br><span class="hljs-attribute">pip</span> install bert-serving-server==<span class="hljs-number">1</span>.<span class="hljs-number">10</span>.<span class="hljs-number">0</span> # 服务端<br><span class="hljs-attribute">pip</span> install bert-serving-client==<span class="hljs-number">1</span>.<span class="hljs-number">10</span>.<span class="hljs-number">0</span>  # 客户端，与服务端互相独立<br><span class="hljs-attribute">pip</span> install tensorflow==<span class="hljs-number">1</span>.<span class="hljs-number">15</span>.<span class="hljs-number">0</span>	(&gt;=<span class="hljs-number">1</span>.<span class="hljs-number">13</span>.<span class="hljs-number">1</span>)<br></code></pre></td></tr></table></figure>
+<h2 id="bert-as-service-入门"><a href="#bert-as-service-入门" class="headerlink" title="bert_as_service 入门"></a>bert_as_service 入门</h2><h3 id="1-下载预训练模型"><a href="#1-下载预训练模型" class="headerlink" title="1. 下载预训练模型"></a>1. 下载预训练模型</h3><p>前往<a target="_blank" rel="noopener" href="https://github.com/google-research/bert#pre-trained-models选择模型（本文选择中文模型）下载并解压">https://github.com/google-research/bert#pre-trained-models选择模型（本文选择中文模型）下载并解压</a>.</p>
+<h3 id="2-开启BERT服务"><a href="#2-开启BERT服务" class="headerlink" title="2. 开启BERT服务"></a>2. 开启BERT服务</h3><p>安装服务器后，可以使用 <code>bert-serving-start</code> 命令启动服务</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">bert</span>-serving-start -model_dir /tmp/english_L-<span class="hljs-number">12</span>_H-<span class="hljs-number">768</span>_A-<span class="hljs-number">12</span>/ -num_worker=<span class="hljs-number">4</span> <br></code></pre></td></tr></table></figure>
+<p>其中，<code>-model_dir</code> 是预训练模型的路径，<code>-num_worker</code> 是线程数，表示同时可以处理多少个并发请求</p>
+<p><strong>或者, 使用脚本<code>bert_server.py</code>启动服务</strong></p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs pgsql"><span class="hljs-keyword">from</span> bert_serving.<span class="hljs-keyword">server</span>.helper <span class="hljs-keyword">import</span> get_args_parser<br><span class="hljs-keyword">from</span> bert_serving.<span class="hljs-keyword">server</span> <span class="hljs-keyword">import</span> BertServer<br>args = get_args_parser().parse_args([<span class="hljs-string">&#x27;-model_dir&#x27;</span>, <span class="hljs-string">&#x27;.../bert/chinese_L-12_H-768_A-12&#x27;</span>,<br>                                     <span class="hljs-string">&#x27;-port&#x27;</span>, <span class="hljs-string">&#x27;5555&#x27;</span>,<br>                                     <span class="hljs-string">&#x27;-port_out&#x27;</span>, <span class="hljs-string">&#x27;5556&#x27;</span>,<br>                                     <span class="hljs-string">&#x27;-max_seq_len&#x27;</span>, <span class="hljs-string">&#x27;50&#x27;</span>,<br>                                     <span class="hljs-string">&#x27;-num_worker&#x27;</span>,<span class="hljs-string">&#x27;3&#x27;</span>,<br>                                     <span class="hljs-string">&#x27;-mask_cls_sep&#x27;</span>,<br>                                     <span class="hljs-string">&#x27;-cpu&#x27;</span>])<br><span class="hljs-keyword">server</span> = BertServer(args)<br><span class="hljs-keyword">server</span>.<span class="hljs-keyword">start</span>()<br></code></pre></td></tr></table></figure>
+<h3 id="3-在客户端获取句向量"><a href="#3-在客户端获取句向量" class="headerlink" title="3. 在客户端获取句向量"></a>3. 在客户端获取句向量</h3><blockquote>
+<p><strong>远程使用BERT服务</strong></p>
+</blockquote>
+<p>在一台（GPU）机器上启动该服务，然后从另一台（CPU）机器调用该服务，如下所示：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs routeros"><span class="hljs-comment"># bert_as_service 对并发的支持不太友好，需要加锁使用！</span><br>lock = threading.Lock()  # 生成锁对象<br>bc = BertClient(<br>    <span class="hljs-attribute">ip</span>=BERT_CONFIG.get(&quot;ip&quot;),<br>    <span class="hljs-attribute">port</span>=BERT_CONFIG.getint(&quot;port&quot;),<br>    <span class="hljs-attribute">port_out</span>=BERT_CONFIG.getint(&quot;port_out&quot;),<br>    <span class="hljs-attribute">timeout</span>=BERT_CONFIG.getint(&quot;timeout&quot;),<br>    <span class="hljs-attribute">check_version</span>=<span class="hljs-literal">False</span>,<br>    <span class="hljs-attribute">check_token_info</span>=<span class="hljs-literal">False</span>,<br>)<br><br>bc.encode([<span class="hljs-string">&#x27;First do it&#x27;</span>, <span class="hljs-string">&#x27;then do it right&#x27;</span>, <span class="hljs-string">&#x27;then do it better&#x27;</span>])  #直接输入整个句子不需要提前分词<br></code></pre></td></tr></table></figure>
+<p>它将返回一个ndarray（或List[List[float]]如果您愿意的话），其中每一行都是代表一个句子的固定长度向量。</p>
+<p>总结：Bert的输出最终有两个结果可用</p>
+<p>sequence_output：维度【batch_size, seq_length, hidden_size】，这是训练后每个token的词向量。</p>
+<p>pooled_output：维度是【batch_size, hidden_size】，每个sequence第一个位置CLS的向量输出，用于分类任务。</p>
+<h2 id="服务器和客户端API"><a href="#服务器和客户端API" class="headerlink" title="服务器和客户端API"></a>服务器和客户端API</h2><h3 id="服务器API"><a href="#服务器API" class="headerlink" title="服务器API"></a>服务器API</h3><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>论据</th>
+<th>类型</th>
+<th>默认</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>model_dir</code></td>
+<td>str</td>
+<td><em>Required</em></td>
+<td>预训练的BERT模型的文件夹路径。</td>
+</tr>
+<tr>
+<td><code>tuned_model_dir</code></td>
+<td>str</td>
+<td>（可选的）</td>
+<td>微调的BERT模型的文件夹路径。</td>
+</tr>
+<tr>
+<td><code>ckpt_name</code></td>
+<td>str</td>
+<td><code>bert_model.ckpt</code></td>
+<td>检查点文件的文件名。</td>
+</tr>
+<tr>
+<td><code>config_name</code></td>
+<td>str</td>
+<td><code>bert_config.json</code></td>
+<td>BERT模型的JSON配置文件的文件名。</td>
+</tr>
+<tr>
+<td><code>graph_tmp_dir</code></td>
+<td>str</td>
+<td>None</td>
+<td>图形临时文件的路径</td>
+</tr>
+<tr>
+<td><code>max_seq_len</code></td>
+<td>int</td>
+<td><code>25</code></td>
+<td>最大序列长度，较长的序列将在右侧修剪。将其设置为NONE以动态使用（最小）批次中的最长序列。</td>
+</tr>
+<tr>
+<td><code>cased_tokenization</code></td>
+<td>bool</td>
+<td>False</td>
+<td>标记生成器是否应跳过默认的小写字母和重音符号删除。应该用于例如多语言案例的预训练BERT模型。</td>
+</tr>
+<tr>
+<td><code>mask_cls_sep</code></td>
+<td>bool</td>
+<td>False</td>
+<td>用零屏蔽[CLS]和[SEP]上的嵌入。</td>
+</tr>
+<tr>
+<td><code>num_worker</code></td>
+<td>int</td>
+<td><code>1</code></td>
+<td>（GPU / CPU）工人数量运行BERT模型，每个工人在单独的进程中工作。</td>
+</tr>
+<tr>
+<td><code>max_batch_size</code></td>
+<td>int</td>
+<td><code>256</code></td>
+<td>每个工人处理的最大序列数，较大的批次将被分成小批次。</td>
+</tr>
+<tr>
+<td><code>priority_batch_size</code></td>
+<td>int</td>
+<td><code>16</code></td>
+<td>小于此大小的批处理将被标记为高优先级，并在作业队列中向前跳转以更快地获得结果</td>
+</tr>
+<tr>
+<td><code>port</code></td>
+<td>int</td>
+<td><code>5555</code></td>
+<td>用于将数据从客户端推送到服务器的端口</td>
+</tr>
+<tr>
+<td><code>port_out</code></td>
+<td>int</td>
+<td><code>5556</code></td>
+<td>用于将结果从服务器发布到客户端的端口</td>
+</tr>
+<tr>
+<td><code>http_port</code></td>
+<td>int</td>
+<td>None</td>
+<td>接收HTTP请求的服务器端口</td>
+</tr>
+<tr>
+<td><code>cors</code></td>
+<td>str</td>
+<td><code>*</code></td>
+<td>为HTTP请求设置“ Access-Control-Allow-Origin”</td>
+</tr>
+<tr>
+<td><code>pooling_strategy</code></td>
+<td>str</td>
+<td><code>REDUCE_MEAN</code></td>
+<td>用于产生编码矢量的合并策略，有效值为<code>NONE</code>，<code>REDUCE_MEAN</code>，<code>REDUCE_MAX</code>，<code>REDUCE_MEAN_MAX</code>，<code>CLS_TOKEN</code>，<code>FIRST_TOKEN</code>，<code>SEP_TOKEN</code>，<code>LAST_TOKEN</code>。这些策略的说明<a target="_blank" rel="noopener" href="https://github.com/hanxiao/bert-as-service#q-what-are-the-available-pooling-strategies">可以在这里找到</a>。要获得序列中每个令牌的编码，请将其设置为<code>NONE</code>。</td>
+</tr>
+<tr>
+<td><code>pooling_layer</code></td>
+<td>list</td>
+<td><code>[-2]</code></td>
+<td>池在其上进行操作的编码层，其中<code>-1</code>表示最后一层，<code>-2</code>表示倒数第二层，<code>[-1, -2]</code>表示并置最后两层的结果，依此类推。</td>
+</tr>
+<tr>
+<td><code>gpu_memory_fraction</code></td>
+<td>float</td>
+<td><code>0.5</code></td>
+<td>每个工作人员应为每个GPU分配的内存总量的一部分</td>
+</tr>
+<tr>
+<td><code>cpu</code></td>
+<td>bool</td>
+<td>False</td>
+<td>在CPU而非GPU上运行</td>
+</tr>
+<tr>
+<td><code>xla</code></td>
+<td>bool</td>
+<td>False</td>
+<td>启用<a target="_blank" rel="noopener" href="https://www.tensorflow.org/xla/jit">XLA编译器</a>进行图形优化（<em>实验性！</em>）</td>
+</tr>
+<tr>
+<td><code>fp16</code></td>
+<td>bool</td>
+<td>False</td>
+<td>使用float16精度（实验性）</td>
+</tr>
+<tr>
+<td><code>device_map</code></td>
+<td>list</td>
+<td><code>[]</code></td>
+<td>指定将使用的GPU设备ID的列表（ID从0开始）</td>
+</tr>
+<tr>
+<td><code>show_tokens_to_client</code></td>
+<td>bool</td>
+<td>False</td>
+<td>发送令牌化结果给客户端</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>注意：</p>
+<p>bert_as_service默认的输出是 【倒数第二层】→【倒数第一层】 的隐藏状态的平均值！！！</p>
+<h3 id="客户端API"><a href="#客户端API" class="headerlink" title="客户端API"></a>客户端API</h3><p>客户端提供了一个名为的Python类<code>BertClient</code>，该类接受如下参数：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>论据</th>
+<th>类型</th>
+<th>默认</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ip</code></td>
+<td>str</td>
+<td><code>localhost</code></td>
+<td>服务器的IP地址</td>
+</tr>
+<tr>
+<td><code>port</code></td>
+<td>int</td>
+<td><code>5555</code></td>
+<td>用于将数据从客户端推送到服务器的端口，<em>必须与服务器端配置一致</em></td>
+</tr>
+<tr>
+<td><code>port_out</code></td>
+<td>int</td>
+<td><code>5556</code></td>
+<td>用于将结果从服务器发布到客户端的端口，<em>必须与服务器端配置一致</em></td>
+</tr>
+<tr>
+<td><code>output_fmt</code></td>
+<td>str</td>
+<td><code>ndarray</code></td>
+<td>句子的输出格式编码为numpy数组或python List [List [float]]（<code>ndarray</code>/ <code>list</code>）</td>
+</tr>
+<tr>
+<td><code>show_server_config</code></td>
+<td>bool</td>
+<td><code>False</code></td>
+<td>首次连接时是否显示服务器配置</td>
+</tr>
+<tr>
+<td><code>check_version</code></td>
+<td>bool</td>
+<td><code>True</code></td>
+<td>是否强制客户端和服务器版本相同</td>
+</tr>
+<tr>
+<td><code>identity</code></td>
+<td>str</td>
+<td><code>None</code></td>
+<td>标识客户端的UUID，在多播中很有用</td>
+</tr>
+<tr>
+<td><code>timeout</code></td>
+<td>int</td>
+<td><code>-1</code></td>
+<td>设置客户端上接收操作的超时时间（毫秒）</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>A <code>BertClient</code>实现以下方法和属性：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>.encode()</code></td>
+<td>将字符串列表编码为向量列表</td>
+</tr>
+<tr>
+<td><code>.encode_async()</code></td>
+<td>来自生成器的异步编码批处理</td>
+</tr>
+<tr>
+<td><code>.fetch()</code></td>
+<td>从服务器获取所有编码的向量，并将其返回给生成器，将其与<code>.encode_async()</code>或结合使用<code>.encode(blocking=False)</code>。发送订单未保留。</td>
+</tr>
+<tr>
+<td><code>.fetch_all()</code></td>
+<td>从服务器获取所有编码的向量，并将其返回到列表中，将其与<code>.encode_async()</code>或结合使用<code>.encode(blocking=False)</code>。发送订单被保留。</td>
+</tr>
+<tr>
+<td><code>.close()</code></td>
+<td>优雅地关闭客户端和服务器之间的连接</td>
+</tr>
+<tr>
+<td><code>.status</code></td>
+<td>以JSON格式获取客户端状态</td>
+</tr>
+<tr>
+<td><code>.server_status</code></td>
+<td>以JSON格式获取服务器状态</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="💡-想了解更多？"><a href="#💡-想了解更多？" class="headerlink" title="💡 想了解更多？"></a>💡 想了解更多？</h2><p>查看我们的教程：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/hanxiao/bert-as-service#building-a-qa-semantic-search-engine-in-3-minutes">在3分钟内构建一个质量检查语义搜索引擎</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/hanxiao/bert-as-service#serving-a-fine-tuned-bert-model">服务于微调的BERT模型</a></li>
+<li>获得类似ELMo的上下文词嵌入</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/hanxiao/bert-as-service#using-your-own-tokenizer">使用自己的令牌生成器</a></li>
+<li>BertClient与tf.dataAPI一起使用</li>
+<li>使用BERT功能和tf.estimator API训练文本分类器</li>
+<li>保存和加载TFRecord数据</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/hanxiao/bert-as-service#asynchronous-encoding">异步编码</a></li>
+<li>广播到多个客户端</li>
+<li>在仪表板中监控服务状态</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/hanxiao/bert-as-service#using-bert-as-service-to-serve-http-requests-in-json">使用bert-as-service服务于JSON的HTTP请求</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/hanxiao/bert-as-service#starting-bertserver-from-python">BertServer从Python 开始</a></li>
+</ul>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a target="_blank" rel="noopener" href="https://juejin.im/post/5ce8cab8e51d4577523f22f8">[译] 通过优化 Gunicorn 配置提高性能</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/hanxiao/bert-as-service#what-is-it">https://github.com/hanxiao/bert-as-service#what-is-it</a></p>
+<p><a target="_blank" rel="noopener" href="http://bert-as-service.readthedocs.io/">bert-as-service 最新API文档</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/hanxiao/bert-as-service#starting-bertserver-from-python">ex1-starting-bertserver-from-python</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/hanxiao/bert-as-service#broadcasting-to-multiple-clients">ex2-broadcasting-to-multiple-clients</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/hanxiao/bert-as-service#q-i-encounter-zmqerrorzmqerror-operation-cannot-be-accomplished-in-current-state-when-using-bertclient-what-should-i-do">ex3-<code>zmq.error.ZMQError</code></a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E6%95%99%E7%A8%8B/">#教程</a>
+      
+        <a href="/tags/%E6%8A%80%E6%9C%AF/">#技术</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>bert-as-service使用指南</div>
+      <div>http://example.com/2019/11/08/2019-11-08-bert_as_service使用指南/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>NSX</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2019年11月8日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/11/13/2019-11-13-PyHanLP%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/" title="PyHanLP工具包使用指南">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">PyHanLP工具包使用指南</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2019/10/31/2019-10-31-Atexit%E7%A8%8B%E5%BA%8F%E9%80%80%E5%87%BA%E5%89%8D%E6%89%A7%E8%A1%8C%E6%93%8D%E4%BD%9C/" title="Atexit程序退出前执行操作">
+                        <span class="hidden-mobile">Atexit程序退出前执行操作</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

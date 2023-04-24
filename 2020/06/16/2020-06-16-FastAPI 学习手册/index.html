@@ -1,0 +1,739 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="NSX">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="在这篇教程里，我们会一起搭建一个用于生产环境的 FastAPI 服务器。写好之后，整个应用技术栈会是这样的：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="FastAPI 学习手册">
+<meta property="og:url" content="http://example.com/2020/06/16/2020-06-16-FastAPI%20%E5%AD%A6%E4%B9%A0%E6%89%8B%E5%86%8C/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="在这篇教程里，我们会一起搭建一个用于生产环境的 FastAPI 服务器。写好之后，整个应用技术栈会是这样的：">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://python-gino.org/docs/zh/master/_images/gino-fastapi.svg">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/web.png">
+<meta property="og:image" content="https://calmcode.io/images/fastapi.svg">
+<meta property="article:published_time" content="2020-06-15T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-23T10:28:32.047Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="教程">
+<meta property="article:tag" content="技术">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://python-gino.org/docs/zh/master/_images/gino-fastapi.svg">
+  
+  
+  
+  <title>FastAPI 学习手册 - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="FastAPI框架入门 基本使用, 模版渲染, form表单数据交互, 上传文件, 静态文件配置"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2020-06-16 00:00" pubdate>
+          2020年6月16日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.9k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          33 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">FastAPI框架入门 基本使用, 模版渲染, form表单数据交互, 上传文件, 静态文件配置</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>在这篇教程里，我们会一起搭建一个用于生产环境的 <a target="_blank" rel="noopener" href="https://fastapi.tiangolo.com/">FastAPI</a> 服务器。写好之后，整个应用技术栈会是这样的：</p>
+<p><img src="https://python-gino.org/docs/zh/master/_images/gino-fastapi.svg" srcset="/img/loading.gif" lazyload alt="../_images/gino-fastapi.svg"></p>
+<span id="more"></span>
+<h1 id="FastAPI-简介"><a href="#FastAPI-简介" class="headerlink" title="FastAPI 简介"></a>FastAPI 简介</h1><p>官方文档：<a target="_blank" rel="noopener" href="https://fastapi.tiangolo.com/">https://fastapi.tiangolo.com/</a></p>
+<p>FastAPI是一种现代，快速（高性能）的Web框架，用于基于标准Python类型提示使用Python 3.6+构建API。</p>
+<p>主要功能是：</p>
+<ul>
+<li><strong>快速</strong>：非常高的性能，看齐NodeJS和Go。<strong>现有最快的Python框架之一。</strong></li>
+<li><strong>快速编码</strong>：将功能开发速度提高约200％至300％。</li>
+<li><strong>更少的错误</strong>：减少约40％的人为错误（开发人员）。</li>
+<li><strong>直观</strong>：强大的编辑器支持。完成无处不在。调试时间更少。</li>
+<li><strong>简易</strong>：旨在易于使用和学习。减少阅读文档的时间。</li>
+<li><strong>短</strong>：最小化代码重复。每个参数声明中的多个功能。更少的错误。</li>
+<li><strong>健壮</strong>：获取可用于生产的代码。具有自动交互式文档。</li>
+<li><strong>基于标准</strong>：基于（并完全兼容）API的开放标准：<a target="_blank" rel="noopener" href="https://github.com/OAI/OpenAPI-Specification">OpenAPI</a>（以前称为Swagger）和<a target="_blank" rel="noopener" href="http://json-schema.org/">JSON Schema</a>。</li>
+</ul>
+<h1 id="FastAPI-教程"><a href="#FastAPI-教程" class="headerlink" title="FastAPI 教程"></a>FastAPI 教程</h1><h3 id="FastAPI-基础学习"><a href="#FastAPI-基础学习" class="headerlink" title="FastAPI 基础学习"></a>FastAPI 基础学习</h3><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mazhiyong/p/12807379.html">FastApi 基础学习(一) 概述</a> </p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mazhiyong/p/12808529.html">FastApi 基础学习(二) 开发环境安装及交互式API文档 </a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mazhiyong/p/12808825.html">FastApi 基础学习(三) Pydantic 做类型强制检查</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mazhiyong/p/12871349.html">FastAPI 基础学习(四) 路径参数</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mazhiyong/p/12900239.html">FastAPI 基础学习(五) 请求参数</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mazhiyong/p/12902149.html">FastAPI 基础学习(六) Request Body(I)</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mazhiyong/p/12905387.html">FastAPI 基础学习(七) Request Body(II)</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mazhiyong/p/12906795.html">FastAPI 基础学习(八) 参数附加信息 (一)</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mazhiyong/p/12911618.html">FastAPI 基础学习(九) 参数附加信息 (二)</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mazhiyong/p/12923751.html">FastAPI 基础学习(十) Pydantic复杂模型</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mazhiyong/p/12928963.html">FastAPI 基础学习(十一) 复杂数据类型</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mazhiyong/p/12930555.html">FastAPI 基础学习(十二) Cookie操作</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mazhiyong/p/12930938.html">FastAPI 基础学习(十三) Header操作</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mazhiyong/p/12957121.html">FastAPI 基础学习(十四) Response自定义状态码</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mazhiyong/p/13345076.html">FastAPI 基础学习(十五) 直接使用Request</a></p>
+<h3 id="FastAPI-Response"><a href="#FastAPI-Response" class="headerlink" title="FastAPI Response"></a>FastAPI Response</h3><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mazhiyong/p/12942241.html">FastAPI Response(一) Response模型</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mazhiyong/p/13279543.html">FastAPI Response(二) 直接返回Response对象</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mazhiyong/p/13293036.html">FastAPI Response(三) 定制化的Response</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mazhiyong/p/13298832.html">FastAPI Response(四) 高级定制的Response</a></p>
+<h3 id="FastAPI-中间件"><a href="#FastAPI-中间件" class="headerlink" title="FastAPI 中间件"></a>FastAPI 中间件</h3><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mazhiyong/p/12988001.html">FastAPI 中间件(一) 自定义中间件</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mazhiyong/p/12988413.html">FastAPI 中间件(二) 高级中间件</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mazhiyong/p/12987619.html">FastAPI 中间件(三) 跨域资源共享中间件</a></p>
+<h3 id="FastAPI-依赖注入系统"><a href="#FastAPI-依赖注入系统" class="headerlink" title="FastAPI 依赖注入系统"></a>FastAPI 依赖注入系统</h3><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mazhiyong/p/13050551.html">FastAPI 依赖注入系统(一) 简介</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mazhiyong/p/13066065.html">FastAPI 依赖注入系统(二) 依赖项类</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mazhiyong/p/13066271.html">FastAPI 依赖注入系统(三) 子依赖项</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mazhiyong/p/13072728.html">FastAPI 依赖注入系统(四) 基于路径操作装饰器的依赖项</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mazhiyong/p/13073754.html">FastAPI 依赖注入系统(五) 带有yield功能的依赖项</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mazhiyong/p/13323133.html">FastAPI 依赖注入系统(六) 可参数化的依赖项</a></p>
+<h3 id="FastAPI-安全机制"><a href="#FastAPI-安全机制" class="headerlink" title="FastAPI 安全机制"></a>FastAPI 安全机制</h3><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mazhiyong/p/13086051.html">FastAPI 安全机制(一) 简介 </a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mazhiyong/p/13214643.html">FastAPI 安全机制(二) 基于OAuth2和JWT的Token认证机制(一)生成token</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mazhiyong/p/13219300.html">FastAPI 安全机制(三) 基于OAuth2和JWT的Token认证机制(二)用户登陆及验证</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mazhiyong/p/13328363.html">FastAPI 安全机制(四) OAuth2 scopes</a> </p>
+<h3 id="FastAPI-数据库访问"><a href="#FastAPI-数据库访问" class="headerlink" title="FastAPI 数据库访问"></a>FastAPI 数据库访问</h3><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mazhiyong/p/13225738.html">FastAPI 数据库访问（一）使用SQLAlchemy访问关系数据库</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mazhiyong/p/13267119.html">FastAPI 数据库访问（二）使用SQLAlchemy异步访问关系数据库 </a></p>
+<h3 id="FastAPI-进阶知识"><a href="#FastAPI-进阶知识" class="headerlink" title="FastAPI 进阶知识"></a>FastAPI 进阶知识</h3><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mazhiyong/p/12957658.html">FastAPI 进阶知识(一) 表单数据</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mazhiyong/p/12965542.html">FastAPI 进阶知识(二) JSON兼容编码</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mazhiyong/p/12965973.html">FastAPI 进阶知识(三) 错误处理</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mazhiyong/p/13273293.html">FastAPI 进阶知识(四) 后台任务</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mazhiyong/p/13370669.html">FastAPI 进阶知识(五) 子应用</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mazhiyong/p/13372006.html">FastAPI 进阶知识(六) 启动-关闭事件</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mazhiyong/p/13433214.html">FastAPI 进阶知识(七) 在Request中存储附加信息</a></p>
+<h3 id="FastAPI-WebSockets"><a href="#FastAPI-WebSockets" class="headerlink" title="FastAPI WebSockets"></a>FastAPI WebSockets</h3><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mazhiyong/p/13371186.html">FastAPI WebSockets</a></p>
+<h3 id="FastAPI-工程管理"><a href="#FastAPI-工程管理" class="headerlink" title="FastAPI 工程管理"></a>FastAPI 工程管理</h3><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mazhiyong/p/13384373.html">FastAPI 工程管理(一) 工程目录管理</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mazhiyong/p/13375949.html">FastAPI 工程管理(二) 工程设置 </a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mazhiyong/p/13384785.html">FastAPI 工程管理(三) 工程部署 </a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mazhiyong/p/13446743.html">FastAPI 工程管理(四) 工程示例</a></p>
+<h1 id="FastAPI异步-async-await"><a href="#FastAPI异步-async-await" class="headerlink" title="FastAPI异步 async/await"></a>FastAPI异步 async/await</h1><blockquote>
+<p>无论你是否使用async，FastAPI都会采用异步的方式处理。</p>
+<p><strong>但是，如果你定义了async函数，函数体却是同步的调用，将导致函数执行过程变成串行。</strong></p>
+</blockquote>
+<p><strong>async使用指导：</strong></p>
+<ul>
+<li>如果这个请求比较慢，比如连接数据库读取数据、文件IO、rpc调用等一般加上async，我想普通项目里大部分请求都会多多少少跟数据库打交道，所以加的往往比较多；</li>
+<li>求稳不求快的，那就定义为普通函数 <code>def</code> （因为它可以采用多线程的方式解决）</li>
+<li>分不清加不加就不加，毕竟async是要开销的。如果定义了async函数，里面却是同步的调用，那么这将慢的是灾难！；</li>
+</ul>
+<p><strong>异步编程：</strong></p>
+<p>Asynchronous Code之所以称为“异步”，是因为计算机/程序不必与速度较慢的任务“同步”，而是在等待中去执行其它工作。文中作者详细列举了相对于cpu和内存操作来说，慢的多的操作如下：</p>
+<ul>
+<li>网络通信</li>
+<li>文件读写</li>
+<li>远程api调用如rpc调用</li>
+<li>数据库操作和查询</li>
+</ul>
+<p>异步是相对同步编程来说的，在执行顺序上并没有改变。实际效果就是同一台机器如果有比较多的慢操作使用异步编程可以提高吞吐率。这里再吐槽一下，大部分语言比如python、csharp、go等的async都是协程实现的，只有java是线程实现的。代价：进程&gt;线程&gt;协程，java不是不能用协程来实现完全是因为历史包袱，线程相对也不会丢失太多的性能。</p>
+<p><strong>异步实验代码</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> fastapi <span class="hljs-keyword">import</span> FastAPI<br><span class="hljs-keyword">import</span> time<br><span class="hljs-keyword">import</span> asyncio<br><span class="hljs-keyword">import</span> os<br><br>app = FastAPI()<br><br><span class="hljs-meta">@app.get(<span class="hljs-params"><span class="hljs-string">&quot;/async_slowest&quot;</span></span>)</span><br><span class="hljs-keyword">async</span> <span class="hljs-keyword">def</span> <span class="hljs-title function_">async_slowest</span>():<br>   time.sleep(<span class="hljs-number">1</span>)<br>   <span class="hljs-keyword">return</span> &#123;<span class="hljs-string">&quot;message&quot;</span>: <span class="hljs-string">&quot;异步模式，但是同步执行sleep函数，执行过程是串行的&quot;</span>&#125;<br>  <br><span class="hljs-meta">@app.get(<span class="hljs-params"><span class="hljs-string">&quot;/async_sleep_in_thread&quot;</span></span>)</span><br><span class="hljs-keyword">async</span> <span class="hljs-keyword">def</span> <span class="hljs-title function_">async_sleep_in_thread</span>():<br>   loop = asyncio.get_event_loop()<br>   <span class="hljs-keyword">await</span> loop.run_in_executor(<span class="hljs-literal">None</span>, time.sleep, <span class="hljs-number">1</span>)<br>   <span class="hljs-keyword">return</span> &#123;<span class="hljs-string">&quot;message&quot;</span>: <span class="hljs-string">&quot;线程池中运行sleep函数&quot;</span>&#125;<br>  <br><span class="hljs-meta">@app.get(<span class="hljs-params"><span class="hljs-string">&quot;/async_sleep&quot;</span></span>)</span><br><span class="hljs-keyword">async</span> <span class="hljs-keyword">def</span> <span class="hljs-title function_">async_sleep</span>():<br>   <span class="hljs-keyword">await</span> asyncio.sleep(<span class="hljs-number">1</span>)<br>   <span class="hljs-keyword">return</span> &#123;<span class="hljs-string">&quot;message&quot;</span>: <span class="hljs-string">&quot;异步模式，且异步执行sleep函数&quot;</span>&#125;<br><br><span class="hljs-meta">@app.get(<span class="hljs-params"><span class="hljs-string">&quot;/sync&quot;</span></span>)</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">sync_sleep</span>():<br>   time.sleep(<span class="hljs-number">1</span>)<br>   <span class="hljs-keyword">return</span> &#123;<span class="hljs-string">&quot;message&quot;</span>: <span class="hljs-string">&quot;同步模式，但是FastAPI会放在线程池中运行，所以很快&quot;</span>&#125;<br></code></pre></td></tr></table></figure>
+<p>我们用ab工具，总量100，并发100进行测试。</p>
+<p>这4个函数，最慢的就是第一个async_slowest。我们可以看到，它几乎是一个接一个的串联输出。原因是：fastapi框架会将async函数会放到event loop中运行。如果函数没有运行或有await，则其他函数无法运行。所以这里是一个串联的效果，总时间需要100s</p>
+<p>为了解决这个问题，第二个函数引入了一个线程池中去运行，所以不会出现阻塞。这个函数，1秒可以全部运行完。</p>
+<p>第三个函数是最正宗的实现。它使用异步的sleep取代了原版同步的sleep。这也是最快的实现。1秒可以运行完</p>
+<p>第四个函数是唯一一个不是async的普通函数。它的运行时间是多少呢？我的电脑是3秒运行完！为什么？这就是fastapi精彩的地方。前面提到，async函数会放到event loop中执行。那么，普通的函数会放到哪里呢？答案是，放到thread pool中。那么为什么是3秒呢。这是因为我的电脑是逻辑8核。线程池的默认配置是核数*5，所以是40线程。我的测试是100个并发，所以一共是3秒完成。40-&gt;40-&gt;20</p>
+<h1 id="FastAPI-vs-Flask"><a href="#FastAPI-vs-Flask" class="headerlink" title="FastAPI vs. Flask"></a>FastAPI vs. Flask</h1><p><a target="_blank" rel="noopener" href="https://amitness.com/2020/06/fastapi-vs-flask/#data-validation">二者的区别在哪？</a></p>
+<ol>
+<li><p>FastAPI是最快的Python框架之一，其性能比Flask高出300％以上：</p>
+<p><img src="https://ningshixian.github.io/resources/images/web.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<p>在总体延迟和吞吐量方面，FastAPI都更具优势！</p>
+</li>
+<li><p>对异步具有本机支持</p>
+<p>Flask（专为诸如Gunicorn之类的WSGI服务器设计）不具有本地异步支持；而FastAPI建立在ASGI服务器Uvicorn的基础上，使运行异步事件循环（对传入请求进行计数）变得容易。</p>
+</li>
+<li><p>转换成本低</p>
+<p>就语法而言，它在设计上与Flask非常相似，从Flask到FastAPI的最初过渡只需要极少的重写量</p>
+</li>
+</ol>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a target="_blank" rel="noopener" href="https://calmcode.io/fastapi/hello-world.html"><img src="https://calmcode.io/images/fastapi.svg" srcset="/img/loading.gif" lazyload alt="..." style="zoom:25%;" /> fastapi.</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_31989047/article/details/104531860">fastapi教程翻译（搬运自用）</a></p>
+<p><a target="_blank" rel="noopener" href="https://my.oschina.net/u/4326175/blog/4255332/print">FastAPI框架入门 基本使用, 模版渲染, form表单数据交互, 上传文件, 静态文件配置</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/tiangolo/fastapi/issues/731">How can I prevent “307 Temporary Redirect” while accessing FastAPI via an Android Emulator on local machine #731 </a></p>
+<p><a target="_blank" rel="noopener" href="https://www.pythonf.cn/read/82324">当碰到<strong>URL结尾包含斜杠“/”</strong>这种情况，会让客户端重定向到相应没有尾斜杠的URI（也有可能会返回301 - 用来资源重定向）</a></p>
+<p><a href="[https://deathfeeling.gitee.io/myblog/2020/03/25/FastAPI%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/](https://deathfeeling.gitee.io/myblog/2020/03/25/FastAPI项目实战/">FastAPI项目实战</a>)</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E6%95%99%E7%A8%8B/">#教程</a>
+      
+        <a href="/tags/%E6%8A%80%E6%9C%AF/">#技术</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>FastAPI 学习手册</div>
+      <div>http://example.com/2020/06/16/2020-06-16-FastAPI 学习手册/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>NSX</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2020年6月16日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/06/19/2020-06-19-Python%20%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/" title="Python 最佳实践">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Python 最佳实践</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/06/16/2020-06-16-FastAPI%E5%B7%A5%E7%A8%8B%E9%83%A8%E7%BD%B2Gunicorn+Uvicorn/" title="FastAPI工程部署Gunicorn+Uvicorn">
+                        <span class="hidden-mobile">FastAPI工程部署Gunicorn+Uvicorn</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

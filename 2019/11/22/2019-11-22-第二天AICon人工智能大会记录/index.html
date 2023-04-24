@@ -1,0 +1,1061 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="NSX">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="第二天AICon人工智能大会记录AICon第二天 2019.11.22 腾讯云 《腾讯云知识图谱技术与应用实践之路》吴睿 小米AI Lab 《知识图谱在小米的落地与挑战》刘作鹏  平安AI团队《智能金融在客服机器人中台的落地实践》潘鹏举 阿里达摩院语音实验室 《阿里KAN-TTS技术和落地实践》雷鸣 追一科技AI Lab《企业服务中智能交互机器人的实践与探索》徐易楠  《微软小冰：人格化对话机器人">
+<meta property="og:type" content="article">
+<meta property="og:title" content="第二天AICon人工智能大会记录">
+<meta property="og:url" content="http://example.com/2019/11/22/2019-11-22-%E7%AC%AC%E4%BA%8C%E5%A4%A9AICon%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD%E5%A4%A7%E4%BC%9A%E8%AE%B0%E5%BD%95/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="第二天AICon人工智能大会记录AICon第二天 2019.11.22 腾讯云 《腾讯云知识图谱技术与应用实践之路》吴睿 小米AI Lab 《知识图谱在小米的落地与挑战》刘作鹏  平安AI团队《智能金融在客服机器人中台的落地实践》潘鹏举 阿里达摩院语音实验室 《阿里KAN-TTS技术和落地实践》雷鸣 追一科技AI Lab《企业服务中智能交互机器人的实践与探索》徐易楠  《微软小冰：人格化对话机器人">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/%E5%9B%BE%E8%B0%B1%E6%9E%84%E5%BB%BA.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/%E5%9B%BE%E8%B0%B1%E4%B8%80%E7%AB%99%E5%BC%8F.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/%E7%9F%A5%E8%AF%86%E6%8A%BD%E5%8F%96.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/%E9%9D%9E%E7%BB%93%E6%9E%84%E5%8C%96%E7%9F%A5%E8%AF%86%E6%8A%BD%E5%8F%96.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/%E5%85%B3%E9%94%AE%E6%9E%84%E5%BB%BA%E6%8A%80%E6%9C%AF.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/%E5%B0%8F%E7%88%B1%E5%BC%80%E6%94%BE%E5%9F%9F%E9%97%AE%E7%AD%94%E7%B3%BB%E7%BB%9F.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/%E5%AE%9E%E4%BD%93%E9%93%BE%E6%8E%A5.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/%E5%B9%B3%E5%AE%89AI%E4%B8%9A%E5%8A%A1%E6%9E%B6%E6%9E%84.PNG">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/%E5%B0%8F%E5%AE%892.0.PNG">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/%E6%9C%8D%E5%8A%A1%E6%80%BB%E7%BA%BF.PNG">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/%E5%8D%A1%E7%89%87%E5%BC%8F%E7%AD%94%E6%A1%88.PNG">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/%E5%B0%8F%E5%AE%893.0.PNG">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/%E7%9B%B8%E5%85%B3%E6%9C%AF%E8%AF%AD.PNG">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/ali-KAN.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/%E4%BC%AA%E6%A0%87%E7%AD%BE.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/%E9%A1%BA%E5%BA%8F%E9%87%8D%E8%A6%81.PNG">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/%E6%A0%87%E7%82%B9%E7%AC%A6%E5%8F%B7%E9%87%8D%E8%A6%81.PNG">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/Query%E8%AF%AD%E4%B9%89%E5%88%86%E6%9E%90.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/%E4%BA%91%E9%9F%B3%E4%B9%90%E6%90%9C%E7%B4%A2%E6%A1%86%E6%9E%B6.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/%E4%BA%91%E9%9F%B3%E4%B9%90%E5%88%86%E4%BA%AB.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/Query%E7%90%86%E8%A7%A3%E4%BD%93%E7%B3%BB.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/%E6%84%8F%E5%9B%BE%E8%AF%86%E5%88%AB.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/%E5%9F%BA%E4%BA%8E%E7%82%B9%E5%87%BB%E7%9A%84%E7%9B%B8%E5%85%B3%E6%80%A7.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/%E5%9F%BA%E4%BA%8E%E6%B7%B1%E5%BA%A6%E8%AF%AD%E4%B9%89%E8%A1%A8%E5%BE%81.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/%E6%8E%92%E5%BA%8F%E6%A8%A1%E5%9E%8B.png">
+<meta property="article:published_time" content="2019-11-21T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-23T10:28:32.042Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="技术博客">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ningshixian.github.io/resources/images/%E5%9B%BE%E8%B0%B1%E6%9E%84%E5%BB%BA.png">
+  
+  
+  
+  <title>第二天AICon人工智能大会记录 - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="听课笔记"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2019-11-22 00:00" pubdate>
+          2019年11月22日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.9k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          25 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">听课笔记</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="第二天AICon人工智能大会记录"><a href="#第二天AICon人工智能大会记录" class="headerlink" title="第二天AICon人工智能大会记录"></a>第二天AICon人工智能大会记录</h1><h2 id="AICon第二天-2019-11-22"><a href="#AICon第二天-2019-11-22" class="headerlink" title="AICon第二天 2019.11.22"></a>AICon第二天 2019.11.22</h2><ul>
+<li>腾讯云 《<a target="_blank" rel="noopener" href="https://aicon.infoq.cn/2019/beijing/presentation/1999">腾讯云知识图谱技术与应用实践之路</a>》吴睿</li>
+<li>小米AI Lab 《<a target="_blank" rel="noopener" href="https://aicon.infoq.cn/2019/beijing/presentation/1974">知识图谱在小米的落地与挑战</a>》刘作鹏 </li>
+<li>平安AI团队《<a target="_blank" rel="noopener" href="https://aicon.infoq.cn/2019/beijing/presentation/2206">智能金融在客服机器人中台的落地实践</a>》潘鹏举</li>
+<li>阿里达摩院语音实验室 《阿里KAN-TTS技术和落地实践》雷鸣</li>
+<li>追一科技AI Lab《<a target="_blank" rel="noopener" href="https://aicon.infoq.cn/2019/beijing/presentation/2088">企业服务中智能交互机器人的实践与探索</a>》徐易楠 </li>
+<li>《<a target="_blank" rel="noopener" href="https://aicon.infoq.cn/2019/beijing/presentation/2001">微软小冰：人格化对话机器人的构建及在语音场景当中的实践（上）</a>》</li>
+<li>网易云音乐搜索《<a target="_blank" rel="noopener" href="https://aicon.infoq.cn/2019/beijing/presentation/2070">AI算法在云音乐搜索中的应用实践</a>》王新欣</li>
+</ul>
+<span id="more"></span>
+<h4 id="腾讯云-《腾讯云知识图谱技术与应用实践之路》吴睿"><a href="#腾讯云-《腾讯云知识图谱技术与应用实践之路》吴睿" class="headerlink" title="腾讯云 《腾讯云知识图谱技术与应用实践之路》吴睿"></a>腾讯云 《<a target="_blank" rel="noopener" href="https://aicon.infoq.cn/2019/beijing/presentation/1999">腾讯云知识图谱技术与应用实践之路</a>》吴睿</h4><ul>
+<li><p>知识图谱定义</p>
+<ul>
+<li>知识图谱是采取二元图网络，描述客观世界中的实体信息及其相互关系规律的知识化描述，其基本组成单位是【实体-关系-实体】 ， 【实体-属性-属性值】 的三元组（triplet），实体之间通过关系相互联结，构成网状结构  </li>
+</ul>
+</li>
+<li><p>图谱构建与应用流程  </p>
+<p><img src="https://ningshixian.github.io/resources/images/图谱构建.png" srcset="/img/loading.gif" lazyload alt=""></p>
+</li>
+<li><p>知识图谱一站式平台</p>
+<p><img src="https://ningshixian.github.io/resources/images/图谱一站式.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<ul>
+<li>图谱构建可用预训练语言模型提高效果</li>
+<li>用远监督回标降低成本。</li>
+<li>用云更降本增效。  </li>
+</ul>
+</li>
+<li><p>知识抽取  </p>
+<p><img src="https://ningshixian.github.io/resources/images/知识抽取.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<p><img src="https://ningshixian.github.io/resources/images/非结构化知识抽取.png" srcset="/img/loading.gif" lazyload alt=""></p>
+</li>
+<li><p>知识图谱一站式平台<strong>底层</strong>：腾讯Plato高性能图计算引擎  （<a target="_blank" rel="noopener" href="https://github.com/Tencent/plato/">已开源</a>）</p>
+</li>
+</ul>
+<h4 id="小米人工智能实验室-《知识图谱在小米的落地与挑战》刘作鹏"><a href="#小米人工智能实验室-《知识图谱在小米的落地与挑战》刘作鹏" class="headerlink" title="小米人工智能实验室 《知识图谱在小米的落地与挑战》刘作鹏"></a>小米人工智能实验室 《<a target="_blank" rel="noopener" href="https://aicon.infoq.cn/2019/beijing/presentation/1974">知识图谱在小米的落地与挑战</a>》刘作鹏</h4><ul>
+<li><p>知识图谱简介  </p>
+<ul>
+<li>本质上，知识图谱是大规模的语义网络（ Semantic Web）；</li>
+<li>语义网络是知识表示的重要方式之一，富含实体、概念和多种语义关系；  </li>
+<li>让机器具备认知能力的关键技术  </li>
+</ul>
+</li>
+<li><p><strong>OpenBase</strong> 项目</p>
+<ul>
+<li>联合OpenKG、小米、清华大学、浙江大学、东南大学、狗尾草、海知智能</li>
+<li>多个中文知识图谱自由下载</li>
+</ul>
+</li>
+<li><p>关键构建技术</p>
+<p><img src="https://ningshixian.github.io/resources/images/关键构建技术.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<ul>
+<li>bert太重，蒸馏！</li>
+</ul>
+</li>
+<li><p>百科知识图谱构建（避坑指南）</p>
+<ul>
+<li><p>知识抽取 → 实体发现 → 实体分类 → 知识补全 → 知识更新 → 知识融合  </p>
+</li>
+<li><p>百科图谱的对齐： Schema层对齐  </p>
+<ul>
+<li>以cnSchema为基础，半自动地抽取等价概念和上下位关系  </li>
+<li>利用等价概念发现等价谓词  </li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>垂域知识图谱的构建</p>
+<ul>
+<li>^本体定义 → 实体发现 → 知识抽取 → 实体对齐 → <strong>知识择优</strong> → 知识更新  </li>
+<li>小样本条件下的文本分类模型  <ul>
+<li>联合BERT和Meta Network的网络模型；</li>
+<li>Transformer层之间用残差网络连接  </li>
+</ul>
+</li>
+<li><p>图谱的质检流程…（众包）</p>
+</li>
+<li><p>数据不足</p>
+<ul>
+<li>人工标注10000条垂域数据+远程监督</li>
+</ul>
+</li>
+<li>知识择优来源<ul>
+<li>数据的权重引用数</li>
+</ul>
+</li>
+<li>知识及时更新</li>
+</ul>
+</li>
+<li><p>小米图谱</p>
+<ul>
+<li>以百科图谱为中心（已接入9大业务类别），链接了52垂域图谱</li>
+</ul>
+</li>
+<li><p>基于图谱的问答 - KBQA</p>
+<ul>
+<li>小爱开放域问答系统  </li>
+</ul>
+<p><img src="https://ningshixian.github.io/resources/images/小爱开放域问答系统.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<ul>
+<li><p>问句理解是当前的难点  </p>
+<ul>
+<li><p>问句纠错 → 问句改写 → 意图识别 → 指代消解 → <em>实体链接</em> → <em>谓词判断</em></p>
+</li>
+<li><p>借鉴了搜索和NLP的技术  </p>
+</li>
+<li>需要在80毫秒内完成全部处理，每天处理6千万次以上的请求  (120ms以内返回答案)</li>
+</ul>
+</li>
+<li><p>KBQA关键技术：实体链接  </p>
+<p><img src="https://ningshixian.github.io/resources/images/实体链接.png" srcset="/img/loading.gif" lazyload alt=""></p>
+</li>
+<li><p>KBQA关键技术：谓词判断  </p>
+<ul>
+<li>……</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>未来发展</p>
+<ul>
+<li>从KG到KG Plus  </li>
+<li>KG Plus查询： 根据内容名称或者内容ID，从KG Plus里查询内容；</li>
+<li>理解服务：根据内容名称或者内容ID，查询补充了各类信息的内容数据；</li>
+<li>融合服务：将结构化的和非结构化的数据融合到KG Plus中；</li>
+<li>距离计算：查询实体之间或者概念之间的图谱距离 ；</li>
+<li>实体推荐：根据给定实体，推荐关联实体；  </li>
+</ul>
+</li>
+<li><p>知识图谱：好用，耗钱，耗人力，偏长远发展</p>
+</li>
+<li><p>如何对客服机器人评价？</p>
+<ol>
+<li><p>对给出的答案进行反馈（点赞点踩）</p>
+</li>
+<li><p>标注测试集，计算PRF值</p>
+</li>
+</ol>
+</li>
+</ul>
+<h4 id="平安银行-AI算法团队《智能金融在客服机器人中台的落地实践》潘鹏举"><a href="#平安银行-AI算法团队《智能金融在客服机器人中台的落地实践》潘鹏举" class="headerlink" title="平安银行 / AI算法团队《智能金融在客服机器人中台的落地实践》潘鹏举"></a>平安银行 / AI算法团队《<a target="_blank" rel="noopener" href="https://aicon.infoq.cn/2019/beijing/presentation/2206">智能金融在客服机器人中台的落地实践</a>》潘鹏举</h4><ul>
+<li><p>平安AI业务架构<br><img src="https://ningshixian.github.io/resources/images/平安AI业务架构.PNG" srcset="/img/loading.gif" lazyload alt=""></p>
+</li>
+<li><p>客服机器人小安1.0</p>
+<ul>
+<li>存在问题<ul>
+<li>知识库独立不共享（借记卡和信用卡）</li>
+<li>前端重复开发</li>
+<li>不智能，无法回答其他业务的问题</li>
+</ul>
+</li>
+<li>解决方案<ol>
+<li>知识库维护在一个地方  </li>
+<li>程序分别调用两个机器人，前端进行结果合并（√）</li>
+</ol>
+</li>
+</ul>
+</li>
+<li><p>客服机器人小安2.0</p>
+<p>利用中控机器人来调用不同业务机器人</p>
+<p><img src="https://ningshixian.github.io/resources/images/小安2.0.PNG" srcset="/img/loading.gif" lazyload alt=""></p>
+<ul>
+<li>存在问题<ul>
+<li>知识库的维护工作量增大（各类业务知识的不断接入）</li>
+<li>FAQ知识不共享，扩展性差</li>
+<li>新机器人的冷启动工作量大<ul>
+<li><em>冷启动科普：在无初始客户积累，得不到新入客户群数据，分析不出客户习惯，不能针对性改进和推广</em></li>
+</ul>
+</li>
+<li>需定长周期的定制化开发（麻烦）</li>
+</ul>
+</li>
+<li>解决方案<ul>
+<li>对不同模块进行抽象封装（共享、复用、组件化 ）</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>客服机器人小安3.0（中台化）</p>
+<p>抽象出3个重点</p>
+<ol>
+<li><p>知识统一沉淀</p>
+<ul>
+<li>知识共享（不同业务知识库+闲聊库）</li>
+<li>知识集中化管理（后台管理系统，知识易适配、易维护）</li>
+</ul>
+<ol>
+<li><p>服务统一管理</p>
+<ul>
+<li>实现了服务的统一注册、编排和管理</li>
+</ul>
+<p><img src="https://ningshixian.github.io/resources/images/服务总线.PNG" srcset="/img/loading.gif" lazyload alt="">  </p>
+</li>
+</ol>
+<ul>
+<li><p>实体管理 (分通用实体、场景化实体)</p>
+<ul>
+<li><p>实体状态保持机制实现</p>
+<ul>
+<li>命中了某个实体，根据上下文进行状态机制的保存</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ol>
+<li><p>答案的配置化  </p>
+<ul>
+<li>卡片式答案  </li>
+<li>卡片组件库管理   </li>
+</ul>
+</li>
+</ol>
+</li>
+</ol>
+<p><img src="https://ningshixian.github.io/resources/images/卡片式答案.PNG" srcset="/img/loading.gif" lazyload alt=""></p>
+<p>3.0架构如下：</p>
+<p><img src="https://ningshixian.github.io/resources/images/小安3.0.PNG" srcset="/img/loading.gif" lazyload alt=""></p>
+<ul>
+<li>示例 </li>
+</ul>
+<p><img src="https://ningshixian.github.io/resources/images/相关术语.PNG" srcset="/img/loading.gif" lazyload alt=""></p>
+</li>
+<li><p>总结</p>
+<ul>
+<li><p>扩展问的数量会大幅提高问答的效果</p>
+<ul>
+<li>找运维，多标注知识（很重要）</li>
+</ul>
+</li>
+<li><p>充足的FAQ数据是保证模型起效果的关键</p>
+<ul>
+<li>数据！数据！数据！</li>
+</ul>
+</li>
+<li><p>多轮对话效果有待提高</p>
+</li>
+<li><p>核心的NLU抽象成模块，和知识、答案展示等服务进行解耦</p>
+</li>
+<li><p>通过发现bad case，人工调整数据重新训练</p>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="阿里巴巴达摩院语音实验室-《阿里KAN-TTS技术和落地实践》雷鸣"><a href="#阿里巴巴达摩院语音实验室-《阿里KAN-TTS技术和落地实践》雷鸣" class="headerlink" title="阿里巴巴达摩院语音实验室 《阿里KAN-TTS技术和落地实践》雷鸣"></a>阿里巴巴达摩院语音实验室 《阿里KAN-TTS技术和落地实践》雷鸣</h4><ul>
+<li>语音合成技术的历史演变</li>
+<li>语音合成技术的应用场景<ul>
+<li>ASR→NLP→TTS</li>
+<li>三方面刚需<ul>
+<li>交互（智能客服、智能硬件、虚拟助理）</li>
+<li>播报（导航、内容播报）</li>
+<li>娱乐（变声）</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Knowledge-aware Neural TTS (KAN-TTS)<br><img src="https://ningshixian.github.io/resources/images/ali-KAN.png" srcset="/img/loading.gif" lazyload alt=""><ul>
+<li>评价指标（MOS%）</li>
+</ul>
+</li>
+<li>基于KAN-TTS的定制（声音克隆）<ul>
+<li>5大场景，42种声音<ul>
+<li>高品质– 听起来好听</li>
+<li>开箱即用– 想要什么声音就有什么声音</li>
+<li>低门槛定制– 想做什么声音就可以做什么声音</li>
+<li>个性化– 低成本娱乐效果</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="追一科技AI-Lab《企业服务中智能交互机器人的实践与探索》徐易楠"><a href="#追一科技AI-Lab《企业服务中智能交互机器人的实践与探索》徐易楠" class="headerlink" title="追一科技AI Lab《企业服务中智能交互机器人的实践与探索》徐易楠"></a>追一科技AI Lab《<a target="_blank" rel="noopener" href="https://aicon.infoq.cn/2019/beijing/presentation/2088">企业服务中智能交互机器人的实践与探索</a>》徐易楠</h4><p><strong>实践过程中的瓶颈及探索</strong></p>
+<ul>
+<li><p>冷启动效果差、可复制能力不够</p>
+<ul>
+<li>数据量 vs. 准确率 服从线性递增关系  </li>
+</ul>
+</li>
+<li><p>解决方案 </p>
+<ul>
+<li>数据复用  <ul>
+<li>构造伪标签（  无监督数据增强+主动学习  ）</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://ningshixian.github.io/resources/images/伪标签.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<ul>
+<li>模型优化<ul>
+<li>小样本学习</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>系统鲁棒性不⾜</p>
+<ul>
+<li><p>两句话相似，但语义完全不一致</p>
+</li>
+<li><p>字面完全不匹配，意图却相关</p>
+</li>
+<li><p>顺序重要还是不重要</p>
+<p><img src="https://ningshixian.github.io/resources/images/顺序重要.PNG" srcset="/img/loading.gif" lazyload alt=""></p>
+</li>
+<li><p>标点符号也很重要</p>
+<p><img src="https://ningshixian.github.io/resources/images/标点符号重要.PNG" srcset="/img/loading.gif" lazyload alt=""></p>
+</li>
+</ul>
+</li>
+<li><p>解决方案</p>
+<ul>
+<li>数据优化<ul>
+<li>简单数据增强：近义词、乱序、随机替换、删除等</li>
+<li>复杂数据增强：使用生成模型</li>
+</ul>
+</li>
+<li>模型优化<ul>
+<li>对抗训练：在某个输⼊上有意的加⼊⾜够小的扰动，能够使⽹络预测<code>错误且预测概率较高</code>的样本  </li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>口语化表达理解能力不够</p>
+<ul>
+<li><p>通用ASR对于 <strong>领域知识</strong> 识别效果有限</p>
+<p>| ASR识别结果         | 标签                |<br>| —————————- | —————————- |<br>| 能不能<u>改天</u>呐 | 能不能<u>改签</u>呐 |<br>| 我怎么<u>投保</u>啊 | 我怎么<u>淘宝</u>啊 |</p>
+</li>
+<li><p>领域关键词通常会导致意图识别错误</p>
+</li>
+<li><p><strong>口语化表达与文本差异较大</strong></p>
+</li>
+</ul>
+</li>
+<li><p>解决方案</p>
+<ul>
+<li>将ASR转写的数据也参与模型训练</li>
+<li>语音+文本联合建模</li>
+</ul>
+</li>
+<li><p>不能洞察用户情感，从而进行安抚</p>
+</li>
+</ul>
+<h4 id="《微软小冰：人格化对话机器人的构建及在语音场景当中的实践（上）》曾敏"><a href="#《微软小冰：人格化对话机器人的构建及在语音场景当中的实践（上）》曾敏" class="headerlink" title="《微软小冰：人格化对话机器人的构建及在语音场景当中的实践（上）》曾敏"></a>《<a target="_blank" rel="noopener" href="https://aicon.infoq.cn/2019/beijing/presentation/2001">微软小冰：人格化对话机器人的构建及在语音场景当中的实践（上）</a>》曾敏</h4><ul>
+<li><p>对话系统的基本架构<br><img src="https://ningshixian.github.io/resources/images/对话系统.png" srcset="/img/loading.gif" lazyload alt=""></p>
+</li>
+<li><p>语义分析（四方面）</p>
+<p><img src="https://ningshixian.github.io/resources/images/Query语义分析.png" srcset="/img/loading.gif" lazyload alt=""></p>
+</li>
+<li><p>检索模型的基本结构</p>
+<ul>
+<li>…</li>
+<li>利用<code>bert+蒸馏</code>作检索排序（分类），效果提升很明显</li>
+</ul>
+</li>
+<li><p>2017年业界第一个把开放域对话生成模型做成线上系统</p>
+</li>
+<li><p>人格化IP</p>
+<ul>
+<li>AI beings需要避免被工具化</li>
+<li>上升到内容创作，有创造力（现代诗创作）</li>
+</ul>
+</li>
+</ul>
+<h4 id="网易云音乐搜索《AI算法在云音乐搜索中的应用实践》王新欣"><a href="#网易云音乐搜索《AI算法在云音乐搜索中的应用实践》王新欣" class="headerlink" title="网易云音乐搜索《AI算法在云音乐搜索中的应用实践》王新欣"></a>网易云音乐搜索《<a target="_blank" rel="noopener" href="https://aicon.infoq.cn/2019/beijing/presentation/2070">AI算法在云音乐搜索中的应用实践</a>》王新欣</h4><ul>
+<li><p>面临的问题</p>
+<ul>
+<li>用户需求仅仅是一首歌曲？</li>
+<li>如何理解用户并匹配？</li>
+<li>如何给用户更好的资源？</li>
+<li>如何给业务赋能？</li>
+</ul>
+</li>
+<li><p>云音乐搜索框架<br><img src="https://ningshixian.github.io/resources/images/云音乐搜索框架.png" srcset="/img/loading.gif" lazyload alt=""></p>
+</li>
+<li><p>关键分享（两部分）</p>
+<p><img src="https://ningshixian.github.io/resources/images/云音乐分享.png" srcset="/img/loading.gif" lazyload alt=""></p>
+</li>
+<li><p>Query理解体系<br><img src="https://ningshixian.github.io/resources/images/Query理解体系.png" srcset="/img/loading.gif" lazyload alt=""></p>
+</li>
+<li><p>意图识别 - 方法归纳<br><img src="https://ningshixian.github.io/resources/images/意图识别.png" srcset="/img/loading.gif" lazyload alt=""></p>
+</li>
+<li><p>多链路相关性（没太听懂）</p>
+<ol>
+<li>传统相关性<ul>
+<li>Word Seg+Term weight</li>
+</ul>
+</li>
+<li>基于点击的Graph</li>
+</ol>
+</li>
+</ul>
+<p><img src="https://ningshixian.github.io/resources/images/基于点击的相关性.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<ol>
+<li>基于深度语义表征</li>
+</ol>
+<p><img src="https://ningshixian.github.io/resources/images/基于深度语义表征.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<ul>
+<li>排序模型（第二个重点部分）<br><img src="https://ningshixian.github.io/resources/images/排序模型.png" srcset="/img/loading.gif" lazyload alt=""></li>
+</ul>
+<h4 id="华为海思计算芯片《达芬奇密码：昇腾芯片的前世今生》王晓雷"><a href="#华为海思计算芯片《达芬奇密码：昇腾芯片的前世今生》王晓雷" class="headerlink" title="华为海思计算芯片《达芬奇密码：昇腾芯片的前世今生》王晓雷"></a>华为海思计算芯片《达芬奇密码：昇腾芯片的前世今生》王晓雷</h4><ul>
+<li>⾼算⼒的计算平台<ul>
+<li>CPU</li>
+<li>GPU / FPGA / DSP</li>
+<li>TPU</li>
+</ul>
+</li>
+<li><p>深度学习性能提升小秘诀</p>
+</li>
+<li><p>…</p>
+</li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/">#技术博客</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>第二天AICon人工智能大会记录</div>
+      <div>http://example.com/2019/11/22/2019-11-22-第二天AICon人工智能大会记录/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>NSX</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2019年11月22日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/12/02/2019-12-02-keras%E5%90%8E%E7%AB%AF%E5%BC%95%E6%93%8EK%E5%8F%8A%E5%85%B6%E6%96%B9%E6%B3%95/" title="keras后端引擎K及其方法">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">keras后端引擎K及其方法</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2019/11/21/2019-11-21-%E7%AC%AC%E4%B8%80%E5%A4%A9AICon%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD%E5%A4%A7%E4%BC%9A%E8%AE%B0%E5%BD%95/" title="第一天AICon人工智能大会记录">
+                        <span class="hidden-mobile">第一天AICon人工智能大会记录</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

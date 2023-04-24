@@ -1,0 +1,740 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="NSX">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="在我们的生活中，智能对话被广泛应用在客服、营销等重复性对话频繁发生的场景，或者作为GUI的补充，为用户提供高效、个性化的体验，甚至是直接集成到智能音箱、智能家居、智能导航等硬件设备中，独立承载人机交互的重担。 按照对话的智能程度，我们可以把智能问答分为5个阶段：单轮问答、多轮会话、意图推理、个性化以及情感互动。 而从问答的种类来讲，我们又可以将其分为Community QA、KBQA、TableQ">
+<meta property="og:type" content="article">
+<meta property="og:title" content="来也对话机器人平台智能问答技术拆解">
+<meta property="og:url" content="http://example.com/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E6%9D%A5%E4%B9%9F/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="在我们的生活中，智能对话被广泛应用在客服、营销等重复性对话频繁发生的场景，或者作为GUI的补充，为用户提供高效、个性化的体验，甚至是直接集成到智能音箱、智能家居、智能导航等硬件设备中，独立承载人机交互的重担。 按照对话的智能程度，我们可以把智能问答分为5个阶段：单轮问答、多轮会话、意图推理、个性化以及情感互动。 而从问答的种类来讲，我们又可以将其分为Community QA、KBQA、TableQ">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://image.woshipm.com/wp-files/2019/11/b8HeYwrn5j5BJQUWYNYz.png">
+<meta property="og:image" content="http://image.woshipm.com/wp-files/2019/11/4OCoNFCjvjq31PeBEJKp.png">
+<meta property="og:image" content="http://image.woshipm.com/wp-files/2019/11/iSdG4qnDaPHJSqFwSZHn.png">
+<meta property="og:image" content="http://image.woshipm.com/wp-files/2019/11/MpEGyRmL5PvGm7p2LAIS.png">
+<meta property="og:image" content="http://image.woshipm.com/wp-files/2019/11/zu6m9aR6muomaV4mpdm6.png">
+<meta property="og:image" content="http://image.woshipm.com/wp-files/2019/11/sfHP6yaLK5m60SgTiLsM.png">
+<meta property="og:image" content="http://image.woshipm.com/wp-files/2019/11/anANQr2GXqzvbbM5gKWo.png">
+<meta property="og:image" content="http://image.woshipm.com/wp-files/2019/11/htXlbjQLbLlIK6MKc7D2.png">
+<meta property="og:image" content="http://image.woshipm.com/wp-files/2019/11/Wgah2ye0OyLiVFhqEVCx.png">
+<meta property="og:image" content="http://image.woshipm.com/wp-files/2019/11/CFMpTuxwZxMFHridaeZB.png">
+<meta property="og:image" content="http://image.woshipm.com/wp-files/2019/11/M7QVX65TUBAMpsu7Ko9y.png">
+<meta property="og:image" content="http://image.woshipm.com/wp-files/2019/11/fu4UeMbeZC6ug4wJDzqZ.png">
+<meta property="og:image" content="http://image.woshipm.com/wp-files/2019/11/iseODLSNNO3Y68FRaM5W.png">
+<meta property="og:image" content="http://image.woshipm.com/wp-files/2019/11/Gz90QDP2dHZoWDcRui7r.png">
+<meta property="og:image" content="http://image.woshipm.com/wp-files/2019/11/BopOLTwVACuB2goOQjqD.png">
+<meta property="og:image" content="http://image.woshipm.com/wp-files/2019/11/GxmOwDgS3KkIzkGQD0V5.png">
+<meta property="article:published_time" content="2021-10-30T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-23T10:28:32.068Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="智能问答系统">
+<meta property="article:tag" content="来也">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://image.woshipm.com/wp-files/2019/11/b8HeYwrn5j5BJQUWYNYz.png">
+  
+  
+  
+  <title>来也对话机器人平台智能问答技术拆解 - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="来也对话机器人平台智能问答技术拆解"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-10-31 00:00" pubdate>
+          2021年10月31日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          37 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">来也对话机器人平台智能问答技术拆解</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>在我们的生活中，智能对话被广泛应用在客服、营销等重复性对话频繁发生的场景，或者作为GUI的补充，为用户提供高效、个性化的体验，甚至是直接集成到智能音箱、智能家居、智能导航等硬件设备中，独立承载人机交互的重担。</p>
+<p>按照对话的智能程度，我们可以把智能问答分为5个阶段：单轮问答、多轮会话、意图推理、个性化以及情感互动。</p>
+<p>而从问答的种类来讲，我们又可以将其分为Community QA、KBQA、TableQA、PassageQA、VQA这5大类。</p>
+<p><img src="http://image.woshipm.com/wp-files/2019/11/b8HeYwrn5j5BJQUWYNYz.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<span id="more"></span>
+<h2 id="智能问答工程实践"><a href="#智能问答工程实践" class="headerlink" title="智能问答工程实践"></a>智能问答工程实践</h2><p>面对智能问答的广泛应用，本篇文章以如何搭建一套智能问答系统为切入点，深入浅出介绍一下在Community QA上所做的尝试。</p>
+<h3 id="1-业务简介"><a href="#1-业务简介" class="headerlink" title="1. 业务简介"></a>1. 业务简介</h3><p>我们再基于几个实际的例子看一下问答的使用场景：</p>
+<ul>
+<li>第一类是常见的客服场景，询问产品、询问业务、询问经验，这类场景比较泛，他会衍生在生活中的各个方面，客服机器人相比传统的客服，他永不打烊，回答永远标准，而且面对各种刁钻甚至不友好的问题，都会永远积极正面地给出响应。</li>
+<li>同时，该类问答机器人进一步深化拓宽到领域，会孵化出某些领域通用的机器人，比如HR领域，相信不同公司的HR，很大程度上面临的问题集合都是固定的，也就是说，垂直领域的问答机器人是可以有效渗透并横向复制给不同企业使用的。</li>
+<li>在英语学习相关产品上，我们想给小孩报名英文课，但是不清楚课程内容和价格，那我们会问相关的问题。对于商家来讲，我们不仅是提问的人，还是潜在的商机，可能我们仅仅只想问一个问题，但是商家却希望能获得我们更多的信息，电话、小孩年纪、上课意向等，进而让我们留存下来最后能成功消费，类似的场景还有很多，我们把这一类应用场景叫营销机器人，它是商务团队的好帮手，能在多个平台自由切换，回答问题标准且及时，最终往往能通过更小的人力投入，获取更多的有效线索。</li>
+</ul>
+<h3 id="2-问答建模"><a href="#2-问答建模" class="headerlink" title="2. 问答建模"></a>2. 问答建模</h3><p>基于前面的例子，我们对问答场景有了更具体的画像，需要做什么已经很清晰了，那么怎么做呢，我们开始尝试对该问题进行建模。</p>
+<p>首先是对知识的结构化表示：</p>
+<ul>
+<li>用户问题我们用q表示；</li>
+<li>一个问答对表示一条领域知识，我们把它叫做一个知识点ki；</li>
+<li>答案我们定义为ai；</li>
+<li>由于一个语义的问题可能有多种不同的表述方式，因此一个知识点的问题由多个不同的表述组成，这些表述都叫相似问pij；</li>
+<li>一个领域的知识库，由多个知识点构成。</li>
+</ul>
+<p><img src="http://image.woshipm.com/wp-files/2019/11/4OCoNFCjvjq31PeBEJKp.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>图2 知识库表示</p>
+<p>我们为什么要用这种方式来管理知识，不用图表、也不用表格？</p>
+<p>实际上，知识的管理方式是来源于实际业务场景的，这种方式非常易于维护，多个同义问题用一个知识点管理，也能减轻维护答案工作量，同一知识点下的问题也将会是很好的训练数据。</p>
+<p>现在有了领域内知识库，用户提问后，我们还需要一个问答模型，这个模型能找到和用户query最匹配的问题，进而给出对应的答案，这里我们采用检索+匹配+排序的架构。</p>
+<p><img src="http://image.woshipm.com/wp-files/2019/11/iSdG4qnDaPHJSqFwSZHn.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>图3 问答建模流程</p>
+<p>下图是基于知识库和问答模型在母婴场景的应用举例：</p>
+<p><img src="http://image.woshipm.com/wp-files/2019/11/MpEGyRmL5PvGm7p2LAIS.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>图4 QA应用举例</p>
+<h3 id="3-数据储备"><a href="#3-数据储备" class="headerlink" title="3.数据储备"></a>3.数据储备</h3><p><img src="http://image.woshipm.com/wp-files/2019/11/zu6m9aR6muomaV4mpdm6.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>图5 数据类型分布</p>
+<p>在正式开始问答模型构建之前，我们需要思考目前有哪些数据可被我们使用，以及我们需要什么数据来支撑后续的工作。</p>
+<p>通用领域的贴吧、豆瓣、微博、知道等问答数据，可被用来训练词向量，或是统计共现、互信息词典；人工标注的q/p对，可被用来训练有监督的分类模型；垂直领域的知识库可被用来训练领域相关的分类模型，也可用作词向量的fine-tune，当然也是有效的评估数据。</p>
+<h3 id="4-模型迭代"><a href="#4-模型迭代" class="headerlink" title="4. 模型迭代"></a>4. 模型迭代</h3><p><img src="http://image.woshipm.com/wp-files/2019/11/sfHP6yaLK5m60SgTiLsM.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>图6 QA架构图</p>
+<p>整体的QA架构图如图6所示，下面我们简单介绍一下历次迭代的思路。</p>
+<p><strong>1. BoW+LR</strong></p>
+<p>第一次迭代我们只引入了词袋（Bag of Words）模型，5维代表特征。</p>
+<ul>
+<li>Jaccard：q和p词交集个数与词并集个数的比值；</li>
+<li>Coverity：最长公共子串特征，q和p最长公共子串在p中的占比；</li>
+<li>Edit-Distance：最小编辑距离，q和p的最小编辑距离除以q、p长度的平均值；</li>
+<li>TM：共现特征，基于bigram/trigram词典，计算q、p共现词平均score、共现词最高score的平均值、共现词去除相同词后最高score的平均值共3维特征；</li>
+<li>MI：互信息特征，基于互信息词典，计算q、p两两词的互信息平均值。</li>
+</ul>
+<p>上述特征集合，均由大数据文本的统计特征衍生而来，对句子的语义表示能力较弱。</p>
+<p><strong>2. BoW+WE+LR</strong></p>
+<p>第二次迭代我们给模型引入了一定的语义表示能力，对于了解深度学习、自然语言处理的同学来讲，word2vec在很多任务上都有着非常杰出的贡献，这一模型从不同角度刻画了周围词和当前词的关系。经过训练后，我们能得到一份词汇的向量表示。</p>
+<p><img src="http://image.woshipm.com/wp-files/2019/11/anANQr2GXqzvbbM5gKWo.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>图7 word2vec的2个模型</p>
+<p>基于训练得到的词向量，我们采用IDF对词向量进行加权平均，以此得到q、p词粒度的句向量表示，并最终通过余弦相似度来度量两者的语义相关性。</p>
+<p><img src="http://image.woshipm.com/wp-files/2019/11/htXlbjQLbLlIK6MKc7D2.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>图8 基于句子表示的w2v特征</p>
+<p>通过余弦相似度给出的相似，本质上描述的还是两个词的相对一致，而且word2vec不考虑词序，余弦相似度大表示两个词搭配出现、或者和同一批词搭配出现的可能性较大，这一特征所显示出来的弊端就是往往相似度高的2个词具有可替换性但却语义不完全相同。</p>
+<p>比如q=“宝宝感冒怎么办”，p=”宝宝发烧怎么办”，”感冒”和”发烧”互相替换，句子依然具有合理性，而且由于他们经常在同一批词汇中搭配出现，具有比较相似的分布特征，相关性比较高，然而他们语义并不同。</p>
+<p>接下来我们引入另一种语义度量方法：WMD (the Word Mover’s Distance)，它刻画了如何用最小的代价将q中的每个词以不同权重匹配到p中每个词上，这是一种基于句子间的交互来表示语义的方法。</p>
+<p><img src="http://image.woshipm.com/wp-files/2019/11/Wgah2ye0OyLiVFhqEVCx.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>图9 基于句子交互的WMD特征</p>
+<p>在利用WMD计算q/p的相关性时，我们会对句子进行切词、去停，对于q中的每个词，找到p中的另一个词，进行语义转移，转移的代价我们用两个词汇间的word2vec余弦相似度来度量。</p>
+<p>当2个词语义较相近时，我们可以多转移一点，如果语义相差很大，我们可以选择少转移或者不转移，最后使得所有转移的加权和最小，这里加权采用词频作为特征，具体示例如图10所示。</p>
+<p><img src="http://image.woshipm.com/wp-files/2019/11/CFMpTuxwZxMFHridaeZB.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>图10 the Word Mover’s Distance (WMD)</p>
+<p>由于WMD也高度依赖word2vec词向量，因此上文提到的word2vec cosine特征所有的不足，WMD特征依旧存在，既没有考虑语序信息，同时对OOV (Out of Vocabulary)情况也很不友好，语义泛化能力弱，相似意图区分能力差。</p>
+<p><strong>3. BoW+WE+SE+fine-tune</strong></p>
+<p>前两次迭代都没有考虑知识库内的数据，比较适用于无语料或者语料较少的知识库，当知识库具有一定的规模后，正如前面提到的，同一个知识点下的相似问，将是很好的训练数据。</p>
+<p>我们采用了fastText模型，充分利用知识点中的问题语义相同/相近这个事实作为监督信号，训练一个分类模型，直接用一个问题的词去预测问题所属的知识点。</p>
+<p>FastText是Tomas Makolov为了弥补word2vec的某些不足而提出的改进方案，和word2vec中CBOW不同的是，它的输入不再是上下文，而是一整个句子，同时它接收子词和ngram特征，能捕捉到更多的信息。</p>
+<p>比如单词的前后缀，以及词的语序特征等。相比其它深度学习模型，fastText结构简单，本质上是一个线性模型，不太适合处理较长或者线性不可分的样本，而对于偏线性的短文本分类任务却比较合适，能在较少训练集合的基础上，非常快速地得到不错的效果。</p>
+<p><img src="http://image.woshipm.com/wp-files/2019/11/M7QVX65TUBAMpsu7Ko9y.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>图11 fastText模型结构</p>
+<p>同时fastText在训练过程中也会产生一份词向量，经实验验证，基于知识库训练fastText的词向量对基于大数据训练的word2vec词向量进行fine-tune，能一定程度上提升该领域的问答效果。</p>
+<p><strong>4. BoW+WE+SE+DM+fine-tune</strong></p>
+<p>前面我们利用一个知识库的相似问语义相近作为监督信号，从中抽取出了一个知识点的语义信息，但我们最终的目标是判断用户输入和相似问之间的相关性，这里我们使用一个深度学习的模型ESIM (Enhanced LSTM for Natural Language Inference)，利用要比较的两句话的监督信号来训练模型，观察句对的交互对模型的影响。</p>
+<p><img src="http://image.woshipm.com/wp-files/2019/11/fu4UeMbeZC6ug4wJDzqZ.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>图12 ESIM模型架构（左侧）</p>
+<p>上图是ESIM的网络结构，它在众多短文本分类任务中都有不错的表现，主要在于输入2句话分别接embedding+BiLSTM， 利用BiLSTM学习一句话中的word和它上下文的关系后，在进行inference之前，会利用attention操作计算2个句子word之间的相似度来更新embedding，也就是说比较的两句话在模型训练中产生了交互，相比其它的类似网络只在最后一层求距离来讲，这种交互的影响能学到更全局的信息。</p>
+<p><strong>5. BERT+MTL+fine-tune</strong></p>
+<p>当然，学术界是在不断变化的，对于效果较好的模型，我们也需要进行尝试，寻找适合在工业界落地的条件和场景。</p>
+<p><img src="http://image.woshipm.com/wp-files/2019/11/iseODLSNNO3Y68FRaM5W.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>图13 BERT+多任务学习MTL框架图</p>
+<p>在BERT横扫了11项NLP测评任务的效果后，我们把它应用在知识点分类任务上，期望利用BERT本身的优势，来提升分类任务的效果。同时我们还基于知识库数据，在BERT的基础上，通过MTL进行fine-tune，再以BERT-MTL为基础，通过单个任务分别进行fine-tune。</p>
+<p><img src="http://image.woshipm.com/wp-files/2019/11/Gz90QDP2dHZoWDcRui7r.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>图14 BERT+MTL的fine-tune过程</p>
+<h3 id="5-评估"><a href="#5-评估" class="headerlink" title="5. 评估"></a>5. 评估</h3><p><img src="http://image.woshipm.com/wp-files/2019/11/BopOLTwVACuB2goOQjqD.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>图15 评估数据举例</p>
+<p>效果变好了，有多好？肉眼可见显然不能作为一个反馈的指标，所以我们需要去科学地评估这些改进，评估这一环节我们选了6个不同领域，每个领域50个知识点，每个知识点12个相似问作训练，3个作评估测试，示例数据见图15，在此数据集基础上去评估准召和F1。具体结果见图16，大家可以看到在不卡阈值的情况下，准确率从0.8提升到了0.968。</p>
+<p><img src="http://image.woshipm.com/wp-files/2019/11/GxmOwDgS3KkIzkGQD0V5.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>图16 历次迭代评估数据表</p>
+<p>迭代是一个循序渐进的过程，可能有人会有疑惑，我怎么知道要用什么特征、选哪个模型，从多次迭代的经验来讲，Badcase分析很重要，特征的设计一方面来源于你对问题的直观感知。</p>
+<p>比如我们需要从多方面（统计层面、词汇表示、句子表示、句子间交互等）来设计方法对句子进行语义表示，另一方面来源于对模型现有Badcase的弥补，通过分析case表现出来的规律或者倾向来设计有针对性的特征。</p>
+<p>同时学术界也在不断更新新的模型，3年前时兴的技术，到现在被完全替代的可能性是非常大的，因此我们需要与时俱进。</p>
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>整个智能问答系统升级的过程，主要围绕四个步骤进行，首先面对任务要理解问题的本质，对问题进行合理的建模，然后评估选择合适的语言工具去实现它，再由浅入深稳步迭代，形成数据、模型、反馈的闭环，最后就是要持续性学习，拥抱变化，拥抱技术。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="http://www.woshipm.com/ai/3074814.html">http://www.woshipm.com/ai/3074814.html</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E6%99%BA%E8%83%BD%E9%97%AE%E7%AD%94%E7%B3%BB%E7%BB%9F/">#智能问答系统</a>
+      
+        <a href="/tags/%E6%9D%A5%E4%B9%9F/">#来也</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>来也对话机器人平台智能问答技术拆解</div>
+      <div>http://example.com/2021/10/31/2021-10-31-智能客服-来也/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>NSX</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年10月31日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-OPPO%E5%B0%8F%E5%B8%83/" title="OPPO小布深度语义问答FQA技术实践">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">OPPO小布深度语义问答FQA技术实践</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E5%B9%B3%E5%AE%89%E4%BA%BA%E5%AF%BF/" title="平安人寿智能问答系统">
+                        <span class="hidden-mobile">平安人寿智能问答系统</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

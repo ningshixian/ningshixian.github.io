@@ -1,0 +1,1023 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="BY NSX                  # 作者">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="本文为 Pre-trained Models for Natural Language Processing: A Survey 和相关模型的笔记  一、为什么要进行预训练？ 二、PTMs 有哪两大范式？ 三、PTMs 按照任务类型如何分类？ 四、PTMs 有哪些拓展？ 五、如何对 PTMs 进行迁移学习？ 预训练模型详解  ELMo GPT (2018) BERT (2018) UniLM (">
+<meta property="og:type" content="article">
+<meta property="og:title" content="🍺预训练语言模型小酌new          ">
+<meta property="og:url" content="http://example.com/2023/02/26/2023-02-26-%F0%9F%8D%BA%E9%A2%84%E8%AE%AD%E7%BB%83%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%B0%8F%E9%85%8Cnew/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="本文为 Pre-trained Models for Natural Language Processing: A Survey 和相关模型的笔记  一、为什么要进行预训练？ 二、PTMs 有哪两大范式？ 三、PTMs 按照任务类型如何分类？ 四、PTMs 有哪些拓展？ 五、如何对 PTMs 进行迁移学习？ 预训练模型详解  ELMo GPT (2018) BERT (2018) UniLM (">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2023/02/26/2023-02-26-%F0%9F%8D%BA%E9%A2%84%E8%AE%AD%E7%BB%83%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%B0%8F%E9%85%8Cnew/1650275584551-bacbbf55-45d2-43b2-89c8-ba0e09771416.png">
+<meta property="og:image" content="http://example.com/2023/02/26/2023-02-26-%F0%9F%8D%BA%E9%A2%84%E8%AE%AD%E7%BB%83%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%B0%8F%E9%85%8Cnew/1650276292664-4bd14080-8096-42d4-9e80-31d8b39718e6.png">
+<meta property="og:image" content="http://example.com/2023/02/26/2023-02-26-%F0%9F%8D%BA%E9%A2%84%E8%AE%AD%E7%BB%83%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%B0%8F%E9%85%8Cnew/1652349654559-7213f045-17a2-4e0b-870a-3a6c35ba564e.png">
+<meta property="og:image" content="http://example.com/2023/02/26/2023-02-26-%F0%9F%8D%BA%E9%A2%84%E8%AE%AD%E7%BB%83%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%B0%8F%E9%85%8Cnew/1650276293002-13009e34-eaaa-4cc1-8074-baec51a63d0e.png">
+<meta property="og:image" content="http://example.com/2023/02/26/2023-02-26-%F0%9F%8D%BA%E9%A2%84%E8%AE%AD%E7%BB%83%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%B0%8F%E9%85%8Cnew/1650277182234-6929b86e-81f9-47c2-b164-53fddbf76b8c.png">
+<meta property="og:image" content="http://example.com/2023/02/26/2023-02-26-%F0%9F%8D%BA%E9%A2%84%E8%AE%AD%E7%BB%83%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%B0%8F%E9%85%8Cnew/1650276292083-ec453eff-7eac-46b8-8291-b4edf0fbcc4f.png">
+<meta property="og:image" content="http://example.com/2023/02/26/2023-02-26-%F0%9F%8D%BA%E9%A2%84%E8%AE%AD%E7%BB%83%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%B0%8F%E9%85%8Cnew/1650277767178-60527907-256a-43b6-ac20-87d3b59119b3.png">
+<meta property="og:image" content="http://example.com/2023/02/26/2023-02-26-%F0%9F%8D%BA%E9%A2%84%E8%AE%AD%E7%BB%83%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%B0%8F%E9%85%8Cnew/1651816836376-68aead3d-6b67-4dde-b344-830eb8954771.png">
+<meta property="og:image" content="http://example.com/2023/02/26/2023-02-26-%F0%9F%8D%BA%E9%A2%84%E8%AE%AD%E7%BB%83%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%B0%8F%E9%85%8Cnew/1651816836340-a65367fb-112b-4f09-9703-0b2c7044d4ca.png">
+<meta property="og:image" content="http://example.com/2023/02/26/2023-02-26-%F0%9F%8D%BA%E9%A2%84%E8%AE%AD%E7%BB%83%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%B0%8F%E9%85%8Cnew/1651816836226-bc53c8ec-bdf7-42f3-bd72-f1a4cd1e1dc5.png">
+<meta property="og:image" content="http://example.com/2023/02/26/2023-02-26-%F0%9F%8D%BA%E9%A2%84%E8%AE%AD%E7%BB%83%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%B0%8F%E9%85%8Cnew/1651816836386-7c64406e-e3cd-4e37-a217-47adfb3c4cf3.png">
+<meta property="og:image" content="http://example.com/2023/02/26/2023-02-26-%F0%9F%8D%BA%E9%A2%84%E8%AE%AD%E7%BB%83%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%B0%8F%E9%85%8Cnew/1651142611439-48661325-6f81-464e-94fd-23ca3ddc01eb.png">
+<meta property="og:image" content="http://example.com/2023/02/26/2023-02-26-%F0%9F%8D%BA%E9%A2%84%E8%AE%AD%E7%BB%83%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%B0%8F%E9%85%8Cnew/1652352024792-00cda75c-67d2-4f8d-aa9b-ce97a12af0d6.png">
+<meta property="article:published_time" content="2023-02-26T07:58:00.000Z">
+<meta property="article:modified_time" content="2023-04-24T13:41:23.124Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="ptm">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2023/02/26/2023-02-26-%F0%9F%8D%BA%E9%A2%84%E8%AE%AD%E7%BB%83%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%B0%8F%E9%85%8Cnew/1650275584551-bacbbf55-45d2-43b2-89c8-ba0e09771416.png">
+  
+  
+  
+  <title>🍺预训练语言模型小酌new           - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="🍺预训练语言模型小酌new          "></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-02-26 15:58" pubdate>
+          2023年2月26日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          17k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          144 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">🍺预训练语言模型小酌new          </h1>
+            
+            
+              <div class="markdown-body">
+                
+                <blockquote>
+<p>本文为 Pre-trained Models for Natural Language Processing: A Survey 和相关模型的笔记</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.yuque.com/ningshixian/pz10h0/mu9a48/edit#luHYs">一、为什么要进行预训练？</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.yuque.com/ningshixian/pz10h0/mu9a48/edit#FOh7K">二、PTMs 有哪两大范式？</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.yuque.com/ningshixian/pz10h0/mu9a48/edit#YfxPH">三、PTMs 按照任务类型如何分类？</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.yuque.com/ningshixian/pz10h0/mu9a48/edit#FRdXy">四、PTMs 有哪些拓展？</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.yuque.com/ningshixian/pz10h0/mu9a48/edit#P4x2t">五、如何对 PTMs 进行迁移学习？</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.yuque.com/ningshixian/pz10h0/mu9a48/edit#a8f55deb">预训练模型详解</a></p>
+<ul>
+<li>ELMo</li>
+<li><a target="_blank" rel="noopener" href="https://leovan.me/cn/2020/03/pre-trained-model-for-nlp/#gpt-2018-radford2018improving">GPT (2018)</a></li>
+<li><a target="_blank" rel="noopener" href="https://leovan.me/cn/2020/03/pre-trained-model-for-nlp/#bert-2018-devlin2018bert">BERT (2018)</a></li>
+<li><a target="_blank" rel="noopener" href="https://leovan.me/cn/2020/03/pre-trained-model-for-nlp/#unilm-2019-dong2019unified">UniLM (2019)</a></li>
+<li><a target="_blank" rel="noopener" href="https://leovan.me/cn/2020/03/pre-trained-model-for-nlp/#transformer-xl-2019-dai2019transformer">Transformer-XL (2019)</a></li>
+<li><a target="_blank" rel="noopener" href="https://leovan.me/cn/2020/03/pre-trained-model-for-nlp/#xlnet-2019-yang2019xlnet">XLNet (2019)</a></li>
+<li><a target="_blank" rel="noopener" href="https://leovan.me/cn/2020/03/pre-trained-model-for-nlp/#mass-2019-song2019mass">MASS (2019)</a></li>
+<li><a target="_blank" rel="noopener" href="https://leovan.me/cn/2020/03/pre-trained-model-for-nlp/#roberta-2019-liu2019roberta">RoBERTa (2019)</a></li>
+<li><a target="_blank" rel="noopener" href="https://leovan.me/cn/2020/03/pre-trained-model-for-nlp/#bart-2019-lewis2019bart">BART (2019)</a></li>
+<li><a target="_blank" rel="noopener" href="https://leovan.me/cn/2020/03/pre-trained-model-for-nlp/#t5-2019-raffel2019exploring">T5 (2019)</a></li>
+<li><a target="_blank" rel="noopener" href="https://leovan.me/cn/2020/03/pre-trained-model-for-nlp/#ernie-baidu-2019-sun2019ernie-sun2019ernie2">ERNIE (Baidu, 2019)</a></li>
+<li>Albert / DistillBERT / TINYBERT</li>
+<li>BERT 拓展</li>
+</ul>
+<img src="/2023/02/26/2023-02-26-%F0%9F%8D%BA%E9%A2%84%E8%AE%AD%E7%BB%83%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%B0%8F%E9%85%8Cnew/1650275584551-bacbbf55-45d2-43b2-89c8-ba0e09771416.png" srcset="/img/loading.gif" lazyload class="" title="PTM 总结.png">
+<h1 id="一、为什么要进行预训练？"><a href="#一、为什么要进行预训练？" class="headerlink" title="一、为什么要进行预训练？"></a>一、为什么要进行预训练？</h1><blockquote>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/115014536">NLP算法面试必备！PTMs：NLP预训练模型的全面总结 —- JayJay</a></p>
+</blockquote>
+<p>深度学习时代，为了充分训练深层模型参数并防止过拟合，通常需要更多标注数据喂养。在 NLP 领域，标注数据更是一个昂贵资源。PTMs 从大量无标注数据中进行预训练使许多 NLP 任务获得显著的性能提升。<strong>总的来看，预训练模型 PTMs 的优势包括：</strong></p>
+<ol>
+<li>在庞大的无标注数据上进行预训练可以获取更通用的语言表示，并有利于下游任务；</li>
+<li>为模型提供了一个更好的初始化参数，在目标任务上具备更好的泛化性能、并加速收敛；</li>
+<li>是一种有效的正则化手段，避免在小数据集上过拟合（一个随机初始化的深层模型容易对小数据集过拟合）</li>
+</ol>
+<h1 id="二、PTMs-有哪两大范式？"><a href="#二、PTMs-有哪两大范式？" class="headerlink" title="二、PTMs 有哪两大范式？"></a>二、PTMs 有哪两大范式？</h1><blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.yuque.com/ningshixian/pz10h0/opzyty?singleDoc#">https://www.yuque.com/ningshixian/pz10h0/opzyty?singleDoc#</a> 《语言模型的前世今生》</p>
+</blockquote>
+<h1 id="三、PTMs-的训练任务如何分类？"><a href="#三、PTMs-的训练任务如何分类？" class="headerlink" title="三、PTMs 的训练任务如何分类？"></a>三、PTMs 的训练任务如何分类？</h1><blockquote>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/115014536">NLP算法面试必备！PTMs：NLP预训练模型的全面总结 —- JayJay</a></p>
+</blockquote>
+<p>PTMs 按照任务类型可分为 2 大类：监督学习 和 无监督学习/自监督学习。</p>
+<p>监督学习在 NLP-PTMs 中的主要代表就是 <strong>CoVe</strong>，CoVe 作为机器翻译的 encoder 部分可以应用于多种 NLP 下游任务。除了 CoVe 外，NLP 中的绝大多数 PTMs 属于自监督学习。</p>
+<p>自监督学习是无监督学习的一种方法，自监督学习主要是利用辅助任务从大规模的无监督数据中挖掘自身的监督信息，通过这种构造的监督信息对网络进行训练，从而可以学习到对下游任务有价值的表征。因此，从“构造监督信息”这个角度来看，自监督也可看作是监督学习和无监督学习的一种融合。严格地讲，从是否由人工标注来看，自监督学习属于无监督学习的范畴。</p>
+<p>综合各种自监督学习的分类方式，笔者将 NLP-PTMs 在自监督学习中分为两种类型：基于上下文（Context Based）和基于对比（Contrastive Based）。</p>
+<p><strong>1、基于上下文（Context Based）</strong></p>
+<p>基于上下文的 PTMs，主要基于数据本身的上下文信息构造辅助任务，在 NLP 中我们通常引入语言模型作为训练目标。PTMs 中的语言模型主要分为三大类：</p>
+<img src="/2023/02/26/2023-02-26-%F0%9F%8D%BA%E9%A2%84%E8%AE%AD%E7%BB%83%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%B0%8F%E9%85%8Cnew/1650276292664-4bd14080-8096-42d4-9e80-31d8b39718e6.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p><strong>第一类：自回归语言模型（Autoregressive LM）</strong></p>
+<p>在ELMO／BERT出来之前，大家通常讲的语言模型其实是根据上文内容预测下一个可能跟随的单词，就是常说的自左向右的语言模型任务，或者反过来也行，就是根据下文预测前面的单词，这种类型的LM被称为自回归语言模型。auto-regressive的loss的定义如下：</p>
+<p>$\max _{\theta} \log p_{\theta}(\mathbf{x})=\sum_{t=1}^{T} \log p_{\theta}\left(x_{t} | \mathbf{x}_{&lt;t}\right)=\sum_{t=1}^{T} \log \frac{\exp \left(h_{\theta}\left(\mathbf{x}_{1: t-1}\right)^{\top} e\left(x_{t}\right)\right)}{\sum_{x^{\prime}} \exp \left(h_{\theta}\left(\mathbf{x}_{1: t-1}\right)^{\top} e\left(x^{\prime}\right)\right)}$</p>
+<p>GPT 就是典型的自回归语言模型。ELMO尽管看上去利用了上文，也利用了下文，但是本质上仍然是自回归LM，这个跟模型具体怎么实现有关系。ELMO是做了两个方向（从左到右以及从右到左两个方向的语言模型），但是是分别有两个方向的自回归LM，然后把LSTM的两个方向的隐节点状态拼接到一起，来体现双向语言模型这个事情的。所以其实是两个自回归语言模型的拼接，本质上仍然是自回归语言模型。</p>
+<p>自回归语言模型有优点有缺点，缺点是只能利用上文或者下文的信息，不能同时利用上文和下文的信息，当然，貌似ELMO这种双向都做，然后拼接看上去能够解决这个问题，因为融合模式过于简单，所以效果其实并不是太好。它的优点，其实跟下游NLP任务有关，比如生成类NLP任务，比如文本摘要，机器翻译等，在实际生成内容的时候，就是从左向右的，自回归语言模型天然匹配这个过程。而Bert这种DAE模式，在生成类NLP任务中，就面临训练过程和应用过程不一致的问题，导致生成类的NLP任务到目前为止都做不太好。</p>
+<p><strong>第二类：自编码语言模型（Autoencoder LM）</strong></p>
+<p>自回归语言模型只能根据上文预测下一个单词，或者反过来，只能根据下文预测前面一个单词。相比而言，Bert通过在输入X中随机Mask掉一部分单词，然后预训练过程的主要任务之一是根据上下文单词来预测这些被Mask掉的单词，如果你对Denoising Autoencoder比较熟悉的话，会看出，这确实是典型的DAE的思路。那些被Mask掉的单词就是在输入侧加入的所谓噪音。类似Bert这种预训练模式，被称为DAE LM（旨在采用部分损坏的输入，旨在恢复原始的未失真输入）。</p>
+<p>DAE LM的loss的定义如下：(如果当前 token 被预测，则 $m_t=1$否则 $m_t=0$，$\widetilde x$为原始文本被替换后的输入)</p>
+<p>$\max_{\theta} \log p_{\theta}(\overline{\mathbf{x}} | \hat{\mathbf{x}}) \approx \sum_{t=1}^{T} m_{t} \log p_{\theta}\left(x_{t} | \hat{\mathbf{x}}\right)=\sum_{t=1}^{T} m_{t} \log \frac{\exp \left(H_{\theta}(\hat{\mathbf{x}})_{t}^{\top} e\left(x_{t}\right)\right)}{\sum_{x^{\prime}} \exp \left(H_{\theta}(\hat{\mathbf{x}})_{t}^{\top} e\left(x^{\prime}\right)\right)}$</p>
+<p>这种DAE LM的优缺点正好和自回归LM反过来，它能比较自然地融入双向语言模型，同时看到被预测单词的上文和下文，这是好处。缺点是啥呢？主要在输入侧引入[Mask]标记，导致预训练阶段和Fine-tuning阶段不一致的问题，因为Fine-tuning阶段是看不到[Mask]标记的。DAE吗，就要引入噪音，[Mask] 标记就是引入噪音的手段，这个正常。</p>
+<p>两种不同的预训练目标的优劣势对比如下：</p>
+<ol>
+<li><strong>独立假设</strong>：BERT 中联合条件概率 $p(\overline{\mathbf{x}} | \hat{\mathbf{x}})$ 假设在给定的 x^ 下，遮挡的词条 $\overline{\mathbf{x}}$ 是相关独立的，而 AR(auto-regressive) 语言模型则没有这样的假设。</li>
+<li><strong>输入噪声</strong>：BERT 在预训练是使用了特殊标记 <code>[MASK]</code>，在下游任务微调时不会出现，而 AR 语言模型则不会存在这个问题。</li>
+<li><strong>上下文依赖</strong>：AR 语言模型仅考虑了词条左侧的上下文，而 BERT 则可以捕获两个方向的上下文。</li>
+</ol>
+<p><strong>第三类：排列语言模型（PLM）</strong></p>
+<p>为了能够结合自回归LM和DAE LM两者的优点，XLNet 提出了排序语言模型 Permuted Language Model(PLM)。对于一个长度为 T 序列 x，共有 $T!$ 种不同的方式进行 AR 分解，随机选择一部分作为模型预训练的输入，如果模型共享不同分解顺序的参数，那么模型就能学习到两侧所有位置的信息。令 $Z_T$ 为长度为 T 的索引序列 $[1,2,…,T]$ 的所有可能排列，$z_t$ 和 $z_{&lt;t}$ 分别表示一个排列 $z∈Z_T$ 第 t 个和前 t−1 个元素。则排列语言模型的优化目标为：</p>
+<p>$\max_{\theta} \quad \mathbb{E}_{\mathbf{z} \sim \mathcal{Z}_{T}}\left[\sum_{t=1}^{T} \log p_{\theta}\left(x_{z_{t}} | \mathbf{x}_{\mathbf{z}_{&lt;t}}\right)\right]$</p>
+<p>PLM一样采用单个Transformer模型作为主干结构，但是从训练方法上来说，是个很另类也很有创意的做法，是种“形为AR，实为AE”的做法。在语言模型预训练过程中，它看上去遵循AR从左到右的输入过程，这符合一般生成任务的外在表现形式，但是在内部通过Attention Mask，实际做法其实是AE的做法，无非是把AE的做法隐藏在Transformer内部。它和AE从细节来说，主要有两个区别：首先，预训练过程中，输入句子去掉了Mask标记，改为内部Attention Mask，以保持预训练过程和下游任务Fine-tuning的一致性；其次，也是它和AE的最主要区别，PLM认为被Mask掉的单词之间是相互有影响的，先产生的被Mask掉的单词，应该对后生成的被Mask掉的单词，在预测的时候发生作用，而标准的AE则认为被Mask掉的单词是相互独立的，相互之间不产生作用。</p>
+<img src="/2023/02/26/2023-02-26-%F0%9F%8D%BA%E9%A2%84%E8%AE%AD%E7%BB%83%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%B0%8F%E9%85%8Cnew/1652349654559-7213f045-17a2-4e0b-870a-3a6c35ba564e.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>最后，我们对基于上述三类语言模型的 PTMs 进行总结：</p>
+<img src="/2023/02/26/2023-02-26-%F0%9F%8D%BA%E9%A2%84%E8%AE%AD%E7%BB%83%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%B0%8F%E9%85%8Cnew/1650276293002-13009e34-eaaa-4cc1-8074-baec51a63d0e.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p><strong>2、基于对比（Contrastive Based）</strong></p>
+<p>基于对比（Contrastive Based），不同于 <strong>Context Based</strong> 主要基于数据本身的上下文信息构造辅助任利用，Contrastive Based 主要利用样本间的约束信息构造辅助任务，这类方法也是 Contrastive learning（CTL）。CTL 假设观察到的文本对（正样本）在语义上比随机采样的文本（负样本）更相似。CTL 背后的原理是<strong>「在对比中学习」</strong>。相较于语言建模，CTL 的计算复杂度更低，因而在预训练中是理想的替代训练标准。</p>
+<p>CTL 通过构建正样本（positive）和负样本（negative），然后度量正负样本的距离来实现自监督学习：可以使用点积的方式构造距离函数，然后构造一个 softmax 分类器，以正确分类正样本和负样本。鼓励相似性度量函数将较大的值分配给正例，将较小的值分配给负例：</p>
+<img src="/2023/02/26/2023-02-26-%F0%9F%8D%BA%E9%A2%84%E8%AE%AD%E7%BB%83%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%B0%8F%E9%85%8Cnew/1650277182234-6929b86e-81f9-47c2-b164-53fddbf76b8c.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>-</p>
+<p>基于对比的PTMs 主要有如下 4 类形式：</p>
+<p><strong>第一类： Deep InfoMax (DIM)</strong></p>
+<p>DIM 方法来源于 CV 领域，对于全局的特征（编码器最终的输出）和局部特征（编码器中间层的特征），DIM 需要判断全局特征和局部特征是否来自同一图像。</p>
+<p><strong>InfoWord</strong> 将 DIM 引入到 NLP 中，用 Mutual Information 的一个下界 InfoNCE 来重新解释 BERT 和 XLNET 的 objective，并提出一个新的 DIM objective 以最大化一个句子的 global representation 和其中一个 ngram 的 local representation 之间的 Mutual Information。</p>
+<p><strong>第二类：Replaced Token Detection (RTD)</strong></p>
+<p>噪声对比估计（Noise-Contrastive Estimation，NCE）通过训练一个二元分类器来区分真实样本和假样本，可以很好的训练词嵌入。RTD 于与 NCE 相同，根据上下文语境来预测 token 是否替换 。</p>
+<ul>
+<li><strong>word2vec*</strong> 中的 negative sampling 可看作是 RTD，负样本从词表中进行带权采样。</li>
+<li><strong>ELECTRA*</strong> 提出了一种新的预训练任务框架，构建生成器-判别器，生成器通过 MLM 任务对被 mask 的 token 进行预测，迭代器判断原始句子中的每个 token 是否被 replace 过。生成器相当于对输入进行了筛选，使判别器的任务更难，从而学习到更好的表示。生成器-判别器共享 embedding，生成器部分采用 small-bert，判别器部分对每一个 token 采用 sigmoid 计算 loss。finetune 阶段只采用判别器部分。RTD 也被看作解决 MLM 中「MASK」在预训练和 finetune 间差异的一种手段。</li>
+<li><strong>WKLM*</strong> 在实体 level 进行替换，替换为具有相同实体类型的实体名称。</li>
+</ul>
+<p><strong>第三类：Next Sentence Prediction (NSP)</strong></p>
+<p>NSP 区分两个输入句子是否为训练语料库中的连续片段，第二个句子 50% 为第一句子实际的连续片段，50% 从其他语料随机选择。NSP 可以引导模型理解两个输入句子之间的关系，从而使对此信息敏感的下游任务受益，如 QA 任务。而 RoBERTa 表明：NSP 在对单个文档中的文本块进行训练时，去除 NSP 任务或在下游任务上可以稍微提高性能。</p>
+<p><strong>第四类：Sentence Order Prediction (SOP)</strong></p>
+<p>SOP 使用同一文档中的两个连续片段作为正样本，而相同的两个连续片段互换顺序作为负样本。NSP 融合了主题预测和相关性预测，主题预测更容易，这使得模型进行预测时仅依赖于主题学习。与 NSP 不同，SOP 使用同一文档中的两个连续段作为正样本，但顺序互换为负样本。采取 SOP 任务的 PTMs 有 ALBERT、StructBERT、BERTje。</p>
+<p>最后，我们对基于对比（Contrastive Based）的四类 PTMs 进行总结：</p>
+<img src="/2023/02/26/2023-02-26-%F0%9F%8D%BA%E9%A2%84%E8%AE%AD%E7%BB%83%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%B0%8F%E9%85%8Cnew/1650276292083-ec453eff-7eac-46b8-8291-b4edf0fbcc4f.png" srcset="/img/loading.gif" lazyload class="" title="基于对比（Contrastive Based）的四类 PTMs 总结">
+<h1 id="四、PTMs-有哪些拓展？"><a href="#四、PTMs-有哪些拓展？" class="headerlink" title="四、PTMs 有哪些拓展？"></a>四、PTMs 有哪些拓展？</h1><blockquote>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/115014536">NLP算法面试必备！PTMs：NLP预训练模型的全面总结 —- JayJay</a></p>
+</blockquote>
+<p><strong>1、引入知识</strong></p>
+<p>PTMs 通常从通用大型文本语料库中学习通用语言表示，但是缺少特定领域的知识。PTMs 中设计一些辅助的预训练任务，将外部知识库中的领域知识整合到 PTMs 中被证明是有效的。</p>
+<ul>
+<li><strong>ERNIE-THU</strong> 将在知识图谱中预先训练的实体嵌入与文本中相应的实体提及相结合，以增强文本表示。由于语言表征的预训练过程和知识表征过程有很大的不同，会产生两个独立的向量空间。为解决上述问题，在有实体输入的位置，将实体向量和文本表示通过非线性变换进行融合，以融合词汇、句法和知识信息。</li>
+<li><strong>LIBERT</strong>（语言知识的 BERT）通过附加的语言约束任务整合了语言知识。</li>
+<li><strong>SentiLR</strong> 集成了每个单词的情感极性，以将 MLM 扩展到标签感知 MLM（LA-MLM），ABSA 任务上都达到 SOTA。</li>
+<li><strong>SenseBERT</strong> 不仅能够预测被 mask 的 token，还能预测它们在给定语境下的实际含义。使用英语词汇数据库 WordNet 作为标注参照系统，预测单词在语境中的实际含义，显著提升词汇消歧能力。</li>
+<li><strong>KnowBERT</strong> 与实体链接模型以端到端的方式合并实体表示。</li>
+<li><strong>KG-BERT</strong> 显示输入三元组形式，采取两种方式进行预测：构建三元组识别和关系分类，共同优化知识嵌入和语言建模目标。这些工作通过实体嵌入注入知识图的结构信息。</li>
+<li><strong>K-BERT</strong> 将从 KG 提取的相关三元组显式地注入句子中，以获得 BERT 的扩展树形输入。</li>
+<li><strong>K-Adapter</strong> 通过针对不同的预训练任务独立地训练不同的适配器来注入多种知识，从而可以不断地注入知识，以解决注入多种知识时可能会出现灾难性遗忘问题。</li>
+<li>此外，这类 PTMs 还有 WKLM、KEPLER 等。</li>
+</ul>
+<p><strong>2、模型压缩</strong></p>
+<p>由于预训练的语言模型通常包含至少数亿个参数，因此很难将它们部署在现实应用程序中的在线服务和资源受限的设备上。模型压缩是减小模型尺寸并提高计算效率的有效方法。5 种 PTMs 的压缩方法为：</p>
+<ul>
+<li><strong>pruning（剪枝）</strong>：将模型中影响较小的部分舍弃。<ul>
+<li>如 Compressing BERT，还有结构化剪枝 LayerDrop* ，其在训练时进行 Dropout，预测时再剪掉 Layer，不像知识蒸馏需要提前固定 student 模型的尺寸大小。</li>
+</ul>
+</li>
+<li><strong>quantization（量化）</strong>：将高精度模型用低精度来表示；<ul>
+<li>如 Q-BERT 和 Q8BERT ，量化通常需要兼容的硬件。</li>
+</ul>
+</li>
+<li><strong>parameter sharing （参数共享）</strong>：相似模型单元间的参数共享；<ul>
+<li>ALBERT 主要是通过矩阵分解和跨层参数共享来做到对参数量的减少。</li>
+</ul>
+</li>
+<li><strong>module replacing（模块替换）</strong>：<ul>
+<li>BERT-of-Theseus 根据伯努利分布进行采样，决定使用原始的大模型模块还是小模型，只使用 task loss。</li>
+</ul>
+</li>
+<li><strong>knowledge distillation （知识蒸馏）</strong>：通过一些优化目标从大型、知识丰富、fixed 的 teacher 模型学习一个小型的 student 模型。蒸馏机制主要分为 3 种类型：<ul>
+<li>从软标签蒸馏：DistilBERT、EnsembleBERT</li>
+<li>从其他知识蒸馏：TinyBERT、BERT-PKD、MobileBERT、 MiniLM、DualTrain</li>
+<li>蒸馏到其他结构：Distilled-BiLSTM</li>
+</ul>
+</li>
+</ul>
+<img src="/2023/02/26/2023-02-26-%F0%9F%8D%BA%E9%A2%84%E8%AE%AD%E7%BB%83%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%B0%8F%E9%85%8Cnew/1650277767178-60527907-256a-43b6-ac20-87d3b59119b3.png" srcset="/img/loading.gif" lazyload class="" title="不同的知识蒸馏 PTMs">
+<p><strong>3、多模态</strong></p>
+<p>随着 PTMs 在 NLP 领域的成功，许多研究者开始关注多模态领域的 PTMs，主要为通用的视觉和语言特征编码表示而设计。多模态的 PTMs 在一些庞大的跨模式数据语料库（带有文字的语音、视频、图像）上进行了预训练，如带有文字的语音、视频、图像等，主要有 VideoBERT、CBT 、UniViLM、 ViL-BERT 、 LXMERT、 VisualBERT 、 B2T2 、Unicoder-VL 、UNITER 、 VL-BERT 、 SpeechBERT。</p>
+<p><strong>4、从两阶段模型到四阶段模型</strong></p>
+<p>经典的预训练模型框架下，一般我们解决NLP问题有两个阶段：第一阶段是模型预训练阶段，预训练模型从文本等信息中学习语言知识；第二阶段是Fine-tuning阶段，根据手上的有监督数据，对模型参数进行微调，以获得更好的任务效果。</p>
+<p>论文“Don’t Stop Pretraining: Adapt Language Models to Domains and Tasks”也通过大量实验验证了领域数据预训练（DAPT）的有效性，再结合它得出的另外一个重要结论：用手上的任务数据，无论大小，如果做一次任务级数据预训练（TAPT），也就是拿着手上任务数据，在通用预训练模型基础上，再做一次预训练，也能够有效提升任务效果。综合这个文章和其它有关文章的结论，我们不难看出，要想更好地提升任务效果，我们应该从传统的两阶段模型，拓展到如下四阶段模型：</p>
+<p>第一个阶段：通用预训练</p>
+<p>这就是传统两阶段模式中的第一阶段。这个阶段不仅仅追求效果好，也追求领域通用性。它的优化目标是：在尽可能多的下游任务场景中，效果都尽可能好，但不单独考虑某个特殊领域的效果如何。这个阶段，目前看总的发展趋势是：在数据质量有保证的前提下，增加数据数量，以及数据的多样性，同时提升模型复杂度，这样可以提供普遍有效的模型增强能力。很明显，这个阶段，一般只有土豪公司才能做得起，而且从趋势看，会越来越如此。将来的发展模式可能是，超级土豪公司不断优化这个模型，然后放出来供大家用，有能力做这个事情的人，应该会越来越少。</p>
+<p>第二个阶段：领域预训练</p>
+<p>在第一阶段训练好的通用预训练模型基础上，利用不同领域的自由文本，构建多个、不同领域的领域预训练模型。比如我们可以分别收集计算机领域、生物领域、电商领域…等等，多个不同领域的无标注自由文本数据。在第一阶段通用模型基础上，分别用各个领域数据，再分别做一次预训练，这样我们就得到了适合解决各个不同领域的预训练模型：计算机领域、生物领域、电商领域…..等等多个不同的预训练模型。下游任务可以根据自己任务的领域，选择适配性好的领域预训练模型来使用。</p>
+<p>这个阶段的预训练模型，在训练的时候，有个独特的问题需要解决：灾难遗忘问题。所谓“灾难遗忘”，就是说，当你用领域数据进行预训练的时候，因为会调整第一阶段预训练模型的参数，这种偏向领域性的参数调整，可能会导致第一阶段模型学好的参数被改写，这意味着：经过第二阶段预训练，第一阶段预训练模型里学会的很多通用语言知识，可能会被冲掉。灾难遗忘就是这个意思。灾难遗忘问题，对于预训练模型，尤其是领域预训练模型来说，是个很关键也很重要的问题，目前也有一些解决方案，限于篇幅，这里就不展开了。</p>
+<p>这个阶段的预训练，因为数据量相比第一阶段会小很多，所以其实中农公司甚至贫农公司也能做得起，不存在土豪门槛，大家应该都能做。当然，一般我们只做跟自己手头任务相关的领域的预训练模型。如果你想做很多领域的预训练模型，那估计也要备足银行卡。估计后续也会有土豪公司做好很多不同领域的预训练模型，供大家个性化适配使用，虽说目前还没有，但是推断起来，这是个大概率会发生的事件。</p>
+<p>第三个阶段：任务预训练</p>
+<p>在前两个预训练模型基础上，比如从第二个阶段里面的多个不同的领域预训练模型中，选择和手头任务适配的那个领域预训练模型，在这个模型基础上，用手头数据，抛掉数据标签，再做一次预训练，无论手上任务数据有多少。比如手上任务是计算机领域的，那么从第二阶段的多个领域模型里面，选择计算机领域适配过的预训练模型，在这个模型基础上进行一次任务级别的预训练。这样应该能明显提升任务效果。</p>
+<p>第四阶段：任务Fine-tuning</p>
+<p>这是传统两阶段的第二阶段，做法一样，没什么好讲的。</p>
+<p>当然，如果你手上的任务没有那么强的领域性，可以跳过第二阶段，也就是那个领域预训练模型阶段，走剩余的三阶段模式即可，无论如何，任务预训练都是值得做的一个事情。</p>
+<p><strong>5、多语言和特定语言</strong></p>
+<p>学习跨语言共享的多语言文本表示形式对于许多跨语言的 NLP 任务起着重要的作用。</p>
+<ul>
+<li><strong>Multilingual-BERT</strong> 在 104 种 Wikipedia 文本上进行 MLM 训练（共享词表），每个训练样本都是单语言文档，没有专门设计的跨语言目标，也没有任何跨语言数据，M-BERT 也可以很好的执行跨语言任务。</li>
+<li><strong>XLM</strong> 通过融合跨语言任务（翻译语言模型）改进了 M-BERT，该任务通过拼接平行语料句子对进行 MLM 训练。</li>
+<li><strong>Unicoder</strong> 提出了 3 种跨语言预训练任务：1)cross-lingual word recovery；2) cross-lingual paraphrase classification;3) cross-lingual masked language model.</li>
+</ul>
+<p>虽然多语言的 PTMs 在跨语言上任务表现良好，但用单一语言训练的 PTMs 明显好于多语言的 PTMs。此外一些单语言的 PTMs 被提出：BERT-wwm，ZEN，NEZHA , ERNIE-Baidu, BERTje, CamemBERT, FlauBERT, RobBERT。</p>
+<h1 id="五、如何对-PTMs-进行迁移学习？"><a href="#五、如何对-PTMs-进行迁移学习？" class="headerlink" title="五、如何对 PTMs 进行迁移学习？"></a>五、如何对 PTMs 进行迁移学习？</h1><blockquote>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/115014536">NLP算法面试必备！PTMs：NLP预训练模型的全面总结 —- JayJay</a></p>
+</blockquote>
+<p>PTMs 从大型语料库中获取通用语言知识，如何有效地将其知识适应下游任务是一个关键问题。迁移学习的方式主要有归纳迁移（顺序迁移学习、多任务学习）、领域自适应（转导迁移）、跨语言学习等。NLP 中 PTMs 的迁移方式是顺序迁移学习。</p>
+<p><strong>1、如何迁移？</strong></p>
+<ol>
+<li>选择合适的<strong>预训练任务</strong>：语言模型是 PTM 是最为流行的预训练任务；同的预训练任务有其自身的偏置，并且对不同的任务会产生不同的效果。例如，NSP 任务可以使诸如问答（QA）和自然语言推论（NLI）之类的下游任务受益。</li>
+<li>选择合适的<strong>模型架构</strong>：例如 BERT 采用的 MLM 策略和 Transformer-Encoder 结构，导致其不适合直接处理生成任务。</li>
+<li>选择合适的<strong>数据</strong>：下游任务的数据应该近似于 PTMs 的预训练任务，现在已有有很多现成的 PTMs 可以方便地用于各种特定领域或特定语言的下游任务。</li>
+<li>选择合适的 <strong>layers</strong> 进行 transfer：主要包括 Embedding 迁移、top layer 迁移和 all layer 迁移。如 word2vec 和 Glove 可采用 Embedding 迁移，BERT 可采用 top layer 迁移，Elmo 可采用 all layer 迁移。</li>
+<li><strong>特征集成</strong> 还是 <strong>fine-tune</strong>？对于特征集成预训练参数是 freeze 的，而 fine-tune 是 unfreeze 的。特征集成方式却需要特定任务的体系结构，fine-tune 方法通常比特征提取方法更为通用和方便。</li>
+</ol>
+<p><strong>2、fine-tune 策略：</strong> 通过更好的微调策略进一步激发 PTMs 性能</p>
+<ul>
+<li>两阶段 fine-tune 策略：如第一阶段对中间任务或语料进行 finetune，第二阶段再对目标任务 fine-tune。第一阶段通常可根据特定任务的数据继续进行 fine-tune 预训练。</li>
+<li>多任务 fine-tune：MTDNN 在多任务学习框架下对 BERT 进行了 fine-tune，这表明多任务学习和预训练是互补的技术。</li>
+<li>采取额外的适配器：fine-tune 的主要缺点是其参数效率低，每个下游任务都有自己的 fine-tune 参数。因此，更好的解决方案是在固定原始参数的同时，将一些可 fine-tune 的适配器注入 PTMs。</li>
+<li>逐层阶段：逐渐冻结而不是同时对所有层进行 fine-tune，也是一种有效的 fine-tune 策略。</li>
+</ul>
+<h1 id="经典预训练模型"><a href="#经典预训练模型" class="headerlink" title="经典预训练模型"></a>经典预训练模型</h1><h2 id="Skip-thoughts-2015"><a href="#Skip-thoughts-2015" class="headerlink" title="#. Skip-thoughts (2015)"></a>#. Skip-thoughts (2015)</h2><img src="/2023/02/26/2023-02-26-%F0%9F%8D%BA%E9%A2%84%E8%AE%AD%E7%BB%83%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%B0%8F%E9%85%8Cnew/1651816836376-68aead3d-6b67-4dde-b344-830eb8954771.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>Skip-thoughts 是一个15年的模型。它的选择的是<strong>大规模的图书语料</strong>。图书语料其实是一个很合适的选择，因为图书的题材可以很多，比如历史、爱情、科幻，以及图书包含了很多人类的知识。在编码器方面。选择了当时比较流行的GRU。它的目标是很经典的语言模型单词预测任务，通过一个句子的前n-1个单词的信息来预测第n个单词。如果在预训练阶段模型能把单词预测的任务做好，那么我们认为它充分学习到了人类语言的知识，对下游任务会有很大的帮助。</p>
+<p>Skip-thoughts这个模型还有一个额外的贡献点，那就是它<strong>用了相邻句子的信息来预测第n个单词</strong>。如图所示，灰色、红色和绿色代表不同的句子。我们对红色的句子进行单词预测的时候，不仅使用红色句子中前n-1个单词的信息预测第n个单词，还会使用相邻句子的信息，也就是灰色的句子。<strong>最终，模型会将相邻的句子进行编码之后和前面的n-1个单词一起预测第n个单词。</strong></p>
+<h2 id="Quick-thoughts-2018"><a href="#Quick-thoughts-2018" class="headerlink" title="#. Quick-thoughts (2018)"></a>#. Quick-thoughts (2018)</h2><img src="/2023/02/26/2023-02-26-%F0%9F%8D%BA%E9%A2%84%E8%AE%AD%E7%BB%83%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%B0%8F%E9%85%8Cnew/1651816836340-a65367fb-112b-4f09-9703-0b2c7044d4ca.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>Quick-thoughts 其实是Skip-thoughts模型的近亲。在语料方面，它用了和Skip-thoughts一样的大规模图书语料，同时它还增加了更多的互联网的语料。在编码器方面，它跟Skip-thoughts一样，用的也是GRU模型。这篇论文的贡献，也就是和Skip-thoughts主要的不同点在于它的预训练目标：它使用了句子级别的预测模型，<strong>即用中心句子预测周围的句子</strong>。如图所示，第一句话“春天来了”的下面有三句候选，我们要从这三句候选句子中挑选出哪一句话是真正的下一句话。所以我们会对这三个候选的句子，通过GRU编码器进行编码，最后通过一个分类器进行预测。第二个候选句子“但是谷物还没有生长”是正确的答案。这个预训练任务的目标就是通过预测句子之间的关系来让模型学习到高质量的句子表示。</p>
+<p>这个模型的名字叫做Quick-thoughts，之所以有quick这个名字，是因为它的训练非常的快。我们知道，一般语言模型是比较慢的，因为语言模型对单词的预测需要在整个词典中找出合适的单词。举一个简单的例子，词典大小是两万，那就要从两万个单词中去选择那个合适的单词。另一方面，语言模型需要对每个单词进行预测。但Quick-thoughts针对句子进行预测是可以很快的。<strong>直观的说，如果进行负采样，Quick-thoughts只选两个句子作为负样本，到最后就是一个简单的三分类任务，所以这也是为什么它叫Quick-thoughts的原因。</strong></p>
+<h2 id="CoVe-2017"><a href="#CoVe-2017" class="headerlink" title="#. CoVe (2017)"></a>#. CoVe (2017)</h2><img src="/2023/02/26/2023-02-26-%F0%9F%8D%BA%E9%A2%84%E8%AE%AD%E7%BB%83%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%B0%8F%E9%85%8Cnew/1651816836226-bc53c8ec-bdf7-42f3-bd72-f1a4cd1e1dc5.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>接下来是17年的一个模型，是当时在预训练领域比较有名气的一个工作，叫做CoVe。它最大的贡献是<strong>提出了用机器翻译作为训练目标进行预训练</strong>。因为机器翻译是一个非常困难的一个任务，被称为人工智能皇冠上的明珠。如果模型把这么难的任务都能做好的话，那它应该能学习到很多的语言知识，这些知识对于其他的下游任务就会有很大的帮助。CoVe的预训练目标选择了机器翻译之后，很自然的就会选择平行语料作为预训练的语料，这里使用了英德平行语料。编码器则选择了当时最为流行的双层LSTM，解码器也是双层LSTM。如图所示，在预训练的过程中，编码器对应的是英语，解码器对应的是德语。由于模型的下游任务都是英语，所以会把编码器学习到的英语的知识迁移到下游任务上，然后利用学习到的权重去更好的提升下游任务上的表现。</p>
+<h2 id="InferSent-2017"><a href="#InferSent-2017" class="headerlink" title="#. InferSent (2017)"></a>#. InferSent (2017)</h2><img src="/2023/02/26/2023-02-26-%F0%9F%8D%BA%E9%A2%84%E8%AE%AD%E7%BB%83%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%B0%8F%E9%85%8Cnew/1651816836386-7c64406e-e3cd-4e37-a217-47adfb3c4cf3.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>下一个介绍的是InferSent。这个工作的动机和上个介绍的工作是类似的，认为自然语言推理是一个很难的任务。如果把这个任务做好了，那模型也就能学习到有价值的人类语言知识，对于下游任务也会有很大的帮助。自然语言推理是一个文本对三分类任务：给定两个句子，如果第一句能推理出第二句是正确的，这两个句子就是蕴含关系；如果第一句能推出第二句是错误的，这两个句子就是矛盾关系；如果第一句既推不出第二句是正确，也推不出第二句是错误的话，那两者就是中立关系。简单来说这篇文章的核心工作就是使用分类任务作为预训练目标。这个工作的语料是五十七万的语言推理数据集。在编码器方面。用到了在Transformer之前常用的各种编码器，包括LSTM/GRU加上不同的Pooling层、以及多层的CNN、LSTM加上Attention。</p>
+<p>这篇文章最后给出了一个结论，认为LSTM加上max Pooling是最好的选择。其实我们之前自己的实验也有相似的结论，LSTM确实在很多场景下还是一个非常鲁棒的模型，在和max pooling配合的时候，在很多数据集上都能取得非常好的效果，不一定比Transformer要差。</p>
+<h1 id="自回归语言模型详解"><a href="#自回归语言模型详解" class="headerlink" title="自回归语言模型详解"></a>自回归语言模型详解</h1><h2 id="1-ELMo-2018"><a href="#1-ELMo-2018" class="headerlink" title="1. ELMo (2018)"></a>1. ELMo (2018)</h2><p><a target="_blank" rel="noopener" href="https://www.yuque.com/ningshixian/pz10h0/kq901lwtmot3ec5a">https://www.yuque.com/ningshixian/pz10h0/kq901lwtmot3ec5a</a></p>
+<h2 id="2-GPT"><a href="#2-GPT" class="headerlink" title="2. GPT"></a>2. GPT</h2><p><a target="_blank" rel="noopener" href="https://www.yuque.com/ningshixian/pz10h0/oboycd6mxxhveub2">https://www.yuque.com/ningshixian/pz10h0/oboycd6mxxhveub2</a></p>
+<h1 id="自编码语言模型详解"><a href="#自编码语言模型详解" class="headerlink" title="自编码语言模型详解"></a>自编码语言模型详解</h1><h2 id="1-BERT-2018"><a href="#1-BERT-2018" class="headerlink" title="1. BERT (2018)"></a>1. BERT (2018)</h2><p><a target="_blank" rel="noopener" href="https://www.yuque.com/ningshixian/pz10h0/ggf6f5se8w5w5004">https://www.yuque.com/ningshixian/pz10h0/ggf6f5se8w5w5004</a></p>
+<h2 id="2-RoBERTa-2019"><a href="#2-RoBERTa-2019" class="headerlink" title="2. RoBERTa (2019)"></a>2. RoBERTa (2019)</h2><p><a target="_blank" rel="noopener" href="https://www.yuque.com/ningshixian/pz10h0/fw3tok5d2e7lbmoq">https://www.yuque.com/ningshixian/pz10h0/fw3tok5d2e7lbmoq</a></p>
+<h2 id="3-UniLM-2019"><a href="#3-UniLM-2019" class="headerlink" title="3. UniLM (2019)"></a>3. UniLM (2019)</h2><p><a target="_blank" rel="noopener" href="https://www.yuque.com/ningshixian/pz10h0/uwhgtl6fsdqv48m8">https://www.yuque.com/ningshixian/pz10h0/uwhgtl6fsdqv48m8</a></p>
+<h2 id="4-MASS-2019"><a href="#4-MASS-2019" class="headerlink" title="4. MASS (2019)"></a>4. MASS (2019)</h2><p><a target="_blank" rel="noopener" href="https://www.yuque.com/ningshixian/pz10h0/wp2d21vm3ynmqv9q">https://www.yuque.com/ningshixian/pz10h0/wp2d21vm3ynmqv9q</a></p>
+<h2 id="5-BART-2019"><a href="#5-BART-2019" class="headerlink" title="5. BART (2019)"></a>5. BART (2019)</h2><p><a target="_blank" rel="noopener" href="https://www.yuque.com/ningshixian/pz10h0/ixi2eil4u4kce32l">https://www.yuque.com/ningshixian/pz10h0/ixi2eil4u4kce32l</a></p>
+<h2 id="6-T5-2019"><a href="#6-T5-2019" class="headerlink" title="6. T5 (2019)"></a>6. T5 (2019)</h2><p><a target="_blank" rel="noopener" href="https://www.yuque.com/ningshixian/pz10h0/lbk203cipy4mc1za">https://www.yuque.com/ningshixian/pz10h0/lbk203cipy4mc1za</a></p>
+<h2 id="7-SpanBERT"><a href="#7-SpanBERT" class="headerlink" title="7. SpanBERT"></a>7. SpanBERT</h2><p><a target="_blank" rel="noopener" href="https://www.yuque.com/ningshixian/pz10h0/rhvq0bzgl8tia5sy">https://www.yuque.com/ningshixian/pz10h0/rhvq0bzgl8tia5sy</a></p>
+<h2 id="8-MacBERT"><a href="#8-MacBERT" class="headerlink" title="8. MacBERT"></a>8. MacBERT</h2><p><a target="_blank" rel="noopener" href="https://www.yuque.com/ningshixian/pz10h0/nrkzl091247ui7sg">https://www.yuque.com/ningshixian/pz10h0/nrkzl091247ui7sg</a></p>
+<h1 id="全排列语言模型"><a href="#全排列语言模型" class="headerlink" title="全排列语言模型"></a>全排列语言模型</h1><h2 id="1-Transformer-XL-2019"><a href="#1-Transformer-XL-2019" class="headerlink" title="1. Transformer-XL (2019)"></a>1. Transformer-XL (2019)</h2><p><a target="_blank" rel="noopener" href="https://www.yuque.com/ningshixian/pz10h0/lli9fsaidass95ko">https://www.yuque.com/ningshixian/pz10h0/lli9fsaidass95ko</a></p>
+<h2 id="2-XLNet-2019"><a href="#2-XLNet-2019" class="headerlink" title="2. XLNet (2019)"></a>2. XLNet (2019)</h2><p><a target="_blank" rel="noopener" href="https://www.yuque.com/ningshixian/pz10h0/ggsm2eqel1sdgwac">https://www.yuque.com/ningshixian/pz10h0/ggsm2eqel1sdgwac</a></p>
+<h1 id="基于对比学习的语言模型"><a href="#基于对比学习的语言模型" class="headerlink" title="基于对比学习的语言模型"></a>基于对比学习的语言模型</h1><h2 id="1-ELECTRA-2020"><a href="#1-ELECTRA-2020" class="headerlink" title="1. ELECTRA (2020)"></a>1. ELECTRA (2020)</h2><blockquote>
+<p>苏剑林. (Oct. 29, 2020). 《用ALBERT和ELECTRA之前，请确认你真的了解它们 》[Blog post]. Retrieved from <a target="_blank" rel="noopener" href="https://kexue.fm/archives/7846">https://kexue.fm/archives/7846</a></p>
+</blockquote>
+<p>ELECTRA则来自论文<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2003.10555">《ELECTRA: Pre-training Text Encoders as Discriminators Rather Than Generators》</a>。说实话，ELECTRA真是一个一言难尽的模型，它刚出来的时候让很多人兴奋过，后来正式发布开源后又让很多人失望过，目前的实战表现虽然不能说差，却也不能说多好。</p>
+<img src="/2023/02/26/2023-02-26-%F0%9F%8D%BA%E9%A2%84%E8%AE%AD%E7%BB%83%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%B0%8F%E9%85%8Cnew/1651142611439-48661325-6f81-464e-94fd-23ca3ddc01eb.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>ELECTRA的出发点是觉得BERT的MLM模型随机选择一部分Token进行Mask的这个操作过于简单了，想要增加一下它的难度。所以它借鉴了GAN的思想，用普通的方式训练一个MLM模型（生成器），然后根据MLM模型对输入句子进行采样替换，将处理后的句子输入到另外一个大模型（判别器）中，判断句子哪些 token 是被替换过的，哪些是被没被替换的（二分类任务）。该任务被称为替代词检测(<strong>RTD</strong>)任务。生成器和判别器是同步训练的，因此随着生成器的训练，判断难度会慢慢增加，直观想象有利于模型学到更有价值的内容。最后只保留判别器的Encoder来用，生成器一般就不要了。</p>
+<p><strong>Q：ELECTRA模型介绍</strong><br><strong>A：</strong>首先，按照一定的比例对于原始输入序列进行随机MASK操作得到新序列；<br>其次，将新序列作为生成器模型的输入，生成器模型对MASK的token进行预测，获取生成序列；<br>之后，将生成序列作为判别器模型的输入，判别器模型对生成序列每一个元素进行预测，判断是否是原始文本；<br>然后，将生成器模型和判别器模型的损失进行加和，分别反向传播；<br>最后，将判别器模型用于下游任务。</p>
+<p><strong>Q：ELECTRA模型任务本质</strong><br><strong>A：</strong>任务本质是获取效果较好的判别器，而判别器任务，就是一个Replaced Token Detection任务，预测替换词语是否为原始文本词语；而存在生成器模型的原因是直接使用随机替换的词语效果不好。</p>
+<p><strong>Q：ELECTRA模型与GAN的关系？</strong><br><strong>A：</strong>其实不是GAN模型，句子的字词是离散的，梯度在判别器使用生成器结果时就断了，判别器的梯度无法传给生成器，生成器的训练目标还是MLM。</p>
+<p><strong>Q：Loss如何分布</strong><br><strong>A：</strong>判别器的任务相对来说容易些，RTD loss相对MLM loss会很小，因此加上一个系数，论文提供的参数为50。</p>
+<p><strong>Q：判别器Loss是计算所有Token，为什么不只计算15%被mask的token</strong><br><strong>A：</strong>效果好。</p>
+<p><strong>Q：生成器和判别器的权重共享是否可以提升效果呢？</strong><br><strong>A：</strong>在相同参数下（生成器和判别器结构一致），不共享权重下的模型效果最差，共享所有权重的效果最好，只共享token embedding层的效果只比共享所有权重差一点点。原因是，生成器是一个MLM任务，在模型预测时softmax建立在词典的所有词之上，反向传播会更新所有token 的embedding，因此生成器对token embedding层的学习效果更好。最后论文作者只使用了token embedding共享策略。并且实验发现生成器的大小在判别器的1/4到1/2之间效果是最好的。</p>
+<p><strong>ELECTRA论文</strong>见：<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2003.10555">https://arxiv.org/abs/2003.10555</a></p>
+<h2 id="2-StructBERT"><a href="#2-StructBERT" class="headerlink" title="2. StructBERT"></a>2. StructBERT</h2><p>word structural objective：给定一个被打乱顺序的序列，尝试预测每个被移位的词的原始正确的位置：</p>
+<ul>
+<li>在句子中引入词乱序（“乱序不改其义”的思想，增大理解难度）。</li>
+</ul>
+<p>Sentence Structural Objective：对于两句话(S1, S2)，预测二者相对关系，3分类问题。</p>
+<ul>
+<li>1/3的概率是segment B是segment A的下一句</li>
+<li>1/3的概率是segment A是segment B的下一句</li>
+<li>1/3的概率是segment A和segment B来自2篇不同的文本</li>
+</ul>
+<h1 id="引入知识的语言模型"><a href="#引入知识的语言模型" class="headerlink" title="引入知识的语言模型"></a>引入知识的语言模型</h1><h2 id="1-ERNIE-系列-Baidu"><a href="#1-ERNIE-系列-Baidu" class="headerlink" title="1. ERNIE 系列 (Baidu)"></a>1. ERNIE 系列 (Baidu)</h2><p><strong>ERNIE 1.0</strong> 通过建模海量数据中的词、实体及实体关系，学习真实世界的语义知识。相较于 BERT 学习原始语言信号，百度ERNIE 1.0 可以概括为 2 点改进：</p>
+<ol>
+<li>Knowledge Masking：直接对先验语义知识单元进行建模，借助知识改进masking策略，包括 3 种：传统mask + 实体mask + 短语mask 。例如</li>
+</ol>
+<blockquote>
+<p>BERT ：哈 [mask] 滨是 [mask] 龙江的省会，[mask] 际冰 [mask] 文化名城。<br>ERNIE：[mask] [mask] [mask] 是黑龙江的省会，国际 [mask] [mask] 文化名城。</p>
+</blockquote>
+<p>在 BERT 模型中，我们通过『哈』与『滨』的局部共现，即可判断出『尔』字，模型没有学习与『哈尔滨』相关的任何知识。而 ERNIE 通过学习词与实体的表达，使模型能够建模出『哈尔滨』与『黑龙江』的关系，学到『哈尔滨』是 『黑龙江』的省会以及『哈尔滨』是个冰雪城市。</p>
+<ol>
+<li>Dialog Language Model (DLM)：训练数据方面，除百科类、资讯类中文语料外，ERNIE 还引入了论坛对话类数据，利用 DLM（Dialogue Language Model）建模 Query-Response 对话结构，将对话 Pair 对作为输入，引入 Dialogue Embedding 标识对话的角色，利用 Dialogue Response Loss 学习对话的隐式关系，进一步提升模型的语义表示能力。</li>
+</ol>
+<hr>
+<p><strong>ERNIE 2.0</strong> 是基于持续学习的语义理解预训练框架，使用多任务学习增量式构建预训练任务。ERNIE 2.0 中，新构建的预训练任务类型可以无缝的加入训练框架，持续的进行语义理解学习。 </p>
+<blockquote>
+<p><strong>ERNIE2.0论文</strong>见：<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1907.12412">https://arxiv.org/abs/1907.12412</a></p>
+</blockquote>
+<p>在预训练引入多任务学习，主要包含3个方面的任务：</p>
+<ul>
+<li>词层面任务<ul>
+<li>知识掩码任务（Knowledge Masking Task）：同ERNIE1.0</li>
+<li>词语-文档关系预测任务（Token-Document Relation Prediction Task）：一篇文档出现的词语，是否在另外一篇出现；</li>
+<li>大写预测任务（Capitalization Prediction Task）：预测一个word的首字母是否大写，一般大写词语都是较重要的词语；</li>
+</ul>
+</li>
+<li>句子层面<ul>
+<li>句子重排序任务（Sentence Reordering Task）：将文本句子打乱顺序，然后预测正确排序；</li>
+<li>句子距离预测任务（SentenceDistance Task）：预测句子对之间的相对距离–&gt;三分类问题</li>
+</ul>
+</li>
+<li>语义层面<ul>
+<li>句子关系任务（Discourse Relation Task）：根据句子之间的关键词判断，两个句子之间的语义关系</li>
+<li>检索关系任务（IR Relevance Task）：判断一条用户查询和一篇文档题目的相关性程度，包含强相关、弱相关和无关</li>
+</ul>
+</li>
+</ul>
+<hr>
+<p><strong>ERNIE 3.0</strong> </p>
+<ul>
+<li>设计了上下两层网络结构，一个用于聚焦自然语言理解，一个用于聚焦自然语言生成任务<ul>
+<li>Universal Representation Module</li>
+<li>Task-specific Representation Module</li>
+</ul>
+</li>
+<li>使用Transformer-XL作为骨干网络</li>
+</ul>
+<h2 id="2-ERNIE-THU"><a href="#2-ERNIE-THU" class="headerlink" title="2. ERNIE (THU)"></a>2. ERNIE (THU)</h2><blockquote>
+<p><a target="_blank" rel="noopener" href="https://paddlepedia.readthedocs.io/en/latest/tutorials/pretrain_model/THU-ERNIE.html">https://paddlepedia.readthedocs.io/en/latest/tutorials/pretrain_model/THU-ERNIE.html</a></p>
+</blockquote>
+<p>相比百度ERNIE，清华ERNIE则是另外一种思路：我们已经有些结构化知识或者实体关系知识等现成的外部知识库，可以在预训练的过程中，通过工具找出句中的命名实体，句中的命名实体可以触发知识库中其它相关实体，然后预训练模型通过特殊的结构，来融合文本和结构化知识，以进一步促进语言的理解。</p>
+<p><strong>THU-ERNIE</strong>是由两种类型的Encoder堆叠而成：<strong>T-Encoder</strong>和<strong>K-Encoder</strong>。<strong>T-Encoder</strong>负责从输入序列中捕获词法和句法信息；<strong>K-Encoder</strong>负责将KG知识和从<strong>T-Encoder</strong>中提取的文本信息进行融合，其中KG知识在这里主要是实体，这些实体是通过TransE模型训练出来的。</p>
+<p>具体来说：</p>
+<ol>
+<li>使用<a target="_blank" rel="noopener" href="https://arxiv.org/pdf/1006.3498v1.pdf">TAGME</a>提取文本中的实体，并将这些实体链指到KG中的对应实体对象，然后找出这些实体对象对应的embedding，这些embedding是由一些知识表示方法，例如<a target="_blank" rel="noopener" href="https://proceedings.neurips.cc/paper/2013/file/1cecc7a77928ca8133fa24680a88d2f9-Paper.pdf">TransE</a>训练得到的。</li>
+<li>将实体向量和文本表示通过非线性变换进行融合，以融合词汇、句法和知识信息；</li>
+<li>除了MLM、NSP任务外，重新添加了一个和KG相关的预训练目标Denoising entity auto-encoder (DEA)。dEA将随机地Mask掉一些token-entity对，然后要求模型在这些对齐的token上利用图谱去预测相应的实体分布，完成对齐。</li>
+</ol>
+<img src="/2023/02/26/2023-02-26-%F0%9F%8D%BA%E9%A2%84%E8%AE%AD%E7%BB%83%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%B0%8F%E9%85%8Cnew/1652352024792-00cda75c-67d2-4f8d-aa9b-ce97a12af0d6.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>THU-ERNIE的模型架构</p>
+<h2 id="3-K-BERT"><a href="#3-K-BERT" class="headerlink" title="3. K-BERT"></a>3. K-BERT</h2><p>将实体关系的三元组知识显式地嵌入到原始文本</p>
+<ul>
+<li>原始句子：“Tim Cook is visiting Beijing now”</li>
+<li>改造句子：“Tim Cook CEO Apple is visiting Beijing capital China is_a City now”</li>
+</ul>
+<h2 id="4-LIBERT"><a href="#4-LIBERT" class="headerlink" title="4. LIBERT"></a>4. LIBERT</h2><p>添加了语言知识约束</p>
+<ul>
+<li>基于预训练好的 BERT，利用同义词/上下位词对进行fine-tuning</li>
+</ul>
+<h2 id="5-其他"><a href="#5-其他" class="headerlink" title="5. 其他"></a>5. 其他</h2><p>KnowBERT</p>
+<p>SentiLR</p>
+<p>KEPLER</p>
+<p>WKLM</p>
+<p>CoLAKE</p>
+<h1 id="轻量化BERT详解"><a href="#轻量化BERT详解" class="headerlink" title="轻量化BERT详解"></a>轻量化BERT详解</h1><h2 id="1-Albert"><a href="#1-Albert" class="headerlink" title="1. Albert"></a>1. Albert</h2><p><a target="_blank" rel="noopener" href="https://www.yuque.com/ningshixian/pz10h0/utnz6o1aps5m1cge">https://www.yuque.com/ningshixian/pz10h0/utnz6o1aps5m1cge</a></p>
+<h2 id="2-DistillBert"><a href="#2-DistillBert" class="headerlink" title="2. DistillBert"></a>2. DistillBert</h2><p><a target="_blank" rel="noopener" href="https://www.yuque.com/ningshixian/pz10h0/mqhw8qymy5tmal0s">https://www.yuque.com/ningshixian/pz10h0/mqhw8qymy5tmal0s</a></p>
+<h2 id="3-TINYBERT"><a href="#3-TINYBERT" class="headerlink" title="3. TINYBERT"></a>3. TINYBERT</h2><p><a target="_blank" rel="noopener" href="https://www.yuque.com/ningshixian/pz10h0/gg28qb7cmr3mc4ue">https://www.yuque.com/ningshixian/pz10h0/gg28qb7cmr3mc4ue</a></p>
+<h1 id="State-of-Art"><a href="#State-of-Art" class="headerlink" title="State-of-Art"></a>State-of-Art</h1><p>NLP 任务的 State-of-Art 模型详见：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://gluebenchmark.com/leaderboard">GLUE Leaderboard</a></li>
+<li><a target="_blank" rel="noopener" href="https://super.gluebenchmark.com/leaderboard">SuperGLUE Leaderboard</a></li>
+<li><a target="_blank" rel="noopener" href="https://rajpurkar.github.io/SQuAD-explorer/">SQuAD</a></li>
+<li><a target="_blank" rel="noopener" href="https://nlpprogress.com/">NLP-progress</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cluebenchmarks.com/">中文任务基准测评</a></li>
+</ul>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzI3MTA0MTk1MA==&amp;mid=2652057750&amp;idx=4&amp;sn=799877cde18a3a4ce259a1a1654c9dfc&amp;chksm=f1204467c657cd71891649bbf14ecf20549a76911fcd087b5b0e6406ff5717f052d672d5db8b&amp;mpshare=1&amp;scene=23&amp;srcid=&amp;sharer_sharetime=1573370368071&amp;sharer_shareid=5f83a05212e1b63a8a185c7ff5d2a2be#rd">绝对干货！NLP预训练模型：从transformer到albert</a></p>
+<p><a target="_blank" rel="noopener" href="https://kexue.fm/archives/4765">《Attention is All You Need》浅读（简介+代码）</a></p>
+<p><a target="_blank" rel="noopener" href="https://tech.meituan.com/2019/11/14/nlp-bert-practice.html">美团BERT的探索和实践</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.bookstack.cn/books/huaxiaozhuan-ai"> AI算法工程师手册</a></p>
+<p><strong>⭐️</strong><a target="_blank" rel="noopener" href="https://leovan.me/cn/2020/03/pre-trained-model-for-nlp/"><strong>预训练自然语言模型 (Pre-trained Models for NLP)-范叶亮</strong></a></p>
+<p><a target="_blank" rel="noopener" href="https://www.6aiq.com/article/1587401784826">贝壳找房【语言模型系列】原理篇二：从 ELMo 到 ALBERT</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/rsiV1ZXlGdFBawxGYbEyCQ">常用预训练语言模型（PTMs）总结-刘聪 NLP</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/llm/" class="category-chain-item">llm</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/ptm/">#ptm</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>🍺预训练语言模型小酌new          </div>
+      <div>http://example.com/2023/02/26/2023-02-26-🍺预训练语言模型小酌new/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>BY NSX                  # 作者</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年2月26日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/02/26/2023-02-26-Transformer%E8%AF%A6%E8%A7%A3/" title="Transformer详解          ">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Transformer详解          </span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/10/27/2022-10-27-%E3%80%8A%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/" title="《深度学习推荐系统》-极客时间">
+                        <span class="hidden-mobile">《深度学习推荐系统》-极客时间</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,674 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="NSX">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="腾讯微信团队于2020年提出的一种深度语义匹配方法的论文。在QA检索问题中，新输入的一个问法，就需要与语料库中的所有问题-答案对（QA对）进行语义相关性匹配。但是在开放领域的场景下，由于在“问法-问题”对中会存在各式各样不同表达的词汇，导致衡量新问法与候选QA对的相似性就变的富有挑战性。 Keyword-BERT提出了一种“关键词-注意力机制”的方法来改进深度语义匹配任务。首先从海量的语料中按领域">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Keyword-BERT">
+<meta property="og:url" content="http://example.com/2021/11/15/2021-11-15-Keyword-BERT/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="腾讯微信团队于2020年提出的一种深度语义匹配方法的论文。在QA检索问题中，新输入的一个问法，就需要与语料库中的所有问题-答案对（QA对）进行语义相关性匹配。但是在开放领域的场景下，由于在“问法-问题”对中会存在各式各样不同表达的词汇，导致衡量新问法与候选QA对的相似性就变的富有挑战性。 Keyword-BERT提出了一种“关键词-注意力机制”的方法来改进深度语义匹配任务。首先从海量的语料中按领域">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9uV1dwaWFHY29IRTcwTzNPSFFGaWFxakFQWjEzM1M4ZVNha3I5RGljS2VlbVhtVHZQN2dXR092VzhRVnpwRkZ0TGx4c1VzU1ZYczQ3Nkhqd3JFeDZzeDkxdy82NDA?x-oss-process=image/format,png">
+<meta property="og:image" content="http://example.com/2021/11/15/2021-11-15-Keyword-BERT/format,png-20230424105522203.png">
+<meta property="og:image" content="http://example.com/2021/11/15/2021-11-15-Keyword-BERT/format,png-20230424105516412.png">
+<meta property="og:image" content="http://example.com/2021/11/15/2021-11-15-Keyword-BERT/webp">
+<meta property="og:image" content="http://example.com/2021/11/15/2021-11-15-Keyword-BERT/format,png-20230424105507051.png">
+<meta property="og:image" content="http://example.com/2021/11/15/2021-11-15-Keyword-BERT/format,png-20230424105501255.png">
+<meta property="og:image" content="http://example.com/2021/11/15/2021-11-15-Keyword-BERT/webp-20230424105400222">
+<meta property="og:image" content="http://example.com/2021/11/15/2021-11-15-Keyword-BERT/webp-20230424105432683">
+<meta property="og:image" content="http://example.com/2021/11/15/2021-11-15-Keyword-BERT/format,png.png">
+<meta property="article:published_time" content="2021-11-14T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-24T08:08:09.529Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="Keyword-BERT">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9uV1dwaWFHY29IRTcwTzNPSFFGaWFxakFQWjEzM1M4ZVNha3I5RGljS2VlbVhtVHZQN2dXR092VzhRVnpwRkZ0TGx4c1VzU1ZYczQ3Nkhqd3JFeDZzeDkxdy82NDA?x-oss-process=image/format,png">
+  
+  
+  
+  <title>Keyword-BERT - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Keyword-BERT——问答系统中语义匹配的杀手锏"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-11-15 00:00" pubdate>
+          2021年11月15日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          26 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Keyword-BERT——问答系统中语义匹配的杀手锏</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>腾讯微信团队于2020年提出的一种深度语义匹配方法的论文。在QA检索问题中，新输入的一个问法，就需要与语料库中的所有问题-答案对（QA对）进行语义相关性匹配。但是在开放领域的场景下，由于在“问法-问题”对中会存在各式各样不同表达的词汇，导致衡量新问法与候选QA对的相似性就变的富有挑战性。</p>
+<p>Keyword-BERT提出了一种“关键词-注意力机制”的方法来改进深度语义匹配任务。首先从海量的语料中按领域划分来生成领域相关的关键词字典。在基于BERT原有架构的基础之上，再堆叠一层“关键词注意力”层来强调在“问法-问题”对中出现的关键词。在模型的训练过程中，提出了一种新的，基于输入问法对中的关键词重合度的负样本采样方法。最终在中文QA语料上利用多种评估指标对模型进行了验证，包括召回候选数据的精确率，语义匹配的准确率。实验表明，Keyword-BERT超过了现有的其他基线模型。</p>
+<p>论文链接：<a target="_blank" rel="noopener" href="https://links.jianshu.com/go?to=https%3A%2F%2Farxiv.org%2Fpdf%2F2003.11516.pdf">https://arxiv.org/pdf/2003.11516.pdf</a></p>
+<p>github地址：<a target="_blank" rel="noopener" href="https://links.jianshu.com/go?to=https%3A%2F%2Fgithub.com%2FDataTerminatorX%2FKeyword-BERT">https://github.com/DataTerminatorX/Keyword-BERT</a></p>
+<p>论文相关博客：<a target="_blank" rel="noopener" href="https://links.jianshu.com/go?to=https%3A%2F%2Fmp.weixin.qq.com%2Fs%2F_QY2EhB-TiBcb5q0379McQ">https://mp.weixin.qq.com/s/_QY2EhB-TiBcb5q0379McQ</a></p>
+ <span id="more"></span>
+<h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>检索式问答系统大致的流程如下：</p>
+<p><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9uV1dwaWFHY29IRTcwTzNPSFFGaWFxakFQWjEzM1M4ZVNha3I5RGljS2VlbVhtVHZQN2dXR092VzhRVnpwRkZ0TGx4c1VzU1ZYczQ3Nkhqd3JFeDZzeDkxdy82NDA?x-oss-process=image/format,png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>首先我们需要维护一个海量且高质量的问答库。然后对于用户的问题(Query)，我们从问答库里先粗略地检索出比较相似的问题 (Questions)，对于这些候选问题，再进一步进行『语义匹配』，找出最匹配的那个问题，然后将它所对应的答案，返回给用户。我们可以看到，粗略检索出来的 Question，里面噪音很多，跟我们的 Query 相比，很多都是 <strong>形似</strong>而<strong>神不似</strong>。所以最最最核心的模块，便是<strong>Query-Question 的语义匹配</strong>，用来从一堆<strong>形似</strong>的候选问题中，找出跟 Query<strong>神似</strong>的 Question。</p>
+<h1 id="挑战"><a href="#挑战" class="headerlink" title="挑战"></a>挑战</h1><h2 id="系统鲁棒性不⾜"><a href="#系统鲁棒性不⾜" class="headerlink" title="系统鲁棒性不⾜"></a>系统鲁棒性不⾜</h2><ol>
+<li>字面相似case不同义（False Positive）</li>
+<li>同义case表述不同（False Negative）</li>
+</ol>
+<img src="/2021/11/15/2021-11-15-Keyword-BERT/format,png-20230424105522203.png" srcset="/img/loading.gif" lazyload class="" title="img">
+<p>蓝色加粗的词代表模型自以为匹配上的关键信息，红色代表实际要匹配的关键信息、但模型失配了。</p>
+<p>此外，不同的term对于搜索的意义也不同，例如“桃子味的牙膏”，这里的桃子是修饰牙膏的，核心词为“牙膏”，核心词应该就有更高的查询分值。在意图类目识别时也应该根据核心词来确认。所以提前对query做<strong>同义词转化、词性分析POS，命名实体识别NER，计算词语权重Term Weight</strong>等将会帮助检索。</p>
+<h1 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h1><p>Keyword-BERT对传统语义匹配模型的框架做了两处改进，一处是加入了 <strong><em>关键词系统</em></strong>，从海量的开放域中提取关键词/词组，然后给训练样本/预测样本中出现的关键词，额外添加一个标注。另一处，是对模型做相应改进，去增强模型对这种关键信息的捕获。这两处改动的核心，是为数据和模型 显式地引入关键信息，这样我们便能从根本上解决我们所面临的数据和模型的痛点，不再只是隔靴搔痒。</p>
+<img src="/2021/11/15/2021-11-15-Keyword-BERT/format,png-20230424105516412.png" srcset="/img/loading.gif" lazyload class="" title="img">
+<h3 id="1-改进的模型：强化模型对关键信息的捕获"><a href="#1-改进的模型：强化模型对关键信息的捕获" class="headerlink" title="1. 改进的模型：强化模型对关键信息的捕获"></a>1. 改进的模型：强化模型对关键信息的捕获</h3><p>这一点很好理解，我们在模型中，额外增加了对关键词词对儿的处理，相当于增加了额外的 feature，给模型提供更多信息，加强模型对问题对儿的区分能力。至于具体的改进细节，我们将会在下节提到，这里先不表。</p>
+<h3 id="2-带关键词的样本：减少对标注数据依赖"><a href="#2-带关键词的样本：减少对标注数据依赖" class="headerlink" title="2. 带关键词的样本：减少对标注数据依赖"></a>2. 带关键词的样本：减少对标注数据依赖</h3><p>我们举个例子，也是我们在引子部分提到的一个负样本：<strong>怎么扫码加微信</strong>和<strong>怎么扫码进微信群</strong>。这两个问题不相似的根源，在于<strong>微信和微信群</strong>的含义不同。但模型一开始学出来的可能是<strong>加和进</strong>这两个动词的差异（因为微信和微信群的embedding可能非常接近），只有我们提供了额外的样本，比如告诉模型<strong>怎么加豆瓣小组</strong>和<strong>怎么进豆瓣小组</strong>这两个问题是相似的，模型才可能学出<strong>进和加</strong>不是关键，继而学到真正的关键信息。所以如果我们一开始就标注出关键词，相当于告诉模型，这些是候选的、可能的关键信息，模型（经过我们改进后的）就会有意识地针对这部分进行学习，而不需要自行通过更多的样本去判别，从而从根本上解决对标组数据的依赖。</p>
+<h1 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h1><h2 id="如何构造一个-关键词系统"><a href="#如何构造一个-关键词系统" class="headerlink" title="如何构造一个 关键词系统?"></a>如何构造一个 <strong><em>关键词系统</em></strong>?</h2><p>如上面所说，一个好的关键词系统，要能抽取出<strong>多又好的关键词</strong>——即：数量多、质量高。</p>
+<p>为了达成这个目标，采用新词发现/PMI方法从里面提取出候选的关键词。PMI的计算公式如下，</p>
+<p>然后设计了一个 <strong><em>diff-idf</em></strong> 分值，去衡量这个关键词的领域特性，直观来说，就是这个关键词在自己领域出现的文档频次，远高于其他领域。计算方法如下所示，</p>
+<p>其中 ^domain 表示“其他领域”的语料。举个例子，比如我们计算，“杠杆”这个词在金融领域中的重要性，那么“其他领域”就指，非金融类的语料。这里，我们用“df”来替代“tf”，是因为我们认为评估一个词汇在这个领域的重要性，在篇章（document-level）中的频次，比在词组（term-level）中的频次更为重要。而减去“其他领域”中的idf值能够确保计算出的值，是具有区分度的，能够真正代表该词在目标领域的重要性。从直觉上来说，如果一个词，在每一个领域的文章中都比较平均的出现，那么它的“diff-idf”分值会变小，因为需要同时减去，“其他领域”的idf值。我们最终就利用，“diff-idf”值来排序候选词并剔除那些低于阈值的噪声词汇。</p>
+<p>通过这个分值排序截断后，再进行后处理，去除噪音、实体归一化等等，最后与一些公开词条一起，构成一个庞大的关键词词典。</p>
+<img src="/2021/11/15/2021-11-15-Keyword-BERT/webp" srcset="/img/loading.gif" lazyload class="">
+<p>具体的流程如下(比较细碎 但缺一不可)。</p>
+<img src="/2021/11/15/2021-11-15-Keyword-BERT/format,png-20230424105507051.png" srcset="/img/loading.gif" lazyload class="" title="img">
+<p>这个流程每天都在运行和更新，我们目前的关键词数量达到数百万级，人工评测的质量也不错。下面是一些 case 展示：</p>
+<img src="/2021/11/15/2021-11-15-Keyword-BERT/format,png-20230424105501255.png" srcset="/img/loading.gif" lazyload class="" title="img">
+<h2 id="如何-改进模型"><a href="#如何-改进模型" class="headerlink" title="如何 改进模型?"></a>如何 <strong><em>改进模型</em></strong>?</h2><p>BERT 相比其他已知的深度模型，是核弹级别的改进，所以我们理所当然地选择了它 (事实上我们也做了线下实验，结果都在意料之中)鉴于 BERT 的结构已家喻户晓，我们就不细述了，我们重点思考的，是如何给 BERT 增加额外的关键信息捕捉模块？我们的思路跟 Fastpair 的改进一脉相承，只不过将这种 pair-wise 的交互，变成了 attention 机制，具体细节如下：</p>
+<img src="/2021/11/15/2021-11-15-Keyword-BERT/webp-20230424105400222" srcset="/img/loading.gif" lazyload class="" title="img">
+<p>注意力机制对于语义匹配来说是非常重要的，然而，因为缺少额外的监督信息，深度模型往往不能够准确捕获在句子对中的关键信息，从而对这两句话做准确的相似度区分。从pair2vec受到的启发，我们提出的模型更加会关注到那些包含关键词的词组对。具体如下图3所示，在句子A中的每一个字符，只会与句子B中的关键词的字符做点乘。</p>
+<img src="/2021/11/15/2021-11-15-Keyword-BERT/webp-20230424105432683" srcset="/img/loading.gif" lazyload class="" title="img">
+<p>一方面，我们在最上层引入一个额外的 keyword layer，通过 attention 和 mask ，专门对两个文本之间的关键词信息进行互相之间的 attention， 增强他们之间的<strong>互信息</strong>，另一方面，对于输出的两个文本的表示，我们借鉴了机器阅读理解里 fusion 的思想进行融合，然后将融合后的结果和 CLS 一起，输出到分类层通过这样的改造，Keyword-BERT 在不同 layer 数目下的指标都优于原始 BERT。</p>
+<img src="/2021/11/15/2021-11-15-Keyword-BERT/format,png.png" srcset="/img/loading.gif" lazyload class="" title="img">
+<p>我们发现， layer 数越少，Keyword-BERT 相比原始 BERT 提升越明显。这也很好理解，因为 layer 数越少， BERT 所能学到的句子级别的信息越少，而关键词相当于对这种句子级别信息进行了补充。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/xixiaoyaoww/article/details/105182946">Keyword-BERT——问答系统中语义匹配的杀手锏</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/5345f56d76c2">【NLP论文笔记】Keyword-Attentive Deep Semantic Matching（Keyword-BERT详解）</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Keyword-BERT/">#Keyword-BERT</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Keyword-BERT</div>
+      <div>http://example.com/2021/11/15/2021-11-15-Keyword-BERT/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>NSX</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年11月15日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E4%B9%8BAMSoftmax/" title="度量学习之 AMSoftmax 理解">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">度量学习之 AMSoftmax 理解</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/11/15/2021-11-15-%E5%85%83%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8/" title="元学习入门（转载）">
+                        <span class="hidden-mobile">元学习入门（转载）</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

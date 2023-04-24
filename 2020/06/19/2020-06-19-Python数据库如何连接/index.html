@@ -1,0 +1,773 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="NSX">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Python操作数据库本文主要介绍如何使用pymysql库以及DBUtils库来连接MySQL数据库。 一 准备1 几个概念 2 几个概念间关系">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python操作数据库">
+<meta property="og:url" content="http://example.com/2020/06/19/2020-06-19-Python%E6%95%B0%E6%8D%AE%E5%BA%93%E5%A6%82%E4%BD%95%E8%BF%9E%E6%8E%A5/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="Python操作数据库本文主要介绍如何使用pymysql库以及DBUtils库来连接MySQL数据库。 一 准备1 几个概念 2 几个概念间关系">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://marlous.github.io/2019/04/29/Python-%E4%BD%BF%E7%94%A8-pymysql-%E5%BA%93%E6%93%8D%E4%BD%9C-MySQL/%E5%9B%BE1.PNG">
+<meta property="og:image" content="https://marlous.github.io/2019/04/29/Python-%E4%BD%BF%E7%94%A8-pymysql-%E5%BA%93%E6%93%8D%E4%BD%9C-MySQL/%E5%9B%BE2.PNG">
+<meta property="og:image" content="https://marlous.github.io/2019/04/29/Python-%E4%BD%BF%E7%94%A8-pymysql-%E5%BA%93%E6%93%8D%E4%BD%9C-MySQL/%E5%9B%BE2-1.PNG">
+<meta property="og:image" content="https://marlous.github.io/2019/04/29/Python-%E4%BD%BF%E7%94%A8-pymysql-%E5%BA%93%E6%93%8D%E4%BD%9C-MySQL/%E5%9B%BE3.PNG">
+<meta property="og:image" content="https://marlous.github.io/2019/04/29/Python-%E4%BD%BF%E7%94%A8-pymysql-%E5%BA%93%E6%93%8D%E4%BD%9C-MySQL/%E5%9B%BE4.PNG">
+<meta property="og:image" content="https://github.com/dachenzi/StudyNotes/blob/master/Learn_Python_from_Zero/%E7%AC%94%E8%AE%B0/photo/dbutils.png?raw=true">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2887744-ec0ce39f74b53f83.png?imageMogr2/auto-orient/strip|imageView2/2/w/1024/format/webp">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2887744-167d70d5325c6a5c.png?imageMogr2/auto-orient/strip|imageView2/2/w/1052/format/webp">
+<meta property="article:published_time" content="2020-06-18T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-23T10:28:32.048Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="教程">
+<meta property="article:tag" content="技术">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://marlous.github.io/2019/04/29/Python-%E4%BD%BF%E7%94%A8-pymysql-%E5%BA%93%E6%93%8D%E4%BD%9C-MySQL/%E5%9B%BE1.PNG">
+  
+  
+  
+  <title>Python操作数据库 - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="pymysql库以及DBUtils库的使用指南"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2020-06-19 00:00" pubdate>
+          2020年6月19日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.5k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          47 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">pymysql库以及DBUtils库的使用指南</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="Python操作数据库"><a href="#Python操作数据库" class="headerlink" title="Python操作数据库"></a>Python操作数据库</h1><p>本文主要介绍如何使用pymysql库以及DBUtils库来连接MySQL数据库。</p>
+<h2 id="一-准备"><a href="#一-准备" class="headerlink" title="一 准备"></a>一 准备</h2><h3 id="1-几个概念"><a href="#1-几个概念" class="headerlink" title="1 几个概念"></a>1 几个概念</h3><p><img src="https://marlous.github.io/2019/04/29/Python-%E4%BD%BF%E7%94%A8-pymysql-%E5%BA%93%E6%93%8D%E4%BD%9C-MySQL/%E5%9B%BE1.PNG" srcset="/img/loading.gif" lazyload alt="几个概念"></p>
+<h3 id="2-几个概念间关系"><a href="#2-几个概念间关系" class="headerlink" title="2 几个概念间关系"></a>2 几个概念间关系</h3><p><img src="https://marlous.github.io/2019/04/29/Python-%E4%BD%BF%E7%94%A8-pymysql-%E5%BA%93%E6%93%8D%E4%BD%9C-MySQL/%E5%9B%BE2.PNG" srcset="/img/loading.gif" lazyload alt="几个概念间关系"></p>
+<span id="more"></span>
+<h2 id="二-安装模块"><a href="#二-安装模块" class="headerlink" title="二 安装模块"></a>二 安装模块</h2><p>​    Python 程序想要操作数据库，首先需要安装 模块 来进行操作，下面使用pip命令安装PyMSQL模块</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">pip3 install pymysql<br></code></pre></td></tr></table></figure>
+<p>如果没有pip3命令那么需要确认环境变量是否有添加，安装完毕后测试是否安装完毕。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-keyword">import</span> pymysql<br>&gt;&gt;&gt;<br><span class="hljs-comment"># 如果没有报错，则表示安装成功</span><br></code></pre></td></tr></table></figure>
+<h2 id="三-Pymysql-基本使用"><a href="#三-Pymysql-基本使用" class="headerlink" title="三 Pymysql 基本使用"></a>三 Pymysql 基本使用</h2><p>连接数据库并执行sql语句的一般流程是：</p>
+<ol>
+<li>建立连接</li>
+<li>获取游标(创建)</li>
+<li>执行SQL语句</li>
+<li>提交事务</li>
+<li>释放资源</li>
+</ol>
+<p>对应到代码上的逻辑为：</p>
+<ol>
+<li>导入相应的Python模块</li>
+<li>使用connect函数连接数据库，并返回一个Connection对象</li>
+<li>通过Connection对象的cursor方法，返回一个Cursor对象</li>
+<li>通过Cursor对象的execute方法执行SQL语句</li>
+<li>如果执行的是查询语句，通过Cursor对象的fetchall语句获取返回结果</li>
+<li>调用Cursor对象的close关闭Cursor</li>
+<li>调用Connection对象的close方法关闭数据库连接</li>
+</ol>
+<p>connection 对象（生成对象的方法参数、对象方法）</p>
+<p><img src="https://marlous.github.io/2019/04/29/Python-%E4%BD%BF%E7%94%A8-pymysql-%E5%BA%93%E6%93%8D%E4%BD%9C-MySQL/%E5%9B%BE2-1.PNG" srcset="/img/loading.gif" lazyload alt="connection 对象（生成对象的方法参数、对象方法）"></p>
+<p><img src="https://marlous.github.io/2019/04/29/Python-%E4%BD%BF%E7%94%A8-pymysql-%E5%BA%93%E6%93%8D%E4%BD%9C-MySQL/%E5%9B%BE3.PNG" srcset="/img/loading.gif" lazyload alt="connection 对象（生成对象的方法参数、对象方法）"></p>
+<p>cursor 对象（对象方法、fetch 方法）</p>
+<p><img src="https://marlous.github.io/2019/04/29/Python-%E4%BD%BF%E7%94%A8-pymysql-%E5%BA%93%E6%93%8D%E4%BD%9C-MySQL/%E5%9B%BE4.PNG" srcset="/img/loading.gif" lazyload alt="cursor 对象（对象方法）"></p>
+<h3 id="3-1-实现"><a href="#3-1-实现" class="headerlink" title="3.1 实现"></a>3.1 实现</h3><p><strong>连接数据库</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> pymysql<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">connect_mysql</span>():<br>    conn = pymysql.connect(host=<span class="hljs-string">&#x27;127.0.0.1&#x27;</span>，<br>                       port=<span class="hljs-number">3306</span>，<br>                       user=<span class="hljs-string">&#x27;root&#x27;</span>，<br>                       password=<span class="hljs-string">&#x27;123&#x27;</span>，<br>                       database=<span class="hljs-string">&#x27;pooldb&#x27;</span>，<br>                       charset=<span class="hljs-string">&#x27;utf8&#x27;</span>)<br>   <span class="hljs-keyword">return</span> conn<br><br><span class="hljs-comment"># conn.begin：开始事务</span><br><span class="hljs-comment"># conn.commit：提交事务</span><br><span class="hljs-comment"># conn.rollback：回滚事务</span><br><span class="hljs-comment"># conn.cursor：返回一个Cursor对象</span><br><span class="hljs-comment"># conn.autocommit：设置事务是否自动提交</span><br><span class="hljs-comment"># conn.set_character_set：设置字符集编码</span><br><span class="hljs-comment"># conn.get_server_info：获取数据库版本信息</span><br><span class="hljs-comment"># conn.ping(reconnect=True): 测试数据库是否活着，reconnect表示断开与服务器连接后是否重连，连接关闭时抛出异常（一般用来测通断）</span><br></code></pre></td></tr></table></figure>
+<p>PS<em>: 在实际的编程过程中，一般不会直接调用begin、commit和rollback函数，而是通过<code>上下文管理器实现事务的提交与回滚操作</code>。</em></p>
+<p><strong>利用游标操作数据库</strong></p>
+<p>查询类SQL</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs pgsql">conn = connect_mysql()<br><span class="hljs-keyword">cursor</span> = conn.<span class="hljs-keyword">cursor</span>()    # 创建游标<br><span class="hljs-keyword">sql</span> = <span class="hljs-string">&#x27;select * from test.student where id = %s&#x27;</span><br><span class="hljs-keyword">cursor</span>.<span class="hljs-keyword">execute</span>(<span class="hljs-keyword">sql</span>,args=(<span class="hljs-number">2</span>,))	# 参数化查询<br>result = <span class="hljs-keyword">cursor</span>.fetchall()  # 获取游标执行的所有结果<br><span class="hljs-keyword">cursor</span>.<span class="hljs-keyword">close</span>()<br>conn.<span class="hljs-keyword">close</span>()<br></code></pre></td></tr></table></figure>
+<p>非查询类SQL</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">try</span>:<br>    conn = connect_mysql()<br>    cursor = conn.cursor()  <span class="hljs-comment"># 创建游标</span><br>    sql = <span class="hljs-string">r&quot;insert into test.student (id,name,age) VALUES (%s,%s,%s)&quot;</span><br>    cursor.execute(sql, args=(<span class="hljs-number">6</span>,<span class="hljs-string">&#x27;dahl&#x27;</span>, <span class="hljs-number">23</span>,))<br>    conn.commit()    <span class="hljs-comment"># 提交事务</span><br><span class="hljs-keyword">except</span>:<br>    conn.rollback()   <span class="hljs-comment"># 当SQL语句执行失败时，回滚</span><br><span class="hljs-keyword">finally</span>:<br>    <span class="hljs-keyword">if</span> cursor:   <br>        cursor.close()    <span class="hljs-comment"># 关闭游标</span><br>    <span class="hljs-keyword">if</span> conn:<br>        conn.close()   <span class="hljs-comment"># 关闭连接</span><br></code></pre></td></tr></table></figure>
+<p><em>PS: 使用pymysql来连接数据库时，单线程应用完全没有问题，但如果涉及到多线程应用那么就需要加锁，一旦加锁那么连接势必就会排队等待，当请求比较多时，性能就会降低了。因此，实际使用中，通常会使用数据库的连接池技术，来访问数据库达到资源复用的目的。</em></p>
+<h2 id="四-数据库连接池DBUtils"><a href="#四-数据库连接池DBUtils" class="headerlink" title="四 数据库连接池DBUtils"></a>四 数据库连接池DBUtils</h2><p>DBUtils 是一套用于管理数据库连接池的包，并允许对非线程安全的数据库接口进行线程安全包装。它能为高频度高并发的数据库访问提供更好的性能，可以自动管理连接对象的创建和释放。</p>
+<p><img src="https://github.com/dachenzi/StudyNotes/blob/master/Learn_Python_from_Zero/%E7%AC%94%E8%AE%B0/photo/dbutils.png?raw=true" srcset="/img/loading.gif" lazyload alt="db_utils"></p>
+<p><strong>连接池对性能的提升：</strong></p>
+<ol>
+<li><p>使用连接池可以进行长连接，直接从一个空闲的连接中获取，不需要重新初始化连接，提升获取连接的速度</p>
+</li>
+<li><p>关闭连接的时候，把连接放回连接池，而不是真正的关闭，所以可以减少频繁地打开和关闭连接</p>
+</li>
+</ol>
+<p><em>PS：如果不执行conn.close() 会导致线程不断创建连接，超过了连接池能容纳的最大连接数而报错: <code>pymysql.err.OperationalError</code>，<code>1040</code>， <code>&#39;Too many connections&#39;</code></em></p>
+<p><strong>DBUtils提供两种外部接口：</strong></p>
+<ul>
+<li><code>PersistentDB</code>: 提供线程专用的数据库连接，并自动管理连接。（为每一个线程创建一个）</li>
+<li><code>PooledDB</code>: 提供线程间可共享的数据库连接，并自动管理连接。（常用）</li>
+</ul>
+<p><code>PooledDB</code> 和 <code>PersistentDB</code> 都通过回收数据库连接，且<strong>即使数据库连接中断也能保持稳定性</strong>，从而达到提升数据库访问性能的目的。那么在现实场景中应该如何选择呢？</p>
+<blockquote>
+<p>PooledDB 常用于多线程的情况。如果你的程序<strong>频繁地启动和关闭线程</strong>，最好使用这个;</p>
+<p>PersistentDB 常用于单线程的情况。PersistentDB 会为每个线程创建一个，资源消耗太大。如果你的程序只是在单个线程上进行<strong>频繁的数据库连接</strong>，最好使这个;</p>
+</blockquote>
+<h3 id="4-1-安装"><a href="#4-1-安装" class="headerlink" title="4.1 安装"></a>4.1 安装</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs javascript">pip install <span class="hljs-title class_">DBUtils</span><br>pip install pymysql<br></code></pre></td></tr></table></figure>
+<h3 id="4-2-使用"><a href="#4-2-使用" class="headerlink" title="4.2 使用"></a>4.2 使用</h3><p>连接池对象只初始化一次，一般可以作为模块级代码来确保。</p>
+<h4 id="PersistentDB"><a href="#PersistentDB" class="headerlink" title="PersistentDB"></a>PersistentDB</h4><p>实现了稳定，线程仿射(thread-affine)，持久化的数据库连接。某个线程第一次开启一个数据库连接时，该连接将用于此特定线程。即使在线程中关闭连接，连接也会保持打开状态，以便同一个线程的下一次连接请求直接使用。线程结束时该连接会自动关闭。<a target="_blank" rel="noopener" href="https://segmentfault.com/img/bVbnuiV?w=400&amp;h=475">图解地址</a></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> DBUtils.PersistentDB <span class="hljs-keyword">import</span> PersistentDB<br><span class="hljs-keyword">import</span> pymysql<br><br>POOL = PersistentDB(<br>    creator=pymysql,<br>    ping=<span class="hljs-number">0</span>,<br>    closeable=<span class="hljs-literal">False</span>,<br>    threadlocal=<span class="hljs-literal">None</span>,<br>    host=<span class="hljs-string">&#x27;10.1.210.33&#x27;</span>,<br>    port=<span class="hljs-number">3306</span>,<br>    user=<span class="hljs-string">&#x27;root&#x27;</span>,<br>    password=<span class="hljs-string">&#x27;1234qwer&#x27;</span>,<br>    database=<span class="hljs-string">&#x27;devops&#x27;</span>,<br>    charset=<span class="hljs-string">&#x27;utf8&#x27;</span><br>)<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">query</span>():<br>    conn = POOL.connection()<br>    cursor = conn.cursor()<br>    cursor.execute(<span class="hljs-string">&#x27;select * from XXX&#x27;</span>)<br>    result = cursor.fetchall()<br>    <span class="hljs-built_in">print</span>(result)<br>    cursor.close()<br>    conn.close()<br>    <br><span class="hljs-keyword">if</span> __name__==<span class="hljs-string">&#x27;__main__&#x27;</span>:<br>    query()<br></code></pre></td></tr></table></figure>
+<p><strong>NOTE:</strong>需要在连接上调用<code>begin()</code>方法明确开启事务。这可以确保a.只在事务完成时才重新打开连接b.连接被同一个线程重用时回滚。</p>
+<h4 id="PooledDB"><a href="#PooledDB" class="headerlink" title="PooledDB"></a>PooledDB</h4><p><code>DBUtils.PooledDB</code> 实现了稳定、线程安全的缓存连接池。<a target="_blank" rel="noopener" href="https://segmentfault.com/img/bVbnuiY?w=730&amp;h=515">图解地址</a></p>
+<p>相关配置参数说明：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>PooledDB 参数</th>
+<th>参数说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>mincached</td>
+<td>初始化时，链接池中至少创建的空闲的链接，0表示不创建</td>
+</tr>
+<tr>
+<td>maxcached</td>
+<td>连接池中允许的闲置的最多连接数量(缺省值 0和None不限制)</td>
+</tr>
+<tr>
+<td>maxshared</td>
+<td>允许的最大共享连接数(0或None表示所有连接都是专用的)</td>
+</tr>
+<tr>
+<td>maxconnections</td>
+<td>连接池允许的最大连接数，0和None表示不限制连接数</td>
+</tr>
+<tr>
+<td>blocking</td>
+<td>连接池中如果没有可用连接后，是否阻塞等待。True：等待；False：抛出异常</td>
+</tr>
+<tr>
+<td>maxusage</td>
+<td>单个连接的最大允许复用次数(缺省值 0 或 None 代表不限制的复用).当达到最大数时，连接会自动重新连接(关闭和重新打开)</td>
+</tr>
+<tr>
+<td>setsession</td>
+<td>开始会话前执行的命令列表</td>
+</tr>
+<tr>
+<td>ping</td>
+<td>如果<code>ping()</code>方法可用，该值表示何时使用ping()方法检查连接(`0 = None = never)</td>
+</tr>
+<tr>
+<td>closeable</td>
+<td>如果设置为True，将允许手动close()连接，默认为False，忽略关闭连接的操作，只在线程终止时自动关闭</td>
+</tr>
+</tbody>
+</table>
+</div>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><code class="hljs routeros"><span class="hljs-comment">#!/usr/bin/env python3</span><br><span class="hljs-comment"># -*- coding:utf-8 -*-</span><br>import pymysql<br><span class="hljs-keyword">from</span> DBUtils.PooledDB import PooledDB， SharedDBConnection<br><span class="hljs-built_in"></span><br><span class="hljs-built_in">POOL </span>= PooledDB(<br>    <span class="hljs-attribute">creator</span>=pymysql，<br>    <span class="hljs-attribute">host</span>=self.host，<br>    <span class="hljs-attribute">port</span>=self.port，<br>    <span class="hljs-attribute">user</span>=self.user，<br>    <span class="hljs-attribute">password</span>=self.password，<br>    <span class="hljs-attribute">db</span>=self.db，<br>    <span class="hljs-attribute">charset</span>=<span class="hljs-string">&quot;utf8&quot;</span>，<br>    <span class="hljs-attribute">mincached</span>=2，<br>    <span class="hljs-attribute">maxcached</span>=20，<br>    <span class="hljs-attribute">maxconnections</span>=0，<br>    <span class="hljs-attribute">blocking</span>=<span class="hljs-literal">True</span><br>)<br><br>def query():<br>    try:<br>        conn = POOL.connection()<br>        <br>        # 必须先调用begin来开启一个事务<br>        conn.begin()<br>        with conn.cursor() as cursor:<br>            cursor.execute(sql, values)<br>            res = cursor.fetchall()<br>        <br>        # 这里commit之后才会真正提交给数据库<br>        conn.commit()<br>        conn.close()<br>    except Exception as e:<br>    	conn.rollback()<br>        raise Exception(<span class="hljs-string">&quot;连接或执行失败: &quot;</span> + str(e))<br>    finally:<br>        cursor.close()<br>        conn.close()<br></code></pre></td></tr></table></figure>
+<p>NOTE: 对于不再使用的连接，调用close()方法回收到连接池。</p>
+<p>NOTE: <strong>需要在连接上调用begin()方法明确开启事务</strong>。这可以确保：a.只在事务完成时才重新打开连接；b.连接被同一个线程重用时回滚；c.连接不会被其他线程共享</p>
+<h3 id="4-3-遇到的问题"><a href="#4-3-遇到的问题" class="headerlink" title="4.3 遇到的问题"></a>4.3 遇到的问题</h3><ol>
+<li>正常情况下，mysql的设置的timeout是8个小时(28800秒)，也就是说，如果一个连接8个小时都没有操作，那么mysql会主动的断开连接，当这个连接再次尝试查询的时候就会报个”<code>2013, &#39;Lost connection to MySQL server during query&#39;</code>错误”</li>
+</ol>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs awk">解决办法:<br>https:<span class="hljs-regexp">//</span>www.yangyanxing.com<span class="hljs-regexp">/article/</span>connect_short_problem.html<br><br><span class="hljs-number">1</span>. 解决的方法有两种，既然这里的超时是由于在规定时间内没有任何操作导致mysql主动的将链接关闭，pymysql的connection对象有一个ping()方法，可以检查连接是否有效，在每次执行查询操作之前先执行一下ping()方法,该方法默认的有个reconnect参数，默认是True，如果失去连接了会重连。<br><br><span class="hljs-number">2</span>. 还有一种方法是使用连接池，连接池中保持着指定数量的可用连接，每次重新获取一个有效的连接进行查询操作,pymysql本身不具有连接池功能，需要借住DBUtils<br></code></pre></td></tr></table></figure>
+<ol>
+<li>很多使用DBUtils.PooledDB模块建立连接池，使用cursor()来建立多线程连接，在执行SQL查询的时候会报错：<strong>2014， “Commands out of sync; you can’t run this command now”</strong></li>
+</ol>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs awk">究其原因是：<br><span class="hljs-number">1</span>、查询结果未释放，然又执行查询；<br><span class="hljs-number">2</span>、两次查询之间没有存储结果应该重复使用connection()，而不是cursor()；<br><br>更多请参考官网：https:<span class="hljs-regexp">//</span>cito.github.io<span class="hljs-regexp">/DBUtils/</span>UsersGuide.html。 <br></code></pre></td></tr></table></figure>
+<h3 id="4-4-思维导图总结"><a href="#4-4-思维导图总结" class="headerlink" title="4.4 思维导图总结"></a>4.4 思维导图总结</h3><p><img src="https://upload-images.jianshu.io/upload_images/2887744-ec0ce39f74b53f83.png?imageMogr2/auto-orient/strip|imageView2/2/w/1024/format/webp" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>模式一</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/2887744-167d70d5325c6a5c.png?imageMogr2/auto-orient/strip|imageView2/2/w/1052/format/webp" srcset="/img/loading.gif" lazyload alt="img"></p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>DBUtils-数据库连接池：<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/f94bc9ce0842">https://www.jianshu.com/p/f94bc9ce0842</a></p>
+<p>数据库连接池DBUtils使用  <a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1578187">https://cloud.tencent.com/developer/article/1578187</a></p>
+<p>Python DBUtils 连接池对象 (PooledDB)   <a target="_blank" rel="noopener" href="https://my.oschina.net/u/4357988/blog/3347902">https://my.oschina.net/u/4357988/blog/3347902</a></p>
+<p>《python DbUtils 使用教程》<a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1568031">https://cloud.tencent.com/developer/article/1568031</a></p>
+<p>《python数据库连接工具DBUtils》<a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000017952033">https://segmentfault.com/a/1190000017952033</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.pythonf.cn/read/56464">https://www.pythonf.cn/read/56464</a></p>
+<p>一个简单易懂的博客<a target="_blank" rel="noopener" href="https://www.cnblogs.com/zhuminghui/p/10930846.html">https://www.cnblogs.com/zhuminghui/p/10930846.html</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E6%95%99%E7%A8%8B/">#教程</a>
+      
+        <a href="/tags/%E6%8A%80%E6%9C%AF/">#技术</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Python操作数据库</div>
+      <div>http://example.com/2020/06/19/2020-06-19-Python数据库如何连接/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>NSX</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2020年6月19日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/07/03/2020-07-03-NLP%E6%95%B0%E6%8D%AE%E5%A2%9E%E5%BC%BA%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/" title="NLP数据增强方法总结">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">NLP数据增强方法总结</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/06/19/2020-06-19-Python%20%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/" title="Python 最佳实践">
+                        <span class="hidden-mobile">Python 最佳实践</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

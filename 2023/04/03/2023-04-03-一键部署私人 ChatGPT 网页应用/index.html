@@ -1,0 +1,767 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Ning Shixian">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="开源项目我试用了这两个 ChatGPT Web 端都可以一键发布到 Vercel，在 Cloudflare 上配置好域名，都不需要翻墙来使用，方便搭建分享给身边不方便上网的朋友们使用。 ChatGPT Next Web (9.4K star) 在 1 分钟内使用 Vercel 免费一键部署 精心设计的 UI，响应式设计，支持深色模式 极快的首屏加载速度（~85kb） 海量的内置 prompt 列表">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一键部署私人 ChatGPT 网页应用">
+<meta property="og:url" content="http://example.com/2023/04/03/2023-04-03-%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2%E7%A7%81%E4%BA%BA%20ChatGPT%20%E7%BD%91%E9%A1%B5%E5%BA%94%E7%94%A8/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="开源项目我试用了这两个 ChatGPT Web 端都可以一键发布到 Vercel，在 Cloudflare 上配置好域名，都不需要翻墙来使用，方便搭建分享给身边不方便上网的朋友们使用。 ChatGPT Next Web (9.4K star) 在 1 分钟内使用 Vercel 免费一键部署 精心设计的 UI，响应式设计，支持深色模式 极快的首屏加载速度（~85kb） 海量的内置 prompt 列表">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2023/04/03/2023-04-03-%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2%E7%A7%81%E4%BA%BA%20ChatGPT%20%E7%BD%91%E9%A1%B5%E5%BA%94%E7%94%A8/1680488791128-d5cb63e1-8f69-4070-a811-47ab10450686.png">
+<meta property="og:image" content="http://example.com/2023/04/03/2023-04-03-%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2%E7%A7%81%E4%BA%BA%20ChatGPT%20%E7%BD%91%E9%A1%B5%E5%BA%94%E7%94%A8/1680489066235-d4ecb09c-f8ea-4525-996e-0a421b9302cf.png">
+<meta property="og:image" content="http://example.com/2023/04/03/2023-04-03-%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2%E7%A7%81%E4%BA%BA%20ChatGPT%20%E7%BD%91%E9%A1%B5%E5%BA%94%E7%94%A8/1680492617401-ddc54b77-c16f-43d5-898f-d79a56865984.png">
+<meta property="og:image" content="http://example.com/2023/04/03/2023-04-03-%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2%E7%A7%81%E4%BA%BA%20ChatGPT%20%E7%BD%91%E9%A1%B5%E5%BA%94%E7%94%A8/1680492617418-b41172c4-573e-4c86-a93b-5d805e5b0369.png">
+<meta property="og:image" content="http://example.com/2023/04/03/2023-04-03-%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2%E7%A7%81%E4%BA%BA%20ChatGPT%20%E7%BD%91%E9%A1%B5%E5%BA%94%E7%94%A8/1680492617392-d9221dc9-4778-4b34-a116-581e0073d64f.png">
+<meta property="og:image" content="http://example.com/2023/04/03/2023-04-03-%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2%E7%A7%81%E4%BA%BA%20ChatGPT%20%E7%BD%91%E9%A1%B5%E5%BA%94%E7%94%A8/1680492616670-2c28963a-5aa3-4a02-9c84-65486750a491.png">
+<meta property="og:image" content="http://example.com/2023/04/03/2023-04-03-%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2%E7%A7%81%E4%BA%BA%20ChatGPT%20%E7%BD%91%E9%A1%B5%E5%BA%94%E7%94%A8/1680492617321-9c644c5a-0fa5-4f79-95c0-c49cf215b396.png">
+<meta property="og:image" content="http://example.com/2023/04/03/2023-04-03-%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2%E7%A7%81%E4%BA%BA%20ChatGPT%20%E7%BD%91%E9%A1%B5%E5%BA%94%E7%94%A8/1680492617868-94f03fd7-989a-47f3-9fcc-8aadefc0d0c4.png">
+<meta property="og:image" content="http://example.com/2023/04/03/2023-04-03-%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2%E7%A7%81%E4%BA%BA%20ChatGPT%20%E7%BD%91%E9%A1%B5%E5%BA%94%E7%94%A8/1680492619992-8cf59e14-2fe6-43dc-b40b-016f9507b628.png">
+<meta property="og:image" content="http://example.com/2023/04/03/2023-04-03-%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2%E7%A7%81%E4%BA%BA%20ChatGPT%20%E7%BD%91%E9%A1%B5%E5%BA%94%E7%94%A8/1680492619973-617f22b3-d8f9-4d87-95f8-2a24f5993e32.png">
+<meta property="og:image" content="http://example.com/2023/04/03/2023-04-03-%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2%E7%A7%81%E4%BA%BA%20ChatGPT%20%E7%BD%91%E9%A1%B5%E5%BA%94%E7%94%A8/1680492619949-d77a4b54-82ba-458a-85e2-9dadb40a2121.png">
+<meta property="og:image" content="http://example.com/2023/04/03/2023-04-03-%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2%E7%A7%81%E4%BA%BA%20ChatGPT%20%E7%BD%91%E9%A1%B5%E5%BA%94%E7%94%A8/1680492620020-7ad1e627-39c4-4181-b331-cf7bedf43223.png">
+<meta property="og:image" content="http://example.com/2023/04/03/2023-04-03-%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2%E7%A7%81%E4%BA%BA%20ChatGPT%20%E7%BD%91%E9%A1%B5%E5%BA%94%E7%94%A8/1680492620168-7ce06520-5948-4c86-8490-dad84ebfa359.png">
+<meta property="og:image" content="http://example.com/2023/04/03/2023-04-03-%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2%E7%A7%81%E4%BA%BA%20ChatGPT%20%E7%BD%91%E9%A1%B5%E5%BA%94%E7%94%A8/1680492621225-2e855386-11fa-4de1-98e4-244506b19ad3.png">
+<meta property="og:image" content="http://example.com/2023/04/03/2023-04-03-%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2%E7%A7%81%E4%BA%BA%20ChatGPT%20%E7%BD%91%E9%A1%B5%E5%BA%94%E7%94%A8/1680492621469-6e74d7f2-68fb-4500-97a7-bf28aba053a1.png">
+<meta property="og:image" content="http://example.com/2023/04/03/2023-04-03-%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2%E7%A7%81%E4%BA%BA%20ChatGPT%20%E7%BD%91%E9%A1%B5%E5%BA%94%E7%94%A8/1680492621872-3b800f7e-61c4-4dd9-bcaa-966d2502108b.png">
+<meta property="og:image" content="http://example.com/2023/04/03/2023-04-03-%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2%E7%A7%81%E4%BA%BA%20ChatGPT%20%E7%BD%91%E9%A1%B5%E5%BA%94%E7%94%A8/1680492621914-45d5b128-6117-44fc-9d46-dfc65e8b02a1.png">
+<meta property="article:published_time" content="2023-04-03T02:25:20.000Z">
+<meta property="article:modified_time" content="2023-04-24T14:07:06.389Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="ChatGPT 私人部署">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2023/04/03/2023-04-03-%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2%E7%A7%81%E4%BA%BA%20ChatGPT%20%E7%BD%91%E9%A1%B5%E5%BA%94%E7%94%A8/1680488791128-d5cb63e1-8f69-4070-a811-47ab10450686.png">
+  
+  
+  
+  <title>一键部署私人 ChatGPT 网页应用 - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="一键部署私人 ChatGPT 网页应用"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-04-03 10:25" pubdate>
+          2023年4月3日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          19 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">一键部署私人 ChatGPT 网页应用</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="开源项目"><a href="#开源项目" class="headerlink" title="开源项目"></a>开源项目</h1><p>我试用了这两个 ChatGPT Web 端都可以一键发布到 Vercel，在 Cloudflare 上配置好域名，都不需要翻墙来使用，方便搭建分享给身边不方便上网的朋友们使用。</p>
+<h2 id="ChatGPT-Next-Web-9-4K-star"><a href="#ChatGPT-Next-Web-9-4K-star" class="headerlink" title="ChatGPT Next Web (9.4K star)"></a><a target="_blank" rel="noopener" href="https://github.com/Yidadaa/ChatGPT-Next-Web">ChatGPT Next Web</a> (9.4K star)</h2><ul>
+<li>在 1 分钟内使用 Vercel <strong>免费一键部署</strong></li>
+<li>精心设计的 UI，响应式设计，支持深色模式</li>
+<li>极快的首屏加载速度（~85kb）</li>
+<li>海量的内置 prompt 列表，来自<a target="_blank" rel="noopener" href="https://github.com/PlexPt/awesome-chatgpt-prompts-zh">中文</a>和<a target="_blank" rel="noopener" href="https://github.com/f/awesome-chatgpt-prompts">英文</a></li>
+<li>自动压缩上下文聊天记录，在节省 Token 的同时支持超长对话</li>
+<li>一键导出聊天记录，完整的 Markdown 支持</li>
+<li>拥有自己的域名？好上加好，绑定后即可在任何地方<strong>无障碍</strong>快速访问</li>
+</ul>
+<img src="/2023/04/03/2023-04-03-%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2%E7%A7%81%E4%BA%BA%20ChatGPT%20%E7%BD%91%E9%A1%B5%E5%BA%94%E7%94%A8/1680488791128-d5cb63e1-8f69-4070-a811-47ab10450686.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<h2 id="chatgpt-vercel-1-8K-star"><a href="#chatgpt-vercel-1-8K-star" class="headerlink" title="chatgpt-vercel (1.8K star)"></a><a target="_blank" rel="noopener" href="https://github.com/ourongxing/chatgpt-vercel">chatgpt-vercel</a> (1.8K star)</h2><ul>
+<li>基于 <a target="_blank" rel="noopener" href="https://github.com/ddiu8081/chatgpt-demo">chatgpt-demo</a> 开发</li>
+<li>修改 .env 文件中的 api_key 即可；</li>
+</ul>
+<img src="/2023/04/03/2023-04-03-%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2%E7%A7%81%E4%BA%BA%20ChatGPT%20%E7%BD%91%E9%A1%B5%E5%BA%94%E7%94%A8/1680489066235-d4ecb09c-f8ea-4525-996e-0a421b9302cf.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<hr>
+<h1 id="Vercel应用绑定自己的域名"><a href="#Vercel应用绑定自己的域名" class="headerlink" title="Vercel应用绑定自己的域名"></a>Vercel应用绑定自己的域名</h1><blockquote>
+<p><a target="_blank" rel="noopener" href="https://tangly1024.com/article/vercel-domain">https://tangly1024.com/article/vercel-domain</a></p>
+</blockquote>
+<h2 id="准备一个域名"><a href="#准备一个域名" class="headerlink" title="准备一个域名"></a>准备一个域名</h2><p>首先购买自己的域名，您可以选择以下渠道进行购买：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.namesilo.com/">Namesilo</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.godaddy.com/zh-sg/offers/godaddy">Godaddy</a></li>
+</ul>
+<p>另外您还可以选择从以下平台获取到免费的域名：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://freenom.com/">Freenom</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/538005306">eu.org</a></li>
+</ul>
+<p>eu.org是欧盟组织的免费域名；需要英国的用户信息才能注册;</p>
+<h3 id="首推Namesilo"><a href="#首推Namesilo" class="headerlink" title="首推Namesilo"></a>首推Namesilo</h3><p>我早先在腾讯云购买的域名，但奈何无耻的价格套路，最后选择迁入<a target="_blank" rel="noopener" href="https://www.namesilo.com/">Namesilo</a>。</p>
+<ul>
+<li><strong>价格便宜稳定，无套路</strong></li>
+</ul>
+<p>Namesilo 域名本身价格就比较便宜，COM 域名 $8.99/年，除了一个一美元优惠码，基本没有其他大幅度促销活动，域名续费和首年购买价格一致。<br>套路指那些首年极其便宜，但次年续费很贵的。如 Godaddy，首年 $0.99，次年续费要 102 元人民币，而且隐私保护还需要额外再加 60 元。</p>
+<p>Namesilo 价格表：<a href="https://link.zhihu.com/?target=https%3A//www.namesilo.com/pricing.php%3Frid%3Dd27fa32do">Domain Pricing</a></p>
+<blockquote>
+<p>💡填入我的优惠码 <strong>tangly1024 </strong>可以享受 1$的 优惠。</p>
+<img src="/2023/04/03/2023-04-03-%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2%E7%A7%81%E4%BA%BA%20ChatGPT%20%E7%BD%91%E9%A1%B5%E5%BA%94%E7%94%A8/1680492617401-ddc54b77-c16f-43d5-898f-d79a56865984.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+</blockquote>
+<ul>
+<li><strong>永久免费的隐私保护</strong></li>
+</ul>
+<p>Namesilo 提供永久免费的域名隐私保护，防止别人通过 WHOIS 查询获取域名所有者的个人注册信息。作为对比，Godaddy 的隐私保护是 60 元/年，Namecheap 是免费提供第一年。</p>
+<ul>
+<li><strong>安全性高</strong></li>
+</ul>
+<p>支持账户登陆二次验证和 Domain Defender，保护账户和域名安全。登陆、解锁域名等，都可以设置邮件或短信提醒。</p>
+<ul>
+<li><strong>支付方便</strong></li>
+</ul>
+<p>支持支付宝、Paypal、信用卡等多种方式付款。</p>
+<h2 id="Vercel控制台配置"><a href="#Vercel控制台配置" class="headerlink" title="Vercel控制台配置"></a>Vercel控制台配置</h2><ul>
+<li>在Vercel控制面板中找到Setting→Domains→Add，输入域名</li>
+</ul>
+<img src="/2023/04/03/2023-04-03-%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2%E7%A7%81%E4%BA%BA%20ChatGPT%20%E7%BD%91%E9%A1%B5%E5%BA%94%E7%94%A8/1680492617418-b41172c4-573e-4c86-a93b-5d805e5b0369.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<ul>
+<li>Add之后，如果看到下图中的提示（Invalid Configuration）👇,说明要是这个域名解析生效，需要在你的域名商管理后台配置对应的Cname解析。</li>
+</ul>
+<img src="/2023/04/03/2023-04-03-%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2%E7%A7%81%E4%BA%BA%20ChatGPT%20%E7%BD%91%E9%A1%B5%E5%BA%94%E7%94%A8/1680492617392-d9221dc9-4778-4b34-a116-581e0073d64f.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<h2 id="配置CNAME域名解析（CloudFlare）"><a href="#配置CNAME域名解析（CloudFlare）" class="headerlink" title="配置CNAME域名解析（CloudFlare）"></a>配置CNAME域名解析（CloudFlare）</h2><p>以下分多个平台举例，点击展开：</p>
+<p>CloudFlare (首选推荐)CF具有Worker.js、全球无限CDN流量、网站防火墙、DDoS等特性，我个人比较喜欢将域名解析交给CloudFlare管理 。</p>
+<p>这里主要用CF举例，打开CloudFlare打开域名控制台 <a target="_blank" rel="noopener" href="https://dash.cloudflare.com/">https://dash.cloudflare.com</a></p>
+<ul>
+<li><strong>如果你的域名没有绑定过任何一条A记录，则添加一条域名A记录指向Vercel服务器地址76.76.21.21</strong></li>
+</ul>
+<img src="/2023/04/03/2023-04-03-%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2%E7%A7%81%E4%BA%BA%20ChatGPT%20%E7%BD%91%E9%A1%B5%E5%BA%94%E7%94%A8/1680492616670-2c28963a-5aa3-4a02-9c84-65486750a491.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<ul>
+<li>根据需要添加你的一条CNAME记录，值指向Vercel的CNAME服务器：cname-china.vercel-dns.com ;（例如我这里用的是二级域名 <a target="_blank" rel="noopener" href="http://hexo.tangly1024.com/">hexo.tangly1024.com</a> ）</li>
+</ul>
+<img src="/2023/04/03/2023-04-03-%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2%E7%A7%81%E4%BA%BA%20ChatGPT%20%E7%BD%91%E9%A1%B5%E5%BA%94%E7%94%A8/1680492617321-9c644c5a-0fa5-4f79-95c0-c49cf215b396.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<img src="/2023/04/03/2023-04-03-%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2%E7%A7%81%E4%BA%BA%20ChatGPT%20%E7%BD%91%E9%A1%B5%E5%BA%94%E7%94%A8/1680492617868-94f03fd7-989a-47f3-9fcc-8aadefc0d0c4.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<ul>
+<li>这里需要在ssl/tls配配置开启https加密</li>
+</ul>
+<img src="/2023/04/03/2023-04-03-%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2%E7%A7%81%E4%BA%BA%20ChatGPT%20%E7%BD%91%E9%A1%B5%E5%BA%94%E7%94%A8/1680492619992-8cf59e14-2fe6-43dc-b40b-016f9507b628.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>腾讯云托管域名<a target="_blank" rel="noopener" href="https://console.dnspod.cn/dns/list">https://console.dnspod.cn/dns/list</a> 点击域名进行配置，添加一条CNAME 转发</p>
+<img src="/2023/04/03/2023-04-03-%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2%E7%A7%81%E4%BA%BA%20ChatGPT%20%E7%BD%91%E9%A1%B5%E5%BA%94%E7%94%A8/1680492619973-617f22b3-d8f9-4d87-95f8-2a24f5993e32.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<img src="/2023/04/03/2023-04-03-%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2%E7%A7%81%E4%BA%BA%20ChatGPT%20%E7%BD%91%E9%A1%B5%E5%BA%94%E7%94%A8/1680492619949-d77a4b54-82ba-458a-85e2-9dadb40a2121.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>阿里云托管域名打开控制台 <a target="_blank" rel="noopener" href="https://dc.console.aliyun.com/#/domain-list/all">https://dc.console.aliyun.com/#/domain-list/all</a> 域名列表，点击域名，并添加一条cname转发</p>
+<img src="/2023/04/03/2023-04-03-%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2%E7%A7%81%E4%BA%BA%20ChatGPT%20%E7%BD%91%E9%A1%B5%E5%BA%94%E7%94%A8/1680492620020-7ad1e627-39c4-4181-b331-cf7bedf43223.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>Freenom 购买的域名建议将域名的Nameservers 托管给 CloudFlare，然后在CloudFlare中设置</p>
+<img src="/2023/04/03/2023-04-03-%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2%E7%A7%81%E4%BA%BA%20ChatGPT%20%E7%BD%91%E9%A1%B5%E5%BA%94%E7%94%A8/1680492620168-7ce06520-5948-4c86-8490-dad84ebfa359.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<h2 id="完成"><a href="#完成" class="headerlink" title="完成"></a>完成</h2><p>如果域名服务配置正常，Vercel的卡片会变成如图的样子：<br><img src="/2023/04/03/2023-04-03-%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2%E7%A7%81%E4%BA%BA%20ChatGPT%20%E7%BD%91%E9%A1%B5%E5%BA%94%E7%94%A8/1680492621225-2e855386-11fa-4de1-98e4-244506b19ad3.png" srcset="/img/loading.gif" lazyload class="" title="image.png"></p>
+<blockquote>
+<p>接下来就可以通过设置的域名（如 <a target="_blank" rel="noopener" href="https://hexo.tangly1024.com/">https://hexo.tangly1024.com</a> ）访问我们的网站了</p>
+</blockquote>
+<h2 id="关于根域名的配置"><a href="#关于根域名的配置" class="headerlink" title="关于根域名的配置"></a>关于根域名的配置</h2><p>以上举例使用的是二级域名，如果你想像我一样使用 <a target="_blank" rel="noopener" href="https://tangly1024.com/">https://tangly1024.com</a> 这样的根域名，配置参考如下：</p>
+<h3 id="Vercel后台"><a href="#Vercel后台" class="headerlink" title="Vercel后台"></a>Vercel后台</h3><p>直接添加根域名后，vercel会提示需要添加一条@记录指向vercel的服务器 76.76.21.21</p>
+<img src="/2023/04/03/2023-04-03-%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2%E7%A7%81%E4%BA%BA%20ChatGPT%20%E7%BD%91%E9%A1%B5%E5%BA%94%E7%94%A8/1680492621469-6e74d7f2-68fb-4500-97a7-bf28aba053a1.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<h3 id="域名管理后台"><a href="#域名管理后台" class="headerlink" title="域名管理后台"></a>域名管理后台</h3><p>直接将根域名 解析到 vercel的服务器地址即可 ： 76.76.21.21</p>
+<img src="/2023/04/03/2023-04-03-%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2%E7%A7%81%E4%BA%BA%20ChatGPT%20%E7%BD%91%E9%A1%B5%E5%BA%94%E7%94%A8/1680492621872-3b800f7e-61c4-4dd9-bcaa-966d2502108b.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<h3 id="完成效果"><a href="#完成效果" class="headerlink" title="完成效果"></a>完成效果</h3><img src="/2023/04/03/2023-04-03-%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2%E7%A7%81%E4%BA%BA%20ChatGPT%20%E7%BD%91%E9%A1%B5%E5%BA%94%E7%94%A8/1680492621914-45d5b128-6117-44fc-9d46-dfc65e8b02a1.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<h2 id="Vercel域名在国内被墙"><a href="#Vercel域名在国内被墙" class="headerlink" title="Vercel域名在国内被墙"></a>Vercel域名在国内被墙</h2><p>vercel.app因为被大量使用，自然而然被墙掉了，不过好在 Vercel 官方提供了单独的 IP 和 CNAME 地址给大家，对于国内的用户来说，配置一下单独的解析，依然可以享受 Vercel 提供的服务。</p>
+<p>将上述步骤中用到的 ip和 cname地址替换成以下内容即可：</p>
+<ul>
+<li>A记录地址：76.223.126.88 或 76.76.21.98 等</li>
+<li>CNAME 记录地址：cname-china.vercel-dns.com</li>
+</ul>
+<h3 id="扩展阅读-A记录和CNAME的区别"><a href="#扩展阅读-A记录和CNAME的区别" class="headerlink" title="扩展阅读 A记录和CNAME的区别"></a>扩展阅读 A记录和CNAME的区别</h3><p>A记录就是把一个域名解析到一个IP地址（Address，特指数字IP地址）；</p>
+<p>CNAME记录就是把域名解析到另外一个域名。</p>
+<p>其功能差不多，CNAME将几个主机名指向一个别名，其实跟指向IP地址是一样的，因为这个别名也要做一个A记录的。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/ChatGPT/" class="category-chain-item">ChatGPT</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/ChatGPT-%E7%A7%81%E4%BA%BA%E9%83%A8%E7%BD%B2/">#ChatGPT 私人部署</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>一键部署私人 ChatGPT 网页应用</div>
+      <div>http://example.com/2023/04/03/2023-04-03-一键部署私人 ChatGPT 网页应用/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Ning Shixian</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年4月3日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/04/06/2023-04-06-%E5%9F%BA%E4%BA%8E%E7%9F%A5%E8%AF%86%E5%BA%93+ChatGPT%E6%90%AD%E5%BB%BA%E9%97%AE%E7%AD%94%E6%9C%BA%E5%99%A8%E4%BA%BA/" title="基于知识库+ChatGPT搭建问答机器人">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">基于知识库+ChatGPT搭建问答机器人</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/03/21/%F0%9F%87%A8%F0%9F%87%B3%E4%B8%AD%E6%96%87NLP%E5%B8%B8%E7%94%A8%E5%BC%80%E6%BA%90%E5%BA%93%E6%95%B4%E7%90%86/" title="🇨🇳中文NLP常用开源库整理">
+                        <span class="hidden-mobile">🇨🇳中文NLP常用开源库整理</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

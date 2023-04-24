@@ -1,0 +1,811 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Ning Shixian">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="基础知识介绍 指令学习（Instruct Learning）：Instruct是激发语言模型的理解能力，它通过给出更明显的指令，让模型去做出正确的行动。比如“判断这句话的情感：带女朋友去了一家餐厅，她吃的很开心。选项：A&#x3D;好，B&#x3D;一般，C&#x3D;差”。Instruction Finetuning 经过多任务精调后，也能够在其他任务上做zero-shot！！ 提示学习（Prompt Learning）：P">
+<meta property="og:type" content="article">
+<meta property="og:title" content="大白话 ChatGPT 及大模型">
+<meta property="og:url" content="http://example.com/2023/04/21/2023-04-21-%E5%A4%A7%E7%99%BD%E8%AF%9D%20ChatGPT%20%E5%8F%8A%E5%A4%A7%E6%A8%A1%E5%9E%8B/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="基础知识介绍 指令学习（Instruct Learning）：Instruct是激发语言模型的理解能力，它通过给出更明显的指令，让模型去做出正确的行动。比如“判断这句话的情感：带女朋友去了一家餐厅，她吃的很开心。选项：A&#x3D;好，B&#x3D;一般，C&#x3D;差”。Instruction Finetuning 经过多任务精调后，也能够在其他任务上做zero-shot！！ 提示学习（Prompt Learning）：P">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2023/04/21/2023-04-21-%E5%A4%A7%E7%99%BD%E8%AF%9D%20ChatGPT%20%E5%8F%8A%E5%A4%A7%E6%A8%A1%E5%9E%8B/1673576390621-9ef1e60c-725d-442a-b068-c7b199e77df6.jpeg">
+<meta property="og:image" content="http://example.com/2023/04/21/2023-04-21-%E5%A4%A7%E7%99%BD%E8%AF%9D%20ChatGPT%20%E5%8F%8A%E5%A4%A7%E6%A8%A1%E5%9E%8B/1682065361784-afe190e2-cedd-410d-869e-4e8b3a3dee56.png">
+<meta property="og:image" content="http://example.com/2023/04/21/2023-04-21-%E5%A4%A7%E7%99%BD%E8%AF%9D%20ChatGPT%20%E5%8F%8A%E5%A4%A7%E6%A8%A1%E5%9E%8B/1682066197164-6b7294e7-6f0d-430c-b252-bdcee26c479c.png">
+<meta property="og:image" content="http://example.com/2023/04/21/2023-04-21-%E5%A4%A7%E7%99%BD%E8%AF%9D%20ChatGPT%20%E5%8F%8A%E5%A4%A7%E6%A8%A1%E5%9E%8B/1675751265148-3c7f0b42-cd5e-4f94-b0d0-6fc124fe1265.png">
+<meta property="og:image" content="http://example.com/2023/04/21/2023-04-21-%E5%A4%A7%E7%99%BD%E8%AF%9D%20ChatGPT%20%E5%8F%8A%E5%A4%A7%E6%A8%A1%E5%9E%8B/1679302969913-09de361f-4d92-4fc6-bc27-32ea226a0f6c.png">
+<meta property="og:image" content="http://example.com/2023/04/21/2023-04-21-%E5%A4%A7%E7%99%BD%E8%AF%9D%20ChatGPT%20%E5%8F%8A%E5%A4%A7%E6%A8%A1%E5%9E%8B/1679287654270-36317103-d54c-4a4c-a04e-86d85fc39f17-20230424222049583.png">
+<meta property="og:image" content="http://example.com/2023/04/21/2023-04-21-%E5%A4%A7%E7%99%BD%E8%AF%9D%20ChatGPT%20%E5%8F%8A%E5%A4%A7%E6%A8%A1%E5%9E%8B/1678697434094-6be50ddd-cf86-465a-92a9-8fe0b7e987b0.png">
+<meta property="og:image" content="http://example.com/2023/04/21/2023-04-21-%E5%A4%A7%E7%99%BD%E8%AF%9D%20ChatGPT%20%E5%8F%8A%E5%A4%A7%E6%A8%A1%E5%9E%8B/1676520360806-99aca1fb-3e78-4c47-9627-6fe75385f886.png">
+<meta property="og:image" content="http://example.com/2023/04/21/2023-04-21-%E5%A4%A7%E7%99%BD%E8%AF%9D%20ChatGPT%20%E5%8F%8A%E5%A4%A7%E6%A8%A1%E5%9E%8B/1679481256881-cf7d4942-21cb-4304-a5b6-70878ac513dc.png">
+<meta property="og:image" content="http://example.com/2023/04/21/2023-04-21-%E5%A4%A7%E7%99%BD%E8%AF%9D%20ChatGPT%20%E5%8F%8A%E5%A4%A7%E6%A8%A1%E5%9E%8B/1678722972193-bc7f626f-3aad-4dd3-a082-472bbe0b792b.png">
+<meta property="article:published_time" content="2023-04-21T08:50:20.000Z">
+<meta property="article:modified_time" content="2023-04-24T14:22:33.643Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="原创">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2023/04/21/2023-04-21-%E5%A4%A7%E7%99%BD%E8%AF%9D%20ChatGPT%20%E5%8F%8A%E5%A4%A7%E6%A8%A1%E5%9E%8B/1673576390621-9ef1e60c-725d-442a-b068-c7b199e77df6.jpeg">
+  
+  
+  
+  <title>大白话 ChatGPT 及大模型 - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="大白话 ChatGPT 及大模型"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-04-21 16:50" pubdate>
+          2023年4月21日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          8.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          68 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">大白话 ChatGPT 及大模型</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="基础知识介绍"><a href="#基础知识介绍" class="headerlink" title="基础知识介绍"></a>基础知识介绍</h2><ol>
+<li><strong>指令学习（</strong><a target="_blank" rel="noopener" href="https://www.yuque.com/ningshixian/pz10h0/nwnib06bpxikneg9"><strong>Instruct Learning</strong></a><strong>）：</strong>Instruct是激发语言模型的理解能力，它通过给出更明显的指令，让模型去做出正确的行动。比如“判断这句话的情感：带女朋友去了一家餐厅，她吃的很开心。选项：A=好，B=一般，C=差”。Instruction Finetuning 经过多任务精调后，也能够在其他任务上做zero-shot！！</li>
+<li><strong>提示学习（</strong><a target="_blank" rel="noopener" href="https://www.yuque.com/ningshixian/pz10h0/nwnib06bpxikneg9"><strong>Prompt Learning</strong></a><strong>）：</strong>Prompt是激发语言模型的补全能力，例如根据上半句生成下半句，或是完形填空等。<strong>Prompting 都是针对一个任务的</strong>，比如做个情感分析任务的prompt tuning，精调完的模型只能用于情感分析任务。</li>
+<li><a target="_blank" rel="noopener" href="https://huggingface.co/blog/rlhf?continueFlag=cbeef78ac33939a46add3f56bc58a83b">Illustrating Reinforcement Learning from Human Feedback (RLHF)</a><strong>：</strong>RL 是通过奖励（Reward）机制来指导模型训练，而 RLHF 利用人工反馈训一个Reward Model，并将这个模型作为强化学习的奖励，代替人类去指导大模型进行微调。通过不断地反馈和调整，将模型和人类偏好进行对齐。<br>微调：采用的是 RL 经典算法 <a target="_blank" rel="noopener" href="https://www.yuque.com/ningshixian/pz10h0/uegpsbdxnxm4zmsl">PPO（Proximal Policy Optimization）</a>：它是OpenAI提出的一个针对策略梯度算法进行改进的算法，可以在多个训练步骤实现小批量的更新，解决了Policy Gradient算法中步长难以确定的问题。</li>
+</ol>
+<img src="/2023/04/21/2023-04-21-%E5%A4%A7%E7%99%BD%E8%AF%9D%20ChatGPT%20%E5%8F%8A%E5%A4%A7%E6%A8%A1%E5%9E%8B/1673576390621-9ef1e60c-725d-442a-b068-c7b199e77df6.jpeg" srcset="/img/loading.gif" lazyload class="">
+<p>图3：人工反馈的强化学习的基本原理</p>
+<h2 id="ChatGPT的本质"><a href="#ChatGPT的本质" class="headerlink" title="ChatGPT的本质"></a>ChatGPT的本质</h2><p>ChatGPT（或者更准确地说，它所基于的GPT-3）实际上是在做什么呢？请记住，它的总体目标是基于其从训练中看到的东西（其中包括查看了来自网络等数十亿个页面的文本），“合理地”续写文本。因此，在任何给定的时刻，它都有一定量的文本，并且其目标是为下一个token pick一个适当的选择。</p>
+<img src="/2023/04/21/2023-04-21-%E5%A4%A7%E7%99%BD%E8%AF%9D%20ChatGPT%20%E5%8F%8A%E5%A4%A7%E6%A8%A1%E5%9E%8B/1682065361784-afe190e2-cedd-410d-869e-4e8b3a3dee56.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>原理总结：</p>
+<ul>
+<li>ChatGPT的实质功能是单字接龙</li>
+<li>长文由单字接龙的自回归所生成</li>
+<li>通过提前训练才能让它生成人们想要的问答</li>
+<li>训练方式是让它按照问答范例来做单字接龙</li>
+<li>这样训练是为了让它学会「能举一反三的规律」</li>
+<li>缺点是可能混淆记忆，无法直接查看和更新所学，且高度依赖学习材料。</li>
+</ul>
+<h2 id="ChatGPT的三个训练过程"><a href="#ChatGPT的三个训练过程" class="headerlink" title="ChatGPT的三个训练过程"></a>ChatGPT的三个训练过程</h2><img src="/2023/04/21/2023-04-21-%E5%A4%A7%E7%99%BD%E8%AF%9D%20ChatGPT%20%E5%8F%8A%E5%A4%A7%E6%A8%A1%E5%9E%8B/1682066197164-6b7294e7-6f0d-430c-b252-bdcee26c479c.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>ChatGPT 这个模型建立在 GPT3.5 版本之上，使用基于人工反馈的强化学习 RLHF 进行对齐。ChatGPT的训练过程分为如下几步：</p>
+<ol>
+<li><strong>用监督数据基于GPT3.5训练一个对话模型SFT，训练数据是标注人员手把手写出来的</strong></li>
+<li><strong>人工标注对模型生成的多个结果排序，训练一个给对话回复打分的模型（RM）</strong></li>
+<li><strong>由RM提供reward，利用强化学习的手段（PPO）来训练之前微调过的SFT。</strong></li>
+</ol>
+<p><strong>阶段2与阶段3其实是递交进行的。</strong></p>
+<img src="/2023/04/21/2023-04-21-%E5%A4%A7%E7%99%BD%E8%AF%9D%20ChatGPT%20%E5%8F%8A%E5%A4%A7%E6%A8%A1%E5%9E%8B/1675751265148-3c7f0b42-cd5e-4f94-b0d0-6fc124fe1265.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<h3 id="数据集采集"><a href="#数据集采集" class="headerlink" title="数据集采集"></a>数据集采集</h3><p>如上图所示，InstructGPT/ChatGPT的训练分成3步，每一步需要的数据也有些许差异，下面我们分别介绍它们。</p>
+<p><strong>① SFT数据集</strong></p>
+<p>SFT数据集是用来训练第1步有监督的模型，即使用采集的新数据，按照GPT-3的训练方式对GPT-3进行微调。因为GPT-3是一个基于提示学习的生成模型，因此SFT数据集也是由提示-答复对组成的样本。SFT数据一部分来自使用OpenAI的PlayGround的用户，另一部分来自OpenAI雇佣的40名标注工（labeler）。并且他们对labeler进行了培训。在这个数据集中，标注工的工作是根据内容自己编写指示，并且要求编写的指示满足下面三点：</p>
+<ul>
+<li><strong>简单任务</strong>：labeler给出任意一个简单的任务，同时要确保任务的多样性；</li>
+<li><strong>Few-shot任务</strong>：labeler给出一个指示，以及该指示的多个查询-相应对；</li>
+<li><strong>用户相关的</strong>：从接口中获取用例，然后让labeler根据这些用例编写指示。</li>
+</ul>
+<p><strong>② RM数据集</strong></p>
+<p>RM数据集用来训练第2步的奖励模型，我们也需要为InstructGPT/ChatGPT的训练设置一个奖励目标。这个奖励目标不必可导，但是一定要尽可能全面且真实的对齐我们需要模型生成的内容。很自然的，我们可以通过人工标注的方式来提供这个奖励，通过人工对可以给那些涉及偏见的生成内容更低的分从而鼓励模型不去生成这些人类不喜欢的内容。</p>
+<p>具体而言，随机抽样一批用户提交的prompt(大部分和第一阶段的相同)，使用第一阶段Fine-tune好的冷启动模型，针对每个 prompt 生成K个不同的回答（$4≤K≤9$），于是模型产生出了<prompt,answer1>,<prompt,answer2>….<prompt,answerK>数据。之后，标注人员对K个结果按照很多标准综合考虑进行排序，给出K个结果的排名顺序，这就是此阶段人工标注的数据。</p>
+<p><strong>③ PPO数据集</strong></p>
+<p>InstructGPT的PPO数据没有进行标注，它均来自GPT-3的API的用户。既又不同用户提供的不同种类的生成任务，其中占比最高的包括生成任务（45.6%），QA（12.4%），头脑风暴（11.2%），对话（8.4%）等。</p>
+<h3 id="ChatGPT训练-一阶段"><a href="#ChatGPT训练-一阶段" class="headerlink" title="ChatGPT训练: 一阶段"></a>ChatGPT训练: 一阶段</h3><p><strong>第一阶段：冷启动阶段的监督策略模型</strong> SFT</p>
+<blockquote>
+<p>The “pre-training on a general task + fine-tuning on a specific task” strategy is called <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Transfer_learning">transfer learning</a>.<br>Most state-of-the-art large language models also go through an additional <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2203.02155">instruction fine-tuning</a> step after being pre-trained. In this step, the model is shown thousands of prompt + completion pairs that were <strong>human labeled</strong>. Why? While language modeling on Wikipedia pages makes the model good at continuing sentences, but it doesn’t make it particularly good at following instructions, or having a conversation, or summarizing a document (all the things we would like a GPT to do). Fine-tuning them on human labelled instruction + completion pairs is a way to teach the model how it can be more useful, and make them easier to interact with.</p>
+</blockquote>
+<p>尽管 GPT 3.5本身很强，但是它很难理解人类不同类型指令中蕴含的不同意图，也很难判断生成内容是否是高质量的结果。为了让GPT 3.5初步具备理解指令中蕴含的意图，首先会从测试用户提交的 prompt (就是指令或问题)中随机抽取一批，交由专业的标注人员，给出高质量答案，然后用这些人工标注好的<prompt,answer>数据来<strong>微调 GPT 3.5 模型</strong>（获得SFT模型, Supervised Fine-Tuning）。</p>
+<img src="/2023/04/21/2023-04-21-%E5%A4%A7%E7%99%BD%E8%AF%9D%20ChatGPT%20%E5%8F%8A%E5%A4%A7%E6%A8%A1%E5%9E%8B/1679302969913-09de361f-4d92-4fc6-bc27-32ea226a0f6c.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>经过这个过程，我们可以认为GPT 3.5初步具备了理解人类prompt中所包含意图，并根据这个意图给出相对高质量回答的能力，但不一定符合人类偏好，并且通常会出现不一致问题。为解决该问题，ChatGPT 的做法是让人工标注者对 SFT 模型的不同输出进行排序，构建一个<strong>排序数据集</strong>，训练奖励模型 RM，并让训好的 RM 来对 SFT 进行打分，通过RLHF来调整 SFT。</p>
+<h3 id="ChatGPT训练-二阶段"><a href="#ChatGPT训练-二阶段" class="headerlink" title="ChatGPT训练: 二阶段"></a>ChatGPT训练: 二阶段</h3><p><strong>第二阶段：训练回报模型 RM（Reward Model）</strong></p>
+<p>这一步的目标是从数据中学习人类的偏好，目的是为 SFT 输出进行打分。它的工作过程为：</p>
+<ul>
+<li>给定 prompt，SFT 为每个 prompt 生成多个输出（4~9 个）</li>
+<li>标注者对这些输出进行排序，得到一个新的<strong>RM排序数据集；</strong></li>
+<li>基于此数据集，训练Reward Model。简单做法是，利用大模型做一个回归任务，即在模型的输出层[CLS]位置添加一个MLP，最后得到的数值即为Reward Model给出的分数。</li>
+</ul>
+<img src="/2023/04/21/2023-04-21-%E5%A4%A7%E7%99%BD%E8%AF%9D%20ChatGPT%20%E5%8F%8A%E5%A4%A7%E6%A8%A1%E5%9E%8B/1679287654270-36317103-d54c-4a4c-a04e-86d85fc39f17-20230424222049583.png" srcset="/img/loading.gif" lazyload class="" title="未命名绘图.drawio.png">
+<p>**回归任务该如何训练呢？</p>
+<p>如下图所示，在训练Reward Model的时候采用 pair-wise learning to rank，即针对同一个上文，利用一阶段训好的 SFT 输出$K=4$个回复结果，这4个回复之间两两组合可以形成$C_4^2=6$个数据对 pair，优化目标为：每对之中 与上文关系大的分数 高于与上文关系小的。</p>
+<img src="/2023/04/21/2023-04-21-%E5%A4%A7%E7%99%BD%E8%AF%9D%20ChatGPT%20%E5%8F%8A%E5%A4%A7%E6%A8%A1%E5%9E%8B/1678697434094-6be50ddd-cf86-465a-92a9-8fe0b7e987b0.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p><strong>Reward Model </strong>的损失函数为 pairwise loss：</p>
+<img src="/2023/04/21/2023-04-21-%E5%A4%A7%E7%99%BD%E8%AF%9D%20ChatGPT%20%E5%8F%8A%E5%A4%A7%E6%A8%A1%E5%9E%8B/1676520360806-99aca1fb-3e78-4c47-9627-6fe75385f886.png" srcset="/img/loading.gif" lazyload class="">
+<p>其中$r_θ(x,y)$是奖励值，$y_i$是排名相对靠前的结果，$y_j$是排名相对靠后的结果。这个损失函数的目标是最大化好的回复结果和不好的回复结果之间的差值。</p>
+<p><strong>归纳下：在这个阶段里，首先由冷启动后的监督策略模型 SFT 为每个prompt产生K个结果，人工根据结果质量由高到低排序，以此作为训练数据，通过pair-wise learning to rank模式来训练回报模型。对于学好的RM模型来说，输入<prompt,answer>，输出结果的质量得分，得分越高说明产生的回答质量越高。</strong></p>
+<h3 id="chatGPT训练-三阶段"><a href="#chatGPT训练-三阶段" class="headerlink" title="chatGPT训练: 三阶段"></a>chatGPT训练: 三阶段</h3><blockquote>
+<p><a target="_blank" rel="noopener" href="https://huggingface.co/blog">图解人工反馈强化学习(RLHF) - Hugging Face</a></p>
+</blockquote>
+<p><strong>第三阶段：采用 PPO 强化学习，来增强PLM的能力。</strong></p>
+<p>本阶段无需人工标注数据，而是利用第二阶段训练好的奖励模型，靠奖励打分来更新预训练模型参数，将此微调任务表述为 RL 问题。</p>
+<p>在这一步中，首先随机抽取一批新的 prompt，PPO 模型由SFT模型初始化，价值函数由 RM 模型初始化。期望对 prompt 做出响应。对于给定的 promot和响应，它会产生相应的回报（由 RM模型决定），SFT 模型会对每个 token 添加KL惩罚因子，以尽量避免 RM 模型的过度优化。</p>
+<img src="/2023/04/21/2023-04-21-%E5%A4%A7%E7%99%BD%E8%AF%9D%20ChatGPT%20%E5%8F%8A%E5%A4%A7%E6%A8%A1%E5%9E%8B/1679481256881-cf7d4942-21cb-4304-a5b6-70878ac513dc.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<ol>
+<li><p>First, the policy is a language model that takes in a prompt and returns a sequence of text (or just probability distributions over text). The action space of this policy is all the tokens corresponding to the vocabulary of the language model (often on the order of 50k tokens) and the observation space is the distribution of possible input token sequences. The reward function is a combination of the preference model and a constraint on policy shift. </p>
+<p>首先，Policy Model 就是语言模型（即一阶段<strong>冷启动后的监督策略模型 SFT</strong>），它接收一个提示并返回一个文本序列（或者只是文本的概率分布）。该策略的动作空间是所有对应于语言模型词汇表的 tokens（通常在50k个tokens左右），观察空间是可能的输入token序列的分布。奖励函数是偏好模型（上一阶段训练好的RM模型）和策略转移约束的组合。</p>
+</li>
+<li><p>The reward function is where the system combines all of the models we have discussed into one RLHF process. Given a prompt, $x$,  from the dataset, two texts, $y1, y2$, are generated – one from the initial language model and one from the current iteration of the fine-tuned policy. The text from the current policy is passed to the preference model, which returns a scalar notion of “preferability”, $r_\theta$ . This text is compared to the text from the initial model to compute a penalty on the difference between them. In multiple papers from OpenAI, Anthropic, and DeepMind, this penalty has been designed as a scaled version of the Kullback–Leibler (KL) divergence between these sequences of distributions over tokens, $r_\text{KL}$. The KL divergence term penalizes the RL policy from moving substantially away from the initial pretrained model with each training batch, which can be useful to make sure the model outputs reasonably coherent text snippets. Without this penalty the optimization can start to generate text that is gibberish but fools the reward model to give a high reward. In practice, the KL divergence is approximated via sampling from both distributions (explained by John Schulman here). The final reward sent to the RL update rule is $r = r_\theta - \lambda r_\text{KL}$</p>
+<p>奖励函数是系统将上述讨论过的所有模型合并为一个RLHF过程的地方。给定数据集中的提示$x$，生成两个文本$y1$和$y2$，一个来自固定参数不微调的初始语言模型 (initial SFT)，另一个来自参数可调的策略模型 (fine-tuned policy SFT)。①当前策略模型的输出文本会输入给偏好模型，得到一个标量的回报“preferability”$r_\theta$。②将这个文本与初始模型的文本进行比较，计算它们之间差异的惩罚。在OpenAI、Anthropic和DeepMind的多篇论文中，这个惩罚被设计为这些tokens分布序列之间的Kullback-Leibler（KL）散度的缩放版本$r_\text{KL}$。在每个 batch，KL散度项会惩罚RL策略，当其向远离初始预训练模型移动，这对于确保模型输出合理的连贯文本片段非常有用。如果没有这个惩罚，优化可能会开始生成无意义的文本，但欺骗奖励模型给出高奖励。在实践中，KL散度是通过从两个分布中进行采样来近似的，至此RL更新规则的最终奖励是$r=r_\theta-\lambda r_\text{KL}$</p>
+</li>
+<li><p>Some RLHF systems have added additional terms to the reward function. For example, OpenAI experimented successfully on InstructGPT by mixing in additional pre-training gradients (from the human annotation set) into the update rule for PPO. It is likely as RLHF is further investigated, the formulation of this reward function will continue to evolve.</p>
+<p>一些RLHF系统在奖励函数中添加了一些额外的项。例如，OpenAI在InstructGPT上成功地进行了实验，将额外的预训练梯度混合到PPO的更新规则中。随着对RLHF系统的进一步研究，这个奖励函数的构建很可能会不断演变。</p>
+</li>
+</ol>
+<p>补充：只用PPO模型进行训练的话，会导致模型在通用NLP任务上性能的大幅下降，OpenAI的解决方案是在训练目标中加入了通用的语言模型目标 $γE_x∼D_{pretrain} [log⁡(π_ϕ^{RL}(x))]$，这个变量在论文中被叫做PPO-ptx。</p>
+<ol>
+<li><p>Finally, the update rule is the parameter update from PPO that maximizes the reward metrics in the current batch of data (PPO is on-policy, which means the parameters are only updated with the current batch of prompt-generation pairs). PPO is a trust region optimization algorithm that uses constraints on the gradient to ensure the update step does not destabilize the learning process. DeepMind used a similar reward setup for Gopher but used synchronous advantage actor-critic (A2C) to optimize the gradients, which is notably different but has not been reproduced externally.</p>
+<p>最后，更新规则是从当前数据批次中最大化奖励值的PPO参数更新（PPO是在线策略，这意味着参数只能通过当前的’提示-生成’对进行更新）。PPO是一种信任区域优化算法，它使用梯度约束来确保更新步骤不会破坏学习过程。DeepMind在Gopher中使用了类似的奖励设置，但使用同步 advantage actor-critic (A2C) 来优化梯度，这明显不同，但尚未在外部得到复制。</p>
+</li>
+</ol>
+<img src="/2023/04/21/2023-04-21-%E5%A4%A7%E7%99%BD%E8%AF%9D%20ChatGPT%20%E5%8F%8A%E5%A4%A7%E6%A8%A1%E5%9E%8B/1678722972193-bc7f626f-3aad-4dd3-a082-472bbe0b792b.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>Optionally, RLHF can continue from this point by iteratively updating the reward model and the policy together. As the RL policy updates, users can continue ranking these outputs versus the model’s earlier versions. </p>
+<p>如果我们不断重复第二和第三阶段，通过<strong>迭代</strong>，会训练出更高质量的ChatGPT模型。</p>
+<blockquote>
+<p>PPO 算法的详细介绍请移步 <a target="_blank" rel="noopener" href="https://www.yuque.com/ningshixian/pz10h0/uegpsbdxnxm4zmsl?view=doc_embed">PPO：Proximal Policy Optimization</a></p>
+</blockquote>
+<h2 id="ps-为什么是RLHF？"><a href="#ps-为什么是RLHF？" class="headerlink" title="ps:为什么是RLHF？"></a>ps:为什么是RLHF？</h2><p>这里我们举一个具体的场景，当我们想要训练一个能够对话的机器人时，</p>
+<ul>
+<li>强化学习（RL）的reward 需要人来衡量机器人每句对话的好坏（reward），但这显然非常折磨人。</li>
+<li>模仿学习（IL）不需要人类对机器人的对话做评价，而是机器人反过来模仿人类的对话方式。具体来说，可以从网上或者其它渠道收集大量历史对话数据来训练一个奖赏模型（RM），但是带来了如何收集高质量数据训练RM的问题（如医疗对话等场景）</li>
+<li>而 RLHF 并不提供直接的监督信号。但通过学习简单的排序，RM可以学到人类的偏好。那怎么去理解这里的“偏好”呢？打个比方，有一家冰箱工厂生产了好几种类型的冰箱，虽然这些客户中没有一个懂得如何造冰箱的（或者说他们不需要懂），但他们可以通过消费行为，让厂商明白消费者对冰箱类型的“偏好”，从而引导冰箱厂商生产销量更好的冰箱。</li>
+</ul>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/V0BTumv8Ax5ToMn8V2DdAA">张俊林：ChatGPT会成为下一代搜索引擎吗</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/cMoR-9tkBvp2eudgcj4LPg">全网唯一，不忽悠的ChatGPT</a></li>
+<li>视频：《【渐构】万字科普GPT4为何会颠覆现有工作流；为何你要关注微软Copilot、文心一言等大模型》，适合零基础小白 <a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1MY4y1R7EN/">www.bilibili.com</a></li>
+<li>视频：《手把手从头实现GPT by Andrej Karpathy》，适合有基本编程概念的初学者 <a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1E14y1M75n/">www.bilibili.com</a></li>
+<li>课程：《李宏毅2023春机器学习课程》，适合有简单线代和编程基础、想要系统学习Machine Learning的用户 <a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1TD4y137mP/">www.bilibili.com</a></li>
+</ol>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/ChatGPT/" class="category-chain-item">ChatGPT</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%8E%9F%E5%88%9B/">#原创</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>大白话 ChatGPT 及大模型</div>
+      <div>http://example.com/2023/04/21/2023-04-21-大白话 ChatGPT 及大模型/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Ning Shixian</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年4月21日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/04/23/2023-04-23-GitHub%20Pages%20+%20Hexo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E7%BD%91%E7%AB%99/" title="GitHub Pages + Hexo搭建个人博客网站">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">GitHub Pages + Hexo搭建个人博客网站</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/04/18/2023-04-18-LangChain%20%E5%AE%9E%E6%88%98/" title="LangChain 实战">
+                        <span class="hidden-mobile">LangChain 实战</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

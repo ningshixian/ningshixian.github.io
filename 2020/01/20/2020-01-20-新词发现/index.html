@@ -1,0 +1,696 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="NSX">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="新词发现新词发现是 NLP 的基础任务之一，通过对已有语料进行挖掘，从中识别出新词。它主要是希望通过无监督发掘一些语言特征（主要是统计特征），来判断一批语料中哪些字符片段可能是一个新词。“新词发现”是一个比较通俗的叫法，更准确的叫法应该是“无监督构建词库”，因为原则上它能完整地构建一个词库出来，而不仅仅是“新词”。当然，你可以将它跟常用词库进行对比，删掉常见词，就可以得到新词了。 特定领域的专有名">
+<meta property="og:type" content="article">
+<meta property="og:title" content="新词发现">
+<meta property="og:url" content="http://example.com/2020/01/20/2020-01-20-%E6%96%B0%E8%AF%8D%E5%8F%91%E7%8E%B0/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="新词发现新词发现是 NLP 的基础任务之一，通过对已有语料进行挖掘，从中识别出新词。它主要是希望通过无监督发掘一些语言特征（主要是统计特征），来判断一批语料中哪些字符片段可能是一个新词。“新词发现”是一个比较通俗的叫法，更准确的叫法应该是“无监督构建词库”，因为原则上它能完整地构建一个词库出来，而不仅仅是“新词”。当然，你可以将它跟常用词库进行对比，删掉常见词，就可以得到新词了。 特定领域的专有名">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-01-19T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-23T10:28:32.043Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="教程">
+<meta property="article:tag" content="技术">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>新词发现 - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="PyHanLP&amp;kenlm&amp;HarvestText领域自适应文本挖掘工具"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2020-01-20 00:00" pubdate>
+          2020年1月20日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.8k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          32 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">PyHanLP&amp;kenlm&amp;HarvestText领域自适应文本挖掘工具</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="新词发现"><a href="#新词发现" class="headerlink" title="新词发现"></a>新词发现</h2><p>新词发现是 NLP 的基础任务之一，通过对已有语料进行挖掘，从中识别出新词。它主要是希望通过无监督发掘一些语言特征（主要是统计特征），来判断一批语料中哪些字符片段可能是一个新词。“新词发现”是一个比较通俗的叫法，更准确的叫法应该是“无监督构建词库”，因为原则上它能完整地构建一个词库出来，而不仅仅是“新词”。当然，你可以将它跟常用词库进行对比，删掉常见词，就可以得到新词了。</p>
+<p>特定领域的专有名词也可归属于新词的范畴。何出此言呢？通常我们会很容易找到通用领域的词表，但要找到某个具体领域的专有名词则非常困难，因此特定领域的专有名词相对于通用领域的词语即为新词。换言之，“新”并非只是时间上的概念，同样可以迁移到领域或空间上。因此，新词发现不仅可以挖掘随时间变化而产生的新词，也可以<strong>挖掘不同领域的专有名词</strong>。</p>
+<span id="more"></span>
+<h3 id="新词发现的方法"><a href="#新词发现的方法" class="headerlink" title="新词发现的方法"></a>新词发现的方法</h3><p>目前主要有基于规则和基于统计两种方法：</p>
+<ul>
+<li>基于规则的方法：根据新词的构词特征或外型特征建立规则库、专业词库或模式库，然后通过规则匹配发现新词。</li>
+<li>基于统计的方法<ul>
+<li>有监督：有监督方法利用标注语料，将新词发现看作分类或者序列标注问题。</li>
+<li>无监督：不依赖于任何已有的词库、分词工具和标注语料，仅仅根据词的共同特征，利用统计策略将一段大规模语料中可能成词的文本片段全部提取出来，然后再利用语言知识排除不是新词语的“无用片段”或者计算相关度，寻找相关度最大的字与字的组合。最后，把所有抽取得到的词和已有的词库进行比较，就能得到新词</li>
+</ul>
+</li>
+</ul>
+<h3 id="项目开源地址"><a href="#项目开源地址" class="headerlink" title="项目开源地址"></a>项目开源地址</h3><p>✨ <a target="_blank" rel="noopener" href="https://github.com/bojone/word-discovery">https://github.com/bojone/word-discovery</a></p>
+<p>✨ <a href="[https://github.com/hankcs/HanLP/wiki/%E6%96%B0%E8%AF%8D%E8%AF%86%E5%88%AB](https://github.com/hankcs/HanLP/wiki/新词识别">PyHanLP 新词识别</a>)</p>
+<p>✨ <a target="_blank" rel="noopener" href="https://github.com/blmoistawinde/HarvestText">HarvestText: 领域自适应文本挖掘工具（新词发现、情感分析、实体链接等）√</a></p>
+<h3 id="语言模型简介"><a href="#语言模型简介" class="headerlink" title="语言模型简介"></a>语言模型简介</h3><p><strong>语言模型</strong>是计算条件概率</p>
+<script type="math/tex; mode=display">
+p(wn|w1,w2,…,wn−1)p(wn|w1,w2,…,wn−1)</script><p>的模型，其中$w_1,w_2,…,w_{n−1}$是句子中的前$n−1$个词（或字），$w_n$是第$n$个词（或字）。语言模型在很多方面都有应用，比如说分词、语音识别、机器翻译等。为了得到语言模型，有很多方法，比如说最简单的是“统计+平滑”的方法，还有最大熵语言模型、CRF语言模型等，而当前深度学习框架下研究得很多的是“神经网络语言模型”，它的大概思路是：==$p(w_n|w_1,w_2,…,w_{n−1})$是关于$w1,w2,…,wn$的一个函数，这个函数的具体形式我不知道，所以利用神经网络去拟合它，为了更好地拟合，并且减少模型参数，还把词语“嵌入”到实数空间中，用短向量来表示词语，跟语言模型一起训练。从这个角度看，词向量只是语言模型的副产品。==</p>
+<p>语言模型生成的词向量能够较好地表示语义，这是很有趣的，却也是在情理之中。什么是语义？对人类来说，语义是一种推理和理解的过程，而我们的语言模型，就是从前$n−1$个字推测下一个字，这也是一个推理的过程。既然包含了推理成分在里边，就有可能捕捉到语义了。</p>
+<h2 id="详细的算法"><a href="#详细的算法" class="headerlink" title="详细的算法"></a>详细的算法</h2><p>完整的算法步骤如下：</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs vim">第一步，统计：选取某个固定的<span class="hljs-keyword">nn</span>，统计<span class="hljs-number">2</span>grams、<span class="hljs-number">3</span>grams、…、ngrams，计算它们的内部凝固度，只保留高于某个阈值的片段，构成一个集合GG；这一步，可以为<span class="hljs-number">2</span>grams、<span class="hljs-number">3</span>grams、…、ngrams设置不同的阈值，不一定要相同，因为字数越大，一般来说统计就越不充分，越有可能偏高，所以字数越大，阈值要越高；<br><br>第二步，切分：用上述grams对语料进行切分（粗糙的分词），并统计频率。切分的规则是，只有一个片段出现在前一步得到的集合GG中，这个片段就不切分，比如“各项目”，只要“各项”和“项目”都在GG中，这时候就算“各项目”不在GG中，那么“各项目”还是不切分，保留下来；<br><br>第三步，回溯：经过第二步，“各项目”会被切出来（因为第二步保证宁放过，不切错）。回溯就是检查，如果它是一个小于等于<span class="hljs-keyword">nn</span>字的词，那么检测它在不在GG中，不在就出局；如果它是一个大于<span class="hljs-keyword">nn</span>字的词，那个检测它每个<span class="hljs-keyword">nn</span>字片段是不是在GG中，只要有一个片段不在，就出局。还是以“各项目”为例，回溯就是看看，“各项目”在不在<span class="hljs-number">3</span>gram中，不在的话，就得出局。<br></code></pre></td></tr></table></figure>
+<p>每一步的补充说明：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs">1、较高的凝固度，但综合考虑多字，是为了更准，比如两字的“共和”不会出现在高凝固度集合中，所以会切开（比如“我一共和三个人去玩”，“共和”就切开了），但三字“共和国”出现在高凝固度集合中，所以“中华人民共和国”的“共和”不会切开；<br><br>2、第二步就是根据第一步筛选出来的集合，对句子进行切分（你可以理解为粗糙的分词），然后把“粗糙的分词结果”做统计，注意现在是统计分词结果，跟第一步的凝固度集合筛选没有交集，我们认为虽然这样的分词比较粗糙，但高频的部分还是靠谱的，所以筛选出高频部分；<br><br>3、第三步，例如因为“各项”和“项目”都出现高凝固度的片段中，所以第二步我们也不会把“各项目”切开，但我们不希望“各项目”成词，因为“各”跟“项目”的凝固度不高（“各”跟“项”的凝固度高，不代表“各”跟“项目”的凝固度高），所以通过回溯，把“各项目”移除（只需要看一下“各项目”在不在原来统计的高凝固度集合中即可，所以这步计算量是很小的）<br></code></pre></td></tr></table></figure>
+<h2 id="细节"><a href="#细节" class="headerlink" title="细节"></a>细节</h2><ol>
+<li><p>Linux环境CentOS系统 kenlm 的自行编译</p>
+<p><code>kenlm</code> 是一个C++编写的语言模型工具，具有速度快、占用内存小的特点，也提供了Python接口。使用了语言模型工具<a target="_blank" rel="noopener" href="https://github.com/kpu/kenlm/">kenlm</a>的 <code>count_ngrams</code> 程序来统计ngram。</p>
+<p>首先，安装必要的包：</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs mipsasm">sudo yum <span class="hljs-keyword">install </span><span class="hljs-keyword">boost</span><br><span class="hljs-keyword"></span>sudo yum <span class="hljs-keyword">install </span><span class="hljs-keyword">boost-devel</span><br><span class="hljs-keyword"></span>sudo yum <span class="hljs-keyword">install </span>libboost-program-options-dev<br>sudo yum <span class="hljs-keyword">install </span>zlib<br>sudo yum <span class="hljs-keyword">install </span>zlib-devel<br>sudo yum <span class="hljs-keyword">install </span>libbz2-dev<br>sudo yum <span class="hljs-keyword">install </span>lzma-devel<br>sudo yum <span class="hljs-keyword">install </span><span class="hljs-keyword">eigen3</span><br><span class="hljs-keyword"></span>sudo yum <span class="hljs-keyword">install </span>xz-devel<br>sudo yum <span class="hljs-keyword">install </span><span class="hljs-keyword">bzip2-devel</span><br></code></pre></td></tr></table></figure>
+<p>然后下载&amp;解压 kenlm.tar.gz工具包</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs awk">wget -O - https:<span class="hljs-regexp">//</span>kheafield.com<span class="hljs-regexp">/code/</span>kenlm.tar.gz |tar xz<br></code></pre></td></tr></table></figure>
+<p>进入子目录进行编译（有用的脚本在<code>build/bin</code>之中）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">mkdir</span> -p kenlm/build<br><span class="hljs-built_in">cd</span> kenlm/build<br>cmake ..<br>make -j 4<br></code></pre></td></tr></table></figure>
+<p>python库的安装方式：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs awk">pip install https:<span class="hljs-regexp">//gi</span>thub.com<span class="hljs-regexp">/kpu/</span>kenlm<span class="hljs-regexp">/archive/m</span>aster.zip<br></code></pre></td></tr></table></figure>
+<p>==把生成的 build/bin/count_ngrams 放到跟 word_discovery.py 同一目录下==</p>
+<p>测试是否可运行：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs stylus">./count_ngrams -o <span class="hljs-number">4</span> <span class="hljs-attr">--memory</span>=<span class="hljs-number">50%</span> <span class="hljs-attr">--write_vocab_list</span> thucnews<span class="hljs-selector-class">.chars</span> &lt;thucnews<span class="hljs-selector-class">.corpus</span> &gt;thucnews.ngrams<br></code></pre></td></tr></table></figure>
+</li>
+</ol>
+<ul>
+<li><p>kenlm 的简单使用</p>
+<p>训练一个==4-gram==的语言模型（训练的文本分好词（用空格隔开，如果你是做基于字的模型，就把模型的每个字用空格隔开））：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs awk">python p.py|.<span class="hljs-regexp">/kenlm/</span>bin/lmplz -o <span class="hljs-number">4</span> &gt; weixin.arpa<br><span class="hljs-comment"># 压缩模型为二进制，方便模型快速加载：</span><br>.<span class="hljs-regexp">/kenlm/</span>bin/build_binary weixin.arpa weixin.klm<br></code></pre></td></tr></table></figure>
+<p>简单使用：</p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs asciidoc">import kenlm<br><br>model = kenlm.Model(<span class="hljs-emphasis">&#x27;weixin.klm&#x27;</span>)<br>model.score(<span class="hljs-emphasis">&#x27;微 信&#x27;</span>, bos=False, eos=False)<br>&#x27;&#x27;&#x27;<br>score函数输出的是对数概率，即log10(p(<span class="hljs-emphasis">&#x27;微 信&#x27;</span>))，其中字符串可以是gbk，也可以是utf-8<br>bos=False, eos=False意思是不自动添加句首和句末标记符<br>&#x27;&#x27;&#x27;<br></code></pre></td></tr></table></figure>
+</li>
+</ul>
+<ol>
+<li>在第二次遍历词库以得到候选词的时候，使用了<code>Trie</code> 树结构来加速搜索字符串是否出现过某个ngram。Trie树或者其变种基本上是所有基于词典的分词工具的标配，就是因为它可以加快搜索字符串中是否出现过词典中的词。</li>
+</ol>
+<h3 id="代码讲解"><a href="#代码讲解" class="headerlink" title="代码讲解"></a>代码讲解</h3><ul>
+<li>逐句地把原始语料给yield出来</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">text_generator</span>():<br></code></pre></td></tr></table></figure>
+<ul>
+<li>参数配置</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs python">min_count = <span class="hljs-number">32</span><br>order = <span class="hljs-number">4</span><br></code></pre></td></tr></table></figure>
+<p>顺便提一下，因为是无监督训练，语料一般都是越大越好，几百M到几个G都可以，==但其实如果你只要几M的语料（比如一部小说），也可以直接测试，也能看到基本的效果（但可能要修改下面的参数）==</p>
+<ul>
+<li>用结巴分词加载这个得到的词库（不用它自带的词库，并且关闭新词发现功能），这就构成了一个基于无监督词库的分词工具</li>
+</ul>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43378396/article/details/103848628">新词发现</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/mattzheng/py-kenlm-model">Linux环境 kenlm 的自行编译</a></p>
+<p><a target="_blank" rel="noopener" href="https://spaces.ac.cn/archives/6920">重新写了之前的新词发现算法：更快更好的新词发现</a></p>
+<p><a target="_blank" rel="noopener" href="https://spaces.ac.cn/archives/3956">《【中文分词系列】 5. 基于语言模型的无监督分词》</a></p>
+<p><a target="_blank" rel="noopener" href="https://spaces.ac.cn/archives/4256">《【中文分词系列】 8. 更好的新词发现算法》</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/mingzai624/article/details/79560063">使用kenlm工具训练统计语言模型</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E6%95%99%E7%A8%8B/">#教程</a>
+      
+        <a href="/tags/%E6%8A%80%E6%9C%AF/">#技术</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>新词发现</div>
+      <div>http://example.com/2020/01/20/2020-01-20-新词发现/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>NSX</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2020年1月20日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/03/09/2020-03-09-linux%E7%A8%8B%E5%BA%8F%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E6%8C%81%E7%BB%AD%E5%A2%9E%E9%95%BFkilled/" title="linux程序内存占用持续增长killed">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">linux程序内存占用持续增长killed</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2019/12/30/2019-12-30-NL2SQL/" title="NL2SQL">
+                        <span class="hidden-mobile">NL2SQL</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,675 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Ning Shixian">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="LlamaIndex 原理介绍 llamaindex 原理介绍  LlamaIndex（GPT Index）是一个对话式文档问答解决方案，可以针对特定语料进行文档检索，通过索引文件把外部语料数据和GPT连接起来。它主要帮我们做了如下几件事：文档拆分、向量化、向量存储检索、基于文档对话等。 现在ChatGPT的API是无状态的，意味着你需要自己去维持会话状态，保存上下文，每次请求的时候将之前的历史消">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LlamaIndex 实战">
+<meta property="og:url" content="http://example.com/2023/04/14/2023-04-14-LlamaIndex%20%E5%AE%9E%E6%88%98/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="LlamaIndex 原理介绍 llamaindex 原理介绍  LlamaIndex（GPT Index）是一个对话式文档问答解决方案，可以针对特定语料进行文档检索，通过索引文件把外部语料数据和GPT连接起来。它主要帮我们做了如下几件事：文档拆分、向量化、向量存储检索、基于文档对话等。 现在ChatGPT的API是无状态的，意味着你需要自己去维持会话状态，保存上下文，每次请求的时候将之前的历史消">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2023/04/14/2023-04-14-LlamaIndex%20%E5%AE%9E%E6%88%98/1681439363149-e0a690e6-7887-440d-94b3-ac27ad2950d7.png">
+<meta property="article:published_time" content="2023-04-14T02:24:20.000Z">
+<meta property="article:modified_time" content="2023-04-24T13:48:29.539Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="LlamaIndex">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2023/04/14/2023-04-14-LlamaIndex%20%E5%AE%9E%E6%88%98/1681439363149-e0a690e6-7887-440d-94b3-ac27ad2950d7.png">
+  
+  
+  
+  <title>LlamaIndex 实战 - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="LlamaIndex 实战"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-04-14 10:24" pubdate>
+          2023年4月14日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.5k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          46 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">LlamaIndex 实战</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h3 id="LlamaIndex-原理介绍"><a href="#LlamaIndex-原理介绍" class="headerlink" title="LlamaIndex 原理介绍"></a>LlamaIndex 原理介绍</h3><blockquote>
+<p><a target="_blank" rel="noopener" href="https://weibo.com/1727858283/MvEIhu6C2?type=repost&amp;sudaref=www.google.com.hk">llamaindex 原理介绍</a></p>
+</blockquote>
+<p>LlamaIndex（GPT Index）是一个对话式文档问答解决方案，可以针对特定语料进行文档检索，通过索引文件把外部语料数据和GPT连接起来。它主要帮我们做了如下几件事：<br>文档拆分、向量化、向量存储检索、基于文档对话等。</p>
+<p>现在ChatGPT的API是无状态的，意味着你需要自己去维持会话状态，保存上下文，每次请求的时候将之前的历史消息全部发过去，但是这里面有两个问题：1. 请求内容会越来越大；2. 费用很高。</p>
+<p>今天在Twitter上看到有人分享的一个很好的解决方案，可以借助OpenAI的embedding模型和自己的数据库，现在本地搜索数据获得上下文，然后在调用ChatGPT的API的时候，加上本地数据库中的相关内容，这样就可以让ChatGPT从你自己的数据集获得了上下文，再结合ChatGPT自己庞大的数据集给出一个更相关的理想结果。</p>
+<p>这种模式尤其适合针对一些特定著作、资料库的搜索和问答。我想之前有人做了模拟乔布斯风格的问答应该也是基于这种模式来做的。</p>
+<p>具体解释一下它的实现原理（参考图一）。</p>
+<ol>
+<li><p>首先准备好你要用来学习的文本资料，把它变成CSV或者Json这样易于处理的格式，并且分成小块（chunks），每块不要超过8191个Tokens，因为这是OpenAI embeddings模型的输入长度限制</p>
+</li>
+<li><p>然后用一个程序，分批调用OpenAI embedding的API，目前最新的模式是text-embedding-ada-002，将文本块变成文本向量。(参考图1从Script到OpenAI的步骤)</p>
+</li>
+</ol>
+<img src="/2023/04/14/2023-04-14-LlamaIndex%20%E5%AE%9E%E6%88%98/1681439363149-e0a690e6-7887-440d-94b3-ac27ad2950d7.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<ol>
+<li>需要将转换后的结果保存到本地数据库。注意一般的关系型数据库是不支持这种向量数据的，必须用特别的数据库，比如<strong>Pinecone</strong>数据库，比如Postgres数据库（需要 <strong>pgvector</strong> 扩展）。如果你数据不大，存成csv文件，然后加载到内存，借助内存搜索也是一样的。</li>
+</ol>
+<p>当然你保存的时候，需要把原始的文本块和数字向量一起存储，这样才能根据数字向量反向获得原始文本。这一步有点类似于全文索引中给数据建索引。(参考图一从Script到DB的步骤)</p>
+<ol>
+<li>等需要搜索的时候，先将你的搜索关键字，调用OpenAI embedding的API把关键字变成数字向量。</li>
+</ol>
+<p>(参考图一 Search App到OpenAI)</p>
+<p>拿到这个数字向量后，再去自己的数据库进行检索，那么就可以得到一个结果集，这个结果集会根据匹配的相似度有个打分，分越高说明越匹配，这样就可以按照匹配度倒序返回一个相关结果。</p>
+<p>(参考图一 Search App到DB的步骤)</p>
+<ol>
+<li>聊天问答的实现要稍微复杂一点</li>
+</ol>
+<p>当用户提问后，需要先根据提问内容去本地数据库中搜索到一个相关结果集。</p>
+<p>（参考图一中Chat App到Search App的步骤）</p>
+<p>然后根据拿到的结果集，将结果集加入到请求ChatGPT的prompt中。</p>
+<p>（参考图一中Chat App到OpenAI的步骤）</p>
+<p>比如说用户提了一个问题：“What’s the makers’s schedule?”，从数据库中检索到相关的文字段落是：“What I worked on…”和”Taste for Makers…”，那么最终的prompt看起来就像这样：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">[</span><br>  <span class="hljs-punctuation">&#123;</span><br>    role<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;system&quot;</span><span class="hljs-punctuation">,</span><br>    content<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;You are a helpful assistant that accurately answers queries using Paul Graham&#x27;s essays. Use the text provided to form your answer, but avoid copying word-for-word from the essays. Try to use your own words when possible. Keep your answer under 5 sentences. Be accurate, helpful, concise, and clear.&quot;</span><br>  <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-punctuation">&#123;</span><br>    role<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;user&quot;</span><span class="hljs-punctuation">,</span><br>    content<span class="hljs-punctuation">:</span> `Use the following passages to provide an answer<br>    to the query<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;What&#x27;s the makers&#x27;s schedule?&quot;</span><br>    <span class="hljs-number">1.</span> What I worked on...<br>    <span class="hljs-number">2.</span> Taste for Makers...`<br>  <span class="hljs-punctuation">&#125;</span><br><span class="hljs-punctuation">]</span><br></code></pre></td></tr></table></figure>
+<p>这样ChatGPT在返回结果的时候，就会加上你的数据集。</p>
+<blockquote>
+<p>项目地址：github.com/mckaywrigley/paul-graham-gpt<br>相关Twitter：twitter.com/mckaywrigley/status/1631328308116996097</p>
+</blockquote>
+<h3 id="LlamaIndex-实战"><a href="#LlamaIndex-实战" class="headerlink" title="LlamaIndex 实战"></a>LlamaIndex 实战</h3><blockquote>
+<p><a target="_blank" rel="noopener" href="https://gpt-index.readthedocs.io/en/latest/use_cases/queries.html">LlamaIndex (GPT Index)  官方教程</a><br><a target="_blank" rel="noopener" href="https://uxdesign.cc/i-built-an-ai-that-answers-questions-based-on-my-user-research-data-7207b052e21c">Build an AI that answers questions based on user research data.</a> 这是一篇利用自己的知识库做 QA 的博客教程，里面有作者的 Colab Notebook ，一眼就会，开箱即炼。</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/jerryjliu/gpt_index">LlamaIndex</a>（原来的名字是gpt_index）库已经把上述这套逻辑封装了，可以直接使用。下面给出一个基于llama-index实现文档问答的具体demo：</p>
+<h4 id="前期准备"><a href="#前期准备" class="headerlink" title="前期准备"></a>前期准备</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># pip3 install openai llama-index tiktoken</span><br><br><span class="hljs-keyword">import</span> os<br><span class="hljs-keyword">import</span> openai<br><br><span class="hljs-comment"># 设置 API key</span><br>os.environ[<span class="hljs-string">&quot;OPENAI_API_KEY&quot;</span>] = <span class="hljs-string">&quot;sk-xxx&quot;</span><br>openai.api_key = os.getenv(<span class="hljs-string">&quot;OPENAI_API_KEY&quot;</span>) <br><br><span class="hljs-keyword">import</span> logging <br><br><span class="hljs-comment"># 记录日志</span><br>logging.basicConfig(stream=sys.stdout, level=logging.INFO)<br>logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))<br></code></pre></td></tr></table></figure>
+<h4 id="核心类构建"><a href="#核心类构建" class="headerlink" title="核心类构建"></a>核心类构建</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain.chat_models <span class="hljs-keyword">import</span> ChatOpenAI<br><span class="hljs-keyword">from</span> langchain.embeddings <span class="hljs-keyword">import</span> OpenAIEmbeddings<br><span class="hljs-keyword">from</span> llama_index <span class="hljs-keyword">import</span> LangchainEmbedding<br><span class="hljs-keyword">from</span> llama_index <span class="hljs-keyword">import</span> (<br>    GPTSimpleVectorIndex,<br>    SimpleDirectoryReader, <br>    LLMPredictor,<br>    PromptHelper,<br>    ServiceContext,<br>)<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">LLma</span>:<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, gptmodel, embeddingmodel</span>) -&gt; <span class="hljs-literal">None</span>:<br>        <span class="hljs-comment"># set maximum input size</span><br>        max_input_size = <span class="hljs-number">4096</span><br>        <span class="hljs-comment"># set number of output tokens</span><br>        num_outputs = <span class="hljs-number">512</span><br>        <span class="hljs-comment"># set maximum chunk overlap</span><br>        max_chunk_overlap = <span class="hljs-number">20</span><br>        <span class="hljs-comment"># set chunk size limit</span><br>        chunk_size_limit = <span class="hljs-number">600</span> <br>        <br>        <span class="hljs-comment"># define LLM</span><br>        llm = ChatOpenAI(model_name=gptmodel, temperature=<span class="hljs-number">0.7</span>, max_tokens=num_outputs, request_timeout=<span class="hljs-number">10</span>, max_retries=<span class="hljs-number">2</span>)<br>        self.llm_predictor = LLMPredictor(llm=llm)<br>        self.prompt_helper = PromptHelper(max_input_size, num_outputs, max_chunk_overlap, chunk_size_limit=chunk_size_limit)<br>        <span class="hljs-comment"># 定制化 embedding</span><br>        embedding = OpenAIEmbeddings(<br>            document_model_name=embeddingmodel,<br>            query_model_name=embeddingmodel<br>        )<br>        self.embedding_llm = LangchainEmbedding(embedding)<br>        <br>        self.service_context = ServiceContext.from_defaults(<br>            llm_predictor=self.llm_predictor,<br>            embed_model=self.embedding_llm,<br>            prompt_helper=self.prompt_helper<br>        )<br><br>    <span class="hljs-comment"># 建立本地索引</span><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">create_index</span>(<span class="hljs-params">self,dir_path=<span class="hljs-string">&quot;./data&quot;</span>,service_context=<span class="hljs-literal">None</span></span>):<br>        <span class="hljs-comment"># 读取data文件夹下的文档</span><br>        documents = SimpleDirectoryReader(dir_path).load_data()<br>        <span class="hljs-comment"># 按最大token数600来把原文档切分为多个小的chunk，每个chunk转为向量，并构建索引</span><br>        index = GPTSimpleVectorIndex.from_documents(documents, service_context=self.service_context)<br>        <span class="hljs-comment"># 保存索引</span><br>        index.save_to_disk(<span class="hljs-string">&#x27;./index.json&#x27;</span>)<br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Save to localpath&quot;</span>)<br>    <br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">query_index</span>(<span class="hljs-params">self,input_text,index_path=<span class="hljs-string">&quot;./index.json&quot;</span></span>):<br>        <span class="hljs-comment"># 加载索引</span><br>        index = GPTSimpleVectorIndex.load_from_disk(index_path)<br>        response = index.query(input_text, response_mode=<span class="hljs-string">&quot;compact&quot;</span>)<br>        <span class="hljs-comment"># display(Markdown(f&quot;Response: &lt;b&gt;&#123;response.response&#125;&lt;/b&gt;&quot;))</span><br>        <span class="hljs-keyword">return</span> response.response<br><br><br>gptmodel = <span class="hljs-string">&quot;gpt-3.5-turbo&quot;</span>   <span class="hljs-comment"># model: gpt4</span><br>embeddingmodel = <span class="hljs-string">&quot;text-embedding-ada-002&quot;</span><br>llma = LLma(gptmodel, embeddingmodel)<br></code></pre></td></tr></table></figure>
+<h4 id="建立索引"><a href="#建立索引" class="headerlink" title="建立索引"></a>建立索引</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 建立索引</span><br>train_dir = <span class="hljs-string">&quot;./data&quot;</span>	<span class="hljs-comment"># 放入多篇 TXT 文档</span><br>llma.create_index(train_dir)<br></code></pre></td></tr></table></figure>
+<p>执行上述代码后可以看到日志打印如下：<br><figure class="highlight node-repl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs node-repl"><span class="hljs-meta prompt_">&gt;</span> <span class="language-javascript">[build_index_from_documents] <span class="hljs-title class_">Total</span> <span class="hljs-variable constant_">LLM</span> token <span class="hljs-attr">usage</span>: <span class="hljs-number">0</span> tokens</span><br><span class="hljs-meta prompt_">&gt;</span> <span class="language-javascript">[build_index_from_documents] <span class="hljs-title class_">Total</span> embedding token <span class="hljs-attr">usage</span>: <span class="hljs-number">1466</span> tokens</span><br></code></pre></td></tr></table></figure><br>说明原文档中所有token数为1466，这也是请求embedding接口的调用成本。按最大token数600，则会切分为3个chunk，可以在索引文件index.json确认chunk的数目确实为3，同时index.json中也记录了每个chunk对应的embedding向量。</p>
+<h4 id="查询索引"><a href="#查询索引" class="headerlink" title="查询索引"></a>查询索引</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 查询索引</span><br>query = <span class="hljs-string">&#x27;讲一下美女蛇的故事&#x27;</span><br>answer = llma.query_index(query)<br><br><span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;query was:&#x27;</span>, query)<br><span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;answer was:&#x27;</span>, answer)<br></code></pre></td></tr></table></figure>
+<p>调用query接口的时候，llama-index会构造如下的prompt:<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs lsl"><span class="hljs-string">&quot;Context information is below. <span class="hljs-subst">\n</span>&quot;</span><br>    <span class="hljs-string">&quot;---------------------<span class="hljs-subst">\n</span>&quot;</span><br>    <span class="hljs-string">&quot;&#123;context_str&#125;&quot;</span><br>    <span class="hljs-string">&quot;<span class="hljs-subst">\n</span>---------------------<span class="hljs-subst">\n</span>&quot;</span><br>    <span class="hljs-string">&quot;Given the context information and not prior knowledge, &quot;</span><br>    <span class="hljs-string">&quot;answer the question: &#123;query_str&#125;<span class="hljs-subst">\n</span>&quot;</span><br></code></pre></td></tr></table></figure><br>上述代码执行后，日志打印如下：<br><figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs stata">&gt; [<span class="hljs-keyword">query</span>] <span class="hljs-keyword">Total</span> LLM <span class="hljs-keyword">token</span> usage: 4894 tokens<br>&gt; [<span class="hljs-keyword">query</span>] <span class="hljs-keyword">Total</span> embedding <span class="hljs-keyword">token</span> usage: 18 tokens<br><br>美女蛇的故事是这样的：有一个读书人住在古庙里用功，晚间，在院子里纳凉的时候，突然听到有人在叫他的名字。他四面看时，却见一个美女的脸露在墙头上，向他一笑，隐去了。他很高兴，但竟给那走来夜谈的老和尚识破了机关，说他脸上有些妖气，一定遇见“美女蛇<br></code></pre></td></tr></table></figure></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/LlamaIndex/">#LlamaIndex</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>LlamaIndex 实战</div>
+      <div>http://example.com/2023/04/14/2023-04-14-LlamaIndex 实战/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Ning Shixian</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年4月14日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/04/18/2023-04-18-LangChain%20%E5%AE%9E%E6%88%98/" title="LangChain 实战">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">LangChain 实战</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/04/11/2023-04-11-%E5%BC%80%E6%BA%90ChatGPT%E5%B9%B3%E6%9B%BF%E9%A1%B9%E7%9B%AE%E6%B1%87%E6%80%BB/" title="开源ChatGPT平替项目汇总">
+                        <span class="hidden-mobile">开源ChatGPT平替项目汇总</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

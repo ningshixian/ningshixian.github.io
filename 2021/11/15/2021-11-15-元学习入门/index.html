@@ -1,0 +1,755 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="NSX">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="元学习入门转载自https:&#x2F;&#x2F;zhuanlan.zhihu.com&#x2F;p&#x2F;136975128 以下是本文的主要框架：  Introduction Meta Learning实施——以MAML为例 Reptile What’s more">
+<meta property="og:type" content="article">
+<meta property="og:title" content="元学习入门（转载）">
+<meta property="og:url" content="http://example.com/2021/11/15/2021-11-15-%E5%85%83%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="元学习入门转载自https:&#x2F;&#x2F;zhuanlan.zhihu.com&#x2F;p&#x2F;136975128 以下是本文的主要框架：  Introduction Meta Learning实施——以MAML为例 Reptile What’s more">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2021/11/15/2021-11-15-%E5%85%83%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8/640">
+<meta property="og:image" content="http://example.com/2021/11/15/2021-11-15-%E5%85%83%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8/640-20230424105635062">
+<meta property="og:image" content="http://example.com/2021/11/15/2021-11-15-%E5%85%83%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8/640-20230424105712832">
+<meta property="og:image" content="http://example.com/2021/11/15/2021-11-15-%E5%85%83%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8/640-20230424105730590">
+<meta property="og:image" content="http://example.com/2021/11/15/2021-11-15-%E5%85%83%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8/640-20230424105741787">
+<meta property="og:image" content="http://example.com/2021/11/15/2021-11-15-%E5%85%83%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8/640-20230424105758258">
+<meta property="og:image" content="http://example.com/2021/11/15/2021-11-15-%E5%85%83%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8/640-20230424105814396">
+<meta property="og:image" content="http://example.com/2021/11/15/2021-11-15-%E5%85%83%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8/640-20230424105835197-2305116.">
+<meta property="og:image" content="http://example.com/2021/11/15/2021-11-15-%E5%85%83%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8/640-20230424105856700">
+<meta property="og:image" content="http://example.com/2021/11/15/2021-11-15-%E5%85%83%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8/640-20230424105906470">
+<meta property="article:published_time" content="2021-11-14T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-24T08:23:02.514Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="Meta-Learning">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2021/11/15/2021-11-15-%E5%85%83%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8/640">
+  
+  
+  
+  <title>元学习入门（转载） - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="元学习入门（转载）"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-11-15 00:00" pubdate>
+          2021年11月15日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          8.8k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          73 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">元学习入门（转载）</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="元学习入门"><a href="#元学习入门" class="headerlink" title="元学习入门"></a>元学习入门</h1><p>转载自<strong><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/136975128">https://zhuanlan.zhihu.com/p/136975128</a></strong></p>
+<p>以下是本文的主要框架：</p>
+<ol>
+<li>Introduction</li>
+<li>Meta Learning实施——以MAML为例</li>
+<li>Reptile</li>
+<li><p>What’s more</p>
+<span id="more"></span>
+</li>
+</ol>
+<hr>
+<h2 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a>1. Introduction</h2><p>通常在机器学习里，我们会使用某个场景的大量数据来训练模型；然而当场景发生改变，模型就需要重新训练。但是对于人类而言，一个小朋友成长过程中会见过许多物体的照片，某一天，当Ta（第一次）仅仅看了几张狗的照片，就可以很好地对狗和其他物体进行区分。</p>
+<p>元学习Meta Learning，含义为学会学习，即learn to learn，就是带着这种对人类这种“学习能力”的期望诞生的。Meta Learning希望使得模型获取一种“学会学习”的能力，使其可以在获取已有“知识”的基础上快速学习新的任务，如：</p>
+<ul>
+<li>让Alphago迅速学会下象棋</li>
+<li>让一个猫咪图片分类器，迅速具有分类其他物体的能力</li>
+</ul>
+<p>需要注意的是，虽然同样有“预训练”的意思在里面，但是元学习的内核区别于迁移学习（Transfer Learning），关于他们的区别，我会在下文进行阐述。</p>
+<p>接下来，我们通过对比机器学习和元学习这两个概念的要素来加深对元学习这个概念的理解。</p>
+<img src="/2021/11/15/2021-11-15-%E5%85%83%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8/640" srcset="/img/loading.gif" lazyload class="" title="图片">
+<p>在机器学习中，训练单位是一条数据，通过数据来对模型进行优化；数据可以分为训练集、测试集和验证集。在元学习中，训练单位分层级了，第一层训练单位是任务，也就是说，元学习中要准备许多任务来进行学习，第二层训练单位才是每个任务对应的数据。</p>
+<p>二者的目的都是找一个Function，只是两个Function的功能不同，要做的事情不一样。机器学习中的Function直接作用于特征和标签，去寻找特征与标签之间的关联；而元学习中的Function是用于寻找新的f，新的f才会应用于具体的任务。有种不同阶导数的感觉。又有种老千层饼的感觉，你看到我在第二层，你把我想象成第一层，而其实我在第五层。。。</p>
+<h2 id="2-Meta-Learning实施——以MAML为例"><a href="#2-Meta-Learning实施——以MAML为例" class="headerlink" title="2. Meta Learning实施——以MAML为例"></a>2. Meta Learning实施——以MAML为例</h2><p>我们先对比机器学习的过程来进一步理解元学习。如下图所示，机器学习的一般过程如下：</p>
+<ul>
+<li>设计网络网络结构，如CNN、RNN等；</li>
+<li>选定某个分布来初始化参数；（以上其实决定了初始的f的长相，选择不同的网络结构或参数相当于定义了不同的f）；</li>
+<li>喂训练数据，根据选定的Loss Function计算Loss；</li>
+<li>梯度下降，逐步更新 ；</li>
+<li>得到最终的f</li>
+</ul>
+<img src="/2021/11/15/2021-11-15-%E5%85%83%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8/640-20230424105635062" srcset="/img/loading.gif" lazyload class="" title="机器学习过程，引自李宏毅《深度学习》">
+<p>其中，红色方框里的“配置”都是由人为设计的，我们又叫做“超参数“。Meta Learning中希望把这些配置，如网络结构，参数初始化，优化器等由机器自行设计（注：此处区别于AutoML，迁移学习（Transfer Learning）和终身学习（Life Long Learning） ），使网络有更强的学习能力和表现。</p>
+<p>上文已经提到，【元学习中要准备许多任务来进行学习，而每个任务又有各自的训练集和测试集】。我们结合一个具体的任务，来介绍元学习和MAML的实施过程。</p>
+<p>有一个图像数据集叫Omniglot：github.com/brendenlake/。Omniglot包含1623个不同的火星文字符，每个字符包含20个手写的case。这个任务是判断每个手写的case属于哪一个火星文字符。</p>
+<p>如果我们要进行N-ways，K-shot（数据中包含N个字符类别，每个字符有K张图像）的一个图像分类任务。比如20-ways，1-shot分类的意思是说，要做一个20分类，但是每个分类下只有1张图像的任务。我们可以依据Omniglot构建很多N-ways，K-shot任务，这些任务将作为元学习的任务来源。构建的任务分为训练任务（Train Task），测试任务（Test Task）。特别地，每个任务包含自己的训练数据、测试数据，在元学习里，分别称为Support Set和Query Set。</p>
+<p>MAML的目的是获取一组更好的模型初始化参数（即让模型自己学会初始化）。我们通过（许多）N-ways，K-shot的任务（训练任务）进行元学习的训练，使得模型学习到“先验知识”（初始化的参数）。这个“先验知识”在新的N-ways，K-shot任务上可以表现的更好。</p>
+<p>接下来介绍MAML的算法流程：</p>
+<img src="/2021/11/15/2021-11-15-%E5%85%83%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8/640-20230424105712832" srcset="/img/loading.gif" lazyload class="" title="图片">
+<p><strong>MAML算法流程</strong></p>
+<blockquote>
+<p>当然，在“预训练”阶段，也可以sample出1个batch的几个任务，那么在更新meta网络时，要使用sample出所有任务的梯度之和。<br>注意：在MAML中，meta网络与子任务的网络结构必须完全相同。</p>
+</blockquote>
+<p>这里面有几个小问题：</p>
+<ol>
+<li>MAML的执行过程与model pretraining &amp; transfer learning的区别是什么？</li>
+<li>为何在meta网络赋值给具体训练任务（如任务m）后，要先更训练任务的参数，再计算梯度，更新meta网络？</li>
+<li>在更新训练任务的网络时，只走了一步，然后更新meta网络。为什么是一步，可以是多步吗？</li>
+</ol>
+<p>这三个问题是MAML中很核心的问题，大家可以先思考一下，我们将在后文进行解答。我们先看一下MAML的实现代码。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment">## 网络构建部分: refer: https://github.com/dragen1860/MAML-TensorFlow</span><br><br><span class="hljs-comment">#################################################</span><br><span class="hljs-comment"># 任务描述：5-ways，1-shot图像分类任务，图像统一处理成 84 * 84 * 3 = 21168的尺寸。</span><br><span class="hljs-comment"># support set：5 * 1</span><br><span class="hljs-comment"># query set：5 * 15</span><br><span class="hljs-comment"># 训练取1个batch的任务：batch size：4</span><br><span class="hljs-comment"># 对训练任务进行训练时，更新5次：K = 5</span><br><span class="hljs-comment">#################################################</span><br><br><span class="hljs-built_in">print</span>(support_x) <span class="hljs-comment"># (4, 5, 21168) </span><br><span class="hljs-built_in">print</span>(query_x) <span class="hljs-comment"># (4, 75, 21168)</span><br><span class="hljs-built_in">print</span>(support_y) <span class="hljs-comment"># (4, 5, 5)</span><br><span class="hljs-built_in">print</span>(query_y) <span class="hljs-comment"># (4, 75, 5)</span><br><span class="hljs-built_in">print</span>(meta_batchsz) <span class="hljs-comment"># 4</span><br><span class="hljs-built_in">print</span>(K) <span class="hljs-comment"># 5</span><br><br>model = MAML()<br>model.build(support_x, support_y, query_x, query_y, K, meta_batchsz, mode=<span class="hljs-string">&#x27;train&#x27;</span>)<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">MAML</span>:<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self</span>):<br>        <span class="hljs-keyword">pass</span><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">build</span>(<span class="hljs-params">self, support_xb, support_yb, query_xb, query_yb, K, meta_batchsz, mode=<span class="hljs-string">&#x27;train&#x27;</span></span>):<br>        <span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">        :param support_xb: [4, 5, 84*84*3] </span><br><span class="hljs-string">        :param support_yb: [4, 5, n-way]</span><br><span class="hljs-string">        :param query_xb:  [4, 75, 84*84*3]</span><br><span class="hljs-string">        :param query_yb: [4, 75, n-way]</span><br><span class="hljs-string">        :param K:  训练任务的网络更新步数</span><br><span class="hljs-string">        :param meta_batchsz: 任务数，4</span><br><span class="hljs-string">        &quot;&quot;&quot;</span><br><br>        self.weights = self.conv_weights() <span class="hljs-comment"># 创建或者复用网络参数；训练任务对应的网络复用meta网络的参数</span><br>        training = <span class="hljs-literal">True</span> <span class="hljs-keyword">if</span> mode <span class="hljs-keyword">is</span> <span class="hljs-string">&#x27;train&#x27;</span> <span class="hljs-keyword">else</span> <span class="hljs-literal">False</span>      <br>        <span class="hljs-keyword">def</span> <span class="hljs-title function_">meta_task</span>(<span class="hljs-params"><span class="hljs-built_in">input</span></span>):<br>            <span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">            :param support_x:   [setsz, 84*84*3] (5, 21168)</span><br><span class="hljs-string">            :param support_y:   [setsz, n-way] (5, 5)</span><br><span class="hljs-string">            :param query_x:     [querysz, 84*84*3] (75, 21168)</span><br><span class="hljs-string">            :param query_y:     [querysz, n-way] (75, 5)</span><br><span class="hljs-string">            :param training:    training or not, for batch_norm</span><br><span class="hljs-string">            :return:</span><br><span class="hljs-string">            &quot;&quot;&quot;</span><br><br>            support_x, support_y, query_x, query_y = <span class="hljs-built_in">input</span><br>            query_preds, query_losses, query_accs = [], [], [] <span class="hljs-comment"># 子网络更新K次，记录每一次queryset的结果</span><br> <br>            <span class="hljs-comment">## 第0次对网络进行更新</span><br>            support_pred = self.forward(support_x, self.weights, training) <span class="hljs-comment"># 前向计算support set</span><br>            support_loss = tf.nn.softmax_cross_entropy_with_logits(logits=support_pred, labels=support_y) <span class="hljs-comment"># support set loss</span><br>            support_acc = tf.contrib.metrics.accuracy(tf.argmax(tf.nn.softmax(support_pred, dim=<span class="hljs-number">1</span>), axis=<span class="hljs-number">1</span>),<br>                                                         tf.argmax(support_y, axis=<span class="hljs-number">1</span>))<br>            grads = tf.gradients(support_loss, <span class="hljs-built_in">list</span>(self.weights.values())) <span class="hljs-comment"># 计算support set的梯度</span><br>            gvs = <span class="hljs-built_in">dict</span>(<span class="hljs-built_in">zip</span>(self.weights.keys(), grads))<br>            <span class="hljs-comment"># 使用support set的梯度计算的梯度更新参数，theta_pi = theta - alpha * grads</span><br>            fast_weights = <span class="hljs-built_in">dict</span>(<span class="hljs-built_in">zip</span>(self.weights.keys(), \<br>                    [self.weights[key] - self.train_lr * gvs[key] <span class="hljs-keyword">for</span> key <span class="hljs-keyword">in</span> self.weights.keys()]))<br><br>            <span class="hljs-comment"># 使用梯度更新后的参数对quert set进行前向计算</span><br>            query_pred = self.forward(query_x, fast_weights, training)<br>            query_loss = tf.nn.softmax_cross_entropy_with_logits(logits=query_pred, labels=query_y)<br>            query_preds.append(query_pred)<br>            query_losses.append(query_loss)<br> <br>            <span class="hljs-comment"># 第1到 K-1次对网络进行更新</span><br>            <span class="hljs-keyword">for</span> _ <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">1</span>, K):           <br>                loss = tf.nn.softmax_cross_entropy_with_logits(logits=self.forward(support_x, fast_weights, training),<br>                                                               labels=support_y)<br>                grads = tf.gradients(loss, <span class="hljs-built_in">list</span>(fast_weights.values()))<br>                gvs = <span class="hljs-built_in">dict</span>(<span class="hljs-built_in">zip</span>(fast_weights.keys(), grads))<br>                fast_weights = <span class="hljs-built_in">dict</span>(<span class="hljs-built_in">zip</span>(fast_weights.keys(), [fast_weights[key] - self.train_lr * gvs[key]<br>                                         <span class="hljs-keyword">for</span> key <span class="hljs-keyword">in</span> fast_weights.keys()]))<br>                query_pred = self.forward(query_x, fast_weights, training)<br>                query_loss = tf.nn.softmax_cross_entropy_with_logits(logits=query_pred, labels=query_y)<br>                <span class="hljs-comment"># 子网络更新K次，记录每一次queryset的结果</span><br>                query_preds.append(query_pred)<br>                query_losses.append(query_loss)<br><br>            <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(K):<br>                query_accs.append(tf.contrib.metrics.accuracy(tf.argmax(tf.nn.softmax(query_preds[i], dim=<span class="hljs-number">1</span>), axis=<span class="hljs-number">1</span>),<br>                                                                tf.argmax(query_y, axis=<span class="hljs-number">1</span>)))<br>            result = [support_pred, support_loss, support_acc, query_preds, query_losses, query_accs]<br>            <span class="hljs-keyword">return</span> result<br><br>        <span class="hljs-comment"># return: [support_pred, support_loss, support_acc, query_preds, query_losses, query_accs]</span><br>        out_dtype = [tf.float32, tf.float32, tf.float32, [tf.float32] * K, [tf.float32] * K, [tf.float32] * K]<br>        result = tf.map_fn(meta_task, elems=(support_xb, support_yb, query_xb, query_yb),<br>                           dtype=out_dtype, parallel_iterations=meta_batchsz, name=<span class="hljs-string">&#x27;map_fn&#x27;</span>)<br>        support_pred_tasks, support_loss_tasks, support_acc_tasks, \<br>            query_preds_tasks, query_losses_tasks, query_accs_tasks = result<br><br>        <span class="hljs-keyword">if</span> mode <span class="hljs-keyword">is</span> <span class="hljs-string">&#x27;train&#x27;</span>:<br>            self.support_loss = support_loss = tf.reduce_sum(support_loss_tasks) / meta_batchsz<br>            self.query_losses = query_losses = [tf.reduce_sum(query_losses_tasks[j]) / meta_batchsz<br>                                                    <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(K)]<br>            self.support_acc = support_acc = tf.reduce_sum(support_acc_tasks) / meta_batchsz<br>            self.query_accs = query_accs = [tf.reduce_sum(query_accs_tasks[j]) / meta_batchsz<br>                                                    <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(K)]<br><br>            <span class="hljs-comment"># 更新meta网络，只使用了第 K步的query loss。这里应该是个超参，更新几步可以调调</span><br>            optimizer = tf.train.AdamOptimizer(self.meta_lr, name=<span class="hljs-string">&#x27;meta_optim&#x27;</span>)<br>            gvs = optimizer.compute_gradients(self.query_losses[-<span class="hljs-number">1</span>])<br>   <span class="hljs-comment"># def ********</span><br></code></pre></td></tr></table></figure>
+<p>接下来回答一下上面的三个问题：</p>
+<p>问题1：MAML的执行过程与model pretraining &amp; transfer learning的区别是什么？</p>
+<p>我们将meta learning与model pretraining的loss函数写出来。</p>
+<img src="/2021/11/15/2021-11-15-%E5%85%83%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8/640-20230424105730590" srcset="/img/loading.gif" lazyload class="" title="meta learning与model pretraining的loss函数">
+<p>注意这两个loss函数的区别：</p>
+<ul>
+<li>meta learning的L来源于训练任务上网络的参数更新过一次后（该网络更新过一次以后，网络的参数与meta网络的参数已经有一些区别），然后使用Query Set计算的loss；</li>
+<li>model pretraining的L来源于同一个model的参数（只有一个），使用训练数据计算的loss和梯度对model进行更新；如果有多个训练任务，我们可以将这个参数在很多任务上进行预训练，训练的所有梯度都会直接更新到model的参数上。</li>
+</ul>
+<p>看一下二者的更新过程简图：</p>
+<img src="/2021/11/15/2021-11-15-%E5%85%83%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8/640-20230424105741787" srcset="/img/loading.gif" lazyload class="" title="图片">
+<p>meta learning与model pretraining训练过程，引自李宏毅《深度学习》</p>
+<ol>
+<li>MAML是使用子任务的参数，第二次更新的gradient的方向来更新参数（所以左图，第一个蓝色箭头的方向与第二个绿色箭头的方向平行；左图第二个蓝色箭头的方向与第二个橘色箭头的方向平行）</li>
+<li>而model pretraining是使用子任务第一步更新的gradient的方向来更新参数(子任务的梯度往哪个方向走，model的参数就往哪个方向走)。</li>
+</ol>
+<p>从sense上直观理解：</p>
+<ul>
+<li>model pretraining最小化当前的model（只有一个）在所有任务上的loss，所以model pretraining希望找到一个在所有任务（实际情况往往是大多数任务）上都表现较好的一个初始化参数，这个参数要在多数任务上当前表现较好。</li>
+<li>meta learning最小化每一个子任务训练一步之后，第二次计算出的loss，用第二步的gradient更新meta网络，这代表了什么呢？子任务从【状态0】，到【状态1】，我们希望状态1的loss小，说明meta learning更care的是初始化参数未来的潜力。</li>
+</ul>
+<p>一个关注当下，一个关注潜力。</p>
+<ul>
+<li>如下图所示，model pretraining找到的参数，在两个任务上当前的表现比较好（当下好，但训练之后不保证好）；</li>
+<li>而MAML的参数在两个子任务当前的表现可能都不是很好，但是如果在两个子任务上继续训练下去，可能会达到各自任务的局部最优（潜力好)。</li>
+</ul>
+<img src="/2021/11/15/2021-11-15-%E5%85%83%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8/640-20230424105758258" srcset="/img/loading.gif" lazyload class="" title="引自李宏毅《深度学习》">
+<p>这里有一个toy example可以表现MAML的执行过程与model pretraining &amp; transfer learning的区别。</p>
+<p>训练任务：给定N个函数，y = asinx + b（通过给a和b不同的取值可以得到很多sin函数），从每个函数中sample出K个点，用sample出的K个点来预估最初的函数，即求解a和b的值。</p>
+<p>训练过程：用这N个训练任务sample出的数据点分别通过MAML与model pretraining训练网络，得到预训练的参数。</p>
+<p>如下图，用橘黄色的sin函数作为测试任务，三角形的点是测试任务中sample出的样本点，在测试任务中，我们希望用sample出的样本点还原橘黄色的线。</p>
+<img src="/2021/11/15/2021-11-15-%E5%85%83%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8/640-20230424105814396" srcset="/img/loading.gif" lazyload class="" title="example，引自李宏毅《深度学习》">
+<ul>
+<li>model pretraining的结果，在测试任务上，在finetuning之前，绿色线是一条水平线，finetuning之后还原的线基本还是一条水平线。因为在预训练的时候，有很多sin函数，model pretraining希望找到一个在所有任务上都效果较好的初始化结果，但是许多sin函数波峰和波谷重叠起来，基本就是一条水平线。用这个初始化的结果取finetuning，得到的结果仍然是水平线。</li>
+<li>MAML的初始化结果是绿色的线，和橘黄色的线有差异。但是随着finetuning的进行，结果与橘黄色的线更加接近。</li>
+</ul>
+<p>问题2：为何在meta网络赋值给具体训练任务（如任务m）后，要先更训练任务的参数，再计算梯度，更新meta网络？</p>
+<p>这个问题其实在问题1中已经进行了回答，更新一步之后，避免了meta learning陷入了和model pretraining一样的训练模式，更重要的是，可以使得meta模型更关注参数的“潜力”。</p>
+<p>问题3：在更新训练任务的网络时，只走了一步，然后更新meta网络。为什么是一步，可以是多步吗？</p>
+<p>李宏毅老师的课程中提到：</p>
+<ul>
+<li>只更新一次，速度比较快；因为meta learning中，子任务有很多，都更新很多次，训练时间比较久。</li>
+<li>MAML希望得到的初始化参数在新的任务中finetuning的时候效果好。如果只更新一次，就可以在新任务上获取很好的表现。把这件事情当成目标，可以使得meta网络参数训练是很好（目标与需求一致）。</li>
+<li>当初始化参数应用到具体的任务中时，也可以finetuning很多次。</li>
+<li>Few-shot learning往往数据较少。</li>
+</ul>
+<p>那么MAML中的训练任务的网络可以更新多次后，再更新meta网络吗？</p>
+<p>我觉得可以。直观上感觉，更新次数决定了子任务对于meta网络的影响程度，我觉得这个步数可以作为一个参数来调。</p>
+<p>另外，即将介绍的下一个网络——Reptile，也是对训练任务网络进行多次更新的。</p>
+<h2 id="3-Reptile"><a href="#3-Reptile" class="headerlink" title="3. Reptile"></a>3. Reptile</h2><p>Reptile与MAML有点像，我们先看一下Reptile的训练简图：</p>
+<img src="/2021/11/15/2021-11-15-%E5%85%83%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8/640-20230424105835197-2305116." srcset="/img/loading.gif" lazyload class="" title="Reptile训练过程，引自李宏毅《深度学习》">
+<p>Reptile的训练过程如下：</p>
+<img src="/2021/11/15/2021-11-15-%E5%85%83%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8/640-20230424105856700" srcset="/img/loading.gif" lazyload class="" title="图片">
+<p>Reptile，每次sample出1个训练任务</p>
+<img src="/2021/11/15/2021-11-15-%E5%85%83%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8/640-20230424105906470" srcset="/img/loading.gif" lazyload class="" title="图片">
+<p>Reptile，每次sample出1个batch训练任务</p>
+<p>在Reptile中：</p>
+<ul>
+<li>训练任务的网络可以更新多次</li>
+<li>reptile不再像MAML一样计算梯度（因此带来了工程性能的提升），而是直接用一个参数乘以meta网络与训练任务的网络参数的差来更新meta网络参数</li>
+<li>从效果上来看，Reptile效果与MAML基本持平</li>
+</ul>
+<h2 id="4-What’s-more"><a href="#4-What’s-more" class="headerlink" title="4. What’s more"></a>4. What’s more</h2><p>元学习入门部分的文章基本就分享到这里了~</p>
+<ul>
+<li>从出发点上来看，元学习和model pretraining有点像，即，都是让网络具有一些先验知识。</li>
+<li>从训练过程的设计来看，元学习更关注模型的潜力，而model pretraining更注重模型当下在多数情况下的表现，效果孰好孰坏很难直接判定。这大概也就是仰望天空和脚踏实地的区别hahaha</li>
+<li>元学习除了可以初始化参数以外，还有一些设计可以帮助确定网络结构，如何更新参数等等这里有李宏毅老师的一个课程大家可以关注一下youtube.com/watch? 。</li>
+</ul>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/cF3SrrmS7ke8WIkW8qqKcA">一文入门元学习（Meta-Learning）（附代码）</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Meta-Learning/">#Meta-Learning</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>元学习入门（转载）</div>
+      <div>http://example.com/2021/11/15/2021-11-15-元学习入门/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>NSX</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年11月15日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/11/15/2021-11-15-Keyword-BERT/" title="Keyword-BERT">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Keyword-BERT</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/11/15/2021-11-15-%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%85%A5%E9%97%A8/" title="图神经网络入门（转载）">
+                        <span class="hidden-mobile">图神经网络入门（转载）</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,703 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="NSX">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Elasticsearch产品介绍与应用场景">
+<meta property="og:type" content="article">
+<meta property="og:title" content="阿里云es内部技术分享摘要">
+<meta property="og:url" content="http://example.com/2021/09/06/2021-09-06-%E9%98%BF%E9%87%8C%E4%BA%91%E6%90%9C%E7%B4%A2%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="Elasticsearch产品介绍与应用场景">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gu6vodeee3j61i30u0afs02.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gu6vqzh7olj61ho0u0n6q02.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gu6vs7ws9ij61hw0u0gu202.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gu6vuw14mpj61l60u0aiy02.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gu6vzeoqr4j61ke0u0gst02.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gu6w0mj476j61kg0u00zm02.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gu6w2sxslpj61hs0u07cb02.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gu6w3e6p7pj61ky0u00um02.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gu6w4inhenj61hs0u0q8v02.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gu6w724ug6j61l50u0tfv02.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gu6w7a3vntj61hj0u0tcg02.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gu6wbi7htxj61hl0u0q8102.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gu6wh3z18cj61hm0u0n3402.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gu6whzj8gtj61l70u0dik02.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gu6wjcstiqj61ho0u0q4y02.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gu6wjuhwhej61hi0u0n3h02.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gu6wkf9gc6j61hc0u0gqp02.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gu6wkwtoqqj61lq0u0gn302.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gu6wltd1e7j61q00u0jyz02.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gu6wulbutpj61dc0u0wha02.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gu6wxbkd90j61al0u0n1y02.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gu6x1e8zw2j616b0u0adu02.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gu6xrzoiypj61610u0wh302.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gu6xvstziwj61b10u0whz02.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gu6xzq4xjxj61fc0re78o02.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gu6ywjkt3uj61oq0u00zt02.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gu6yztnlz3j61lq0u0wkw02.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gu6z3fty76j61ec0u00x402.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gu6z6ji7vuj61rx0u0n2n02.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gu6zbo5olkj61nt0u079q02.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gu6zd3fzjej61fp0u0q9s02.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gu6zhess4xj61jk0u0dlx02.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gu6zlxaan1j61h20u078p02.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gu6zs1nb7tj61if0u0tdz02.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gu6zurxhhmj61fv0u0q7p02.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gu6zz14knlj61l80u0afu02.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gu71k9fzq4j61h00u0tfl02.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gu71o4engej61mk0u0dm502.jpg">
+<meta property="article:published_time" content="2021-09-05T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-23T10:28:32.065Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="阿里云es">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gu6vodeee3j61i30u0afs02.jpg">
+  
+  
+  
+  <title>阿里云es内部技术分享摘要 - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="阿里云es内部技术分享摘要"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-09-06 00:00" pubdate>
+          2021年9月6日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          48 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          1 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">阿里云es内部技术分享摘要</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="Elasticsearch产品介绍与应用场景"><a href="#Elasticsearch产品介绍与应用场景" class="headerlink" title="Elasticsearch产品介绍与应用场景"></a>Elasticsearch产品介绍与应用场景</h2><p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gu6vodeee3j61i30u0afs02.jpg" srcset="/img/loading.gif" lazyload alt="image-20210906141157193"></p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gu6vqzh7olj61ho0u0n6q02.jpg" srcset="/img/loading.gif" lazyload alt="image-20210906141430014"></p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gu6vs7ws9ij61hw0u0gu202.jpg" srcset="/img/loading.gif" lazyload alt="image-20210906141540813"></p>
+<span id="more"></span>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gu6vuw14mpj61l60u0aiy02.jpg" srcset="/img/loading.gif" lazyload alt="image-20210906141814202"></p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gu6vzeoqr4j61ke0u0gst02.jpg" srcset="/img/loading.gif" lazyload alt="image-20210906142236249"></p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gu6w0mj476j61kg0u00zm02.jpg" srcset="/img/loading.gif" lazyload alt="image-20210906142345991"></p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gu6w2sxslpj61hs0u07cb02.jpg" srcset="/img/loading.gif" lazyload alt="image-20210906142551489"></p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gu6w3e6p7pj61ky0u00um02.jpg" srcset="/img/loading.gif" lazyload alt="image-20210906142626246"></p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gu6w4inhenj61hs0u0q8v02.jpg" srcset="/img/loading.gif" lazyload alt="image-20210906142730803"></p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gu6w724ug6j61l50u0tfv02.jpg" srcset="/img/loading.gif" lazyload alt="image-20210906142956361"></p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gu6w7a3vntj61hj0u0tcg02.jpg" srcset="/img/loading.gif" lazyload alt="image-20210906143010308"></p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gu6wbi7htxj61hl0u0q8102.jpg" srcset="/img/loading.gif" lazyload alt="image-20210906143413312"></p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gu6wh3z18cj61hm0u0n3402.jpg" srcset="/img/loading.gif" lazyload alt="image-20210906143936330"></p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gu6whzj8gtj61l70u0dik02.jpg" srcset="/img/loading.gif" lazyload alt="image-20210906144027221"></p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gu6wjcstiqj61ho0u0q4y02.jpg" srcset="/img/loading.gif" lazyload alt="image-20210906144146456"></p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gu6wjuhwhej61hi0u0n3h02.jpg" srcset="/img/loading.gif" lazyload alt="image-20210906144214509"></p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gu6wkf9gc6j61hc0u0gqp02.jpg" srcset="/img/loading.gif" lazyload alt="image-20210906144247449"></p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gu6wkwtoqqj61lq0u0gn302.jpg" srcset="/img/loading.gif" lazyload alt="image-20210906144316224"></p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gu6wltd1e7j61q00u0jyz02.jpg" srcset="/img/loading.gif" lazyload alt="image-20210906144408307"></p>
+<h2 id="阿里云ES集群运维最佳实践"><a href="#阿里云ES集群运维最佳实践" class="headerlink" title="阿里云ES集群运维最佳实践"></a>阿里云ES集群运维最佳实践</h2><p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gu6wulbutpj61dc0u0wha02.jpg" srcset="/img/loading.gif" lazyload alt="image-20210906145234327"></p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gu6wxbkd90j61al0u0n1y02.jpg" srcset="/img/loading.gif" lazyload alt="image-20210906145511616"></p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gu6x1e8zw2j616b0u0adu02.jpg" srcset="/img/loading.gif" lazyload alt="image-20210906145904593"></p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gu6xrzoiypj61610u0wh302.jpg" srcset="/img/loading.gif" lazyload alt="image-20210906152440322"></p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gu6xvstziwj61b10u0whz02.jpg" srcset="/img/loading.gif" lazyload alt="image-20210906152819905"></p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gu6xzq4xjxj61fc0re78o02.jpg" srcset="/img/loading.gif" lazyload alt="image-20210906153206521"></p>
+<h2 id="开放搜索算法工程化应用实践"><a href="#开放搜索算法工程化应用实践" class="headerlink" title="开放搜索算法工程化应用实践"></a>开放搜索算法工程化应用实践</h2><p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gu6ywjkt3uj61oq0u00zt02.jpg" srcset="/img/loading.gif" lazyload alt="image-20210906160338448"></p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gu6yztnlz3j61lq0u0wkw02.jpg" srcset="/img/loading.gif" lazyload alt="image-20210906160647548"></p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gu6z3fty76j61ec0u00x402.jpg" srcset="/img/loading.gif" lazyload alt="image-20210906161016401"></p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gu6z6ji7vuj61rx0u0n2n02.jpg" srcset="/img/loading.gif" lazyload alt="image-20210906161315371"></p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gu6zbo5olkj61nt0u079q02.jpg" srcset="/img/loading.gif" lazyload alt="image-20210906161810909"></p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gu6zd3fzjej61fp0u0q9s02.jpg" srcset="/img/loading.gif" lazyload alt="image-20210906161933085"></p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gu6zhess4xj61jk0u0dlx02.jpg" srcset="/img/loading.gif" lazyload alt="image-20210906162341625"></p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gu6zlxaan1j61h20u078p02.jpg" srcset="/img/loading.gif" lazyload alt="image-20210906162801473"></p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gu6zs1nb7tj61if0u0tdz02.jpg" srcset="/img/loading.gif" lazyload alt="image-20210906163355185"></p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gu6zurxhhmj61fv0u0q7p02.jpg" srcset="/img/loading.gif" lazyload alt="image-20210906163632999"></p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gu6zz14knlj61l80u0afu02.jpg" srcset="/img/loading.gif" lazyload alt="image-20210906164037715"></p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gu71k9fzq4j61h00u0tfl02.jpg" srcset="/img/loading.gif" lazyload alt="image-20210906173535366"></p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gu71o4engej61mk0u0dm502.jpg" srcset="/img/loading.gif" lazyload alt="image-20210906173920626"></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E9%98%BF%E9%87%8C%E4%BA%91es/">#阿里云es</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>阿里云es内部技术分享摘要</div>
+      <div>http://example.com/2021/09/06/2021-09-06-阿里云搜索技术分享/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>NSX</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年9月6日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/09/06/2021-09-06-%E6%96%87%E6%9C%AC%E8%81%9A%E7%B1%BB%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93/" title="文本聚类算法总结">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">文本聚类算法总结</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/09/06/2021-09-06-%E9%99%8D%E7%BB%B4%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/" title="降维方法总结">
+                        <span class="hidden-mobile">降维方法总结</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

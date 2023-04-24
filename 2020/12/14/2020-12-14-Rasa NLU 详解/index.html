@@ -1,0 +1,1033 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="NSX">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="目录 【关于 rasa-&gt;NLU 】那些你不知道的事  目录 一、概况图 二、动机 三、什么是 自然语言理解？ 四、自然语言理解 的 工作 是什么？ 五、自然语言理解 三层次，你知道么？ 六、自然语言理解 一般理解 你知道么？ 七、NLU 训练数据如何准备？ 7.1 NLU 训练样本数据格式？ 7.2 NLU 训练样本数据格式如何验证？   八、Rasa NLU Components 8.1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Rasa NLU 详解">
+<meta property="og:url" content="http://example.com/2020/12/14/2020-12-14-Rasa%20NLU%20%E8%AF%A6%E8%A7%A3/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="目录 【关于 rasa-&gt;NLU 】那些你不知道的事  目录 一、概况图 二、动机 三、什么是 自然语言理解？ 四、自然语言理解 的 工作 是什么？ 五、自然语言理解 三层次，你知道么？ 六、自然语言理解 一般理解 你知道么？ 七、NLU 训练数据如何准备？ 7.1 NLU 训练样本数据格式？ 7.2 NLU 训练样本数据格式如何验证？   八、Rasa NLU Components 8.1">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2020/12/14/2020-12-14-Rasa%20NLU%20%E8%AF%A6%E8%A7%A3/img/1532921162912e4eb2dd348.png">
+<meta property="og:image" content="http://example.com/2020/12/14/2020-12-14-Rasa%20NLU%20%E8%AF%A6%E8%A7%A3/img/aHR0cHM6Ly91cGxvYWQtaW1hZ2VzLmppYW5zaHUuaW8vdXBsb2FkX2ltYWdlcy8xNjY3NDcxLTM3MzE1ZjdiYWFlZTc1ZjQuanBn.png">
+<meta property="og:image" content="http://example.com/2020/12/14/2020-12-14-Rasa%20NLU%20%E8%AF%A6%E8%A7%A3/img/20200923075311.png">
+<meta property="og:image" content="http://example.com/2020/12/14/2020-12-14-Rasa%20NLU%20%E8%AF%A6%E8%A7%A3/img/20200923075505.png">
+<meta property="og:image" content="http://example.com/2020/12/14/2020-12-14-Rasa%20NLU%20%E8%AF%A6%E8%A7%A3/img/20200923075716.png">
+<meta property="og:image" content="http://example.com/2020/12/14/2020-12-14-Rasa%20NLU%20%E8%AF%A6%E8%A7%A3/img/20200923075852.png">
+<meta property="og:image" content="http://example.com/2020/12/14/2020-12-14-Rasa%20NLU%20%E8%AF%A6%E8%A7%A3/img/20200923080230.png">
+<meta property="og:image" content="http://example.com/2020/12/14/2020-12-14-Rasa%20NLU%20%E8%AF%A6%E8%A7%A3/img/20200923080341.png">
+<meta property="og:image" content="http://example.com/2020/12/14/2020-12-14-Rasa%20NLU%20%E8%AF%A6%E8%A7%A3/img/20200923080521.png">
+<meta property="og:image" content="http://example.com/2020/12/14/2020-12-14-Rasa%20NLU%20%E8%AF%A6%E8%A7%A3/img/20200923080657.png">
+<meta property="og:image" content="http://example.com/2020/12/14/2020-12-14-Rasa%20NLU%20%E8%AF%A6%E8%A7%A3/img/20200923080941.png">
+<meta property="og:image" content="http://example.com/2020/12/14/2020-12-14-Rasa%20NLU%20%E8%AF%A6%E8%A7%A3/img/20200923081101.png">
+<meta property="og:image" content="http://example.com/2020/12/14/2020-12-14-Rasa%20NLU%20%E8%AF%A6%E8%A7%A3/img/20200923081214.png">
+<meta property="og:image" content="http://example.com/2020/12/14/2020-12-14-Rasa%20NLU%20%E8%AF%A6%E8%A7%A3/img/20200923081332.png">
+<meta property="og:image" content="http://example.com/2020/12/14/2020-12-14-Rasa%20NLU%20%E8%AF%A6%E8%A7%A3/img/20200923081653.png">
+<meta property="og:image" content="http://example.com/2020/12/14/2020-12-14-Rasa%20NLU%20%E8%AF%A6%E8%A7%A3/img/20200923081836.png">
+<meta property="og:image" content="http://example.com/2020/12/14/2020-12-14-Rasa%20NLU%20%E8%AF%A6%E8%A7%A3/img/20200923082013.png">
+<meta property="og:image" content="http://example.com/2020/12/14/2020-12-14-Rasa%20NLU%20%E8%AF%A6%E8%A7%A3/img/20200923082133.png">
+<meta property="og:image" content="http://example.com/2020/12/14/2020-12-14-Rasa%20NLU%20%E8%AF%A6%E8%A7%A3/img/20200923082314.png">
+<meta property="og:image" content="http://example.com/2020/12/14/2020-12-14-Rasa%20NLU%20%E8%AF%A6%E8%A7%A3/img/20200923082503.png">
+<meta property="og:image" content="http://example.com/2020/12/14/2020-12-14-Rasa%20NLU%20%E8%AF%A6%E8%A7%A3/img/20200923082623.png">
+<meta property="og:image" content="http://example.com/2020/12/14/2020-12-14-Rasa%20NLU%20%E8%AF%A6%E8%A7%A3/img/20200923082716.png">
+<meta property="og:image" content="http://example.com/2020/12/14/2020-12-14-Rasa%20NLU%20%E8%AF%A6%E8%A7%A3/img/20200923082819.png">
+<meta property="og:image" content="http://example.com/2020/12/14/2020-12-14-Rasa%20NLU%20%E8%AF%A6%E8%A7%A3/img/20200923082958.png">
+<meta property="og:image" content="http://example.com/2020/12/14/2020-12-14-Rasa%20NLU%20%E8%AF%A6%E8%A7%A3/img/20200923083143.png">
+<meta property="og:image" content="http://example.com/2020/12/14/2020-12-14-Rasa%20NLU%20%E8%AF%A6%E8%A7%A3/img/20200923083606">
+<meta property="article:published_time" content="2020-12-13T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-23T10:28:32.059Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="Rasa NLU">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2020/12/14/2020-12-14-Rasa%20NLU%20%E8%AF%A6%E8%A7%A3/img/1532921162912e4eb2dd348.png">
+  
+  
+  
+  <title>Rasa NLU 详解 - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="转载自https://github.com/km1994/nlp_paper_study/blob/master/dialogue_system_study/rasa/rasa系列/rasa_nlu.md"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2020-12-14 00:00" pubdate>
+          2020年12月14日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          20k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          169 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">转载自https://github.com/km1994/nlp_paper_study/blob/master/dialogue_system_study/rasa/rasa系列/rasa_nlu.md</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><ul>
+<li><p><a href="#关于-rasa-nlu-那些你不知道的事">【关于 rasa-&gt;NLU 】那些你不知道的事</a></p>
+<ul>
+<li><a href="#目录">目录</a></li>
+<li><a href="#一概况图">一、概况图</a></li>
+<li><a href="#二动机">二、动机</a></li>
+<li><a href="#三什么是-自然语言理解">三、什么是 自然语言理解？</a></li>
+<li><a href="#四自然语言理解-的-工作-是什么">四、自然语言理解 的 工作 是什么？</a></li>
+<li><a href="#五自然语言理解-三层次你知道么">五、自然语言理解 三层次，你知道么？</a></li>
+<li><a href="#六自然语言理解-一般理解-你知道么">六、自然语言理解 一般理解 你知道么？</a></li>
+<li><a href="#七nlu-训练数据如何准备">七、NLU 训练数据如何准备？</a><ul>
+<li><a href="#71-nlu-训练样本数据格式">7.1 NLU 训练样本数据格式？</a></li>
+<li><a href="#72-nlu-训练样本数据格式如何验证">7.2 NLU 训练样本数据格式如何验证？</a></li>
+</ul>
+</li>
+<li><a href="#八rasa-nlu-components">八、Rasa NLU Components</a><ul>
+<li><a href="#81-词向量资源word-vector-sources">8.1 词向量资源（Word Vector Sources）</a><ul>
+<li><a href="#一mitienlp-做中文任务时一般选用做一个因为他是基于中文的词向量">（一）MitieNLP （做中文任务时，一般选用做一个，因为他是基于中文的词向量）</a></li>
+<li><a href="#二spacynlp-英文">（二）SpacyNLP （英文）</a></li>
+</ul>
+</li>
+<li><a href="#82-分词tokenizers">8.2 分词（Tokenizers）</a><ul>
+<li><a href="#一whitespacetokenizer">（一）WhitespaceTokenizer</a></li>
+<li><a href="#二jiebatokenizer">（二）JiebaTokenizer</a></li>
+<li><a href="#三mitietokenizer">（三）MitieTokenizer</a></li>
+<li><a href="#四spacytokenizer">（四）SpacyTokenizer</a></li>
+<li><a href="#五converttokenizer">（五）ConveRTTokenizer</a></li>
+</ul>
+</li>
+<li><a href="#83-文本特征化text-featurizers">8.3 文本特征化（Text Featurizers）</a><ul>
+<li><a href="#一mitiefeaturizer">（一）MitieFeaturizer</a></li>
+<li><a href="#二spacyfeaturizer">（二）SpacyFeaturizer</a></li>
+<li><a href="#三convertfeaturizer">（三）ConveRTFeaturizer</a></li>
+<li><a href="#四regexfeaturizer">（四）RegexFeaturizer</a></li>
+<li><a href="#五countvectorsfeaturizer">（五）CountVectorsFeaturizer</a></li>
+</ul>
+</li>
+<li><a href="#84-意图分类intent-classifiers">8.4 意图分类（Intent Classifiers）</a><ul>
+<li><a href="#一mitieintentclassifier">（一）MitieIntentClassifier</a></li>
+<li><a href="#二sklearnintentclassifier">（二）SklearnIntentClassifier</a></li>
+<li><a href="#三embeddingintentclassifier">（三）EmbeddingIntentClassifier</a></li>
+<li><a href="#四keywordintentclassifier">（四）KeywordIntentClassifier</a></li>
+</ul>
+</li>
+<li><a href="#85-选择器selectors">8.5 选择器（Selectors）</a><ul>
+<li><a href="#一response-selector">（一）Response Selector</a></li>
+</ul>
+</li>
+<li><a href="#86-实体提取entity-extractors">8.6 实体提取（Entity Extractors）</a><ul>
+<li><a href="#一mitieentityextractor">（一）MitieEntityExtractor</a></li>
+<li><a href="#二spacyentityextractor">（二）SpacyEntityExtractor</a></li>
+<li><a href="#三entitysynonymmapper">（三）EntitySynonymMapper</a></li>
+<li><a href="#四crfentityextractor">（四）CRFEntityExtractor</a></li>
+<li><a href="#五ducklinghttpextractor">（五）DucklingHTTPExtractor</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#九rasa-nlu-pipline">九、Rasa NLU Pipline</a><ul>
+<li><a href="#91-动机">9.1 动机</a></li>
+<li><a href="#92-介绍">9.2 介绍</a></li>
+<li><a href="#93-使用template-pipline">9.3 使用Template Pipline</a><ul>
+<li><a href="#一pretrained_embeddings_spacy">（一）pretrained_embeddings_spacy</a></li>
+<li><a href="#二supervised_embeddings">（二）supervised_embeddings</a></li>
+<li><a href="#三pretrained_embeddings_convert">（三）pretrained_embeddings_convert</a></li>
+<li><a href="#四mitie">（四）MITIE</a></li>
+</ul>
+</li>
+<li><a href="#94-使用custome-pipline">9.4 使用Custome Pipline</a><ul>
+<li><a href="#一zh_jieba_mitie_sklearn">（一）zh_jieba_mitie_sklearn</a></li>
+<li><a href="#二zh_crf_supervised_embeddings">（二）zh_crf_supervised_embeddings</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#参考资料">参考资料</a></li>
+</ul>
+<span id="more"></span>
+</li>
+</ul>
+<h2 id="二、动机"><a href="#二、动机" class="headerlink" title="二、动机"></a>二、动机</h2><p>在人机对话中，首先需要 让 机器 理解 用户所说的 内容，才能 帮助 机器 知道用户意图，并作出 适当 的 反馈。那么 这个时候 需要怎么做呢？</p>
+<blockquote>
+<p>答案：自然语言理解（NLU）</p>
+</blockquote>
+<h2 id="三、什么是-自然语言理解？"><a href="#三、什么是-自然语言理解？" class="headerlink" title="三、什么是 自然语言理解？"></a>三、什么是 自然语言理解？</h2><ul>
+<li>英文：（NLU，natural language understanding）</li>
+<li>介绍：指机器能够理解执行人类所期望的某些语言功能，换句话说就是人与机器交流的桥梁；</li>
+</ul>
+<h2 id="四、自然语言理解-的-工作-是什么？"><a href="#四、自然语言理解-的-工作-是什么？" class="headerlink" title="四、自然语言理解 的 工作 是什么？"></a>四、自然语言理解 的 工作 是什么？</h2><ol>
+<li>理解句子的正确次序规则和概念，又能理解不含规则的句子；</li>
+<li>知道词的确切含义、形式、词类及构词法；</li>
+<li>了解词的语义分类、词的多义性、词的歧义性；</li>
+<li>指定和不定特性及所有特性；</li>
+<li>问题领域的结构知识和实践概念；</li>
+<li>语言的语气信息和韵律表现；</li>
+<li>有关语言表达形式的文字知识；</li>
+<li>论域的背景知识；</li>
+</ol>
+<h2 id="五、自然语言理解-三层次，你知道么？"><a href="#五、自然语言理解-三层次，你知道么？" class="headerlink" title="五、自然语言理解 三层次，你知道么？"></a>五、自然语言理解 三层次，你知道么？</h2><ul>
+<li>三层次：<ul>
+<li>词法分析：自然语言理解过程的第一层，它的性能直接影响到后面句法和语义分析的成果，主要包括自动分词、词性标注、中文命名实体标注三方面内容；</li>
+<li>句法分析的目标是自动推导出句子的句法结构，实现这个目标首先要确定语法体系，不同的语法体系会产生不同的句法结构，常见语法体系有短语结构语法、依存关系语法；</li>
+<li>语义分析就是指分析话语中所包含的含义，根本目的是理解自然语言。分为词汇级语义分析、句子级语义分析、段落／篇章级语义分析，即分别理解词语、句子、段落的意义。</li>
+</ul>
+</li>
+</ul>
+<p><img src="img/1532921162912e4eb2dd348.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<blockquote>
+<p>参考：<a target="_blank" rel="noopener" href="https://www.aistudyblog.com/naturallanguage/20180731/13196.html">自然语言理解技术NLU</a></p>
+</blockquote>
+<h2 id="六、自然语言理解-一般理解-你知道么？"><a href="#六、自然语言理解-一般理解-你知道么？" class="headerlink" title="六、自然语言理解 一般理解 你知道么？"></a>六、自然语言理解 一般理解 你知道么？</h2><p><img src="img/aHR0cHM6Ly91cGxvYWQtaW1hZ2VzLmppYW5zaHUuaW8vdXBsb2FkX2ltYWdlcy8xNjY3NDcxLTM3MzE1ZjdiYWFlZTc1ZjQuanBn.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<blockquote>
+<p>该图来源于【<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_41510260/article/details/99876405?utm_source=distribute.pc_relevant.none-task">自然语言处理(NLP)的一般处理流程</a>】，还提供了【<a target="_blank" rel="noopener" href="https://naotu.baidu.com/file/f644044a8fb37fdba2d3d0bb4eb350e1?token=fd9855a9fc353aca">百度脑图查看点击链接</a>】。</p>
+</blockquote>
+<h2 id="七、NLU-训练数据如何准备？"><a href="#七、NLU-训练数据如何准备？" class="headerlink" title="七、NLU 训练数据如何准备？"></a>七、NLU 训练数据如何准备？</h2><h3 id="7-1-NLU-训练样本数据格式？"><a href="#7-1-NLU-训练样本数据格式？" class="headerlink" title="7.1 NLU 训练样本数据格式？"></a>7.1 NLU 训练样本数据格式？</h3><blockquote>
+<p>注：将NLU训练数据保存到单独的文件或者多个文件的目录</p>
+</blockquote>
+<ul>
+<li>markdown:<ul>
+<li>Common Examples:（唯一必须，NLU模型核心，也是训练NLU模型基础）<ul>
+<li>intent：某个意图，它应于某些text相对应；</li>
+<li>text：用户自然语言文本，即用户Message（text中可以不包括实体，但如果包含需要用<a href="entityName">entityText</a>进行标志）；</li>
+<li>entities：将要被提取的目标实体，我们需要在text文本中标出(如果该text存在实体的话)；</li>
+</ul>
+</li>
+<li>synonyms：同义词，在实体提取时会统一被解析成同一个意思；<ul>
+<li>举例说明：NLU 能够将（余额、话费、话费余额、账号余额）-映射-&gt; 余额；</li>
+<li>注：<strong>需要pipeline中包含EntitySynonmMapper组件，才能使用</strong>；</li>
+</ul>
+</li>
+<li>Regular Expression Features：<ul>
+<li>介绍：有助于意图分类和实体提取，但是它并不参与实体和意图的定义，仅仅是提供规则来协助意图分类和实体提取，因此，在训练文本text中，该添加的实体和意图样本需要照样添加</li>
+<li>举例：当需要用户输入的手机号实体时，我们可以再nlu.md文件中添加正则表达式特征支持，当用户输入的Message包含符合手机号正则表达式规则的内容时，Rasa可以更加容易地将其提取出来；</li>
+<li>说明：phone_number表示的既不是实体名也不是意图名，它只是一个便于我们阅读的标志而已。除了实体识别，我们还可以编写符合意图分类的正则表达式，这里就不演示了。</li>
+<li>对于<strong>实体提取</strong>来说，目前<strong>只有CRFEntityExtractor 实体提取器支持正则特征，像``MitieEntityExtractor和SpacyEntityExtractor目前还不支持</strong>；</li>
+<li>对于<strong>意图分类器</strong>，<strong>目前均已支持正则特征</strong>。</li>
+<li>注：<strong>需要pipeline中包含RegexFeaturizer组件，才能使用 正则特性</strong>；</li>
+</ul>
+</li>
+<li>lookup tables：<ul>
+<li>查找表有利于在加载训练数据时，生成与Regular Expression Features相同的正则特征。当在训练数据中提供查找表时，内容被组合成一个大型、不区分大小写的regex模式，该模式在训练示例中查找精确匹配。这些正则表达式匹配多个token，其处理与训练数据中直接指定的正则表达式模式相同。查找表可以包括在训练数据中，如果外部提供的数据必须要以换行进行分隔；</li>
+<li>注：mobile_data_package表示实体名。为了查找表能够有效的被使用，训练数据中必须要有一些示例被匹配上。否则，模型不会使用查找表特征向查找表添加数据时必须小心，比如如果表中有误报或其他噪声，就会影响性能，因此请确保查找表包含干净的数据 【eg：查下<a href="mobile_data_package">腾讯视频流量包</a>被匹配时，才会去 查找 data/lookup_tables/DataPackage.txt 表】</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs s"># data/lookup_tables/DataPackage.txt 格式<br>腾讯视频流量包<br>...<br></code></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs s">&lt;!--Common Examples--&gt;<br>## intent:你的意图名称  <br>- text<br>## intent:request_phone_business<br>- 查个手机号<br>- 查电话号码[19800222425](phone_number)<br>- [余额](business)<br>- 查下[腾讯视频流量包](mobile_data_package)<br>- 你好！请帮我查询一下电话[12260618425](phone_number)的[账户余额](business)<br>- 帮我查个手机号[19860612222](phone_number)的[话费](business)<br>- 查下号码[19860222425](phone_number)的[抖音免流包](mobile_data_package)<br><br>&lt;!--synonyms--&gt;<br>## synonym:余额<br>- 余额<br>- 话费<br>...<br><br>&lt;!--Regular Expression Features--&gt;<br>## regex:phone_number<br>- ((\d&#123;3,4&#125;-)?\d&#123;7,8&#125;)|(((\+86)|(86))?(1)\d&#123;10&#125;)<br><br>## lookup: mobile_data_package<br>data/lookup_tables/DataPackage.txt<br></code></pre></td></tr></table></figure>
+<ul>
+<li>JSON:</li>
+</ul>
+<blockquote>
+<p>markdown 类似</p>
+</blockquote>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">&#123;</span><br>  <span class="hljs-attr">&quot;rasa_nlu_data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;common_examples&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><br>      <span class="hljs-punctuation">&#123;</span><br>        <span class="hljs-attr">&quot;text&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;帮我查一下我的流量有多少&quot;</span><span class="hljs-punctuation">,</span><br>        <span class="hljs-attr">&quot;intent&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;request_search&quot;</span><span class="hljs-punctuation">,</span><br>        <span class="hljs-attr">&quot;entities&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><br>          <span class="hljs-punctuation">&#123;</span><br>            <span class="hljs-attr">&quot;start&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">7</span><span class="hljs-punctuation">,</span><br>            <span class="hljs-attr">&quot;end&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">9</span><span class="hljs-punctuation">,</span><br>            <span class="hljs-attr">&quot;value&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;流量&quot;</span><span class="hljs-punctuation">,</span><br>            <span class="hljs-attr">&quot;entity&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;item&quot;</span><br>          <span class="hljs-punctuation">&#125;</span><br>        <span class="hljs-punctuation">]</span><br>      <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;regex_features&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><br>    <span class="hljs-punctuation">&#123;</span><br>      <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;inform_package&quot;</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">&quot;pattern&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;套餐[0-9一二三四五六七八九十百俩两]+&quot;</span><br>    <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-punctuation">&#123;</span><br>      <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;inform_time&quot;</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">&quot;pattern&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;([0-9一二三四五六七八九十百俩两]+)月份?的?&quot;</span><br>    <span class="hljs-punctuation">&#125;</span><br>  <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;entity_synonyms&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">&#123;</span><br>      <span class="hljs-attr">&quot;value&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;消费&quot;</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">&quot;synonyms&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">&quot;话费&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-string">&quot;钱&quot;</span><span class="hljs-punctuation">]</span><br>    <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">]</span><br>  <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;lookup_tables&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">&#123;</span><br>      <span class="hljs-attr">&quot;value&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;constellation&quot;</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">&quot;ookup&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;data/lookup_tables/constellation.txt&quot;</span><br>    <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">]</span><br>  <span class="hljs-punctuation">&#125;</span><br><span class="hljs-punctuation">&#125;</span><br>  <br><br></code></pre></td></tr></table></figure>
+<h3 id="7-2-NLU-训练样本数据格式如何验证？"><a href="#7-2-NLU-训练样本数据格式如何验证？" class="headerlink" title="7.2 NLU 训练样本数据格式如何验证？"></a>7.2 NLU 训练样本数据格式如何验证？</h3><ul>
+<li>动机：对于 domian.yml、NLU data和Story data，如何检查这些文件是否有错误呢？</li>
+<li>使用命令：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs s">python -m rasa data validate<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>参数说明：</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs s">usage: rasa data validate [-h] [-v] [-vv] [--quiet] [--fail-on-warnings]<br>                        [-d DOMAIN] [--data DATA]<br><br>optional arguments:<br>  -h, --help            show this help message and exit<br>  --fail-on-warnings    Fail validation on warnings and errors. If omitted<br>                        only errors will result in a non zero exit code.<br>                        (default: False)<br>  -d DOMAIN, --domain DOMAIN<br>                        Domain specification (yml file). (default: domain.yml)<br>  --data DATA           Path to the file or directory containing Rasa data.<br>                        (default: data)<br><br>Python Logging Options:<br>  -v, --verbose         Be verbose. Sets logging level to INFO. (default:<br>                        None)<br>  -vv, --debug          Print lots of debugging statements. Sets logging level<br>                        to DEBUG. (default: None)<br>  --quiet               Be quiet! Sets logging level to WARNING. (default:<br>                        None)<br></code></pre></td></tr></table></figure>
+<ul>
+<li>代码：</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> logging<br><span class="hljs-keyword">from</span> rasa <span class="hljs-keyword">import</span> utils<br><span class="hljs-keyword">from</span> rasa.core.validator <span class="hljs-keyword">import</span> Validator<br><br>logger = logging.getLogger(__name__)<br><br>utils.configure_colored_logging(<span class="hljs-string">&#x27;DEBUG&#x27;</span>)<br><br>validator = Validator.from_files(domain_file=<span class="hljs-string">&#x27;domain.yml&#x27;</span>,<br>                                 nlu_data=<span class="hljs-string">&#x27;data/nlu_data.md&#x27;</span>,<br>                                 stories=<span class="hljs-string">&#x27;data/stories.md&#x27;</span>)<br><br>validator.verify_all()<br></code></pre></td></tr></table></figure>
+<h2 id="八、Rasa-NLU-Components"><a href="#八、Rasa-NLU-Components" class="headerlink" title="八、Rasa NLU Components"></a>八、Rasa NLU Components</h2><h3 id="8-1-词向量资源（Word-Vector-Sources）"><a href="#8-1-词向量资源（Word-Vector-Sources）" class="headerlink" title="8.1 词向量资源（Word Vector Sources）"></a>8.1 词向量资源（Word Vector Sources）</h3><h4 id="（一）MitieNLP-（做中文任务时，一般选用做一个，因为他是基于中文的词向量）"><a href="#（一）MitieNLP-（做中文任务时，一般选用做一个，因为他是基于中文的词向量）" class="headerlink" title="（一）MitieNLP （做中文任务时，一般选用做一个，因为他是基于中文的词向量）"></a>（一）MitieNLP （做中文任务时，一般选用做一个，因为他是基于中文的词向量）</h4><p><img src="img/20200923075311.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<ul>
+<li>configs.yml 配置</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs s">pipeline:<br>- name: &quot;MitieNLP&quot;<br>  # 语言模型<br>  model: &quot;data/total_word_feature_extractor_zh.dat&quot;<br></code></pre></td></tr></table></figure>
+<h4 id="（二）SpacyNLP-（英文）"><a href="#（二）SpacyNLP-（英文）" class="headerlink" title="（二）SpacyNLP （英文）"></a>（二）SpacyNLP （英文）</h4><p><img src="img/20200923075505.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<ul>
+<li>configs.yml 配置</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs s">pipeline:<br>- name: &quot;SpacyNLP&quot;<br>  # 指定语言模型<br>  model: &quot;en_core_web_md&quot;<br>  # 设定在检索单词向量时，这将决定单词的大小写是否相关<br>  # 当为false时，表示不区分大小写。比如`hello` and `Hello`<br>  # 检索到的向量是相同的。<br>  case_sensitive: false<br></code></pre></td></tr></table></figure>
+<h3 id="8-2-分词（Tokenizers）"><a href="#8-2-分词（Tokenizers）" class="headerlink" title="8.2 分词（Tokenizers）"></a>8.2 分词（Tokenizers）</h3><h4 id="（一）WhitespaceTokenizer"><a href="#（一）WhitespaceTokenizer" class="headerlink" title="（一）WhitespaceTokenizer"></a>（一）WhitespaceTokenizer</h4><p><img src="img/20200923075716.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<ul>
+<li>configs.yml 配置</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs s">pipeline:<br>- name: &quot;WhitespaceTokenizer&quot;<br>  # 指定是否大小写敏感，默认true为敏感<br>  case_sensitive: false<br></code></pre></td></tr></table></figure>
+<h4 id="（二）JiebaTokenizer"><a href="#（二）JiebaTokenizer" class="headerlink" title="（二）JiebaTokenizer"></a>（二）JiebaTokenizer</h4><p><img src="img/20200923075852.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<ul>
+<li>configs.yml 配置</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs s">pipeline:<br>- name: &quot;JiebaTokenizer&quot;<br>  # 指定自定义词典<br>  dictionary_path: &quot;path/to/custom/dictionary/dir&quot;<br></code></pre></td></tr></table></figure>
+<h4 id="（三）MitieTokenizer"><a href="#（三）MitieTokenizer" class="headerlink" title="（三）MitieTokenizer"></a>（三）MitieTokenizer</h4><p><img src="img/20200923080230.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<ul>
+<li>configs.yml 配置</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs s">pipeline:<br>- name: &quot;MitieTokenizer&quot;<br></code></pre></td></tr></table></figure>
+<h4 id="（四）SpacyTokenizer"><a href="#（四）SpacyTokenizer" class="headerlink" title="（四）SpacyTokenizer"></a>（四）SpacyTokenizer</h4><p><img src="img/20200923080341.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<ul>
+<li>configs.yml 配置</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs s">pipeline:<br>- name: &quot;SpacyTokenizer&quot;<br></code></pre></td></tr></table></figure>
+<h4 id="（五）ConveRTTokenizer"><a href="#（五）ConveRTTokenizer" class="headerlink" title="（五）ConveRTTokenizer"></a>（五）ConveRTTokenizer</h4><p><img src="img/20200923080521.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<ul>
+<li>configs.yml 配置</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs s">pipeline:<br>- name: &quot;ConveRTTokenizer&quot;<br></code></pre></td></tr></table></figure>
+<h3 id="8-3-文本特征化（Text-Featurizers）"><a href="#8-3-文本特征化（Text-Featurizers）" class="headerlink" title="8.3 文本特征化（Text Featurizers）"></a>8.3 文本特征化（Text Featurizers）</h3><h4 id="（一）MitieFeaturizer"><a href="#（一）MitieFeaturizer" class="headerlink" title="（一）MitieFeaturizer"></a>（一）MitieFeaturizer</h4><p><img src="img/20200923080657.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<ul>
+<li>configs.yml 配置</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs s">pipeline:<br>- name: &quot;MitieFeaturizer&quot;<br></code></pre></td></tr></table></figure>
+<h4 id="（二）SpacyFeaturizer"><a href="#（二）SpacyFeaturizer" class="headerlink" title="（二）SpacyFeaturizer"></a>（二）SpacyFeaturizer</h4><p><img src="img/20200923080941.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<ul>
+<li>configs.yml 配置</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs s">pipeline:<br>- name: &quot;SpacyFeaturizer&quot;<br></code></pre></td></tr></table></figure>
+<h4 id="（三）ConveRTFeaturizer"><a href="#（三）ConveRTFeaturizer" class="headerlink" title="（三）ConveRTFeaturizer"></a>（三）ConveRTFeaturizer</h4><p><img src="img/20200923081101.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<ul>
+<li>configs.yml 配置</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs s">pipeline:<br>- name: &quot;ConveRTFeaturizer&quot;<br></code></pre></td></tr></table></figure>
+<h4 id="（四）RegexFeaturizer"><a href="#（四）RegexFeaturizer" class="headerlink" title="（四）RegexFeaturizer"></a>（四）RegexFeaturizer</h4><p><img src="img/20200923081214.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<ul>
+<li>configs.yml 配置</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs s">pipeline:<br>- name: &quot;RegexFeaturizer&quot;<br></code></pre></td></tr></table></figure>
+<h4 id="（五）CountVectorsFeaturizer"><a href="#（五）CountVectorsFeaturizer" class="headerlink" title="（五）CountVectorsFeaturizer"></a>（五）CountVectorsFeaturizer</h4><p><img src="img/20200923081332.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<ul>
+<li>configs.yml 配置</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs s">pipeline:<br>- name: &quot;CountVectorsFeaturizer&quot;<br>  &quot;use_shared_vocab&quot;: False,<br>  analyzer: &#x27;word&#x27; <br>  token_pattern: r&#x27;(?u)\b\w\w+\b&#x27;<br>  strip_accents: None  <br>  stop_words: None <br>  min_df: 1 <br>  max_df: 1.0 <br>  min_ngram: 1  <br>  max_ngram: 1  <br>  max_features: None  <br>  lowercase: true<br>  OOV_token: None  <br>  OOV_words: []  <br></code></pre></td></tr></table></figure>
+<h3 id="8-4-意图分类（Intent-Classifiers）"><a href="#8-4-意图分类（Intent-Classifiers）" class="headerlink" title="8.4 意图分类（Intent Classifiers）"></a>8.4 意图分类（Intent Classifiers）</h3><h4 id="（一）MitieIntentClassifier"><a href="#（一）MitieIntentClassifier" class="headerlink" title="（一）MitieIntentClassifier"></a>（一）MitieIntentClassifier</h4><p><img src="img/20200923081653.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<ul>
+<li>configs.yml 配置</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs s">pipeline:<br>- name: &quot;MitieIntentClassifier&quot; <br></code></pre></td></tr></table></figure>
+<ul>
+<li>输出格式：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs s">&#123;<br>    &quot;intent&quot;: &#123;&quot;name&quot;: &quot;greet&quot;, &quot;confidence&quot;: 0.98343&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h4 id="（二）SklearnIntentClassifier"><a href="#（二）SklearnIntentClassifier" class="headerlink" title="（二）SklearnIntentClassifier"></a>（二）SklearnIntentClassifier</h4><p><img src="img/20200923081836.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<ul>
+<li>configs.yml 配置</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs s">pipeline:<br>- name: &quot;SklearnIntentClassifier&quot;<br>  # 指定SVM训练时要尝试的参数<br>  # 通过运行超参数搜索，以找到最佳的参数集<br>  C: [1, 2, 5, 10, 20, 100]<br>  # 指定C-SVM使用的内核<br>  # 它与GridSearchCV中的“C”超参数一起使用<br>  kernels: [&quot;linear&quot;]<br></code></pre></td></tr></table></figure>
+<ul>
+<li>输出格式：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs s">&#123;<br>    &quot;intent&quot;: &#123;&quot;name&quot;: &quot;greet&quot;, &quot;confidence&quot;: 0.78343&#125;,<br>    &quot;intent_ranking&quot;: [<br>        &#123;<br>            &quot;confidence&quot;: 0.1485910906220309,<br>            &quot;name&quot;: &quot;goodbye&quot;<br>        &#125;,<br>        &#123;<br>            &quot;confidence&quot;: 0.08161531595656784,<br>            &quot;name&quot;: &quot;restaurant_search&quot;<br>        &#125;<br>    ]<br>&#125;<br></code></pre></td></tr></table></figure>
+<h4 id="（三）EmbeddingIntentClassifier"><a href="#（三）EmbeddingIntentClassifier" class="headerlink" title="（三）EmbeddingIntentClassifier"></a>（三）EmbeddingIntentClassifier</h4><p><img src="img/20200923082013.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<ul>
+<li>configs.yml 配置</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs s">pipeline:<br>- name: &quot;EmbeddingIntentClassifier&quot;<br># Embedding算法的控制参数非常多<br># 具体参照官方文档，这里以指定训练次数为例<br>  epochs: 500<br></code></pre></td></tr></table></figure>
+<ul>
+<li>输出格式：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs s">&#123;<br>    &quot;intent&quot;: &#123;&quot;name&quot;: &quot;greet&quot;, &quot;confidence&quot;: 0.8343&#125;,<br>    &quot;intent_ranking&quot;: [<br>        &#123;<br>            &quot;confidence&quot;: 0.385910906220309,<br>            &quot;name&quot;: &quot;goodbye&quot;<br>        &#125;,<br>        &#123;<br>            &quot;confidence&quot;: 0.28161531595656784,<br>            &quot;name&quot;: &quot;restaurant_search&quot;<br>        &#125;<br>    ]<br>&#125;<br></code></pre></td></tr></table></figure>
+<h4 id="（四）KeywordIntentClassifier"><a href="#（四）KeywordIntentClassifier" class="headerlink" title="（四）KeywordIntentClassifier"></a>（四）KeywordIntentClassifier</h4><p><img src="img/20200923082133.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<ul>
+<li>configs.yml 配置</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs s">pipeline:<br>- name: &quot;KeywordIntentClassifier&quot;<br>  case_sensitive: True<br></code></pre></td></tr></table></figure>
+<ul>
+<li>输出格式：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs s">&#123;<br>    &quot;intent&quot;: &#123;&quot;name&quot;: &quot;greet&quot;, &quot;confidence&quot;: 1.0&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h3 id="8-5-选择器（Selectors）"><a href="#8-5-选择器（Selectors）" class="headerlink" title="8.5 选择器（Selectors）"></a>8.5 选择器（Selectors）</h3><h4 id="（一）Response-Selector"><a href="#（一）Response-Selector" class="headerlink" title="（一）Response Selector"></a>（一）Response Selector</h4><p><img src="img/20200923082314.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<ul>
+<li>configs.yml 配置</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs s">pipeline:<br>- name: &quot;KeywordIntentClassifier&quot; <br>  # 算法支持很多参数配置，详情见文档<br>  case_sensitive: True<br></code></pre></td></tr></table></figure>
+<ul>
+<li>输出格式：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs s">&#123;<br>    &quot;text&quot;: &quot;What is the recommend python version to install?&quot;,<br>    &quot;entities&quot;: [],<br>    &quot;intent&quot;: &#123;&quot;confidence&quot;: 0.6485910906220309, &quot;name&quot;: &quot;faq&quot;&#125;,<br>    &quot;intent_ranking&quot;: [<br>        &#123;&quot;confidence&quot;: 0.6485910906220309, &quot;name&quot;: &quot;faq&quot;&#125;,<br>        &#123;&quot;confidence&quot;: 0.1416153159565678, &quot;name&quot;: &quot;greet&quot;&#125;<br>    ],<br>    &quot;response_selector&quot;: &#123;<br>      &quot;faq&quot;: &#123;<br>        &quot;response&quot;: &#123;&quot;confidence&quot;: 0.7356462617, &quot;name&quot;: &quot;Supports 3.5, 3.6 and 3.7, <br>                    							 +&quot;recommended version is 3.6&quot;&#125;,<br>        &quot;ranking&quot;: [<br>            &#123;&quot;confidence&quot;: 0.7356462617, &quot;name&quot;: &quot;Supports 3.5, 3.6 and 3.7, <br>             										+&quot;recommended version is 3.6&quot;&#125;,<br>            &#123;&quot;confidence&quot;: 0.2134543431, &quot;name&quot;: &quot;You can ask me about how <br>             										+&quot;to get started&quot;&#125;<br>        ]<br>      &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h3 id="8-6-实体提取（Entity-Extractors）"><a href="#8-6-实体提取（Entity-Extractors）" class="headerlink" title="8.6 实体提取（Entity Extractors）"></a>8.6 实体提取（Entity Extractors）</h3><p><img src="img/20200923082503.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<h4 id="（一）MitieEntityExtractor"><a href="#（一）MitieEntityExtractor" class="headerlink" title="（一）MitieEntityExtractor"></a>（一）MitieEntityExtractor</h4><p><img src="img/20200923082623.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<ul>
+<li>configs.yml 配置</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs s">pipeline:<br>- name: &quot;MitieEntityExtractor&quot;<br></code></pre></td></tr></table></figure>
+<ul>
+<li>输出格式：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs s">&#123;<br>    &quot;entities&quot;: [&#123;&quot;value&quot;: &quot;New York City&quot;,<br>                  &quot;start&quot;: 20,<br>                  &quot;end&quot;: 33,<br>                  &quot;confidence&quot;: null,<br>                  &quot;entity&quot;: &quot;city&quot;,<br>                  &quot;extractor&quot;: &quot;MitieEntityExtractor&quot;&#125;]<br>&#125;<br></code></pre></td></tr></table></figure>
+<h4 id="（二）SpacyEntityExtractor"><a href="#（二）SpacyEntityExtractor" class="headerlink" title="（二）SpacyEntityExtractor"></a>（二）SpacyEntityExtractor</h4><p><img src="img/20200923082716.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<ul>
+<li>configs.yml 配置</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs s">pipeline:<br>- name: &quot;SpacyEntityExtractor&quot;<br>  # dimensions to extract<br>  dimensions: [&quot;PERSON&quot;, &quot;LOC&quot;, &quot;ORG&quot;, &quot;PRODUCT&quot;]<br></code></pre></td></tr></table></figure>
+<ul>
+<li>输出格式：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs s">&#123;<br>    &quot;entities&quot;: [&#123;&quot;value&quot;: &quot;New York City&quot;,<br>                  &quot;start&quot;: 20,<br>                  &quot;end&quot;: 33,<br>                  &quot;entity&quot;: &quot;city&quot;,<br>                  &quot;confidence&quot;: null,<br>                  &quot;extractor&quot;: &quot;SpacyEntityExtractor&quot;&#125;]<br>&#125;<br></code></pre></td></tr></table></figure>
+<h4 id="（三）EntitySynonymMapper"><a href="#（三）EntitySynonymMapper" class="headerlink" title="（三）EntitySynonymMapper"></a>（三）EntitySynonymMapper</h4><p><img src="img/20200923082819.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<ul>
+<li>configs.yml 配置</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs s">pipeline:<br>- name: &quot;EntitySynonymMapper&quot;<br></code></pre></td></tr></table></figure>
+<ul>
+<li>训练数据与实体提取示例：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs s">[&#123;<br>  &quot;text&quot;: &quot;I moved to New York City&quot;,<br>  &quot;intent&quot;: &quot;inform_relocation&quot;,<br>  &quot;entities&quot;: [&#123;&quot;value&quot;: &quot;nyc&quot;,<br>                &quot;start&quot;: 11,<br>                &quot;end&quot;: 24,<br>                &quot;entity&quot;: &quot;city&quot;,<br>               &#125;]<br>&#125;,<br>&#123;<br>  &quot;text&quot;: &quot;I got a new flat in NYC.&quot;,<br>  &quot;intent&quot;: &quot;inform_relocation&quot;,<br>  &quot;entities&quot;: [&#123;&quot;value&quot;: &quot;nyc&quot;,<br>                &quot;start&quot;: 20,<br>                &quot;end&quot;: 23,<br>                &quot;entity&quot;: &quot;city&quot;,<br>               &#125;]<br>&#125;]<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>说明：在上述例子中，该组件将实体New York City和NYC映射到nyc。即使消息包含NYC，实体提取将返回nyc。当该组件更改现有实体时，它将自己附加到该实体的处理器列表中。</p>
+</blockquote>
+<h4 id="（四）CRFEntityExtractor"><a href="#（四）CRFEntityExtractor" class="headerlink" title="（四）CRFEntityExtractor"></a>（四）CRFEntityExtractor</h4><p><img src="img/20200923082958.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<ul>
+<li>configs.yml 配置</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs s">pipeline:<br>- name: &quot;CRFEntityExtractor&quot;<br>  features: [[&quot;low&quot;, &quot;title&quot;], [&quot;bias&quot;, &quot;suffix3&quot;], [&quot;upper&quot;, &quot;pos&quot;, &quot;pos2&quot;]]<br>  # 决定是否使用BILOU_flag<br>  BILOU_flag: true<br>  # 在训练前将该参数设定给sklearn_crfcuite.CRF tagger<br>  max_iterations: 50<br>  # 指定L1正则化系数<br>  # 在训练前将该参数设定给sklearn_crfcuite.CRF tagger<br>  L1_c: 0.1<br>  # 指定L2正则化系数<br>  # 在训练前将该参数设定给sklearn_crfcuite.CRF tagger<br>  L2_c: 0.1<br></code></pre></td></tr></table></figure>
+<ul>
+<li>实体提取示例：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs s">&#123;<br>    &quot;entities&quot;: [&#123;&quot;value&quot;:&quot;New York City&quot;,<br>                  &quot;start&quot;: 20,<br>                  &quot;end&quot;: 33,<br>                  &quot;entity&quot;: &quot;city&quot;,<br>                  &quot;confidence&quot;: 0.874,<br>                  &quot;extractor&quot;: &quot;CRFEntityExtractor&quot;&#125;]<br>&#125;<br></code></pre></td></tr></table></figure>
+<h4 id="（五）DucklingHTTPExtractor"><a href="#（五）DucklingHTTPExtractor" class="headerlink" title="（五）DucklingHTTPExtractor"></a>（五）DucklingHTTPExtractor</h4><p><img src="img/20200923083143.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<ul>
+<li>configs.yml 配置</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs s">pipeline:<br>- name: &quot;DucklingHTTPExtractor&quot;<br>  # duckling server的url<br>  url: &quot;http://localhost:8000&quot;<br>  # 指定提取哪些维度，即实体类型<br>  dimensions: [&quot;time&quot;, &quot;number&quot;, &quot;amount-of-money&quot;, &quot;distance&quot;]<br>  # 配置语言环境<br>  locale: &quot;de_DE&quot;<br>  # 指定时区<br>  timezone: &quot;Europe/Berlin&quot;<br>  # 访问ducking server超时时间<br>  timeout : 3<br></code></pre></td></tr></table></figure>
+<ul>
+<li>实体提取示例：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs s">&#123;<br>    &quot;entities&quot;: [&#123;&quot;end&quot;: 53,<br>                  &quot;entity&quot;: &quot;time&quot;,<br>                  &quot;start&quot;: 48,<br>                  &quot;value&quot;: &quot;2017-04-10T00:00:00.000+02:00&quot;,<br>                  &quot;confidence&quot;: 1.0,<br>                  &quot;extractor&quot;: &quot;DucklingHTTPExtractor&quot;&#125;]<br>&#125;<br></code></pre></td></tr></table></figure>
+<h2 id="九、Rasa-NLU-Pipline"><a href="#九、Rasa-NLU-Pipline" class="headerlink" title="九、Rasa NLU Pipline"></a>九、Rasa NLU Pipline</h2><h3 id="9-1-动机"><a href="#9-1-动机" class="headerlink" title="9.1 动机"></a>9.1 动机</h3><ul>
+<li>动机：前面介绍了怎么多 组件(Component)，问题来了：怎么多 招式，我们需要怎么搭配 才能 治敌呢？</li>
+<li>解答：本节将继续讲解如何使用这些组件将准备好的样本数据(nlu.md)训练得到NLU模型</li>
+</ul>
+<h3 id="9-2-介绍"><a href="#9-2-介绍" class="headerlink" title="9.2 介绍"></a>9.2 介绍</h3><p>在Rasa NLU模块中，提供了一种名为Pipline(管道)配置方式，传入的消息(Message)通过管道中一系列组件处理后得到最终的模型。管道(Pipline)由多个组件(Component)构成，每个组件有各自的功能，比如实体提取、意图分类、响应选择、预处理等，这些组件在管道中一个接着一个的执行，每个组件处理输入并创建输出，并且输出可以被该组件之后管道中任何组件使用。当然，有些组件只生成管道中其他组件使用的信息，有些组件生成Output属性，这些Output属性将在处理完成后返回。下图为”pipeline”: [“Component A”, “Component B”, “Last Component”]训练时调用顺序：</p>
+<p><img src="img/20200923083606" srcset="/img/loading.gif" lazyload alt=""></p>
+<p>在Rasa NLU模块中，已为我们提供了几种模板(Template) Pipline，比如pretrained_embeddings_spacy、supervised_embeddings等，每一种Pipline组件构成不同，可以根据训练数据的特性选择使用。当然，Pipline的配置非常的灵活，我们可以自定义Pipline中的组件，实现不同特性的Pipline。</p>
+<h3 id="9-3-使用Template-Pipline"><a href="#9-3-使用Template-Pipline" class="headerlink" title="9.3 使用Template Pipline"></a>9.3 使用Template Pipline</h3><h4 id="（一）pretrained-embeddings-spacy"><a href="#（一）pretrained-embeddings-spacy" class="headerlink" title="（一）pretrained_embeddings_spacy"></a>（一）pretrained_embeddings_spacy</h4><p>在config.yaml文件中配置如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs s">language: &quot;en&quot;<br>pipeline: &quot;pretrained_embeddings_spacy&quot;<br></code></pre></td></tr></table></figure>
+<p> 当然，上述配置等价于：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs s">language: &quot;en&quot;<br><br>pipeline:<br>- name: &quot;SpacyNLP&quot;        # 预训练词向量        <br>- name: &quot;SpacyTokenizer&quot;  # 文本分词器          <br>- name: &quot;SpacyFeaturizer&quot; # 文本特征化  <br>- name: &quot;RegexFeaturizer&quot; # 支持正则表达式  <br>- name: &quot;CRFEntityExtractor&quot; # 实体提取器  <br>- name: &quot;EntitySynonymMapper&quot; # 实体同义词映射  <br>- name: &quot;SklearnIntentClassifier&quot; # 意图分类器 <br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>  pretrained_embeddings_spacy管道使用GloVe或 fastText的预训练词向量，因此，它的优势在于当你有一个训练样本如I want to buy apples，Rasa会预测意图为get pears。因为模型已经知道“苹果”和“梨”是非常相似的。如果没有足够大的训练数据，这一点尤其有用。</p>
+</blockquote>
+<h4 id="（二）supervised-embeddings"><a href="#（二）supervised-embeddings" class="headerlink" title="（二）supervised_embeddings"></a>（二）supervised_embeddings</h4><p>在config.yaml文件中配置如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs s">language: &quot;en&quot;<br>pipeline: &quot;supervised_embeddings&quot;<br></code></pre></td></tr></table></figure>
+<p> 当然，上述配置等价于：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs s">language: &quot;en&quot;<br><br>pipeline:<br>- name: &quot;WhitespaceTokenizer&quot;   # 分词器<br>- name: &quot;RegexFeaturizer&quot;       # 正则<br>- name: &quot;CRFEntityExtractor&quot;	 # 实体提取器<br>- name: &quot;EntitySynonymMapper&quot;	 # 同义词映射<br>- name: &quot;CountVectorsFeaturizer&quot;  # featurizes文本基于词<br>- name: &quot;CountVectorsFeaturizer&quot;  # featurizes文本基于n-grams character，保留词边界 <br>  analyzer: &quot;char_wb&quot;<br>  min_ngram: 1<br>  max_ngram: 4<br>- name: &quot;EmbeddingIntentClassifier&quot;  # 意图分类器<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>  supervised_embeddings 管道不使用任何的预训练词向量或句向量，而是针对自己的数据集特别做的训练。它的优势是面向自己特定数据集的词向量(your word vectors will be customised for your domain)，比如，在通用英语中，单词“balance” (平衡)与单词 “symmetry”(对称)意思非常相近，而与单词”cash”意思截然不同。但是，在银行领域(domain)，“balance”与”cash”意思相近，而supervised_embeddings训练得到的模型就能够捕捉到这一点。该pipline不需要任何指定的语言模型，因此适用于任何语言，当然，需要指定对应的分词器。比如默认使用WhitespaceTokenizer，对于中文可以使用Jieba分词器等等，也就是该Pipline的组件是可以自定义的。</p>
+</blockquote>
+<h4 id="（三）pretrained-embeddings-convert"><a href="#（三）pretrained-embeddings-convert" class="headerlink" title="（三）pretrained_embeddings_convert"></a>（三）pretrained_embeddings_convert</h4><p>在config.yaml文件中配置如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs s">language: &quot;en&quot;<br><br>pipeline: &quot;pretrained_embeddings_convert&quot;<br></code></pre></td></tr></table></figure>
+<p> 当然，上述配置等价于：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs s">language: &quot;en&quot;<br><br>pipeline:<br>- name: &quot;ConveRTTokenizer&quot;<br>- name: &quot;ConveRTFeaturizer&quot;<br>- name: &quot;EmbeddingIntentClassifier&quot;<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>  pretrained_embeddings_convert使用预训练的句子编码模型ConveRT以抽取用户输入句子的整体向量表征。该pipeline使用ConveRT模型抽取句子表征，并将句子表征输入到EmbeddingIntentClassifier以进行意图分类。使用pretrained_embeddings_convert的好处是不独立地处理用户输入句子中的每个词，而是为完整的句子创建上下文向量表征。比如，句子can I book a car?Rasa 会预测意图为I need a ride from my place。由于这两个示例的上下文向量表征已经非常相似，因此对它们进行分类的意图很可能是相同的。如果没有足够大的训练数据，这也很有用。需要注意的是，由于ConveRT模型仅在英语语料上进行训练，因此只有在训练数据是英语时才能够使用该pipeline。</p>
+</blockquote>
+<h4 id="（四）MITIE"><a href="#（四）MITIE" class="headerlink" title="（四）MITIE"></a>（四）MITIE</h4><p>在config.yaml文件中配置如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs s">language: &quot;en&quot;<br><br># 1. 使用SklearnIntentClassifier意图分类器<br># 这里的模型为英文<br><br>pipeline:<br>- name: &quot;MitieNLP&quot;       # 预训练词向量<br>  model: &quot;data/total_word_feature_extractor.dat&quot;<br>- name: &quot;MitieTokenizer&quot;  # 分词器<br>- name: &quot;MitieEntityExtractor&quot; # 实体提取器<br>- name: &quot;EntitySynonymMapper&quot; # 同义词映射<br>- name: &quot;RegexFeaturizer&quot; # 正则<br>- name: &quot;MitieFeaturizer&quot; # 特征化<br>- name: &quot;SklearnIntentClassifier&quot; # 意图分类器<br><br># 2. 使用MitieIntentClassifier意图分类器<br># 数据量大的时候，训练非常慢(不推荐)<br><br># pipeline:<br># - name: &quot;MitieNLP&quot;<br>#   model: &quot;data/total_word_feature_extractor.dat&quot;<br># - name: &quot;MitieTokenizer&quot;<br># - name: &quot;MitieEntityExtractor&quot;<br># - name: &quot;EntitySynonymMapper&quot;<br># - name: &quot;RegexFeaturizer&quot;<br># - name: &quot;MitieIntentClassifier&quot;<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>  Rasa NLU模块支持在Pipline中使用Mitie，但是在使用前需要训练词向量，然后使用MitieNLP组件指定。MITIE后端对于小型数据集执行得很好，但是如果数据量超过几百个示例，则训练可能需要很长时间。Rasa官网不建议使用它，因为mitie支持在将来的版本中可能会被弃用。</p>
+</blockquote>
+<h3 id="9-4-使用Custome-Pipline"><a href="#9-4-使用Custome-Pipline" class="headerlink" title="9.4 使用Custome Pipline"></a>9.4 使用Custome Pipline</h3><h4 id="（一）zh-jieba-mitie-sklearn"><a href="#（一）zh-jieba-mitie-sklearn" class="headerlink" title="（一）zh_jieba_mitie_sklearn"></a>（一）zh_jieba_mitie_sklearn</h4><p>在config.yaml文件中配置如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs s">language: &quot;zh&quot;<br><br>pipeline:<br>- name: &quot;MitieNLP&quot; # 使用中文词向量模型<br>  model: &quot;data/total_word_feature_extractor_zh.dat&quot;<br>- name: &quot;JiebaTokenizer&quot; # 使用jieba分词<br>- name: &quot;MitieEntityExtractor&quot;<br>- name: &quot;EntitySynonymMapper&quot;<br>- name: &quot;RegexFeaturizer&quot;<br>- name: &quot;MitieFeaturizer&quot;<br>- name: &quot;SklearnIntentClassifier&quot;<br></code></pre></td></tr></table></figure>
+<p> 当然，上述配置等价于：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs s">Received user message &#x27;&quot;广州明天的天气怎么样&quot;&#x27; with <br>intent <br>	&#x27;&#123;&#x27;name&#x27;: &#x27;request_weather&#x27;, &#x27;confidence&#x27;: 0.5182071733645418&#125;&#x27; <br>and entities <br>	&#x27;[&#123;&#x27;entity&#x27;: &#x27;address&#x27;, &#x27;value&#x27;: &#x27;广州&#x27;, &#x27;start&#x27;: 1, &#x27;end&#x27;: 3, <br>	&#x27;confidence&#x27;: None, &#x27;extractor&#x27;: &#x27;MitieEntityExtractor&#x27;&#125;, <br>	&#123;&#x27;entity&#x27;: &#x27;date-time&#x27;, &#x27;value&#x27;: &#x27;明天&#x27;, &#x27;start&#x27;: 3, &#x27;end&#x27;: 5, &#x27;confidence&#x27;: 	<br>     	None,&#x27;extractor&#x27;: &#x27;MitieEntityExtractor&#x27;&#125;]&#x27;<br>		confidence&#x27;: None, &#x27;extractor&#x27;: &#x27;MitieEntityExtractor&#x27;&#125;<br>     ]&#x27;<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>  由于Rasa NLU模块提供的模板Pipline主要适用于英文，假如我们需要训练中文NLU模型的话，就需要使用中文分词器，比如jieba分词器，因此，我们修改MITIE Pipline将分词器改为Jieba，并修改MitieNLP预训练词向量模型为中文模型，其他不变，如MitieEntityExtractor，SklearnIntentClassifier等。根据NLU识别结果可知，输入文本经过处理后输出的intent和entities，从而可知，intent意图识别和entities实体识别是相互独立的。</p>
+</blockquote>
+<h4 id="（二）zh-crf-supervised-embeddings"><a href="#（二）zh-crf-supervised-embeddings" class="headerlink" title="（二）zh_crf_supervised_embeddings"></a>（二）zh_crf_supervised_embeddings</h4><p>在config.yaml文件中配置如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs s">language: &quot;zh&quot;<br><br>pipeline:<br>- name: &quot;JiebaTokenizer&quot;  # 使用jieba分词<br>- name: &quot;RegexFeaturizer&quot;<br>- name: &quot;CRFEntityExtractor&quot;<br>- name: &quot;EntitySynonymMapper&quot;<br>- name: &quot;CountVectorsFeaturizer&quot;<br>- name: &quot;CountVectorsFeaturizer&quot;<br>  analyzer: &quot;char_wb&quot;<br>  min_ngram: 1<br>  max_ngram: 4<br>- name: &quot;EmbeddingIntentClassifier&quot;<br></code></pre></td></tr></table></figure>
+<ul>
+<li>NLU识别结果示例1：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs s">Received user message &#x27;&quot;广州明天的天气怎么样&quot;&#x27; with <br>intent <br>	&#x27;&#123;&#x27;name&#x27;: &#x27;request_weather&#x27;, &#x27;confidence&#x27;: 0.9965207576751709&#125;&#x27; <br>and entities <br>	&#x27;[&#123;&#x27;start&#x27;: 1, &#x27;end&#x27;: 3, &#x27;value&#x27;: &#x27;广州&#x27;, &#x27;entity&#x27;: &#x27;address&#x27;,<br>	&#x27;confidence&#x27;: 0.4974091477686857, &#x27;extractor&#x27;: &#x27;CRFEntityExtractor&#x27;&#125;, <br>	&#123;&#x27;start&#x27;: 3, &#x27;end&#x27;: 5, &#x27;value&#x27;: &#x27;明天&#x27;, &#x27;entity&#x27;: &#x27;date-time&#x27;, <br>     &#x27;confidence&#x27;: 0.8807040793780636, &#x27;extractor&#x27;: &#x27;CRFEntityExtractor&#x27;&#125;]&#x27;<br></code></pre></td></tr></table></figure>
+<ul>
+<li>NLU识别结果示例2：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs s">Received user message &#x27;&quot;查下138383834381的账户余额&quot;&#x27; with <br>intent <br>	&#x27;&#123;&#x27;name&#x27;: &#x27;request_phone_business&#x27;, &#x27;confidence&#x27;: 0.9994893074035645&#125;&#x27; <br>and entities <br>	&#x27;[&#123;&#x27;start&#x27;: 3, &#x27;end&#x27;: 15, &#x27;value&#x27;: &#x27;138383834381&#x27;, &#x27;entity&#x27;: &#x27;phone_number&#x27;, <br>        &#x27;confidence&#x27;: 0.5848492378103071, &#x27;extractor&#x27;: &#x27;CRFEntityExtractor&#x27;&#125;,<br>		&#123;&#x27;start&#x27;: 16, &#x27;end&#x27;: 20, &#x27;value&#x27;: &#x27;余额&#x27;, &#x27;entity&#x27;: &#x27;business&#x27;,<br>         &#x27;confidence&#x27;: 0.9023286498337025, &#x27;extractor&#x27;: &#x27;CRFEntityExtractor&#x27;, <br>         &#x27;processors&#x27;: [&#x27;EntitySynonymMapper&#x27;]&#125;]&#x27;<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>注：该Pipline修改自模板管道supervised_embeddings，由于该模板默认支持英文，为了实现支持中文，我们将分词器由WhitespaceTokenizer改为JiebaTokenizer，其他配置不变。经过测试可知，在意图分类方面，CountVectorsFeaturizer、EmbeddingIntentClassifier组合意图提取置信度高于MitieFeaturizer、SklearnIntentClassifier组合；在实体提取方面。CRFEntityExtractor也优于MitieEntityExtractor。另外，supervised_embeddings不需要任何指定的语言模型，因此适用于任何语言，并且完全依赖于训练数据，因此训练得到的模型拥有更好的适应性，训练的时间也非常快。但是，目前我遇到的有一点就是，有可能在训练数据不足时，在实体提取时可能会出现无法提取到实体的问题，当然，这只是我的推测，有待进一步验证。</p>
+<p>当然，除了对已有的模板Pipline进行重新组合，我们完全可以自定义Pipline中的组件，定制你想要的功能和改进每个环节，这或许就是Rasa的优秀之处，非常灵活。比如，我们只希望支持实体识别，不做意图分类，那么我们可以这样自定义一个Pipline：</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs s">pipeline:<br>- name: &quot;SpacyNLP&quot;<br>- name: &quot;CRFEntityExtractor&quot;<br>- name: &quot;EntitySynonymMapper&quot;<br></code></pre></td></tr></table></figure>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://jiangdg.blog.csdn.net/article/details/104530994">Rasa中文聊天机器人开发指南(2)：NLU篇</a></li>
+</ol>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Rasa-NLU/">#Rasa NLU</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Rasa NLU 详解</div>
+      <div>http://example.com/2020/12/14/2020-12-14-Rasa NLU 详解/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>NSX</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2020年12月14日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/12/14/2020-12-14-Rasa%20Core%20&amp;%20Rasa%20X%20%E8%AF%A6%E8%A7%A3/" title="Rasa Core &amp; Rasa X 详解">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Rasa Core &amp; Rasa X 详解</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/12/14/2020-12-14-Rasa%E5%AE%89%E8%A3%85%E4%BB%A5%E5%8F%8A%E9%A1%B9%E7%9B%AE%E5%88%9D%E5%B0%9D%E8%AF%95/" title="Rasa安装以及项目初尝试">
+                        <span class="hidden-mobile">Rasa安装以及项目初尝试</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

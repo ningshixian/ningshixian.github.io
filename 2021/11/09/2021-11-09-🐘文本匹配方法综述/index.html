@@ -1,0 +1,990 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="    NSX">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="文本匹配是自然语言理解中的一个核心问题，它可以应用于大量的自然语言处理任务中，例如信息检索、问答系统、复述问题、对话系统、机器翻译等等。这些自然语言处理任务在很大程度上都可以抽象成文本匹配问题，比如信息检索可以归结为搜索词和文档资源的匹配，问答系统可以归结为问题和候选答案的匹配，复述问题可以归结为两个同义句的匹配，对话系统可以归结为前一句对话和回复的匹配，机器翻译则可以归结为两种语言的匹配。 本文">
+<meta property="og:type" content="article">
+<meta property="og:title" content="     语义文本相似度方案">
+<meta property="og:url" content="http://example.com/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="文本匹配是自然语言理解中的一个核心问题，它可以应用于大量的自然语言处理任务中，例如信息检索、问答系统、复述问题、对话系统、机器翻译等等。这些自然语言处理任务在很大程度上都可以抽象成文本匹配问题，比如信息检索可以归结为搜索词和文档资源的匹配，问答系统可以归结为问题和候选答案的匹配，复述问题可以归结为两个同义句的匹配，对话系统可以归结为前一句对话和回复的匹配，机器翻译则可以归结为两种语言的匹配。 本文">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/1662531637155-47f14b20-6370-4236-b3b1-44b5e39af2e1.png">
+<meta property="og:image" content="http://example.com/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/1660292604860-10c0729a-b8da-4d03-b34b-b2c4c29fac6e.png">
+<meta property="og:image" content="http://example.com/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/1654770741231-89f9f602-7eb2-4035-ad36-69414047319d.png">
+<meta property="og:image" content="http://example.com/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/1654770794149-37a4b119-8a4c-441d-ac9b-76369376e104.png">
+<meta property="og:image" content="http://example.com/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/1660293788206-8d19f848-ba85-461e-b0c7-468c546c9cf6.png">
+<meta property="og:image" content="http://example.com/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/1660295364438-e6ec07d3-2e44-4760-8e0e-54a7dde52301.png">
+<meta property="og:image" content="http://example.com/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/1660300150186-f18b64ee-ebad-4507-9abb-1a6d69131712.png">
+<meta property="og:image" content="http://example.com/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/1654770794622-2164f4f4-81d3-43e0-93d3-3025eefd176e.png">
+<meta property="og:image" content="http://example.com/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/1660300245507-88638bb1-cbd2-4095-a502-0f6fed8912e2.png">
+<meta property="og:image" content="http://example.com/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/1654770787813-f9e61573-cca3-4240-83be-6d16e91f6c0f.png">
+<meta property="og:image" content="http://example.com/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/1654770789119-19a31114-19a3-4987-abe0-c0c51be7f1a0.png">
+<meta property="og:image" content="http://example.com/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/1655793230594-23183af8-1889-4368-a24e-20c28f7a4e8b.png">
+<meta property="og:image" content="http://example.com/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/008i3skNly1guktjoweehj61740o20vv02.jpg">
+<meta property="og:image" content="http://example.com/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/v2-774b04defa9ab870c7e8d9fad6cde190_1440w.jpg">
+<meta property="og:image" content="http://example.com/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/image-5a59670f2113499d95fc165ca56b7065-20230424200729876.webp">
+<meta property="og:image" content="http://example.com/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/v2-f8a949b01adbaa20a974ad41901215cc_1440w.jpg">
+<meta property="og:image" content="http://example.com/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/v2-012618cc9e422b78fc0c57972fa687f2_1440w.jpg">
+<meta property="og:image" content="http://example.com/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/008i3skNly1gtyxtrjvl3j60ns0igwgd02.jpg">
+<meta property="og:image" content="http://example.com/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/1599653-ac9cc602bc22d081.png">
+<meta property="og:image" content="http://example.com/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/v2-9752b8ccbc1da96344e0925f16b735cd_1440w.jpg">
+<meta property="og:image" content="http://example.com/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/image-16dce761a5f648d3af92d94195ea1e16-20230424200833973.webp">
+<meta property="og:image" content="http://example.com/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/image-2ceda1d52b3340fe9692e7aa6d438412-20230424200854159.webp">
+<meta property="og:image" content="http://example.com/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/image-252e4dd7a23942ac938472e78e498de7-20230424200902497.png">
+<meta property="og:image" content="http://example.com/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/640-20230424200915421.jpeg">
+<meta property="og:image" content="http://example.com/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/v2-c44b0398dc3e5372e8b91959b8052081_1440w.jpg">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=O_%7BRM%7D#id=XMhh8&amp;originHeight=20&amp;originWidth=40&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=shadow&amp;title=">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=O_%7BSM%7D#id=wbp78&amp;originHeight=20&amp;originWidth=38&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=shadow&amp;title=">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=O_%7BSM%7D%2C+O_%7BRM%7D#id=T0BDo&amp;originHeight=20&amp;originWidth=86&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=shadow&amp;title=">
+<meta property="og:image" content="http://example.com/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/v2-9e3b3f27fc2de53bc27c52baceca84c0_1440w.jpg">
+<meta property="og:image" content="http://example.com/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/1661236959872-b5e9133c-cac2-4e6d-a948-f4aa4499ba4b.png">
+<meta property="article:published_time" content="2021-11-08T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-24T12:10:56.013Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="语义匹配">
+<meta property="article:tag" content="语义相似度">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/1662531637155-47f14b20-6370-4236-b3b1-44b5e39af2e1.png">
+  
+  
+  
+  <title>     语义文本相似度方案 - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="  语义文本相似度方案"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-11-09 00:00" pubdate>
+          2021年11月9日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          24k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          200 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">  语义文本相似度方案</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>文本匹配是自然语言理解中的一个核心问题，它可以应用于大量的自然语言处理任务中，例如信息检索、问答系统、复述问题、对话系统、机器翻译等等。这些自然语言处理任务在很大程度上都可以抽象成文本匹配问题，比如<strong>信息检索可以归结为搜索词和文档资源的匹配，问答系统可以归结为问题和候选答案的匹配，复述问题可以归结为两个同义句的匹配，对话系统可以归结为前一句对话和回复的匹配，机器翻译则可以归结为两种语言的匹配</strong>。</p>
+<p>本文简要介绍语义文本相似度计算的最新研究进展, 主要包括基于字符串、基于统计、基于深度学习的语义相似度计算方法。</p>
+<img src="/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/1662531637155-47f14b20-6370-4236-b3b1-44b5e39af2e1.png" srcset="/img/loading.gif" lazyload class="" title="文本相似模型概览.drawio.png">
+<h2 id="1-基于字符串"><a href="#1-基于字符串" class="headerlink" title="1.基于字符串"></a>1.基于字符串</h2><p>基于字符串的方法都是直接对原始文本进行比较, 主要包括编辑距离[11] (Levenshtein Distance, LD)、最长公共子序列[12] (Longest Common Sequence, LCS)、N-Gram[13] 和 Jaccard 相似度[14] 等. 具体可参考《2021-05-26-常见距离度量方法》</p>
+<p>基于字符串的方法原理简单、实现方便, 并且直接对原始文本进行比较, 多用于文本的快速模糊 匹配, 其不足主要在于没有考虑到单词的含义及单词和单词之间的相互关系, 并且同义词、多义词等问题都无法处理.</p>
+<h2 id="2-基于统计"><a href="#2-基于统计" class="headerlink" title="2.基于统计"></a>2.基于统计</h2><p>基于统计的方法源于一种分布假设, 该假设认为上下文相似的单词具有相似的语义, 这类计算方 法先通过某种策略将文本转换成一个向量, 然后通过各种向量空间的转换, 最后计算表征文本的向量间距离, 通过向量空间中的度量来衡量文本间的相似度.</p>
+<p>主流的基于统计的方法包括向量空间模型[17] (Vector Space Model, VSM) 和主题模型 (Topic Model), 而主题模型又可分为潜在语义分析模型[18] (Latent Semantic Analysis, LSA)、概率潜在语义分析模型[19] (Probabilistic Latent Semantic Analysis, PLSA) 和隐含狄利克雷分布模型[20] (Latent Dirichlet Allocation, LDA) 等.</p>
+<h3 id="2-1-基于向量空间模型"><a href="#2-1-基于向量空间模型" class="headerlink" title="2.1 基于向量空间模型"></a>2.1 基于向量空间模型</h3><p>Salton 等[17] 在 1975 年首次提出向量空间模型 (VSM), 主要思想就是假设一个文本的语义只与该文本中的单词有关, 而忽略其语序和单词之间的相互关系, 然后通过<strong>基于词频统计</strong>的方法, 将文本映射成向量, 最后通过向量间的距离计算以表征文本间的相似度.</p>
+<h4 id="TF-IDF"><a href="#TF-IDF" class="headerlink" title="TF-IDF"></a>TF-IDF</h4><p>目前 VSM 中最常用的是基于 TF-IDF 的权重计算法（详细介绍可参考<a target="_blank" rel="noopener" href="http://www.ruanyifeng.com/blog/2013/03/cosine_similarity.html">TF-IDF与余弦相似性的应用（二）：找出相似文章</a>）, TF-IDF的分数代表了词语在当前文档和整个语料库中的相对重要性。TF-IDF 分数由两部分组成：第一部分是<strong>词语频率</strong>（Term Frequency），第二部分是<strong>逆文档频率</strong>（Inverse Document Frequency），计算方式如下：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs stylus"><span class="hljs-function"><span class="hljs-title">TF</span><span class="hljs-params">(t)</span></span>= 该词语在当前文档出现的次数 / 当前文档中词语的总数<br><span class="hljs-function"><span class="hljs-title">IDF</span><span class="hljs-params">(t)</span></span>= log_e（文档总数 / 出现该词语的文档总数）+σ<br>平滑版 <span class="hljs-built_in">IDF</span>(t)= log_e（文档总数+<span class="hljs-number">1</span> / 出现该词语的文档总数+<span class="hljs-number">1</span>）+σ<br>TF-IDF=TF*IDF<br></code></pre></td></tr></table></figure>
+<img src="/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/1660292604860-10c0729a-b8da-4d03-b34b-b2c4c29fac6e.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>在利用 TF-IDF 权重计算法计算出各个特征项的权重之后, 就得到了可以表征文本的向量, 接下来只要计算向量之间的距离即可, 一般来说, 距离越近则两文本越相似.</p>
+<p>TF-IDF算法的优点是简单快速，结果比较符合实际情况。缺点是，单纯以”词频”衡量一个词的重要性，不够全面，有时重要的词可能出现次数并不多。而且，这种算法无法体现词的位置信息，出现位置靠前的词与出现位置靠后的词，都被视为重要性相同，这是不正确的。</p>
+<ul>
+<li>代码示例如下（借助<code>Sklearn</code>库）</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> sklearn.feature_extraction.text <span class="hljs-keyword">import</span> TfidfVectorizer<br><span class="hljs-keyword">import</span> seaborn <span class="hljs-keyword">as</span> sns<br><br>texts = [<br>    <span class="hljs-string">&#x27;今天 天气 很好 ， 出去 玩&#x27;</span>,<br>    <span class="hljs-string">&#x27;我 来到 北京 清华大学&#x27;</span>,<br>    <span class="hljs-string">&quot;小明 硕士 毕业 与 中国 科学院&quot;</span><br>]<span class="hljs-comment">#提前分好词</span><br><br><span class="hljs-comment"># word level tf-idf</span><br>vectorizer = TfidfVectorizer(analyzer=<span class="hljs-string">&#x27;word&#x27;</span>,use_idf=<span class="hljs-literal">True</span>, smooth_idf=<span class="hljs-literal">True</span>, token_pattern=<span class="hljs-string">r&#x27;\w&#123;1,&#125;&#x27;</span>)<br>vec = vectorizer.fit_transform(texts)	<span class="hljs-comment">#训练&amp;#将文本转为词频矩阵</span><br>xtest_vec = vectorizer.transform(xtest)	<span class="hljs-comment"># 仅向量转换：直接用训练集学习到的idf去计算测试集里面每一个tf-idf</span><br><br><span class="hljs-built_in">print</span>(vectorizer.vocabulary_)<span class="hljs-comment">#&#123;word:idx&#125;</span><br><span class="hljs-built_in">print</span>(vectorizer.get_feature_names())<span class="hljs-comment">#获取词袋模型中的所有词语</span><br><span class="hljs-built_in">print</span>(idx_w=vectorizer.vocabulary_.get(<span class="hljs-string">&quot;今天&quot;</span>))<span class="hljs-comment">#获取&quot;今天&quot;在词表中的索引</span><br><span class="hljs-built_in">print</span>(vectorizer.idf_[idx_w] <span class="hljs-keyword">if</span> idx_w <span class="hljs-keyword">else</span> <span class="hljs-number">1</span>)<span class="hljs-comment">#根据词索引，获取对应的 idf 值</span><br><span class="hljs-built_in">print</span>(vec.toarray())<span class="hljs-comment">#显示词频矩阵</span><br><br>sns.heatmap(vec.toarray(), annot=<span class="hljs-literal">True</span>, cbar = <span class="hljs-literal">False</span>, xticklabels = vocab)<br></code></pre></td></tr></table></figure>
+<h3 id="2-2-基于主题模型"><a href="#2-2-基于主题模型" class="headerlink" title="2.2 基于主题模型"></a>2.2 基于主题模型</h3><p>主题模型的基本假设是每个文档包含 多个主题, 而每个主题又包含多个单词. 换句话说, 文档的语义由一些隐变量表示, 这里的隐变量是指主题, 而这些主题代表了文档的语义信息. 而主题模型的目的就是揭示这些隐变量和它们之间的相互关系. 主题模型主要包括: ① 潜在语义分析 (LSA) 模型; ② 概率潜在语义分析 (PLSA) 模型; ③ 潜在狄 利克雷分布 (LDA) 模型.</p>
+<p><strong>潜在语义分析（LSA, Latent Semantic Analysis）</strong><a target="_blank" rel="noopener" href="https://leovan.me/cn/2020/10/text-similarity/#fn:deerwester1990indexing">5</a> 的核心思想是将文本的高维词空间映射到一个低维的向量空间，我们称之为隐含语义空间。降维可以通过<a target="_blank" rel="noopener" href="https://leovan.me/cn/2017/12/evd-svd-and-pca/">奇异值分解（SVD）</a>实现.</p>
+<h3 id="2-3-基于概率模型"><a href="#2-3-基于概率模型" class="headerlink" title="2.3 基于概率模型"></a>2.3 基于概率模型</h3><h4 id="BM25"><a href="#BM25" class="headerlink" title="BM25"></a>BM25</h4><blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.pinecone.io/learn/semantic-search/">https://www.pinecone.io/learn/semantic-search/</a></p>
+</blockquote>
+<p>BM25 算法的全称为 Okapi BM25，是一种搜索引擎用于评估查询和文档之间相关程度的排序算法，其中 BM 是 Best Match 的缩写。 <strong>Okapi BM25 是 TF-IDF 的优化版，主要是根据文档长度对结果进行归一化。</strong></p>
+<p>首先我们来看一下bm25算法的计算公式：</p>
+<img src="/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/1654770741231-89f9f602-7eb2-4035-ad36-69414047319d.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>这是一个看起来很讨厌的方程——但它只不过是我们的 TF-IDF 公式带了一些新参数！让我们比较两个 TF 部分：</p>
+<img src="/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/1654770794149-37a4b119-8a4c-441d-ac9b-76369376e104.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>BM25 算法的一个重要的设计思想是，<strong>它认为词频和相关性的关系并不是线性的</strong>。也就是说，随着词频的增加，相关性的增加会越来越不明显，并且还会有一个阈值上限。当词频达到阈值以后，那相关性就不会再增长了。因此，BM25 对于 TF 的使用，设立了一个词项在文档中的权重计算公式如下：</p>
+<img src="/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/1660293788206-8d19f848-ba85-461e-b0c7-468c546c9cf6.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>在这个公式中，随着 tf 的值逐步变大，权重会趋向于 k1 + 1 这个固定的阈值上限（将公式的分子分母同时除以 tf，就能看出这个上限）。其中，k1 是可以人工调整的参数。k1 越大，权重上限越大，收敛速度越慢，表示 tf 越重要。在极端情况下，也就是当 k1 = 0 时，就表示 tf 不重要。</p>
+<p>$权重=1$</p>
+<p>除了考虑词频，<strong>BM25 算法还考虑了文档长度的影响</strong>，也就是同样一个词项，_如果在两篇文档中出现了相同的次数，但一篇文档比较长，而另一篇文档比较短，那一般来说，短文档中这个词项会更重要。_这个时候，我们需要在上面的公式中，加入文档长度相关的因子。那么，整个公式就会被改造成如下的样子：</p>
+<img src="/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/1660295364438-e6ec07d3-2e44-4760-8e0e-54a7dde52301.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>你会看到，分母中的 k1 部分被乘上了文档长度的权重。其中，l 表示当前文档的长度，而 L 表示全部文档的平均长度。l 越长，分母中的 k1 就会越大，整体的相关性权重就会越小。b是人工调整的参数，它的取值范围是 0 到 1，代表了文档长度的重要性，一般设置为 0.75。</p>
+<p>除此以外，如果查询词比较复杂，比如说一个词项会重复出现，那我们也可以把它看作是一个短文档，用类似的方法计算词项在查询词中的权重。举个例子，如果我们的查询词是“极客们的极客时间课程”，那么“极客”这个词项，其实在查询词中就出现了两次，它的权重应该比“时间”“课程”这些只出现一次的词项更重要。因此，BM25 对词项在查询词中的权重计算公式如下：</p>
+<img src="/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/1660300150186-f18b64ee-ebad-4507-9abb-1a6d69131712.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>其中 tfq 表示词项在查询词 q 中的词频，而 k2 是可以人工调整的参数，它和 k1 的参数作用是类似的。由于查询词一般不会太长，所以词频也不会很大，因此，我们没必要像对待文档一下，用 k1 = 1.2 这么小的范围对它进行控制。我们可以放大词频的作用，把 k2 设置在 0~10 之间。极端情况下，也就是当 k2 取 0 时，表示我们可以完全不考虑查询词中的词项权重。</p>
+<p>然后是 IDF 部分，它甚至没有引入任何新参数——它只是从 TF-IDF 重新排列我们的旧 IDF。为了避免对数里面分母项等于0，我们给分子分母同时加上0.5，这个0.5被称作平滑系数。</p>
+<img src="/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/1654770794622-2164f4f4-81d3-43e0-93d3-3025eefd176e.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>这样，我们就得到了 BM25 算法计算一个词项和指定文档相关性的打分公式，公式如下：</p>
+<img src="/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/1660300245507-88638bb1-cbd2-4095-a502-0f6fed8912e2.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>如果一个查询词 q 中有多个词项 t，那我们就要把每一个词项 t 和文档 d 的相关性都计算出来，最后累加。这样，我们就得到了这个查询词 q 和文档 d 的相关性打分结果。</p>
+<p>现在，这个修改的结果是什么？如果我们取一个包含 12 个标记的序列，并逐渐向它提供越来越多的“匹配”标记——我们会产生以下分数：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th><img src="/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/1654770787813-f9e61573-cca3-4240-83be-6d16e91f6c0f.png" srcset="/img/loading.gif" lazyload class="" title="image.png"></th>
+<th><img src="/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/1654770789119-19a31114-19a3-4987-abe0-c0c51be7f1a0.png" srcset="/img/loading.gif" lazyload class="" title="image.png"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>TF-IDF（顶部）和 BM25（底部）算法使用 12 个标记的句子和递增数量的相关标记（x 轴）的比较。<br>BM25 算法的效果比 TF-IDF 更好，应用也更广泛。比如说，在 Lucene 和 Elastic Search 这些搜索框架，以及 Google 这类常见的搜索引擎中，就都支持 BM25 排序。不过要用好它，你需要结合我们今天讲的内容，更清楚地理解它的原理。这样才能根据不同的场景，去调整相应的参数，从而取得更好的效果。</p>
+<p>来整体看一下bm25计算公式的推导过程：</p>
+<p>$\begin{aligned}<br>\operatorname{Score}(Q, d)=\sum_{i}^{n} W_{i} \cdot R\left(q_{i}, d\right) \\=\sum_{i}^{n} W_{i} \cdot \frac{f_{i}\left(k_{1}+1\right)}{f_{i}+K} \\<br>=\sum_{i}^{n} \operatorname{IDF}\left(q_{i}\right) \cdot \frac{f_{i}\left(k_{i}+1\right)}{f_{i}+k_{1} \cdot\left(1-b+b \frac{d l}{\operatorname{avg}(d l)}\right)} \\=\sum_{i}\left(\log \frac{N+0.5}{n\left(q_{i}\right)+0.5}\right) \cdot \frac{f_{i}\left(k_{i}+1\right)}{f_{i}+k_{1} \cdot\left(1-b+b \frac{d l}{\operatorname{avg}(d l)}\right)}<br>\end{aligned}$</p>
+<p>在我们了解了bm25算法的原理了之后，我们再一起学习一下用Python来实现它，参考<a target="_blank" rel="noopener" href="https://gist.github.com/koreyou/f3a8a0470d32aa56b32f198f49a9f2b8">使用sklearn的TfidfVectorizer实现OKapi BM25</a></p>
+<ul>
+<li>个人代码实现</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">sim_bm25</span>(<span class="hljs-params">s1, s2, s_avg=<span class="hljs-number">6.05</span>, k1=<span class="hljs-number">2.0</span>, b=<span class="hljs-number">0.75</span></span>):<br>    <span class="hljs-string">&quot;&quot;&quot;BM25算法计算文本相似度&quot;&quot;&quot;</span><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">score_w</span>(<span class="hljs-params">idf_w, fid, len_d</span>):<br>        <span class="hljs-string">&quot;&quot;&quot;计算query中某词与候选文档的相关度得分&quot;&quot;&quot;</span><br>        ra = fid * (k1 + <span class="hljs-number">1</span>)<br>        rb = fid + k1 * (<span class="hljs-number">1</span> - b + b * len_d / s_avg)<br>        <span class="hljs-keyword">return</span> idf_w * (ra / rb)<br>    sim = <span class="hljs-number">0</span><br>    len_d = <span class="hljs-built_in">len</span>(s2)<br>    <span class="hljs-comment"># 1. 分词</span><br>    s1_list, s2_list = jieba.lcut(s1), jieba.lcut(s2)<br>    <span class="hljs-comment"># 2. 计算s1中每个词与s2的相关度得分并累加得s1与s2的相关度</span><br>    <span class="hljs-keyword">for</span> w <span class="hljs-keyword">in</span> s1_list:<br>        idf_w = idf.get(w, <span class="hljs-number">1</span>)<br>        fid = s2_list.count(w)<br>        score = score_w(idf_w, fid, len_d)<br>        sim += score<br>    <span class="hljs-keyword">return</span> sim<br></code></pre></td></tr></table></figure>
+<p>如果想更深入的了解BM25的理论基础，推荐阅读<a target="_blank" rel="noopener" href="https://leovan.me/cn/2020/10/text-similarity/；想要了解基本实现代码，可以参考">https://leovan.me/cn/2020/10/text-similarity/；想要了解基本实现代码，可以参考</a> <a target="_blank" rel="noopener" href="https://gist.github.com/koreyou/f3a8a0470d32aa56b32f198f49a9f2b8">Implementation of OKapi BM25 with sklearn’s TfidfVectorizer</a></p>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>传统的文本匹配技术主要有Jaccard、Levenshtein、Simhash、TF-idf、Bm25、VSM等算法，其主要是基于统计学方法通过词汇重合度来计算两段文本的字面相似度。然而，仅通过字面相似度是衡量文本的匹配度是远远不够的，因为同一语义的文本在形式上千变万化，两段文本可以表现为字面相似但词序不同而导致语义完全相反；可以表现为字面相似但个别字词不同而导致意思大相径庭；更可以表现为字面完全不相似而语义相同等问题。所以，传统的匹配算法存在着词义局限、结构局限等问题。</p>
+<img src="/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/1655793230594-23183af8-1889-4368-a24e-20c28f7a4e8b.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<h2 id="3-基于深度学习"><a href="#3-基于深度学习" class="headerlink" title="3.基于深度学习"></a>3.基于深度学习</h2><h3 id="3-1-分布式词向量"><a href="#3-1-分布式词向量" class="headerlink" title="3.1　分布式词向量"></a>3.1　分布式词向量</h3><p>简单地说, 词向量技术就是将单词映射成向量, 最早出现的 one-hot 编码和 TF-IDF 方法都可以 将单词映射为向量. 但是, 这两种方法都面临<strong>维度灾难</strong>和<strong>语义鸿沟</strong>问题. 分布式词向量可以在保存更多语义信息的同时降低向量维度, 在一定程度上可以克服维度灾难和语义鸿沟问题.</p>
+<p>Mikolov 等[55] 提出的 <strong>word2vec</strong> 是最早生成分布式词向量的方法, 它包含两个模型, 分别为 CBOW 和 Skip-gram, 基本思路是确定中心词和上下文窗口大小, CBOW 是通过上下文来预测中心词, Skipgram 是通过中心词来预测上下文, 整体来说是通过自监督训练的模型生成词向量. word2vec 的主要 问题在于它只能考虑局部信息, 局部信息的大小取决于上下文窗口的大小.</p>
+<p>Pennington 等[56] 提出 <strong>Glove</strong> 模型, 该模型通过语料库构建单词的共现矩阵, 然后通过该共现矩阵 用概率的思想得到最终的词向量, 综合了全局语料, 在一定程度上考虑了全局信息.</p>
+<p>Joulin 等[57] 则是提出了一种快速文本分类方法 <strong>FastText</strong>, 其同样可以用于生成词向量, 模型架构 与 CBOW 类似, 但赋予模型的任务不同. CBOW预测上下文的中间词，fasttext预测文本标签。与word2vec算法的衍生物相同，稠密词向量也是在训练神经网络的过程中得到的。fasttext的<a href="https://link.zhihu.com/?target=https%3A//github.com/salestock/fastText.py">python实现</a></p>
+<p>以上 3 种词向量为静态词向量, 即当它们应用于下游任务时词向量始终是固定的, 无法解决一词 多义问题, 同时无法满足不同语境下语义不同的场景需求.</p>
+<p>动态词向量则是为了解决上述问题所提出的, 这类词向量首先在大型语料库上进行预训练, 然后在面对具体下游任务时微调所有参数, 那么在上下文输入不同时, 生成的词向量也不同, 因此可以解 决一词多义问题.</p>
+<p>Peters 等[58] 提出 <strong>ELMO</strong> 模型, 其使用双向语言模型和两个分开的双层 LSTM 作为编码器, 通过 在大型语料库上进行预训练得到动态词向量.</p>
+<p>Radford 等[59] 提出 <strong>GPT</strong> 模型, 通过将单向语言模型与编码能力更强大的 Transformer[60] 架构的 decoder 部分相结合, 从而生成词向量.</p>
+<p>Devlin 等[61] 提出的 <strong>BERT</strong> 模型, 则是应用 Transformer[60] 的 encoder 部分, 结合 mask 机制, 并且对模型增加了预测“next sentence prediction”任务, 从而生成了更加优质的动态词向量, 该模型也是目前最常用的词向量预训练方法之一. 要是想使用BERT作为服务，具体实现过程可以参考博客<a href="">《<strong>bert_as_service使用指南</strong>》</a></p>
+<h3 id="3-2-无监督文本匹配"><a href="#3-2-无监督文本匹配" class="headerlink" title="3.2　无监督文本匹配"></a>3.2　无监督文本匹配</h3><blockquote>
+<p>参考 《<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/dIO0imsB1VdKobf5RWLnaw">五千字全面梳理文本匹配</a>》</p>
+</blockquote>
+<p>首先我们来谈一下无监督的方法。</p>
+<p>对于无监督的文本匹配，我们需要实时把握两个重点：文本表征和相似函数的度量。文本表征指的是我们将文本表示为计算机可以处理的形式，更准确了来说是数字化文本。而这个数字化文本，必须能够表征文本信息，这样才说的通。相似函数的度量就是你选择何种函数对文本相似度进行一个判定，比如欧氏距离，余弦距离，Jacard相似度，海明距离等等。</p>
+<h4 id="WMD-Word-Mover’s-Distance"><a href="#WMD-Word-Mover’s-Distance" class="headerlink" title="WMD (Word Mover’s Distance)"></a>WMD (Word Mover’s Distance)</h4><blockquote>
+<p><a target="_blank" rel="noopener" href="https://medium.com/@nihitextra/word-movers-distance-for-text-similarity-7492aeca71b0">https://medium.com/@nihitextra/word-movers-distance-for-text-similarity-7492aeca71b0</a></p>
+</blockquote>
+<p>WMD Word Mover’s Distance的缩写，翻译为词移距离，WMD距离越大相似度越小，WMD距离越小文本相似度越大。理解这个概念，分为两个步骤。</p>
+<p>首先第一步，有两个文档A和B，A中的每个词遍历和B中每个词的距离，挑出A中每个词和B中每个词中最小的距离，最后相加，得到A到B的WMD。</p>
+<p>这个时候，需要明白第一步是存在巨大问题的。什么问题呢？A，B，C三个文档。A全部词和音乐相关。B中一个词和音乐相关，C中一个词和音乐相关，其余词和音乐有点关系，而且定义B和C中和音乐相关的词是同一个词。</p>
+<p>根据我们的直觉，A和B相关性肯定小于A和C的相关性，但是如果按照第一步的算法去做，会得到相关性相等的结果，这是不对的。</p>
+<p>这是因为A中的所有词匹配到的B中的那个和音乐相关的词（遍历取最小），A中所有的词匹配到C中和音乐相关的词（遍历取最小），B和C中和音乐相关的词一样，就导致相关性相等。</p>
+<p>怎么解决这个问题，这就是第二步，让A中的所有词在匹配的时候，不是遍历取最小，而是让每个词匹配到C中的所有词，只不过匹配的权重不同。</p>
+<p>这个权重从两个部分去看：一个是从A看，要符合分配出去的权重等于自身这个词在本文档的权重，一个是从B看，分配到B的某个词的权重要等于这个词在B文档的权重。</p>
+<p>大概理解到这里。之后关于WMD加速（因为复杂度比较高）的内容就没有进一步的去了解</p>
+<h4 id="SIF-Smooth-Inverse-Frequency"><a href="#SIF-Smooth-Inverse-Frequency" class="headerlink" title="SIF (Smooth Inverse Frequency)"></a>SIF (Smooth Inverse Frequency)</h4><p>从语义上来讲，求一句话中词嵌入的平均值似乎给与不相关的单词太多权重了。而Smooth Inverse Frequency试着用两种方法解决这一问题：</p>
+<ul>
+<li>加权：就像上文用的TF-IDF，SIF取句中词嵌入的平均权重。每个词嵌入都由a/(a + p(w))进行加权，其中a的值经常被设置为0.01，而p(w)是词语在语料中预计出现的频率。用大白话去描述这个公式就是词在语料中出现的越多，对应的权重越小。这么做就减少了高频词的作用，其实本质上和IDF是很类似的。</li>
+<li>常见元素删除：接下来，SIF计算了句子嵌入中最重要的元素。然后它减去这些句子嵌入中的主要成分。这就可以删除与频率和句法有关的变量，他们和语义的联系不大。比如原始句子是”我爱吃红烧肉“和”我超不爱吃红烧肉“。减去共有信息之后，剩下的词向量矩阵就会对不相似的信息比较敏感。</li>
+</ul>
+<p>最后，SIF使一些不重要的词语的权重下降，例如but、just等，同时保留对语义贡献较大的信息。总体来说。SIF这个算法还是很不错，很适合做个基线初期上线的。</p>
+<p>代码：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs python">sentences = [[<span class="hljs-string">&quot;token1&quot;</span>, <span class="hljs-string">&quot;token2&quot;</span>, <span class="hljs-string">&quot;...&quot;</span>], ...]<br>vector = [[[<span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>], [<span class="hljs-number">2</span>, <span class="hljs-number">2</span>, <span class="hljs-number">2</span>], [...]], ...]<br><span class="hljs-keyword">from</span> sim.sif_usif <span class="hljs-keyword">import</span> SIF<br><span class="hljs-keyword">from</span> sim.sif_usif <span class="hljs-keyword">import</span> uSIF<br><br>sif = SIF(n_components=<span class="hljs-number">5</span>, component_type=<span class="hljs-string">&quot;svd&quot;</span>)<br>sif.fit(tokens_list=sentences, vector_list=vector)<br><br>usif = uSIF(n_components=<span class="hljs-number">5</span>, n=<span class="hljs-number">1</span>, component_type=<span class="hljs-string">&quot;svd&quot;</span>)<br>usif.fit(tokens_list=sentences, vector_list=vector)<br></code></pre></td></tr></table></figure></p>
+<h3 id="3-3-有监督文本匹配"><a href="#3-3-有监督文本匹配" class="headerlink" title="3.3　有监督文本匹配"></a>3.3　有监督文本匹配</h3><p>监督学习方法是一类需要带有标签的训练集对模型进行训练后才能进行语义文本相似度计算的 方法, 这类方法由于有标签对模型进行指导, 在多数有训练集的任务上, 其性能要优于无监督学习方 法. 监督学习方法从模型架构上可以分为两种, 一种是<strong>孪生网络</strong> (Siamese Network) 架构; 另一种是<strong>交互 (interaction-based) 模型</strong>架构, 两种模型的典型架构如图所示.</p>
+<img src="/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/008i3skNly1guktjoweehj61740o20vv02.jpg" srcset="/img/loading.gif" lazyload class="">
+<ol>
+<li><strong>孪生网络架构（</strong>Simese dual encoder，SDE<strong>）</strong>主要体现在句子对中$S_A$和$S_B$同时输入左右两个网络当中, 这两个网络的输入层和编码层模型架构完全相同并共享权重，通过余弦相似度等方式来计算query间的相似度，不断最大化正样本之间的相关性，抑制负样本之间的相关性；此外，还有一种伪孪生网络，也叫非对称双塔结构（Asymmetric dual encoder，ADE）。ADE只是部分参数共享或者完全不共享，是独立的两套参数网络。<ul>
+<li>它们的共同点是都不会进行深层交互！</li>
+<li>ADE在多个任务上的表现一致地明显逊色于SDE，但是ADE-SPL的表现可以媲美SDE。SPL 指的是shared projection layer，即当最后的顶层参数共用一套全连接层的时候， ADE可以取得和SDE接近的效果（参考自《<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/MF3NVyLBh0xIVCEMltzBgw">双塔模型的最强出装，谷歌又开始玩起“老古董”了？</a>》）</li>
+<li>双塔结构一个最典型的应用是召回or粗排，对计算速度要求严格的场景。</li>
+</ul>
+</li>
+<li><strong>交互模型</strong>如图 2b) 和图 2c) 所示, 整体与孪生网络类似, 但在编码层利用 Attention 机制或其他技术增加两个网络间的交互，交互式模型通常使用二分类的任务来进行训练，当模型输入的两个query语义一致，label为“1”，反之，label为“0”。在预测时，可通过logits来作为置信度判断。 <ul>
+<li>典型应用是精排，要求是准确性！</li>
+<li></li>
+</ul>
+</li>
+</ol>
+<p>两种框架比较的话，</p>
+<ul>
+<li>基于表示的匹配方法优势在于Doc的语义向量可以离线预先计算，在线预测时只需要重新计算Query的语义向量速度会快很多；缺点是模型学习时Query和Doc两者没有任何交互，不能充分利用Query和Doc的细粒度匹配信号。 </li>
+<li>基于交互的匹配方法优势在于Query和Doc在模型训练时能够进行充分的交互匹配，语义匹配效果好，缺点是部署上线成本较高。 </li>
+<li><strong>语义表征模型常用于海量query召回，交互式模型更多使用于语义排序阶段</strong> </li>
+</ul>
+<h4 id="3-3-1-基于孪生网络的方法"><a href="#3-3-1-基于孪生网络的方法" class="headerlink" title="3.3.1 基于孪生网络的方法"></a>3.3.1 基于孪生网络的方法</h4><p>它的优势是结构简单、解释性强，且易于实现，是深度学习出现之后应用最广泛的深度文本匹配方法。整个学习过程可以分为两步：① 表示层：计算 query 和 doc 各自的 representation；② 匹配层：根据上一步得到的 representation，计算 query-doc 的匹配分数。</p>
+<h5 id="DSSM"><a href="#DSSM" class="headerlink" title="DSSM"></a>DSSM</h5><blockquote>
+<p>DSSM第一篇深度学习领域文本匹配文章<br>Learning Deep Structured Semantic Models for Web Search usin0g Clickthrough Data</p>
+</blockquote>
+<p>DSSM 算法是最先将孪生网络架构用于语义文本相似度计算的算法之一, DSSM 架构主要分为输入层、表示层、匹配层, 这种三层架构也是后来基于孪生网络的算法最常用的 架构. 输入层主要将原始文本映射为向量, 由于本文在 2013 年被提出, 当时的分布式词向量刚刚问世, 因此本文并没有使用词向量, 而是使用字符级的 <strong>trigram</strong> 方法将文本映射为高维向量, 更具体地说, trigram 是将 3 个字符为一组映射为 one-hot 向量, 最后将句子中的 trigram 向量相加得到高维句子向 量表示. 表示层是将高维的句子向量映射为低维向量, DSSM 表示层就是简单的几个全连接层, 最终 将句子映射为 128 维的低维向量. 匹配层是将两个低维句子向量表示之间求<strong>余弦相似度</strong>来表征两个句子的语义相似度.  DSSM模型在文本匹配任务上取得了突出的成绩, 但忽略了语序信息和上下文信息.</p>
+<img src="/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/v2-774b04defa9ab870c7e8d9fad6cde190_1440w.jpg" srcset="/img/loading.gif" lazyload class="">
+<h5 id="ARC-I"><a href="#ARC-I" class="headerlink" title="ARC-I"></a>ARC-I</h5><p>针对上述讲到的 DSSM 模型对 query 和 doc 序列和上下文信息捕捉能力的不足，华为诺亚方舟在 2015 年在 DSSM 的模型基础上加入了 <strong>CNN 模块</strong>，通过卷积层不同的 feature map 来得到相邻 term 之间的多种组合关系，通过池化层 max pooling 来提取这些组合关系中最重要的部分，进而得到 query 和 doc 各自的表示。卷积层虽然提取到了 word-ngram 的信息，但是池化层依然是在局部窗口进行 pooling，因此一定程度上无法得到全局的信息。</p>
+<img src="/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/image-5a59670f2113499d95fc165ca56b7065-20230424200729876.webp" srcset="/img/loading.gif" lazyload class="">
+<h5 id="Siam-CNN"><a href="#Siam-CNN" class="headerlink" title="Siam-CNN"></a><strong>Siam-CNN</strong></h5><blockquote>
+<p>题目：Applying Deep Learning to Answer Selection: A Study and An Open Task<br>论文：<a target="_blank" rel="noopener" href="https://arxiv.org/pdf/1508.01585.pdf">https://arxiv.org/pdf/1508.01585.pdf</a></p>
+</blockquote>
+<p>在2015年IBM提出的Siam-CNN架构中，作者尝试了<strong>多种孪生架构</strong>，使用CNN作为基础编码器，hinge loss作为损失函数. 该方法对DSSM的改进主要发生在表示层, 该模型表示层中添加了卷积层和池化层, 使得上下文信息得到了有效保留, 但是由于卷积核的限制, 距离较远的上下文信息仍会丢失. 最后实验发现第二种是最好的.</p>
+<p>PS： During training, for each training question Q there is a positive answer A +(the ground truth). A training instance is constructed by pairing this A + with a negative answer A −(a wrong answer) sampled from the whole answer space</p>
+<img src="/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/v2-f8a949b01adbaa20a974ad41901215cc_1440w.jpg" srcset="/img/loading.gif" lazyload class="">
+<h5 id="Siam-LSTM"><a href="#Siam-LSTM" class="headerlink" title="Siam-LSTM"></a><strong>Siam-LSTM</strong></h5><figure class="highlight latex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs latex">题目：Siamese Recurrent Architectures for Learning Sentence Similarity<br>论文：http://www.mit.edu/~jonasm/info/MuellerThyagarajan<span class="hljs-built_in">_</span>AAAI16.pdf<br></code></pre></td></tr></table></figure>
+<p>2016年的Siam-LSTM在结构上比较简单，就是直接用共享权重的LSTM编码，取最后一步的输出作为表示。有个改进点是作者使用了<strong>Manhattan距离</strong>计算句子对的语义相似度. 实验证明将该方法和SVM结合用于情感分类(Entailment Classification), 效果提升明显.</p>
+<img src="/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/v2-012618cc9e422b78fc0c57972fa687f2_1440w.jpg" srcset="/img/loading.gif" lazyload class="">
+<h5 id="BiLSTM-Self-Attention"><a href="#BiLSTM-Self-Attention" class="headerlink" title="BiLSTM+Self-Attention"></a>BiLSTM+Self-Attention</h5><p>Lin等[A structured self-attentive sentence embedding] 将<strong>双向LSTM(BiLSTM)和Self-Attention</strong>技术相结合得到句子向量表示, 具体来说就是, 首先将句子通过BiLSTM模型, 将得到的每一时刻的两个方向的向量拼接成一个二维矩阵, 然后通过自注意力机制(Self-Attention)[<a href="javascript:;">60</a>]得到句中每个词向量对应的权重, 最终通过词向量的加权求和得到句向量. 在训练网络时同样是使用Siamese架构, 在得到句向量后进行简单的特征提取, 如拼接、点积、对位相减等, 然后输入一个多层感知机, 得到最终的语义文本相似度.</p>
+<img src="/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/008i3skNly1gtyxtrjvl3j60ns0igwgd02.jpg" srcset="/img/loading.gif" lazyload class="">
+<h5 id="Sentence-BERT"><a href="#Sentence-BERT" class="headerlink" title="Sentence-BERT"></a>Sentence-BERT</h5><figure class="highlight latex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs latex">题目：Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks<br>论文：https://arxiv.org/pdf/1908.10084<br>代码：https://github.com/UKPLab/sentence-transformers<br></code></pre></td></tr></table></figure>
+<p>EMNLP2019的Sentence-BERT是目前最常用的BERT式双塔模型，一是效果真的好，二是作者的开源工具做的很方便，用的人越来越多。</p>
+<p>Sentence BERT(Sbert) 网络是通过 SNLI 数据集（标注了一对句子之间的关系，可能是蕴含、矛盾或者中立）进行预训练。首先将第一个句子输入到BERT，通过不同的Pooling方法获得句子的Embedding表示，第二个句子同样如此，然后将这两个Embedding变换后通过Softmax输出这对句子之间关系的概率进行训练（类似分类问题）。最后，获取pooling层的输出用于句子之间的余弦相似度计算和推理。SBert的网络结构：</p>
+<img src="/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/1599653-ac9cc602bc22d081.png" srcset="/img/loading.gif" lazyload class="">
+<ul>
+<li><strong>在评估测试阶段，SBert直接使用余弦相似度来比较两个句向量之间的相似度</strong>，极大提升了推理速度；</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> sentence_transformers <span class="hljs-keyword">import</span> SentenceTransformer, util<br><span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np<br><br><span class="hljs-comment"># code adapted from  https://github.com/UKPLab/sentence-transformers/blob/master/examples/applications/semantic_search.py</span><br><br>model = SentenceTransformer(<span class="hljs-string">&#x27;D:/#Pre-trained_Language_Model/weights/distilbert-multilingual-nli-stsb-quora-ranking&#x27;</span>)<br><br><span class="hljs-comment"># Corpus with example sentences</span><br>sentences = [<span class="hljs-string">&quot;我想应聘。&quot;</span>, <span class="hljs-string">&quot;阿斯顿噶似的噶似的盾构法施工大苏打&quot;</span>, <br>        <span class="hljs-string">&quot;我想租冠寓的房子，如何操作？&quot;</span>,<br>        <span class="hljs-string">&quot;我约的保洁想取消，怎么操作&quot;</span>,<br>        <span class="hljs-string">&quot;我约的搬家想取消，怎么操作&quot;</span>,<br>        <span class="hljs-string">&quot;如果我有一处闲置物业，想租给冠寓怎么操作？&quot;</span>,<br>        <span class="hljs-string">&quot;我约的保洁想更改下时间，怎么办&quot;</span>,<br>        <span class="hljs-string">&quot;我是企业客户，我的员工有自租房需求，如何能使员工享受优惠价入住？&quot;</span>,<br>        <span class="hljs-string">&quot;我约的搬家想更改下时间，怎么办&quot;</span>,<br>        <span class="hljs-string">&quot;如果租住过程中有问题想投诉怎么办？&quot;</span>,<br>        <span class="hljs-string">&quot;如果我想和冠寓的门店合作提供一些增值性服务，怎么操作？&quot;</span>]<br><br><span class="hljs-comment"># Each sentence is encoded as a 1-D vector with 78 columns</span><br>sentence_embeddings = model.encode(sentences, convert_to_tensor=<span class="hljs-literal">True</span>)<br><br><span class="hljs-comment"># Query sentences:</span><br>queries = [<span class="hljs-string">&#x27;我想租房&#x27;</span>, <span class="hljs-string">&#x27;约保洁&#x27;</span>]<br>query_embeddings = model.encode(queries)<br><br><br><span class="hljs-comment"># Find the closest 3 sentences of the corpus for each query sentence based on cosine similarity</span><br>top_k = <span class="hljs-number">10</span><br><span class="hljs-keyword">for</span> query, query_embedding <span class="hljs-keyword">in</span> <span class="hljs-built_in">zip</span>(queries, query_embeddings):<br>    cos_scores = util.pytorch_cos_sim(query_embedding, sentence_embeddings)[<span class="hljs-number">0</span>]<br>    cos_scores = cos_scores.cpu()<br><br>    <span class="hljs-comment">#We use np.argpartition, to only partially sort the top_k results</span><br>    top_results = np.argpartition(-cos_scores, <span class="hljs-built_in">range</span>(top_k))[<span class="hljs-number">0</span>:top_k]<br><br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;\n\n======================\n\n&quot;</span>)<br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Query:&quot;</span>, query)<br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;\nTop 5 most similar sentences in corpus:&quot;</span>)<br><br>    <span class="hljs-keyword">for</span> idx <span class="hljs-keyword">in</span> top_results[<span class="hljs-number">0</span>:top_k]:<br>        <span class="hljs-built_in">print</span>(sentences[idx].strip(), <span class="hljs-string">&quot;(Score: %.4f)&quot;</span> % (cos_scores[idx]))<br></code></pre></td></tr></table></figure>
+<p><strong>SBert开源地址</strong>：<a target="_blank" rel="noopener" href="https://github.com/UKPLab/sentence-transformers">https://github.com/UKPLab/sentence-transformers</a></p>
+<p><strong>SBert多语预训练模型下载地址</strong>：<a target="_blank" rel="noopener" href="https://public.ukp.informatik.tu-darmstadt.de/reimers/sentence-transformers/v0.2/">https://public.ukp.informatik.tu-darmstadt.de/reimers/sentence-transformers/v0.2/</a></p>
+<h5 id="小结-1"><a href="#小结-1" class="headerlink" title="小结"></a>小结</h5><p>纵览上述方法, 可以清晰地看到基于孪生网络的计算方法的发展进程, 对于模型的改进主要集中在使用不同的编码器, 如从最开始的多层感知机发展为 CNN、LSTM, 再到 Transformer 等.</p>
+<p><strong>对速度要求高的召回场景可以用BOW+MLP、CNN，精度要求高的排序场景可以用LSTM、Transformer</strong>。同时两个向量的融合方法以及loss也都可以优化，比如做一些轻微的交互、像Deformer一样前面双塔接后面的多层交互，或者根据需要选择pointwise、pairwise（排序场景）损失。</p>
+<p>但真要想做句间关系SOTA的话，比如刷榜，光靠双塔模型还是不行的，它有两个问题比较大：</p>
+<ol>
+<li><strong>位置信息</strong>。如果用BOW的话“我很不开心”和“我不很开心”两句的意思就变成一样了，虽然用RNN、BERT引入位置编码可以减缓一些，但不去让两个句子相互比较的话对于最后的分类层还是很难的</li>
+<li><strong>细粒度语义</strong>。比如“我开心”和“我不开心”这两句话只有一个字的区别，但BOW模型很可能给出较高的相似度，交互式模型则可以稍有缓解</li>
+</ol>
+<h4 id="3-3-2-基于交互模型的方法"><a href="#3-3-2-基于交互模型的方法" class="headerlink" title="3.3.2 基于交互模型的方法"></a>3.3.2 基于交互模型的方法</h4><p>基于孪生网络的方法在编码层对句子编码时是相互独立的, 句子对之间没有交互, 这样对于计算句子对的语义相似度会造成一定影响, 基于交互模型的方法就是为了解决这个问题而产生的, 它是在孪生网络的基础上增加两个平行网络之间的交互作用, 从而提取到句子对之间更加丰富的交互信息.</p>
+<h5 id="MatchPyramid"><a href="#MatchPyramid" class="headerlink" title="MatchPyramid"></a>MatchPyramid</h5><figure class="highlight latex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs latex">题目：Text Matching as Image Recognition<br>论文：https://arxiv.org/pdf/1602.06359.pdf<br>代码：https://github.com/pl8787/MatchPyramid-TensorFlow<br></code></pre></td></tr></table></figure>
+<p>MatchPyramid 模型的提出灵感源于 CV 领域里的图像识别。在此之前，文本匹配的维度是一维的 ( TextCNN 为代表的 word embedding )；而图像是二维平面的，显然信息更加丰富。2016 年的 AAAI 上中科院提出了基于 word-level 级别交互的<strong>矩阵匹配</strong>思想，用一个二维矩阵来代表 query 和 doc 中每个 word 的交互。模型关键，在于如何构建 query 和 doc 中 word 级别的匹配信息，文章提出了匹配矩阵的 3 种构造方法，indicator、cosine 以及 dot product，分别如下：</p>
+<ol>
+<li><strong>indicator match</strong><br>0-1 匹配矩阵，只有两个 word 完全相同才等于 1，否则为 0，相当于是精确匹配 </li>
+<li><strong>cosine match</strong><br>将每个 word 用 glove 预训练得到的词向量，两两计算 cosine 相似度 </li>
+<li><strong>dot product match</strong><br>将每个 word 用 glove 预训练得到的词向量，两两计算向量点积 </li>
+</ol>
+<img src="/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/v2-9752b8ccbc1da96344e0925f16b735cd_1440w.jpg" srcset="/img/loading.gif" lazyload class="">
+<h5 id="MV-LSTM"><a href="#MV-LSTM" class="headerlink" title="MV-LSTM"></a>MV-LSTM</h5><p>AAAI2016 年提出的 MV-LSTM 模型，用双向 LSTM 来对两段文本 query 和 doc 进行编码，然后将 LSTM 的每个隐层输出进行拼接作为 query 和 doc 每个 term 的输出，并对这些 term 两两计算匹配分数，得到不同维度的匹配度矩阵。最后，先用 k-max pooling 压缩特征，然后用 MLP 后输出最终的匹配分数。</p>
+<p>整个模型可以分为 3 部分：① query 和 doc 各自的 LSTM 编码；② query 和 doc 的匹配矩阵；③ 匹配信号融合。文中提到了 cosine、双线性以及 tensor layer 这 3 种计算方法，由于网络参数的不断加大，拟合精确度和复杂度也依次提升：</p>
+<ol>
+<li><strong>cosine 相似度</strong><br>query 中的 term u 以及 doc 中的 term v，计算 cosine 相似度 $s(u, v)=\frac{u^{T} v}{|u| \cdot|v|}$ </li>
+<li><strong>双线性 bilinear</strong><br>通过引入待训练参数 M 进行映射 $s(u, v)=u^{T} M v+b$ </li>
+<li><strong>Tensor layer</strong><br>$s(u, v)=\frac{u^{T} v}{|u| \cdot|v|}$ </li>
+</ol>
+<img src="/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/image-16dce761a5f648d3af92d94195ea1e16-20230424200833973.webp" srcset="/img/loading.gif" lazyload class="">
+<h5 id="ABCNN"><a href="#ABCNN" class="headerlink" title="ABCNN"></a>ABCNN</h5><p>Yin等[<a href="javascript:;">79</a>]提出了ABCNN模型, 是在词向量基础上通过CNN网络对句子进行处理, 在分别对句子对中的句子进行卷积和池化操作的同时, 使用Attention机制对两个中间步骤进行交互, 文中一共尝试了3种添加Attention的策略, 主要区别是作用于模型的不同阶段, 如第一种Attention是直接作用在词向量组成的矩阵上, 而第二种Attention是作用在经过卷积和池化操作后产生的输出矩阵上, 第三种则是将前两种方法相结合. 可以将经过卷积和池化操作后得到的结果看作短语向量, 而该短语向量的长度取决于卷积核的大小, 从这个角度理解, 第一种和第二种Attention方法的区别实质上是在不同粒度上对模型进行了处理.</p>
+<h5 id="PWIM"><a href="#PWIM" class="headerlink" title="PWIM"></a>PWIM</h5><p>He等[<a href="javascript:;">80</a>]通过BiLSTM对句子进行建模提出PWIM算法, 该方法共分为4个部分. 第一部分将BiLSTM网络每个时刻的输出, 即该时刻的双向hidden state做拼接获得的结果, 作为对应时刻word的representation. 第二部分通过计算两个句子的每个时刻的向量表示进行余弦相似度、欧式距离和点积计算, 然后根据计算结果来确定不同向量对的权重, 该方法认为句子内部不同的词的重要性是不一样的, 两个句子间重要的单词对, 对于句子相似度的计算贡献更大, 这些单词对应该得到更多的重视, 最后通过多层CNN网络得到最终结果.</p>
+<h5 id="ESIM"><a href="#ESIM" class="headerlink" title="*ESIM"></a>*ESIM</h5><figure class="highlight latex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs latex">题目：Enhanced LSTM for Natural Language Inference<br>论文：https://www.aclweb.org/anthology/P17-1152.pdf<br>代码：https://github.com/coetaur0/ESIM<br></code></pre></td></tr></table></figure>
+<p>ACL2017中的ESIM 模型在众多短文本匹配比赛中大杀四方，表现十分出色。ESIM 模型通过精细的序列式网络设计，以及同时考虑局部推断和全局推断的方法来达到更好的效果。它的计算过程有一下四步：</p>
+<ol>
+<li>用BiLSTM对embedding编码，得到表示 $a,b$</li>
+<li>将两句话的BiLSTM输出进行<strong>soft attention</strong>，得到融合的句子表示 $\alpha, \beta$</li>
+<li>将 $[a, \alpha, a-\alpha, a \cdot \alpha]$ 拼接作为新表示，用BiLSTM再次编码，分别得到 $v_a,v_b$</li>
+<li>max+avg池化后过进行最终分类 $v=softmax(\left[v_{a, a v e} ; v_{a, m a x} ; v_{b, a v e} ; v_{b, m a x}\right])$</li>
+</ol>
+<p><strong>局部推理层是 ESIM 的点睛之笔， 主要就是用 attention 机制计算出 a 句某一单词和 b 句中各个单词的权重，然后再将权重赋予 b 句各个单词，用来表征 a 句中的该单词，形成一个新的序列，b 句亦然。</strong></p>
+<p>具体来说，使用<strong>点积</strong>的方式计算 a 句中第 i 个词和 b 句中第 j 个词之间的 attention 权重:</p>
+<p>$e_{i j}=\overline{\mathbf{a}}_{i}^{T} \overline{\mathbf{b}}_{j}$</p>
+<p>然后对两句各单词之间进行交互性计算，该词与另一句子联系越大，则计算出的值也会越大：</p>
+<p>$\begin{aligned}<br>\tilde{\mathbf{a}}_{i} &amp;=\sum_{j=1}^{\ell_{b}} \frac{\exp \left(e_{i j}\right)}{\sum_{k=1}^{\ell_{b}} \exp \left(e_{i k}\right)} \overline{\mathbf{b}}_{j}, \forall i \in\left[1, \ldots, \ell_{a}\right] \\<br>\tilde{\mathbf{b}}_{j} &amp;=\sum_{i=1}^{\ell_{a}} \frac{\exp \left(e_{i j}\right)}{\sum_{k=1}^{\ell_{a}} \exp \left(e_{k j}\right)} \overline{\mathbf{a}}_{i}, \forall j \in\left[1, \ldots, \ell_{b}\right]<br>\end{aligned}$</p>
+<p>得到局部推断后，为了增强信息，分别使用了向量相减、向量点积。最终 4 个向量 concat 起来，$m_a$和$m_b$分别表示增强后的 premise 和 hypothesis。</p>
+<p>$\begin{array}{l}<br>m_{a}=[\bar{a} ; \tilde{a} ; (\bar{a}-\tilde{a}) ; (\bar{a} \tilde{a})] \\<br>m_{b}=[\bar{b} ; \tilde{b} ; (\bar{b}-\tilde{b}) ; (\bar{b} \bigodot \widetilde{b})]<br>\end{array}$</p>
+<p>PS：局部推理层中对于匹配矩阵的做法区别于使用 MLP 去提取 query 和 doc 两个句子的做法；而是用两种 LSTM 提取编码后计算加权向量表达。得到加权向量表达后，和原始向量进行乘积和相减后，总共 4 个向量 concat 起来，相当于是丰富了提取到的信息。同时，相比BIMPM，ESIM训练速度快，效果也并没有逊色太多</p>
+<img src="/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/image-2ceda1d52b3340fe9692e7aa6d438412-20230424200854159.webp" srcset="/img/loading.gif" lazyload class="">
+<h5 id="BIMPM"><a href="#BIMPM" class="headerlink" title="BIMPM"></a>BIMPM</h5><figure class="highlight latex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs latex">题目：Bilateral Multi-perspective Matching<br>论文：https://arxiv.org/pdf/1702.03814.pdf<br>代码：https://github.com/terrifyzhao/text<span class="hljs-built_in">_</span>matching<br></code></pre></td></tr></table></figure>
+<p>IJCAI2017 年提出的同样基于BiLSTM网络提出<strong>双向多角度匹配模型BiMPM</strong>, 。该模型最大的创新点在于，对于给定的 query 和 doc，作者认为在匹配过程中，不仅需要考虑 query 到 doc，也应该考虑从 doc 到 query 的倒推关系，因此这是个双边 ( Bilateral ) 的关系。对于多角度，则是在考虑两个句子 query 和 doc 的关系的时候，用了 4 种不同的方法，体现了多角度 ( Multi-Perspective ) 的思想。BIMPM有着复杂的网络结构，计算复杂度高，很多计算之间又是串行的，可想而知，<strong>对于大规模的文本匹配计算速度很慢</strong></p>
+<img src="/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/image-252e4dd7a23942ac938472e78e498de7-20230424200902497.png" srcset="/img/loading.gif" lazyload class="">
+<p>整个模型可以分为 5 层：① 词表示层；② 上下文表示层（使用词向量与字符向量的拼接）；③ 匹配层；④ 聚合层（使用双向 LSTM将两个句子 P 和 Q 匹配得到的 16 个匹配向量（P-&gt;Q,Q-&gt;P 各 8 个），聚合成一个固定长度的匹配向量）；⑤ 输出层（两层 MLP+softmax），其中匹配层为模型的核心，共提出了四种匹配策略，分别是：Full-Matching、Maxpooling-Matching、Attentive-Matching和 Max-Attentive-Matching：</p>
+<img src="/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/640-20230424200915421.jpeg" srcset="/img/loading.gif" lazyload class="">
+<ol>
+<li><strong>full-matching</strong>：在这种匹配策略中，用 P 中每一个 time step 的上下文向量（包含前向和后向）分别与句子 Q 中最后一个 time step 的上下文向量（包含前向和后向）计算匹配值，即</li>
+</ol>
+<p>$\begin{array}{c}<br>\overrightarrow{\boldsymbol{m}}_{i}^{\text {full }}=f_{m}\left(\overrightarrow{\boldsymbol{h}}_{i}^{p}, \overrightarrow{\boldsymbol{h}}_{N}^{q} ; \boldsymbol{W}^{1}\right) \\<br>\overleftarrow{\boldsymbol{m}}_{i}^{\text {full }}=f_{m}\left(\overleftarrow{\boldsymbol{h}}_{i}^{p}, \overleftarrow{\boldsymbol{h}}_{1}^{q} ; \boldsymbol{W}^{2}\right)<br>\end{array}$</p>
+<ol>
+<li><strong>maxpooling-matching</strong>：在第一种匹配方法中选取最大的匹配值，即</li>
+</ol>
+<p>$\begin{array}{l}<br>\overrightarrow{\boldsymbol{m}}_{i}^{\max }=\max _{j \in(1 \ldots N)} f_{m}\left(\overrightarrow{\boldsymbol{h}}_{i}^{p}, \overrightarrow{\boldsymbol{h}}_{j}^{q} ; \boldsymbol{W}^{3}\right) \\<br>\overleftarrow{\boldsymbol{m}}_{i}^{\max }=\max _{j \in(1 \ldots N)} f_{m}\left(\overleftarrow{\boldsymbol{h}}_{i}^{p}, \overleftarrow{\boldsymbol{h}}_{j}^{q} ; \boldsymbol{W}^{4}\right)<br>\end{array}$</p>
+<p>where $\max _{j \in(1 \ldots N)}$ is element-wise maximum.</p>
+<ol>
+<li><strong>attentive-matching</strong>：先对 P 和 Q 中每一个 time step 的上下文向量（包含前向和后向）计算余弦相似度，得到相似度矩阵</li>
+</ol>
+<p>$\begin{array}{l}<br>\vec{\alpha}_{i, j}=\operatorname{cosine}\left(\overrightarrow{\boldsymbol{h}}_{i}^{p}, \overrightarrow{\boldsymbol{h}}_{j}^{q}\right) \\<br>\overleftarrow{\alpha}_{i, j}=\operatorname{cosine}\left(\overleftarrow{\boldsymbol{h}}_{i}^{p}, \overleftarrow{\boldsymbol{h}}_{j}^{q}\right)<br>\end{array}$</p>
+<p>然后将相似度矩阵作为 Q 中每一个 time step 权重，通过对 Q 的所有上下文向量（包含前向和后向）加权求和，计算出整个句子 Q 的注意力向量</p>
+<p>$\begin{aligned}<br>\overrightarrow{\boldsymbol{h}}_{i}^{\text {mean }} &amp;=\frac{\sum_{j=1}^{N} \vec{\alpha}_{i, j} \cdot \overrightarrow{\boldsymbol{h}}_{j}^{q}}{\sum_{j=1}^{N} \vec{\alpha}_{i, j}} \\<br>\overleftarrow{\boldsymbol{h}}_{i}^{\text {mean }} &amp;=\frac{\sum_{j=1}^{N} \overleftarrow{\alpha}_{i, j} \cdot \overleftarrow{\boldsymbol{h}}_{j}^{q}}{\sum_{j=1}^{N} \overleftarrow{\alpha}_{i, j}}<br>\end{aligned}$</p>
+<p>最后，将 P 中每一个 time step 的上下文向量（包含前向和后向）分别与句子 Q 的注意力向量计算匹配值</p>
+<p>$\begin{array}{l}<br>\overrightarrow{\boldsymbol{m}}_{i}^{a t t}=f_{m}\left(\overrightarrow{\boldsymbol{h}}_{i}^{p}, \overrightarrow{\boldsymbol{h}}_{i}^{\text {mean }} ; \boldsymbol{W}^{5}\right) \\<br>\overleftarrow{\boldsymbol{m}}_{i}^{a t t}=f_{m}\left(\overleftarrow{\boldsymbol{h}}_{i}^{p}, \overleftarrow{\boldsymbol{h}}_{i}^{\text {mean }} ; \boldsymbol{W}^{6}\right)<br>\end{array}$</p>
+<ol>
+<li><strong>max-attentive-matching</strong>：与 attentive-matching 的匹配策略相似，不同之处在于选择句子 Q 所有上下文向量中余弦相似度最大的向量作为句子 Q 的注意力向量。</li>
+</ol>
+<h5 id="DIIN"><a href="#DIIN" class="headerlink" title="DIIN"></a>DIIN</h5><figure class="highlight latex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs latex">题目：Natural Language Inference over Interaction Space<br>论文：https://arxiv.org/pdf/1709.04348.pdf<br>代码：https://github.com/YerevaNN/DIIN-in-Keras<br></code></pre></td></tr></table></figure>
+<p>DIIN 模型是在 ICLR2018 上提出的, 输入层使用单词嵌入、字符特征和句法特征的串联, 编码层使用自注意力<a href="self-attention"><a href="javascript:;">60</a></a>机制, 交互层采用点积操作得到交互矩阵, 然后使用DenseNet[<a href="javascript:;">84</a>]进行特征抽取, 之后将抽取的特征传入多层感知机模型得到最终的结果, 本方法简单有效, 在NLI任务上表现出很好的性能.</p>
+<img src="/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/v2-c44b0398dc3e5372e8b91959b8052081_1440w.jpg" srcset="/img/loading.gif" lazyload class="">
+<p>模型可以分为 5 个部分，分别是嵌入层、编码层、交互层、特征抽取层以及输出层：</p>
+<ul>
+<li>Embedding Layer</li>
+</ul>
+<p>在 embedding 层中，论文中同时将单词级别 embedding、字符级别特征的 embedding （OOV）以及句法级别的特征 embedding 信息 （一个是词性特征 ( POS )，另一个是二进制精确匹配特征 ( EM )），全部concat 起来作为每个词的 embedding。</p>
+<ul>
+<li>Encoding Layer</li>
+</ul>
+<p>Encoding Layer的主要作用是将上一层的特征进行融合并进行encode。论文中作者采用的是<strong>self-attention机制</strong>，同时考虑到了词序和上下文信息。以P作为例子，首先计算attetion matrix</p>
+<p>$A_{i j}=\alpha\left(\hat{P}_{i}\right), \hat{P}_{j} \in R$</p>
+<p>这里的attention matrix的 计算方法和transformer的还不太一样，作者取了三个维度的值并<strong>拼接</strong>起来，如下面的公式所示，我的理解是a与b应该是一样的，因为都是针对的P，唯一多了个a ∘ b其中的∘是对位相乘，如果P的维度是d，那么拼接后的向量维度是3d</p>
+<p>$\alpha(a, b)=w_{a}^{T}[a ; b ; a \circ b]$</p>
+<p>然后加上softmax计算self-attention的值</p>
+<p>$\bar{P}=\sum_{j=1}^{p} \frac{\exp \left(A_{i j}\right)}{\sum_{k=1}^{p} \exp \left(A_{k j}\right)} \hat{P}_{j}$</p>
+<p>接下来作为引入了LSTM中门的概念semantic composite fuse gate，其计算公式如下</p>
+<p>$\begin{array}{c}<br>z_{i}=\tanh \left(W^{1 t}\left[\hat{P}_{i} ; \bar{P}_{i}\right]+b^{1}\right) \\<br>r_{i}=\sigma\left(W^{2 T}\left[\hat{P}_{i} ; \bar{P}_{i}\right]+b^{2}\right) \\<br>f_{i}=\sigma\left(W^{3 T}\left[\hat{P}_{i} ; \bar{P}_{i}\right]+b^{3}\right) \\<br>\tilde{P}_{i}=r_{i} \circ \hat{P}_{i}+f_{i} \circ z_{i}<br>\end{array}$</p>
+<p>其中 W 的维度均是$[ 2 d , d ]$，b的维度是d，σ表示的是sigmoid函数</p>
+<p>H的操作和P的操作一样，就不再赘述了，有一点需要注意，论文中认为P和H是有细微差距的，所以attention的权重和gate的权重是没有共享的，不过论文中的任务五是NLI，如果是相似度匹配的任务我觉得此处是可以共享的，必须相似度匹配两个句子本身就是很接近的，此观点仅代表个人想法没有验证过，代码中我们还是以论文为主。</p>
+<ul>
+<li>Interaction Layer</li>
+</ul>
+<p>Interaction Layer的主要目的是把P与H做一个相似度的计算，提取出其中的相关性，可以采用余弦相似度、欧氏距离等等，这里作者发现对位相乘（向量点积）的效果很好，所以公式中的 $\beta(a, b)=a \circ b$</p>
+<p>$I_{i j}=\beta\left(\tilde{P}_{i}, \tilde{H}_{i}\right) \in R^{d}$</p>
+<ul>
+<li>Feature Extraction Layer</li>
+</ul>
+<p>Feature Extraction Layer的任务正如其名，做特征提取。这一层论文主要采用的是CNN的结构，作者实验发现ResNet效果会好一些，但是最终还是选择了DenseNet，因为DenseNet能更好的保存参数，并且作者观察到ResNet如果把skip connection移除了模型就没法收敛了（ResNet的关键就在于skip connection不知道作者为什么要说明这一点）BN还会导致收敛变慢（这里应该是指针对当前这个模型来说）所以作者并没有采用ResNet。卷积采用的是relu激活函数，都是1×1的卷积核来对上文提到的相关性tensor进行缩放，并且这里引入了一个超参数η，例如输入的channel是k那么输出的channel就是k × η，然后把结果送到3层Dense block中，Dense block包含了n个3×3的卷积核，成长率是g，transition layer采用了1×1的卷积核来做channel的缩减，然后跟上一个步长为2的最大池化层，transition layer的缩减率用θ表示。这一层的关键就在于DenseNet，对DenseNet不清楚的小伙伴一定要先去了解该网络的结构原理，这也是为啥作者会把该模型取名为Densely Interactive Inference Network</p>
+<ul>
+<li>Output Layer</li>
+</ul>
+<p>输出层使用简单的一个线性层以及 softmax 多分类进行分类。</p>
+<h5 id="HCAN"><a href="#HCAN" class="headerlink" title="HCAN"></a>HCAN</h5><figure class="highlight latex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs latex">题目：Bridging the Gap Between Relevance Matching and Semantic Matching for Short Text Similarity Modeling<br>论文：https://cs.uwaterloo.ca/~jimmylin/publications/Rao<span class="hljs-built_in">_</span>etal<span class="hljs-built_in">_</span>EMNLP2019.pdf<br>代码：https://github.com/jinfengr/hcan<br></code></pre></td></tr></table></figure>
+<p>HCAN是Facebook在EMNLP2019提出的模型，虽然比上文的ESIM、PWIM等模型高上4+个点，但还是被BERT甩了很远。不过这个模型的核心也不只是做语义匹配，而是同时做检索相关性（Relevance Matching），也就是搜索中query-doc的匹配。</p>
+<p>模型计算如下：</p>
+<ol>
+<li>Encoding层作者提出了三种方法，堆叠的CNN作为Deep Encoder，不同尺寸卷积核作为Wide Encoder，BiLSTM作为Contextual Encoder编码更长距离的上下文</li>
+<li>先把两句话交互得到attention score矩阵，之后对于query中每个词，求得doc中最相似的词的分数，作为向量Max(S)，按照同样的方法求出Mean(S)，长度都为|Q|，再分别乘上query中每个词的tfidf统计，得到相关性匹配向量 <img src="https://www.zhihu.com/equation?tex=O_%7BRM%7D#id=XMhh8&amp;originHeight=20&amp;originWidth=40&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=shadow&amp;title=" srcset="/img/loading.gif" lazyload alt=""></li>
+<li>用加性attention对query和doc进行交互，得到新的表示，再花式拼接过BiLSTM，得到语义匹配向量 <img src="https://www.zhihu.com/equation?tex=O_%7BSM%7D#id=wbp78&amp;originHeight=20&amp;originWidth=38&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=shadow&amp;title=" srcset="/img/loading.gif" lazyload alt=""></li>
+<li>将 <img src="https://www.zhihu.com/equation?tex=O_%7BSM%7D%2C+O_%7BRM%7D#id=T0BDo&amp;originHeight=20&amp;originWidth=86&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=shadow&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 拼接起来过MLP，最后分类</li>
+</ol>
+<p>通过实验结果来看，Deep Encoder的表现是最好的，在7/8个评估上都超过另外两个。</p>
+<img src="/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/v2-9e3b3f27fc2de53bc27c52baceca84c0_1440w.jpg" srcset="/img/loading.gif" lazyload class="">
+<p>模型只是工具，数据才是天花板，数据质不好/数量不够，模型再花哨也没用。像BiMPM和ESIM，小数据集无法发挥它们的效果，所以训练调参的过程会很耗时。像是quora question pairs数据集提供了40W对训练样本，不平衡程度也不大(正负比 3:5)，这时两个模型效果都不错，这也印证了数据驱动的重要性。</p>
+<h5 id="小结-2"><a href="#小结-2" class="headerlink" title="小结"></a>小结</h5><p>基于交互模型的方法实质就是在孪生网络架构的基础上, 通过某种策略对两个孪生网络的中间环节进行交互. 目前最普遍的策略是各种不同的Attention机制. 具有交互能力的模型结构普遍更为复杂, 包含更多的模型参数, 这就导致了这类模型的计算成本较高.</p>
+<h4 id="孪生-vs-交互"><a href="#孪生-vs-交互" class="headerlink" title="孪生 vs. 交互"></a>孪生 vs. 交互</h4><ul>
+<li>基于表示的匹配方法优势在于Doc的语义向量可以离线预先计算，在线预测时只需要重新计算Query的语义向量速度会快很多；缺点是模型学习时Query和Doc两者没有任何交互，不能充分利用Query和Doc的细粒度匹配信号。</li>
+<li>基于交互的匹配方法优势在于Query和Doc在模型训练时能够进行充分的交互匹配，语义匹配效果好，缺点是部署上线成本较高。</li>
+</ul>
+<h2 id="4-『评价指标』"><a href="#4-『评价指标』" class="headerlink" title="4.『评价指标』"></a>4.『评价指标』</h2><p>首先，对于每一个文本对，采用余弦相似度对其打分。打分完成后，采用所有余弦相似度分数和所有 gold label 计算 Spearman Correlation。</p>
+<p>其中，<strong>Pearson</strong> Correlation 与 <strong>Spearman</strong> Correlation 都是用来计算两个分布之间相关程度的指标。Pearson Correlation 计算的是两个变量是否线性相关，而 Spearman Correlation 关注的是两个序列的单调性是否一致。并且论文《Task-Oriented Intrinsic Evaluation of Semantic Textual Similarity》证明，采用 Spearman Correlation 更适合评判语义相似度任务。Pearson Correlation 与 Spearman Correlation 的公式如下：</p>
+<img src="/2021/11/09/2021-11-09-%F0%9F%90%98%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95%E7%BB%BC%E8%BF%B0/1661236959872-b5e9133c-cac2-4e6d-a948-f4aa4499ba4b.png" srcset="/img/loading.gif" lazyload class="">
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/111769969">谈谈文本匹配和多轮检索</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/357864974">21个经典深度学习句间关系模型｜代码&amp;技巧</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.6aiq.com/article/1589474365961">贝壳找房【深度语义匹配模型 】原理篇一：表示型</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.6aiq.com/article/1589798723495">贝壳找房【深度语义匹配模型】原理篇二：交互篇</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.6aiq.com/article/1590190626464">【深度语义匹配模型】实践篇：语义匹配在贝壳找房智能客服中的应用</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/u012526436/article/details/90179466">文本相似度，文本匹配模型归纳总结</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/BDBC-KG-NLP/QA-Survey/blob/master/CQA%E8%B0%83%E7%A0%94-%E5%B7%A5%E4%B8%9A%E7%95%8C.md#221-%E5%9F%BA%E4%BA%8E%E6%84%8F%E5%9B%BE%E8%AF%86%E5%88%AB%E7%9A%84%E7%AE%97%E6%B3%95">QA-Survey/CQA调研-工业界.md</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.6aiq.com/article/1587873440587">干货! 搜索系统中的深度匹配模型</a></p>
+<p><a target="_blank" rel="noopener" href="http://hdsfdxzkb.xml-journal.net/cn/article/doi/10.3969/j.issn.1000-5641.202091011?viewType=HTML">韩程程, 李磊, 刘婷婷, 高明. 语义文本相似度计算方法[J]. 华东师范大学学报（自然科学版）</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E8%AF%AD%E4%B9%89%E5%8C%B9%E9%85%8D/">#语义匹配</a>
+      
+        <a href="/tags/%E8%AF%AD%E4%B9%89%E7%9B%B8%E4%BC%BC%E5%BA%A6/">#语义相似度</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>     语义文本相似度方案</div>
+      <div>http://example.com/2021/11/09/2021-11-09-🐘文本匹配方法综述/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>    NSX</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年11月9日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/11/09/2021-11-09-%F0%9F%86%9A%E5%AF%B9%E6%AF%94%E5%AD%A6%E4%B9%A0/" title="语义匹配前言：对比学习">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">语义匹配前言：对比学习</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/10/31/2021-10-31-%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F%E4%B9%8BNLU/" title="对话系统之NLU">
+                        <span class="hidden-mobile">对话系统之NLU</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

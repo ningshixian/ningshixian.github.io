@@ -1,0 +1,763 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="NSX">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="对话系统之智能客服 简述对话系统的组成和逻辑，以及如何应用于智能客服  一、对话系统的定义 二、对话系统的概述 三、对话系统的组件架构 四、智能客服的实现 五、龙小湖 对话系统开源框架">
+<meta property="og:type" content="article">
+<meta property="og:title" content="对话系统之智能客服">
+<meta property="og:url" content="http://example.com/2021/10/31/2021-10-31-%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F%E4%B9%8B%E9%BE%99%E5%B0%8F%E6%B9%96%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="对话系统之智能客服 简述对话系统的组成和逻辑，以及如何应用于智能客服  一、对话系统的定义 二、对话系统的概述 三、对话系统的组件架构 四、智能客服的实现 五、龙小湖 对话系统开源框架">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gvys9jvey1j31c20imwi0.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gvw767ph3kj31bk0k6n3b.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gvzuru34hqj30kb0gzack.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gvw7ax8z3kj31cu0lmwl5.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gvw7jir943j31cg0mgahf.jpg">
+<meta property="og:image" content="https://p0.meituan.net/travelcube/64f2e7e5ed14850917373612adb8b24f267239.png">
+<meta property="og:image" content="https://p0.meituan.net/travelcube/2474ae90ac83e7955f72509c5326ed18419810.png">
+<meta property="og:image" content="https://p0.meituan.net/travelcube/0c9c76ca8c23d8b0289ce984b9b96da7398937.png">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gvysmzna8hj31d20he78j.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gwfze2t8hhj31n00syq6k.jpg">
+<meta property="og:image" content="http://ww1.sinaimg.cn/large/006qDjsOly1g4form1ztgj30k0044wen.jpg">
+<meta property="article:published_time" content="2021-10-30T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-23T10:28:32.066Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="对话系统">
+<meta property="article:tag" content="智能客服">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gvys9jvey1j31c20imwi0.jpg">
+  
+  
+  
+  <title>对话系统之智能客服 - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="对话系统之智能客服"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-10-31 00:00" pubdate>
+          2021年10月31日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          45 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">对话系统之智能客服</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="对话系统之智能客服"><a href="#对话系统之智能客服" class="headerlink" title="对话系统之智能客服"></a>对话系统之智能客服</h1><blockquote>
+<p>简述对话系统的组成和逻辑，以及如何应用于智能客服</p>
+</blockquote>
+<p>一、对话系统的定义</p>
+<p>二、对话系统的概述</p>
+<p>三、对话系统的组件架构</p>
+<p>四、智能客服的实现</p>
+<p>五、龙小湖</p>
+<p>对话系统开源框架</p>
+<span id="more"></span>
+<h2 id="一、对话系统的定义"><a href="#一、对话系统的定义" class="headerlink" title="一、对话系统的定义"></a>一、对话系统的定义</h2><p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gvys9jvey1j31c20imwi0.jpg" srcset="/img/loading.gif" lazyload alt="image-20211031205004867"></p>
+<p>智能对话系统是可通过语音识别、自然语言理解、机器学习等人工智能技术，使机器理解人类语言并与人类进行有效沟通， 进而根据对人类语言中的意图进行理解并执行相应任务或做出回答的系统。智能对话系统可加载于智能硬件，基于对话交 互满足智能硬件的操作控制需求，使人机交互更加自然；智能对话系统也可赋能于服务场景，以文本机器人、语音机器人、 多模态数字人、智能质检和坐席辅助等对话机器人产品形式服务于客服、营销、企业信息服务等场景。</p>
+<h2 id="二、对话系统的概述"><a href="#二、对话系统的概述" class="headerlink" title="二、对话系统的概述"></a>二、对话系统的概述</h2><p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gvw767ph3kj31bk0k6n3b.jpg" srcset="/img/loading.gif" lazyload alt="image-20211029150909153"></p>
+<p>常见的对话系统可分为三类： 聊天型，任务导向型和问答型：</p>
+<ul>
+<li><strong>闲聊型</strong>：通常是不关注某项特定任务，它的主要的目标是和人进行开放领域的对话，关注点是生成流畅、合理且自然的回复。</li>
+<li><strong>任务型</strong>：通常是帮助用户完成某项任务指令，如查找酒店、查询订单状态、解决用户的退款申请等等。用户的需求通常比较复杂，需要通过多轮交互来不断收集任务所需的必要信息，进而根据信息进行决策，执行不同的动作，最终完成用户的指令。</li>
+<li><strong>问答型</strong>：侧重于一问一答，即直接根据用户的问题给出精准答案。问答型和任务型最本质的区别在于，系统是否需要维护一个用户目标状态的表示和是否需要一个决策过程来完成任务。</li>
+</ul>
+<p>在技术实现上，通常又可以划分为检索式、生成式和任务式：</p>
+<ul>
+<li><strong>检索式</strong>：主要思路是从对话语料库中找出与输入语句最匹配的回复，这些回复通常是预先存储的数据。</li>
+<li><strong>生成式</strong>：主要思路是基于深度学习的Encoder-Decoder架构，从大量语料中习得语言能力，根据问题内容及相关实时状态信息直接生成回答话术。</li>
+<li><strong>任务式</strong>：就是任务型对话，通常要维护一个对话状态，根据不同的对话状态决策下一步动作，是查询数据库还是回复用户等等。</li>
+</ul>
+<p><strong>检索式 vs. 生成式 的优劣：</strong></p>
+<ul>
+<li><strong>生成模型</strong>的对话更灵活，更像人，但是依赖的语料数据的训练、生成的语言结构等不是特别完善，容易出现语言结构混乱语无伦次看不懂的问题；</li>
+<li>而<strong>检索匹配式</strong>，需要更多的精力去维护问答知识库，同时也会存在意图识别不准，问东答西的情况，但由于实现逻辑相较而言容易实现，且问答是可控的，不会出现语言结构错乱的问题。</li>
+</ul>
+<p>一图总结如下：</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gvzuru34hqj30kb0gzack.jpg" srcset="/img/loading.gif" lazyload alt="2bc2fd8b4804aed78b220effac34ad32"></p>
+<p>闲聊、问答、任务型对话本质都是在被动地响应用户需求。在具体业务中还会有问题推荐、商品推荐等来主动引导用户交互。在<a target="_blank" rel="noopener" href="https://tech.meituan.com/2021/09/30/artificial-intelligence-customer-service.html">美团的业务</a>场景里主要是任务型和问答型，中间也会穿插一些闲聊，闲聊主要是打招呼或者简单情绪安抚，起到润滑人机对话的作用。</p>
+<h2 id="三、对话系统的组件架构"><a href="#三、对话系统的组件架构" class="headerlink" title="三、对话系统的组件架构"></a>三、对话系统的组件架构</h2><p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gvw7ax8z3kj31cu0lmwl5.jpg" srcset="/img/loading.gif" lazyload alt="image-20211029151342858"></p>
+<p>用户说话，对话系统的语音识别器（ASR）将输入转为文本，文本由自然语言理解组件（NLU）进行语义理解，接着对话管理器（DM）分析语义信息，保持对话的历史与状态，并管理对话的一般流程；自然语言生成器（NLG）根据对话管理器的对话策略生成对话的文本，最后文本通过语音合成器（TTS）渲染输出；</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gvw7jir943j31cg0mgahf.jpg" srcset="/img/loading.gif" lazyload alt="image-20211029152159074"></p>
+<p>对话系统的关键是要让计算机“理解”并“生成”自然语言，主要涉及到NLP的三大核心任务：</p>
+<ol>
+<li><strong>自然语言理解：</strong>NLU（Natural Language Understanding）产生适合对话任务的语义表示（语义表示常见有一阶逻辑、语义网络、概念依存、基于框架的表示），主要通过分词、词性标注、命名实体识别、句法分析、指代消解等进行语义解析产生句子意义（即理解文本是什么意思），进行意图识别（一般通过动宾短语，事件提及，比如查询天气），从中抽取槽的填充值，进而完成语义表示；</li>
+<li>对话管理器：DM（Dialog Management）为对话系统的主体，控制着对话的架构和结构，从ASR/NLU组件接受输入，维护一些状态，与任务管理器（知识库）交互，并将输出传递给NLG/TTS模块；</li>
+<li>自然语言生成与语音合成：NLG（Natural Language Generation）组件选择需要向用户表达的概念，计划如何用词句表达这些概念，并赋予这些词必要的韵律，TTS（Text To Speech）组件接受这些词句及其韵律注解，并合成波形图，生成语音；NLG模块仍广泛采用传统的基于规则的方法，根据规则可以将各个系统动作映射成自然语言表达。 </li>
+</ol>
+<p>自然语言处理技术的处理流程需经过获取语料、语料预处理、特征工程、特征选择与模型训练，实现机器与人的对话交互。近年来，深度学习技术的大量使用和不断突破极大推动自然语言处理技术的落地发展。</p>
+<h2 id="四、智能客服的实现"><a href="#四、智能客服的实现" class="headerlink" title="四、智能客服的实现"></a>四、智能客服的实现</h2><h3 id="智能客服是什么"><a href="#智能客服是什么" class="headerlink" title="智能客服是什么"></a>智能客服是什么</h3><p>智能客服背后的技术主要是以对话交互技术为核心，它能让大部分简单的问题得以快速自助解决，让复杂问题有机会被人工高效解决。</p>
+<p><img src="https://p0.meituan.net/travelcube/64f2e7e5ed14850917373612adb8b24f267239.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>用户的沟通对象可能有两个，除了跟机器人沟通外，还可能跟人工沟通。机器人的能力主要包括问题推荐、问题理解、对话管理以及答案供给。</p>
+<p>目前，衡量机器人能力好坏的评价一般有外在和内在的评价指标，外在指标指的是我们业务可见的一些指标，比如智能客服的问题解决率（满意率）和转人工率，分别衡量问题解决的好坏，以及能帮人工处理多少问题；内在指标指的是模型算法的一些指标，信息检索常见的评价指标：准确率（precision）、召回率（recall）、F1值等。可根据具体业务场景选取适合的评价指标。而在人工辅助方面，我们提供了话术推荐和会话摘要等能力，核心指标是ATT和ACW的降低，ATT是人工和用户的平均沟通时长，ACW是人工沟通后的其它处理时长。</p>
+<h3 id="智能客服——多轮对话"><a href="#智能客服——多轮对话" class="headerlink" title="智能客服——多轮对话"></a>智能客服——多轮对话</h3><p>理解了用户意图后，有些问题是可以直接给出答案解决的，而有些问题则需要进一步厘清。机器人对话示例：</p>
+<p><img src="https://p0.meituan.net/travelcube/2474ae90ac83e7955f72509c5326ed18419810.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>这个例子背后的机器人是怎么工作的呢？首先当用户输入“如何联系骑手”的时候，问题理解模块将它与知识库中的拓展问进行匹配，进而得到对应的标准问即意图“如何联系骑手”。然后对话管理模块根据意图“如何联系骑手”触发相应的任务流程，先查询订单接口，获取骑手电话号码，进而输出对话状态给到答案生成模块，根据模板生成最终结果，如右边的红框内容所示。在这个过程中涉及到要先有意图体系、定义好Task流程，以及订单的查询接口，这些都是业务强相关的，主要由各业务的运营团队来维护。那么，对话系统要做的是什么呢？一是将用户的输入与意图体系中的标准问进行匹配，二是完成多轮交互里面的调度。</p>
+<p><img src="https://p0.meituan.net/travelcube/0c9c76ca8c23d8b0289ce984b9b96da7398937.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>问题理解是将用户问题与意图体系进行匹配，匹配到的拓展问所对应的标准问即用户意图。机器人的工作过程实际是要做<strong>召回和精排</strong>两件事情。召回更多地是用现有检索引擎实现，技术上更多地关注精排。</p>
+<p>此外，一些场景需要先行确定用户要咨询的是哪个业务，这里的一个任务是“判断用户Query是属于哪个业务”，该任务我们叫做<strong>领域识别</strong>。若能明确判断领域时，则直接用该领域知识来解答；当不能明确判断时，则还需要多轮对话交互与用户进行澄清。</p>
+<h3 id="智能客服——问题推荐"><a href="#智能客服——问题推荐" class="headerlink" title="智能客服——问题推荐"></a>智能客服——问题推荐</h3><p>当用户进入服务门户后，机器人首先是要如何引导用户精准地表达需求，这样即可降低用户迷失或者直接转人工服务，也降低了若机器人不能正确理解时带来的多轮澄清等无效交互。</p>
+<p>该问题是一个标准的曝光点击问题，它的本质是推荐问题。</p>
+<h3 id="智能客服——评价体系"><a href="#智能客服——评价体系" class="headerlink" title="智能客服——评价体系"></a>智能客服——评价体系</h3><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/27044501">你问我答之「智能客服评价体系」</a></p>
+<h2 id="五、龙小湖⭐️"><a href="#五、龙小湖⭐️" class="headerlink" title="五、龙小湖⭐️"></a>五、龙小湖⭐️</h2><p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gvysmzna8hj31d20he78j.jpg" srcset="/img/loading.gif" lazyload alt="image-20211031210259194"></p>
+<p>龙小湖智能客服偏向于<strong>【检索式的FAQ问答型对话系统】</strong>：FAQ（Frequently Asked Questions）指常见问题的解答，具体形式是问题和与问题相关的答案组成的问答对（QA pair），通常这类 QA pair 数量较多。</p>
+<p>当用户输入一个问题，龙小湖智能客服会去FAQ知识库里面找一个和客户的问题最相似的问题（Q），然后将该Q所对应的回答（A）返回给客户，完成知识问答工作。</p>
+<p>整个流程主要是QQ 匹配，也即使用用户的问题和问答库里的问题去匹配。涉及到传统文本匹配方法（信息检索中的BM25， 向量空间模型VSM）、深度语义匹配方法（孪生网络、交互网络 ）、度量学习方法（margin-based softmax、对比学习）等。</p>
+<h3 id="整体架构"><a href="#整体架构" class="headerlink" title="整体架构"></a>整体架构</h3><blockquote>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzIzMzYwNzY2NQ%3D%3D&amp;chksm=e882535fdff5da49cec5450cd692a29562eb929e49217d482fc9e51eb993e2c7387549c87c33&amp;idx=1&amp;mid=2247486401&amp;scene=21&amp;sn=1c4b9be4b359ed4979e3f892d6e55975#wechat_redirect">心法利器[13] | 任务方案思考：句子相似度和匹配</a></p>
+</blockquote>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gwfze2t8hhj31n00syq6k.jpg" srcset="/img/loading.gif" lazyload alt="image-20211115175111233"></p>
+<ol>
+<li>预处理模块：分词、实体识别、领域识别、句法分析、关键词抽取、同义词扩展、纠错等基本文本处理流程；</li>
+<li><p>检索召回模块：通过同义词召回、传统BM25召回和语义召回，从 FAQ 库召回与 Query 相关的问题；</p>
+</li>
+<li><p>排序模块：通过 LTR 模型或者文本相似度模型对召回的问题进行排序，选出 Top k 返回；</p>
+</li>
+<li>最后是业务规则、流量干预等进行顺序调整；</li>
+</ol>
+<p>在智能客服的框架中，最重要的模块是 FAQ 问答库的构建、语义召回、相似度模型和模型更新，它们性能的好坏对用户的使用体验有很大影响。</p>
+<h3 id="问答知识库构建"><a href="#问答知识库构建" class="headerlink" title="问答知识库构建"></a>问答知识库构建</h3><blockquote>
+<p> <a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/1NHuDn62G1SnATNjNWWuEA">智能客服新三网场景问答模型优化实践</a></p>
+</blockquote>
+<p>QABot是基于问答知识库来实现的，问答知识库是由一系列的问题-答案对组成的数据集。我们将问题划分为标准问题和扩展问题，标准问题是对同一个语义的所有扩展问的抽象。如：”如何发布帖子”，”怎么样发布帖子”，”个人中心里是怎么发布帖子的呢？”等这些问题都表达的是同一个意思，这样我们就可以将”如何发布帖子”抽象为一个标准问，其他相似问题作为该问题的扩展问。</p>
+<p>由于我们的问答引擎是基于知识库来实现的，所以知识库的构建就显得非常重要，那么我们是怎么构建知识库的呢？</p>
+<ol>
+<li><p>首先我们会对场景历史积累的问题进行整理，经过抽象、标注形成标准问和扩展问，同时对于扩展问较少的问题使用相关技术做问题扩展，形成初始问答知识库。</p>
+</li>
+<li><p>然后当系统上线以后，我们会不断的对场景进行问题挖掘，再经过标注整理来不断的扩充知识库。</p>
+</li>
+<li>半自动化挖掘新问题扩展知识库。从线上问答日志中挖掘用户提问，TextCNN新问题分类模型筛选出新标准问题，经过提前训练好的Word2Vec获取句向量，并用Kmeans聚类的方法对新标准问题进行聚类，将语义相同新标准问题聚为一类。最后将聚类结果交给编辑团队去审核，最终由编辑团队归纳总结出新的标准问题和对应的扩展问题并入知识库。</li>
+</ol>
+<h3 id="候选问题的语义召回"><a href="#候选问题的语义召回" class="headerlink" title="候选问题的语义召回"></a>候选问题的语义召回</h3><p>由于 FAQ 库里面的 QA pair 可能成千上万，如果每接收一个 query 就将其和库里所有的Q进行匹配计算相似度的话，那给用户的响应速度是不可忍受的；因此需要先从 FAQ 库里召回部分与 query 相关的候选 Q，然后再使用文本匹配模型计算 query 和候选 Q 的相似度。</p>
+<p>通常的做法是将 FAQ 里面的 Q 存入 Elasticsearch 这样的搜索引擎中来做粗略的召回，但是 es 检索召回只能召回和 query 字面意思相关的候选 Q。另外可以使用表示型文本匹配模型提取 FAQ 库中的所有 Q 的语义向量，使用Faiss 或者 annoy 工具做向量索引，这样就能做语义层面的召回了。其实更进一步，我们可以将所有 Q 先按大类归纳分类，然后再将这些分好类的 Q进行向量索引，在召回时先使用分类模型对 query 进行分类，然后在相对应大类的向量索引里进行语义层面的召回。</p>
+<h3 id="相似度模型"><a href="#相似度模型" class="headerlink" title="相似度模型"></a>相似度模型</h3><p>在上文我们已经提到了使用表示型文本匹配模型进行语义召回，表示型文本匹配模型其实就是一个相似度模型了，在得到候选召回 Q 之后我们还需要做一个问题排序的工作，然后将排序最高的问题所对应的回答做用户 query 的回答，这里需要使用一个比表示型文本匹配模型性能更高的相似度模型来计算query 和候选 Q 之间的相似度来作为排序模型的特征。我们可以使用交互式的文本匹配模型来完成这个工作。</p>
+<h1 id="对话系统开源框架"><a href="#对话系统开源框架" class="headerlink" title="对话系统开源框架"></a>对话系统开源框架</h1><p><strong>ChatterBot</strong> ❤❤❤</p>
+<blockquote>
+<p>8K+ star： <a target="_blank" rel="noopener" href="https://github.com/gunthercox/ChatterBot">https://github.com/gunthercox/ChatterBot</a></p>
+</blockquote>
+<p>ChatterBot是一个Python库，使用一系列机器学习算法来生成不同类型的回答。 （主要是 <strong>匹配式</strong>）</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cmake">pip <span class="hljs-keyword">install</span> chatterbot<br></code></pre></td></tr></table></figure>
+<p>程序通过搜索与输入匹配的最接近的匹配已知语句来选择最接近的匹配响应，然后从选择对该语句的已知响应中选择响应。</p>
+<p><strong>rasa</strong> ❤❤❤</p>
+<blockquote>
+<p>对话管理：<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/515385a7c7f0">https://www.jianshu.com/p/515385a7c7f0</a></p>
+<p>rasa中文：<a target="_blank" rel="noopener" href="https://jverson.com/2018/09/11/rasa-nlu/">https://jverson.com/2018/09/11/rasa-nlu/</a></p>
+</blockquote>
+<p>使用rasa_nlu 理解用户的意图（预定义好） ，纯任务型对话。</p>
+<ul>
+<li>意图识别</li>
+<li>实体识别</li>
+</ul>
+<p><strong>DeepQA</strong> ❤</p>
+<p>DeepQA项目试图重现神经会话模型的结果（又名谷歌聊天机器人），它采用了RNN（seq2seq模型）判刑预测，使用Python和TensorFlow实现。</p>
+<p>如果需要自研 闲聊对话系统，可以参考这个。 但是需要大量中文对话数据，在数据来源方面，没有调研。</p>
+<p><strong>DeepPavlov❤❤❤❤</strong></p>
+<blockquote>
+<p>3.2K star <a target="_blank" rel="noopener" href="https://github.com/deepmipt/DeepPavlov">https://github.com/deepmipt/DeepPavlov</a></p>
+<p>参考：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/58133705">https://zhuanlan.zhihu.com/p/58133705</a></p>
+</blockquote>
+<p>开源的对话 AI 库，建立在 TensorFlow 和 Keras 上。<br>DeepPavlov框架层次：</p>
+<p><a target="_blank" rel="noopener" href="http://ww1.sinaimg.cn/large/006qDjsOly1g4form1ztgj30k0044wen.jpg"><img src="http://ww1.sinaimg.cn/large/006qDjsOly1g4form1ztgj30k0044wen.jpg" srcset="/img/loading.gif" lazyload alt="img"></a></p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a target="_blank" rel="noopener" href="https://tech.meituan.com/2021/09/30/artificial-intelligence-customer-service.html">美团智能客服核心技术与实践</a></p>
+<p><a target="_blank" rel="noopener" href="http://www.woshipm.com/ai/1764361.html">对话系统的简单综述及应用智能客服</a></p>
+<p><a href=""> <strong>《自然语言处理实践：聊天机器人技术原理与应用》</strong>  王昊奋，邵浩 等 著</a></p>
+<p><a target="_blank" rel="noopener" href="http://www.sohu.com/a/302618857_99979179">NLP实践：对话系统技术原理和应用 </a></p>
+<p><a target="_blank" rel="noopener" href="https://cn.100offer.com/blog/posts/296">NLP 算法工程师的学习、成长和实战经验 | 知乎 Live 笔录 </a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/5ewD2xD8J08W89-Rwixw4Q">回顾·五八同城智能客服系统“帮帮”技术揭秘</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/o7x1BigfIMJIJEGxlFlLow">58智能客服QABot问答机器人算法实践</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzAwOTgwMjQ4OQ==&amp;mid=2649990182&amp;idx=1&amp;sn=11a98d9cecd0deecb6400d7288b793e6&amp;chksm=835d03b0b42a8aa62d084f11f7382923267fc81ea2efcc20dce82a0e89e9e7540027b922900e&amp;scene=21#wechat_redirect">大话知识图谱—聊聊智能客服</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F/">#对话系统</a>
+      
+        <a href="/tags/%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D/">#智能客服</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>对话系统之智能客服</div>
+      <div>http://example.com/2021/10/31/2021-10-31-对话系统之龙小湖智能客服/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>NSX</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年10月31日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/10/31/2021-10-31-%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F%E4%B9%8B%E6%A7%BD%E4%BD%8D%E6%8F%90%E5%8F%96/" title="对话系统之槽位提取">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">对话系统之槽位提取</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-58%E5%90%8C%E5%9F%8E/" title="58智能客服QABot">
+                        <span class="hidden-mobile">58智能客服QABot</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

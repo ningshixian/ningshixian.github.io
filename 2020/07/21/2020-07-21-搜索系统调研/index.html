@@ -1,0 +1,770 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="NSX">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="如何构建搜索系统 搜索系统的基本组成  Item 内容理解 Query 理解 检索召回 结果集排序">
+<meta property="og:type" content="article">
+<meta property="og:title" content="搜索系统调研">
+<meta property="og:url" content="http://example.com/2020/07/21/2020-07-21-%E6%90%9C%E7%B4%A2%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%A0%94/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="如何构建搜索系统 搜索系统的基本组成  Item 内容理解 Query 理解 检索召回 结果集排序">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img1.3s78.com/codercto/d5b9080aeb6b7135676e3e8484c71b08">
+<meta property="og:image" content="https://img1.3s78.com/codercto/3be45355bee3518c53cf56fd4d5174c3">
+<meta property="og:image" content="https://img1.3s78.com/codercto/7bbd212acc71d60b2e332a3d5c0eb1ac">
+<meta property="og:image" content="https://img1.3s78.com/codercto/b4a367142c73c75e8abf4228da865dd1">
+<meta property="og:image" content="https://img1.3s78.com/codercto/5a6d2c11b2513222a7c424b0f7b77b5d">
+<meta property="og:image" content="https://img1.3s78.com/codercto/c6345485d79a4fd6b36efe71e6d381e0">
+<meta property="og:image" content="https://img1.3s78.com/codercto/f8bb8ca7bf3a726b36444038e70663b6">
+<meta property="og:image" content="https://img1.3s78.com/codercto/3d755c2266f6547454f38ee823e7625f">
+<meta property="og:image" content="https://img1.3s78.com/codercto/37b5d23708ce353df7af68a5ee35a5d6">
+<meta property="og:image" content="https://img1.3s78.com/codercto/d549bd47c8ac93cc6de76b79646fdab7">
+<meta property="og:image" content="https://img1.3s78.com/codercto/07632eacae811163dc70f4e40761688a">
+<meta property="og:image" content="https://img1.3s78.com/codercto/3ab9c07f28025775fa24ccbbb99d8a50">
+<meta property="og:image" content="https://img1.3s78.com/codercto/9753294223a880b2f54df3440adbcf4a">
+<meta property="og:image" content="https://img1.3s78.com/codercto/64e0ef2b931559ad5e880aa2c6a823e3">
+<meta property="og:image" content="https://img1.3s78.com/codercto/27a875679d42db4f154407583f8e0060">
+<meta property="og:image" content="https://img.6aiq.com/e/04993c9aea544b6cae17cb6850e634e1.webp?imageView2/2/w/768/format/webp/interlace/1">
+<meta property="og:image" content="https://gw.alipayobjects.com/zos/skylark/6b9a255c-ef3e-419f-9813-b2d2758cd47b/2018/png/d53cc02f-34d2-462d-b78a-d7510e4b7803.png">
+<meta property="article:published_time" content="2020-07-20T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-23T10:28:32.051Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="技术">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://img1.3s78.com/codercto/d5b9080aeb6b7135676e3e8484c71b08">
+  
+  
+  
+  <title>搜索系统调研 - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="搜索系统的基本组成介绍"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2020-07-21 00:00" pubdate>
+          2020年7月21日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          11k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          89 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">搜索系统的基本组成介绍</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <ul>
+<li>如何构建搜索系统</li>
+<li><p>搜索系统的基本组成</p>
+<ul>
+<li>Item 内容理解</li>
+<li>Query 理解</li>
+<li>检索召回</li>
+<li>结果集排序</li>
+</ul>
+<span id="more"></span>
+</li>
+</ul>
+<h1 id="如何构建搜索系统"><a href="#如何构建搜索系统" class="headerlink" title="如何构建搜索系统"></a>如何构建搜索系统</h1><ol>
+<li>搜索引擎选择</li>
+<li>离线数据/计算/导入导出</li>
+<li>实时数据同步<br>数据的增删改等操作都需要在搜索引擎里面实现同步，还有原始数据也需要实时同步到搜索引擎中去。</li>
+<li>数据访问/排序<br>数据部署完成后如何让外部用户访问，在一般搜素引擎中对搜索的数据会进行个性化排序。还有在 web 端和 Elasticsearch 有一个中间件加载搜索结果，对前五页或者十页进行一个精排。</li>
+<li>日志分析</li>
+</ol>
+<h1 id="搜索系统的基本组成"><a href="#搜索系统的基本组成" class="headerlink" title="搜索系统的基本组成"></a>搜索系统的基本组成</h1><p>一个基本的搜索系统大体可以分为离线挖掘和在线检索两部分，其中包含的重要模块主要有：<strong>Item 内容理解、Query 理解、检索召回、排序模块</strong>等。召回阶段根据用户的兴趣和历史行为，从知识库中挑选出一个小的候选集（e.g., 几百到几千个title）。这些候选都是用户很大概率会感兴趣的内容，排序阶段在此基础上进行更精准的计算，能够给每一个title进行精确打分，进而从成千上万的候选中选出用户最感兴趣的少量title（e.g., 十几个）。</p>
+<p>整个检索系统的目标可以抽象为给定 query，检索出最能满足用户需求的 item，也即检索出概率： $P(I i |Q) $ 最大的 item $I i $。</p>
+<p>根据贝叶斯公式展开：</p>
+<script type="math/tex; mode=display">
+argmaxP(I i |Q)=argmaxP(Q|I i)P(I i) /P(Q)argmaxP(Q|I i)P(I i)</script><p>其 中 $P(I i ) $ 表示 item 的重要程度，对应 item 理解侧的权威度、质量度等挖掘， $P(Q| I i ) $ 表示 item $I i$ 能满足用户搜索需求 Q 的程度，对 query 分词后可以表示为：</p>
+<script type="math/tex; mode=display">
+P(Q| I i ) =P( t 1 ,..., t n | I i )</script><p>这部分概率对应到基于 query 理解和 item 理解的结果上进行 query 和 item 间相关性计算，同时涉及到点击调权等排序模块.</p>
+<p><img src="https://img1.3s78.com/codercto/d5b9080aeb6b7135676e3e8484c71b08" srcset="/img/loading.gif" lazyload alt="搜索中的 Query 理解及应用"></p>
+<h2 id="1、Item-内容理解"><a href="#1、Item-内容理解" class="headerlink" title="1、Item 内容理解"></a>1、Item 内容理解</h2><p>在离线侧，我们需要做一些基础的离线挖掘工作，包括 item 内容的获取、清洗解析、item 内容理解 ( 语义 tag、权威度计算、时间因子、质量度等 )、用户画像构建、query 离线策略挖掘、以及从搜索推荐日志中挖掘 item 之间的语义关联关系、构建排序模型样本及特征工程等。</p>
+<h3 id="索引构建"><a href="#索引构建" class="headerlink" title="索引构建"></a><strong>索引构建</strong></h3><p>进行 item 内容理解之后，对相应的结构化内容执行建库操作，分别构建正排和倒排索引库。其中，正排索引简单理解起来就是根据 itemid 能找到 item 的各个基本属性及 term 相关 ( term 及其在 item 中出现的频次、位置等信息 ) 的详细结构化数据。相反地，倒排索引就是能根据分词 term 来找到包含该 term 的 item 列表及 term 在对应 item 中词频、位置等信息。</p>
+<p>通常会对某个 item 的 title、keyword、anchor、content 等不同属性域分别构建倒排索引，同时一般会根据 item 资源的权威度、质量度等纵向构建分级索引库，首先从高质量库中进行检索优先保证优质资源能被检索出来，如果高质量检索结果不够再从低质量库中进行检索。为了兼顾索引更新时效性和检索效率，一般会对索引库进行横向分布式部署，且索引库的构建一般分为全量构建和增量更新。</p>
+<h2 id="2、Query-理解"><a href="#2、Query-理解" class="headerlink" title="2、Query 理解"></a>2、Query 理解</h2><p>从前面的介绍可以知道，搜索三大模块的大致调用顺序是从 query 理解到检索召回再到排序，作为搜索系统的第一道环节，query 理解的结果除了可以用于召回也可以给排序模块提供必要的基础特征，为此 QU 很大程度影响召回和排序的质量，对 query 是进行简单字面上的理解还是可以理解其潜在的真实需求很大程度决定着一个搜索系统的智能程度。目前业界的搜索 QU 处理流程还是以 pipeline 的方式为主，也即拆分成多个模块分别负责相应的功能实现，pipeline 的处理流程可控性比较强，但存在缺点就是其中一个模块不 work 或准确率不够会对全局理解有较大影响。为此，直接进行 query-item 端到端地理解如深度语义匹配模型等也是一个值得尝试的方向。</p>
+<h3 id="1-Pipeline-流程"><a href="#1-Pipeline-流程" class="headerlink" title="1. Pipeline 流程"></a><strong>1. Pipeline 流程</strong></h3><p>搜索 Query 理解包含的模块主要有：query 预处理、query 纠错、query 扩展、query 归一、联想词、query 分词、意图识别、term 重要性分析、敏感 query 识别、时效性识别等。以下图为例，这里简单介绍下 query 理解的 pipeline 处理流程：线上来一个请求 query，为缓解后端压力首先会判断该 query 是否命中 cache，若命中则直接返回对该 query 对应的结构化数据。若不命中 cache，则首先会对 query 进行一些简单的预处理，接着由于 query 纠错可能会用到分词 term 信息进行错误检测等先进行 query 分词并移除一些噪音符号，然后进行 query 纠错处理，一些情况下局部纠错可能会影响到上下文搭配的全局合理性，为此还可能会需要进行二次纠错处理。</p>
+<p>对 query 纠错完后可以做 query 归一、扩展及联想词用于进行扩召回及帮助用户做搜索引导。接着再对 query 做分词及对分词后的 term 做重要性分析及紧密度分析，对无关紧要的词可以做丢词等处理，有了分词 term 及对应的权重、紧密度信息后可以用于进行精准和模糊意图的识别。除了这些基本模块，有些搜索场景还需要有对 query 进行敏感识别及时效性分析等其他处理模块。最后还需要能在 cms 端进行配置的人工干预模块，对前面各个模块处理的结果能进行干预以快速响应 badcase 处理。</p>
+<p>当然，这个 pipeline 不是通用的，不同的搜索业务可能需要结合自身情况做 pipeline 的调整定制，像百度这些搜索引擎会有更为复杂的 query 理解 pipeline，各个模块间的依赖交互也更为复杂，所以整个 QU 服务最好能灵活支持各个模块的动态热插拔，像组装乐高积木一样进行所需模块的灵活配置，下面对各个模块做进一步详细的介绍。</p>
+<p><img src="https://img1.3s78.com/codercto/3be45355bee3518c53cf56fd4d5174c3" srcset="/img/loading.gif" lazyload alt="搜索中的 Query 理解及应用"></p>
+<h3 id="2-Query-预处理"><a href="#2-Query-预处理" class="headerlink" title="2. Query 预处理"></a><strong>2. Query 预处理</strong></h3><h3 id="3-Query-分词"><a href="#3-Query-分词" class="headerlink" title="3. Query 分词"></a><strong>3. Query 分词</strong></h3><h3 id="4-紧密度分析"><a href="#4-紧密度分析" class="headerlink" title="4. 紧密度分析"></a><strong>4. 紧密度分析</strong></h3><h3 id="5-Term-重要性分析"><a href="#5-Term-重要性分析" class="headerlink" title="5. Term 重要性分析"></a><strong>5. Term 重要性分析</strong></h3><p>考虑到不同 term 在同一文本中会有不一样的重要性，在做 query 理解及 item 内容理解时均需要挖掘切词后各个 term 的重要性，在进行召回计算相关性时需要同时考虑 query 及 item 侧的 term 重要性。如对于 query “手机淘宝”，很明显 term “淘宝”要比”手机”更重要，为此赋予”淘宝”的权重应该比”手机”高。Term 重要性可以通过分等级或0.0~1.0的量化分值来衡量，如下图的 case 所示我们可以将 term 重要性分为4个级别，重要性由高到低分别是：核心词、限定词、可省略词、干扰词。对于重要级别最低的 term 可以考虑直接丢词，或者在索引库进行召回构造查询逻辑表达式时将对应的 term 用 “or” 逻辑放宽出现限制，至于计算出的在 query 和 item 内容中的 term 重要性分值则可以用于召回时计算基础相关性，如简单地将 BM25 公式：</p>
+<p><img src="https://img1.3s78.com/codercto/7bbd212acc71d60b2e332a3d5c0eb1ac" srcset="/img/loading.gif" lazyload alt="搜索中的 Query 理解及应用"></p>
+<p>中 term 在 item 及 query 中的词频 tf(t)、qf(t) 乘上各自的 term 权重。</p>
+<p><img src="https://img1.3s78.com/codercto/b4a367142c73c75e8abf4228da865dd1" srcset="/img/loading.gif" lazyload alt="搜索中的 Query 理解及应用"></p>
+<p>其中 item 内容侧的 term 重要性可以采用 LDA 主题模型、TextRank 等方法来挖掘，至于 query 侧的 term 重要性，比较容易想到的方法就是把它视为分类或回归问题来考虑，通过训练 svm、gbdt 等传统机器学习模型即可进行预测。模型样本的构造除了进行人工标注还可以通过用户的搜索点击日志来自动构造。大概做法是将某个 query 对应搜索结果的用户点击频次作为同时出现在 query 及搜索结果 title 中相应 term 的重要性体现，首先通过共同点击信息或二部图方法对 query 进行聚类，再将一个 query 对应有不同点击 title 以及同一 term 在簇内不同 query 中的点击 title 频次结果加权考虑起来，同时排除掉一些搜索 qv 比较不置信的 query 及 title 对应的结果，最后将累计频次进行归一化及分档得到样本对应 label。</p>
+<h3 id="6-搜索引导"><a href="#6-搜索引导" class="headerlink" title="6. 搜索引导"></a><strong>6. 搜索引导</strong></h3><p>受限于用户的先验知识的参差不齐或输入设备引入的噪音，用户输入的 query 可能不足以表达用户真正的需求进而影响用户搜到想要的结果。为此，除了保证搜索结果的相关性，一个完善的搜索引擎还需要给用户提供一系列搜索引导功能，以减少用户的搜索输入成本，缩短用户找到诉求的路径。搜索引导按功能的不同主要可以分为：<strong>搜索热词、搜索历史、query 改写、搜索联想词</strong>，一些电商等垂搜可能还带有类目属性等搜索导航功能。由于搜索热词及搜索历史功能相对比较好理解，这里不做过多阐述。</p>
+<h4 id="①-Query-改写"><a href="#①-Query-改写" class="headerlink" title="① Query 改写"></a>① Query 改写</h4><p>Query 改写这个概念比较泛，简单理解就是将源 query 改写变换到另一个 query。按照改写功能的不同，query 改写可以分为 <strong>query 纠错、query 归一、query 扩展</strong>三个方向。其中 query 纠错负责对存在错误的 query 进行识别纠错，query 归一负责将偏门的 query 归一变换到更标准且同义的 query 表达，而 query 扩展则负责扩展出和源 query 内容或行为语义相关的 query 列表推荐给用户进行潜在需求挖掘发现。</p>
+<p><strong>Query 纠错</strong></p>
+<p>Query 纠错，顾名思义，也即对用户输入 query 出现的错误进行检测和纠正的过程。用户在使用搜索过程中，可能由于先验知识掌握不够或输入过程引入噪音 ( 如：语音识别有误、快速输入手误等 ) 输入的搜索 query 会存在一定的错误。如果不对带有错误的 query 进行纠错，除了会影响 QU 其他模块的准确率，还会影响召回的相关性及排序的合理性，最终影响到用户的搜索体验。</p>
+<p>除了搜索场景，query 纠错还可以应用于输入法、人机对话、语音识别、内容审核等应用场景。不同的业务场景需要解决的错误类型会不太一样，比如 ASR 语音识别主要解决同谐音、模糊音等错误，而输入法及搜索等场景则需要面临解决几乎所有错误类型，如同谐音、模糊音 ( 平舌翘舌、前后鼻音等 )、混淆音、形近字 ( 主要针对五笔和笔画手写输入法 )、多漏字等错误。根据 query 中是否有不在词典中本身就有错误的词语 ( Non-word )，可以将 query 错误类型主要分为 Non-word 和 Real-word 两类错误。</p>
+<p>其中，Non-word 错误一般出现在带英文单词或数字的 query 中，由于通过输入法进行输入，不会存在错误中文字的情况，所以中文 query 如果以字作为最小语义单元的话一般只会存在 Real-word 错误，而带英文数字的 query 则可能存在两类错误。下图对这两大类的常见错误类型进行归类及给出了相应的例子。</p>
+<p><img src="https://img1.3s78.com/codercto/5a6d2c11b2513222a7c424b0f7b77b5d" srcset="/img/loading.gif" lazyload alt="搜索中的 Query 理解及应用"></p>
+<p>从原理上，Query 纠错可以用噪音信道模型来理解，假设用户本意是搜索 Q real ，但是 query 经过噪音信道后引进了一定的噪音，此时纠错过程相当于构建解码器将带有噪音干扰的 query Q noise 进行最大去噪还原成 Q denoise ，使得 Q denoise ≈ Q real 。</p>
+<p>对应的公式为：</p>
+<p>其中 P( Q denoise ) 表示语言模型概率， P( Q noise | Q denoise ) 表示写错概率，进行纠错一般都是围绕着求解这两个概率来进行的。</p>
+<p><img src="https://img1.3s78.com/codercto/c6345485d79a4fd6b36efe71e6d381e0" srcset="/img/loading.gif" lazyload alt="搜索中的 Query 理解及应用"></p>
+<p>纠错任务主要包含错误检测和错误纠正两个子任务，其中错误检测用于识别错误词语的位置，简单地可以通过对输入 query 进行切分后检查各个词语是否在维护的自定义词表或挖掘积累的常见纠错 pair 中，若不在则根据字型、字音或输入码相近字进行替换构造候选并结合 ngram 语言模型概率来判断其是否存在错误，这个方法未充分考虑到上下文信息，可以适用于常见中文词组搭配、英文单词错误等的检测。进一步的做法是通过训练序列标注模型的方法来识别错误的开始和结束位置。</p>
+<p>至于错误纠正，即在检测出 query 存在错误的基础上对错误部分进行纠正的过程，其主要包括纠错候选召回、候选排序选择两个步骤。在进行候选召回时，没有一种策略方法能覆盖所有的错误类型，所以一般通过采用多种策略方法进行多路候选召回，然后在多路召回的基础上通过排序模型来进行最终的候选排序。</p>
+<p>对于英文单词错误、多漏字、前后颠倒等错误可以通过编辑距离度量进行召回，编辑距离表示从一个字符串变换到另一个字符串需要进行插入、删除、替换操作的次数，如 “apple” 可能错误拼写成 “appel”，它们的编辑距离是1。由于用户的搜索 query 数一般是千万甚至亿级别的，如果进行两两计算编辑距离的话计算量会非常大，为此需要采用一定的方法减小计算量才行。比较容易想到的做法是采用一些启发式的策略，如要求首字 ( 符 ) 一样情况下将长度小于等于一定值的 query 划分到一个桶内再计算两两 query 间的编辑距离，此时可以利用 MapReduce 进一步加速计算。</p>
+<p>当然这种启发式的策略可能会遗漏掉首字 ( 符 ) 不一样的 case，如在前面两个位置的多漏字、颠倒等错误。还有的办法就是利用空间换时间，如对 query 进行 ngram 等长粒度切分后构建倒排索引，然后进行索引拉链的时候保留相似度 topN 的 query 作为候选。又或者利用编辑距离度量满足三角不等式 d(x,y)+d(y,z)≥d(x,z) 的特性对多叉树进行剪枝来减少计算量。</p>
+<p>首先随机选取一个 query 作为根结点，然后自顶向下对所有 query 构建多叉树，树的边为两个结点 query 的编辑距离。给定一个 query，需要找到与其编辑距离小于等于 n 的所有 query，此时自顶向下与相应的结点 query 计算编辑距离 d，接着只需递归考虑边值在 d-n 到 d+n 范围的子树即可。如下图所示需要查找所有与 query “十面埋弧”编辑距离小于等于1的 query，由于”十面埋弧”与”十面埋伏”的编辑距离为1，此时只需考虑边值在1-1到1+1范围的子树，为此”十面埋伏怎么样”作为根结点的子树可以不用继续考虑。</p>
+<p><img src="https://img1.3s78.com/codercto/f8bb8ca7bf3a726b36444038e70663b6" srcset="/img/loading.gif" lazyload alt="搜索中的 Query 理解及应用"></p>
+<p>对于等长的拼音字型错误类型还可以用 HMM 模型进行召回，HMM 模型主要由初始状态概率、隐藏状态间转移概率及隐藏状态到可观测状态的发射概率三部分组成。如下图所示，将用户输入的错误 query “爱奇义”视为可观测状态，对应的正确 query “爱奇艺”作为隐藏状态，其中正确 query 字词到错误 query 字词的发射关系可以通过人工梳理的同谐音、形近字混淆词表、通过编辑距离度量召回的相近英文单词以及挖掘好的纠错片段对得到。</p>
+<p>至于模型参数，可以将搜索日志中 query 进行采样后作为样本利用 hmmlearn、pomegranate 等工具采用 EM 算法进行无监督训练，也可以简单地对搜索行为进行统计得到，如通过 nltk、srilm、kenlm 等工具统计搜索行为日志中 ngram 语言模型转移概率，以及通过统计搜索点击日志中 query-item 及搜索 session 中 query-query 对齐后的混淆词表中字之间的错误发射概率。训练得到模型参数后，采用维特比算法对隐藏状态序列矩阵进行最大纠错概率求解得到候选纠错序列。</p>
+<p><img src="https://img1.3s78.com/codercto/3d755c2266f6547454f38ee823e7625f" srcset="/img/loading.gif" lazyload alt="搜索中的 Query 理解及应用"></p>
+<p><img src="https://img1.3s78.com/codercto/37b5d23708ce353df7af68a5ee35a5d6" srcset="/img/loading.gif" lazyload alt="搜索中的 Query 理解及应用"></p>
+<p>进一步地，我们还可以尝试深度学习模型来充分挖掘搜索点击行为及搜索 session 进行纠错候选召回，如采用 Seq2Seq、Transformer、Pointer-Generator Networks 等模型进行端到端的生成改写，通过引入 attention、copy 等机制以及结合混淆词表进行受限翻译生成等优化，可以比较好地结合上下文进行变长的候选召回。</p>
+<p>另外结合 BERT 等预训练语言模型来进行候选召回也是值得尝试的方向，如在 BERT 等预训练模型基础上采用场景相关的无监督语料继续预训练，然后在错误检测的基础上对错误的字词进行 mask 并预测该位置的正确字词。Google 在2019年提出的 LaserTagger 模型则是另辟蹊径将文本生成建模为序列标注任务，采用 BERT 预训练模型作为 Encoder 基础上预测各个序列位置的增删留标签，同样适用于 query 纠错这种纠错前后大部分文本重合的任务。</p>
+<p><strong>Query 扩展：</strong></p>
+<p>Query 扩展，即通过挖掘 query 间的语义关系扩展出和原 query 相关的 query 列表。Query 列表的结果可以用于扩召回以及进行 query 推荐帮用户挖掘潜在需求，如下图在百度搜索”自然语言处理”扩展出的相关搜索 query：</p>
+<p><img src="https://img1.3s78.com/codercto/d549bd47c8ac93cc6de76b79646fdab7" srcset="/img/loading.gif" lazyload alt="搜索中的 Query 理解及应用"></p>
+<p>搜索场景有丰富的用户行为数据，我们可以通过挖掘搜索 session 序列和点击下载行为中 query 间的语义关系来做 query 扩展。如用户在进行搜索时，如果对当前搜索结果不满意可能会进行一次或多次 query 变换重新发起搜索，那么同一搜索 session 内变换前后的 query 一般存在一定的相关性，为此可以通过统计互信息、关联规则挖掘等方法来挖掘搜索 session 序列中的频繁共现关系。</p>
+<p>或者把一个用户搜索 session 序列当成文章，其中的每个 query 作为文章的一个词语，作出假设：如果两个 query 有相同的 session 上下文，则它们是相似的，然后通过训练 word2vec、fasttext 等模型将 query 向量化，进而可以计算得到 query 间的 embedding 相似度。</p>
+<p>对于长尾复杂 query，通过 word2vec 训练得到的 embedding 可能会存在 oov 的问题，而 fasttext 由于还考虑了字级别的 ngram 特征输入进行训练，所以除了可以得到 query 粒度的 embedding，还可以得到字、词粒度的 embedding，此时通过对未登录 query 切词后的字、词的 embedding 进行简单的求和、求平均也可以得到 query 的 embedding 表示。还可以参考 WR embedding 的做法进一步考虑不同 term 的权重做加权求平均，然后通过减去主成分的映射向量以加大不同 query 间的向量距离，方法简单却比较有效。</p>
+<p><img src="https://img1.3s78.com/codercto/07632eacae811163dc70f4e40761688a" srcset="/img/loading.gif" lazyload alt="搜索中的 Query 理解及应用"></p>
+<p>至于搜索点击下载行为，可以通过构建 query-item 的点击下载矩阵，然后采用协同过滤或 SVD 矩阵分解等方法计算 query 之间的相似度，又或者构建 query 和 item 之间的二部图 ( 如下图示例 )，若某个 query 节点和 item 节点之间存在点击或下载行为则用边进行连接，以 ctr、cvr 或归一化的点击下载次数等作为连接边的权重，然后可以训练 swing、simrank/wsimrank++ 等图算法迭代计算 query 间的相似度，也可以采用 Graph Embedding 的方法来训练得到 query 结点间的 embedding 相似度。</p>
+<p>更进一步地，我们还可以利用搜索点击下载行为构造弱监督样本训练基于 CNN/LSTM/BERT 等子网络的 query-item 语义匹配模型得到 query 和 item 的 embedding 表示，如此也可以计算 query pair 间的 embedding 相似度。对于将 query 进行 embedding 向量化的方法，可以先离线计算好已有存量 query 的 embedding 表示，然后用 faiss 等工具构建向量索引，当线上有新的 query 时通过模型 inference 得到对应的 embedding 表示即可进行高效的近邻向量检索以召回语义相似的 query。</p>
+<p><img src="https://img1.3s78.com/codercto/3ab9c07f28025775fa24ccbbb99d8a50" srcset="/img/loading.gif" lazyload alt="搜索中的 Query 理解及应用"></p>
+<p><img src="https://img1.3s78.com/codercto/9753294223a880b2f54df3440adbcf4a" srcset="/img/loading.gif" lazyload alt="搜索中的 Query 理解及应用"></p>
+<p>在给用户做搜索 query 推荐时，除了上面提到的跟用户当前输入 query 单点相关 query 推荐之外，还可以结合用户历史搜索行为及画像信息等来预测用户当前时刻可能感兴趣的搜索 query，并在搜索起始页等场景进行推荐展示。此时，可以通过 LSTM 等网络将用户在一段 session 内的搜索行为序列建模为用户 embedding 表示，然后可以通过构建 Encoder-Decoder 模型来生成 query，或采用语义匹配的方法将用户 embedding 及 query embedding 映射到同一向量空间中，然后通过计算 embedding 相似度的方法来召回用户可能感兴趣的 query。</p>
+<p><strong>Query 归一：</strong></p>
+<p>。。。</p>
+<h4 id="②-搜索联想词"><a href="#②-搜索联想词" class="headerlink" title="② 搜索联想词"></a>② 搜索联想词</h4><p>联想词，顾名思义，就是对用户输入 query 进行联想扩展，以减少用户搜索输入成本及输错可能，能比较好地提升用户搜索体验。联想结果主要以文本匹配为主，文本匹配结果不足可以辅以语义召回结果提升充盈率。考虑到用户在输入搜索 query 时意图相对明确，一般会从左到右进行 query 组织，为此基于这个启发式规则，目前联想词中文本匹配召回又以前缀匹配优先。</p>
+<p><img src="https://img1.3s78.com/codercto/64e0ef2b931559ad5e880aa2c6a823e3" srcset="/img/loading.gif" lazyload alt="搜索中的 Query 理解及应用"></p>
+<p>虽然联想词涉及的是技术主要是简单的文本匹配，在匹配过程中还需要考虑效率和召回质量，同时中文输入可能会有拼音输入的情况 ( 如上图所示 ) 也需要考虑。由于用户在搜索框中输入每一个字时都会发起一起请求，联想词场景的请求 pv 是非常大的。为加速匹配效率，可以通过对历史搜索 query 按 qv 量这些筛选并预处理后分别构建前后缀 trie 树用于对用户线上输入的 query 进行前缀及中后缀匹配召回，然后对召回的结果进行排序，如果是仅简单按 qv 降序排序，可以在 trie 树结点中存放 qv 信息并用最小堆等结构进行 topK 召回。</p>
+<p><img src="https://img1.3s78.com/codercto/27a875679d42db4f154407583f8e0060" srcset="/img/loading.gif" lazyload alt="搜索中的 Query 理解及应用"></p>
+<p>当然仅按 qv 排序还不够，比如可能还需要考虑用户输入上文 query 后对推荐的下文 query 的点击转化、下文 query 在结果页的点击转化以及 query 的商业化价值等因素。同时一些短 query 召回的结果会非常多，线上直接进行召回排序性能压力较大，为此可以先通过离线召回并进行粗排筛选，再将召回结果写到一些 kv 数据库如 <a target="_blank" rel="noopener" href="http://www.codercto.com/category/redis.html">redis</a> 、共享内存等存储供线上直接查询使用。离线召回的话，可以采用 AC 自动机同时进行高效的前中后缀匹配召回。AC 自动机 ( Aho-Corasic ) 是基于 trie 数 + KMP 实现的多模匹配算法，可以在目标文本中查找多个模式串的出现次数以及位置。此时，离线召回大致的流程是：</p>
+<ul>
+<li>从历史搜索 query 中构造前缀 sub-query，如 query “酷我音乐”对应的 sub-query 有中文形式的”酷”、”酷我”、”酷我音”、”酷我音乐”及拼音字符串 “ku”、”kuwo” 等，同时可以加上一些专名实体或行业词，如应用垂搜中的”音乐”、”视频”等功能需求词；</li>
+<li>利用所有的 sub-query 构建 AC 自动机；</li>
+<li>利用构建的 AC 自动机对历史搜索 query 及其拼音形式分别进行多模匹配，从中匹配出所有的前中后缀 sub-query，进而得到 召回候选。</li>
+<li>按照一定策略 ( 一般在前缀基础上 ) 进行候选粗排并写到线上存储。</li>
+<li>线上来一个请求 sub-query，直接查询存储获取召回结果，然后再基于训练的 pctr 预估模型或 pcpm 商业化导向进行重排，此时可以通过引入用户侧、context 侧等特征实现个性化排序。</li>
+</ul>
+<p><img src="https://img.6aiq.com/e/04993c9aea544b6cae17cb6850e634e1.webp?imageView2/2/w/768/format/webp/interlace/1" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>召回—&gt;排序—&gt;策略调整</p>
+<p>召回强调快，排序强调准</p>
+<p>召回决定了推荐效果的天花板，那么排序就决定了逼近天花板的程度</p>
+<h2 id="3、检索召回"><a href="#3、检索召回" class="headerlink" title="3、检索召回"></a>3、检索召回</h2><p>搜索词经过分词成多个term，然后通过倒排索引找到包含term的文档集合，这基本是一个求并集的过程，也就是假若文档包含任意term，那么它就会被筛选回来。</p>
+<p>一次搜索很有可能召回一个shard内所有的文档，这可能是一个千万级别的集合。需要对其进行排序，将更相关的结果排在前面。</p>
+<h2 id="4、结果集排序"><a href="#4、结果集排序" class="headerlink" title="4、结果集排序"></a>4、结果集排序</h2><blockquote>
+<p><strong>对召回结果和query词做相似度排序，在最短的时间内，让尽高比例的用户找到符合他需求的内容</strong></p>
+</blockquote>
+<p>针对命中结果集，需要进行搜索层面的粗排，而后通过离线训练的模型进行精排。</p>
+<ol>
+<li><p>粗排阶段根据用户长期兴趣画像召回相关度较高的Item，同时减轻精排阶段压力；</p>
+</li>
+<li><p>精排阶段则根据粗排召回的ItemList，通过离线训练好的排序模型预测CTR，最终下发TopN ItemList作为推荐结果；</p>
+</li>
+</ol>
+<h3 id="粗排"><a href="#粗排" class="headerlink" title="粗排"></a>粗排</h3><ul>
+<li>说明：在召回了大量文档后，一般来说会返回与搜索相关性高的文档，因此必须计算每个文档的相关性，最终排序才知道哪个文档相关性高，所以这个过程无法避免。简单的理解，召回的千万文档集合（假设这么大的话），需要遍历每个文档，计算其包含了哪些term，并根据这些term在文档中的出现次数等信息，计算出文档的相关性得分，而这个计算方法就是tf/idf算法。</li>
+</ul>
+<h3 id="精排"><a href="#精排" class="headerlink" title="精排"></a>精排</h3><ul>
+<li>说明：假设召回的千万文档粗排完成，一般的搜索业务也就可以直接取top N返回了。但是随着业务深入，一定不可能只基于默认相关性排序，而是会根据业务需求订制相关性计算的算法。</li>
+<li>其他：ES支持function_score或者script_score，简单的说就是在粗排的结果集上再执行我们自定义的计算脚本，脚本的输入是文档内容以及粗排阶段基于tf/idf计算的相关性，我们可以自定义算法生成一个新的相关性得分，作为最终排序的依据。</li>
+</ul>
+<h3 id="重排"><a href="#重排" class="headerlink" title="重排"></a>重排</h3><blockquote>
+<p>对精排的结果进行重排</p>
+</blockquote>
+<p>Elasticsearch 内部有几种不同的算法来评估相关度(relevance)：TF-IDF、BM25、BM25F等。但是这种模型 $f(q,d)$ 其实是简单的概率模型，评估 query 在 doc 中出现的位置、次数、频率等因素，但是不能有效的根据用户反馈（点击／停留时间）来持续优化搜索结果。比如说用户搜索了某些关键词，点击了某些结果，而这些结果并不是排在最前面的，但确实是用户最想要的。那有没有什么方法可以使它们排在前面呢？</p>
+<p><strong>一种简单的做法：</strong>离线统计文档的点击率，然后在排序时根据这个点击率进行加权。具体来说，为了更好地将用户的点击行为体现在排序中，依据 query 下 title 的点击率，进行威尔逊平滑和归一化处理，用于对 title 加权。但是，一些无点击的商品将永远得不到展示，为了解决这个问题，引入了 Query 维度的平均点击率作为 bias，保证了点击模型分的合理性。</p>
+<p>但这样笼统的算法不一定适合所有情况。传统的排序方法通过构造相关度函数，按照相关度对于每一个文档进行打分，得分较高的文档，排的位置就靠前。但是，随着相关度函数中特征的增多，使调参变得极其的困难。所以我们自然而然的想到使用机器学习来优化搜索排序，<strong>这就导致了排序学习 LTR （Learning to rank）的诞生</strong>。</p>
+<p>LTR 的优势是：<strong>整合大量复杂特征并自动进行参数调整，自动学习最优参数，降低了单一考虑排序因素的风险；同时，能够通过众多有效手段规避过拟合问题。</strong></p>
+<p><img src="https://gw.alipayobjects.com/zos/skylark/6b9a255c-ef3e-419f-9813-b2d2758cd47b/2018/png/d53cc02f-34d2-462d-b78a-d7510e4b7803.png" srcset="/img/loading.gif" lazyload alt="d53cc02f-34d2-462d-b78a-d7510e4b7803.png"></p>
+<p>如上图所示，应用交互层发起搜索请求，经过opensearch的基本检索召回500条结果，之后进入rerank阶段，主要依赖LTR算法以用户的历史行为为重要特征做重排序，最终再将排序后的结果返回给用户端。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/112719984">https://zhuanlan.zhihu.com/p/112719984</a></p>
+<p><a target="_blank" rel="noopener" href="https://elasticsearch.cn/article/6208">Day 19 - 通过点击反馈优化es搜索结果排序</a></p>
+<p><a target="_blank" rel="noopener" href="https://baike.baidu.com/item/点击模型/13677663?fr=aladdin">点击模型-百度百科](https://baike.baidu.com/item/%E7%82%B9%E5%87%BB%E6%A8%A1%E5%9E%8B/13677663?fr=aladdin</a>)</p>
+<p><a target="_blank" rel="noopener" href="https://www.infoq.cn/article/build-enterprise-search-scenarios-using-elasticsearch">如何使用 Elasticsearch 构建企业级搜索方案？</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.6aiq.com/article/1537369931667?p=1&amp;m=0">洋码头搜索应用架构</a></p>
+<p><a target="_blank" rel="noopener" href="https://yuerblog.cc/2018/01/09/elasticsearch-custom/">Elasticsearch搜索订制</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E6%8A%80%E6%9C%AF/">#技术</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>搜索系统调研</div>
+      <div>http://example.com/2020/07/21/2020-07-21-搜索系统调研/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>NSX</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2020年7月21日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/07/23/2020-07-23-%E7%94%A8%E4%BA%BA%E8%AF%9D%E8%A7%A3%E9%87%8A%E4%BA%A4%E5%8F%89%E7%86%B5/" title="用人话解释交叉熵">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">用人话解释交叉熵</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/07/03/2020-07-03-NLP%E6%95%B0%E6%8D%AE%E5%A2%9E%E5%BC%BA%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/" title="NLP数据增强方法总结">
+                        <span class="hidden-mobile">NLP数据增强方法总结</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,1392 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Ning Shixian">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="参考：推荐算法概览参考：学姐问我推荐系统是怎么做的？我用23张图带她搞懂！参考：推荐系统三十六式-刑无刀参考：万字长文详述对话推荐系统的逻辑与演化参考：图文解读：推荐算法架构——精排！  课程学习，推荐系统的基础知识总结！ 概念篇     推荐系统需要可以找到用户和物品之间是否有关联； 这个关联是一种概率上的可能性，而不是强关联；     输入：推荐系统需要已经存在的连接，从已有的连接去预测未来">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《推荐系统三十六式》-极客时间">
+<meta property="og:url" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="参考：推荐算法概览参考：学姐问我推荐系统是怎么做的？我用23张图带她搞懂！参考：推荐系统三十六式-刑无刀参考：万字长文详述对话推荐系统的逻辑与演化参考：图文解读：推荐算法架构——精排！  课程学习，推荐系统的基础知识总结！ 概念篇     推荐系统需要可以找到用户和物品之间是否有关联； 这个关联是一种概率上的可能性，而不是强关联；     输入：推荐系统需要已经存在的连接，从已有的连接去预测未来">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1664332612978-ffa24ee2-4fd2-46c7-9c6a-35836db14283.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1665301184139-70153131-252b-45ec-ba2f-bcc7b88db0e1.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1665302972252-2007f5d2-40b2-4bd8-a373-7a19da0809e3.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1664332918296-dcf7ccdb-86b5-4d04-97e4-8cb8a859dd72.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1666089018024-b9d6f2dc-a00c-42fd-889b-39cee70f804f.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1666089103785-0fc022e9-fc5d-423c-8eff-dc49afe7d043.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1664332918658-c2bb398c-fe01-4362-bf26-c573327ba9f5.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1666090123502-83b6eb20-a387-45ce-84dc-e0e6c8ac62c4.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1666090190970-121273de-2e40-465c-91c8-64876528ad95.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1664335290906-803caf19-aded-4c49-95bc-e81d22eb9452.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1664335290901-676eef25-ac11-4621-9a11-9eb174e99875.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1664335290974-e5c60076-4ced-4a9f-8d9c-cb018ce7d568.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1664335290950-c466acf7-705c-4918-a34a-e4d5d9006b29.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1665202625343-6733bc2f-330b-4d0d-af78-1c123f578fa4.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1665202655366-52e99476-aef0-4f11-8650-f42ea640fe2d.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1665202676097-839155ca-f52a-4bc8-b6c1-33aba2cd593c.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1665202690139-d2d7795b-9947-4b4f-b1a7-e2801fc91c05.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1665202868857-3f0774d8-6d22-4b03-9a43-87f6ae22d80a.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1665202769567-7563fe74-13cf-4397-be26-f8ad37f7e89d.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1665202787577-d77f5da7-91db-418d-be4f-89a052fd7ebf.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1665128167856-15440372-d0da-4808-8200-5bf0af8d078a.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1664464734627-0fc95390-6e21-430c-9ad0-2d793a6c5e3d.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1664348602921-1d7dce2a-4e58-4baa-a8db-1dc646b095e5.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1664465875578-65a56211-ad5c-40d1-8ace-e36dbb3e50b0.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1666090375506-1d2182d8-faf0-43f9-a0eb-bcb2adeac3f3.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1665207740424-b223bb5e-7354-4910-b9d0-4e61749092c3.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1665207793162-ca9665b9-6d71-4e6d-ab39-d42461ef7671.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1665207806470-b17ab514-8dd2-4923-9fe1-c676f0cdb9b7.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1664467019538-db6b08fe-6fad-4d54-bd81-d0f290de5b2f.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1664467074761-bdb8ce88-7e11-41fd-b0f2-71a61b23b56b.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1664467945506-f36dcf76-4980-4855-9027-1ece26ef0837.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1665215453017-05622839-2e97-43c0-9fb9-066cba74872e.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1665215500944-0179ec98-be79-4898-a662-bf7fe0c605ea.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1665299319023-b72be2e1-f2fd-481e-a98d-ad9c1020ea24.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1666091355809-1df621bb-eee7-4286-9f62-5d7ca2b0d1cd.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1665240203946-30d2ecbb-d701-40fb-bb33-8c426436c330.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1665240240177-9230fc50-fa88-4f48-84a0-92acdfb695da.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1664982593677-bfa06d1f-9851-4000-b054-75bf2d8d5e5c.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1665225803548-57ec9b5b-80bd-407e-ad7c-6d376033a9e7.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1665214901091-cd46f595-2cc2-49c7-94c9-10cb3d794191.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1666090554395-33d28a21-7f20-40a1-bc04-96b4813ee928.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1666090576855-55d14903-1444-43b2-a184-ac9cd8998f3c.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1666090600996-49ec0255-4fd5-49a3-80d0-b86a589fcaf9.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1664349135540-9eaf1153-070f-42b4-9303-ef425acaa427.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1666091028138-5dadb465-9a9a-4a36-ba5f-b5a14515315a.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1666091108324-17db757a-e4a2-476d-9bf9-352dd779b44e.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1666091127524-fda9b17d-23cd-47ac-96a8-33ac61f93170.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1666091190763-02104347-2782-4071-b539-54a2d8c29b97.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1664984792552-87eed2e1-090f-46a1-9af5-8925ad3481e2.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1665300378028-667c23c6-525c-473e-b9ef-bdba72086a5f.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1665300386021-d08e3fd2-0def-424d-9e99-accc8f10de71.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1665300399004-ee8454c2-5501-4eb7-87de-0aed18847eb3.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1664985735987-8f9a5c82-d427-4e20-9295-ed6d26f37808.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1664985967647-24533dcf-b321-4cdc-b03b-b1f31d015dd4.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1664986008627-8bc3080c-f531-480e-b82f-4ff7a7060393.png">
+<meta property="og:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1664986083943-16a306c8-6a84-4aeb-85a1-4d8da7afb81c.png">
+<meta property="article:published_time" content="2022-09-29T15:02:00.000Z">
+<meta property="article:modified_time" content="2023-04-24T13:29:29.257Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="推荐系统">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1664332612978-ffa24ee2-4fd2-46c7-9c6a-35836db14283.png">
+  
+  
+  
+  <title>《推荐系统三十六式》-极客时间 - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="《推荐系统三十六式》-极客时间"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-09-29 23:02" pubdate>
+          2022年9月29日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          23k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          193 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">《推荐系统三十六式》-极客时间</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <blockquote>
+<p>参考：<a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1042402">推荐算法概览</a><br>参考：<a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1706381">学姐问我推荐系统是怎么做的？我用23张图带她搞懂！</a><br><strong>参考：</strong><a target="_blank" rel="noopener" href="https://time.geekbang.org/column/intro/100005101?tab=catalog"><strong>推荐系统三十六式-刑无刀</strong></a><br>参考：<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/l0gfLuiRam-kIsIWrZUv5A">万字长文详述对话推荐系统的逻辑与演化</a><br>参考：<a target="_blank" rel="noopener" href="https://www.6aiq.com/article/1647476196657">图文解读：推荐算法架构——精排！</a></p>
+</blockquote>
+<p>课程学习，推荐系统的基础知识总结！</p>
+<p><strong>概念篇</strong></p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>推荐系统需要可以找到用户和物品之间是否有关联； 这个关联是一种概率上的可能性，而不是强关联；</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>输入：推荐系统需要已经存在的连接，从已有的连接去预测未来的连接。</td>
+</tr>
+<tr>
+<td>预测问题模式<strong>评分预测</strong>（显式）<strong>：</strong><br />1. 预测一个用户对每一个物品会打多少分<br />2. <strong>行为预测</strong>（隐式√）<strong>：</strong>预测一个用户“是否点击”某个物品，构建二分类模型，即 CTR 预估<br />评分预测问题很典型，但并不大众，毕竟在实际的应用中，评分数据很难收集到，属于典型的精英问题；与之相对的另一类问题行为预测，才是平民级推荐问题，处处可见。</td>
+</tr>
+<tr>
+<td>推荐系统 4 大关键要素：UI 和 UE→数据→领域知识→算法</td>
+</tr>
+<tr>
+<td>推荐系统强调的是目标思维和不确定性思维<br />- 目标思维：对最终目标进行量化，追求的是目标的增长，而不是一城一池的得失<br />- 不确定性思维：绝大多数推荐算法都是概率算法，不能用因果逻辑严丝合缝地提前推演，而是用概率的眼光去看结果。不能停留在“感觉推荐很精准”或者“感觉推荐得很不准”这样的玄学层面</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>基于内容过滤的推荐算法概览</strong></p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>以item内容信息为评判主体，基于对用户的特征、兴趣的判断，评估用户与item的关联性基于内容的推荐，最重要的不是推荐算法，而是<strong>内容挖掘和分析</strong>。</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>最简单的做法：用户画像构建+挖掘标签，将用户的画像内容就表示为稀疏的向量，同时内容端也有对应的稀疏向量，两者之间计算余弦相似度，根据相似度对推荐物品排序。</td>
+</tr>
+<tr>
+<td>输入：用户画像（用户信息的向量化表示）/ 物品内容的稀疏向量</td>
+</tr>
+<tr>
+<td>类型：<br />- 兴趣标签、注册信息筛选、最近流行、朋友喜欢等<br />- 进一步通过TF-IDF、BM25等方法学习不同特征的重要性（特征加权）</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>- 无需冷启动<br />- 推荐结果直观，容易解释；<br />- 无需领域知识</td>
+<td>新用户问题<br />没有惊喜<br />特征向量稀疏，复杂特征难处理；</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>协同过滤推荐算法概览</strong></p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>协同过滤算法的核心就是「找相似」，它基于用户的历史行为（浏览、收藏、评论等），去发现用户对物品的喜好，并对喜好进行度量和打分，最终筛选出推荐集合。简单总结就是，<strong>“物以类聚，人以群分”</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>输入：用户相似度矩阵 / 物品相似度矩阵</td>
+</tr>
+<tr>
+<td>基于协同过滤的推荐算法类型：<br />- <strong>基于用户的协同过滤：</strong>先根据历史消费行为帮你找到一群和你口味很相似的用户；然后根据这些和你很相似的用户再消费了什么新的、你没有见过的物品，都可以推荐给你。<br />- <strong>基于物品的协同过滤：</strong>首先计算相似物品，然后再根据用户消费过、或者正在消费的物品为其推荐相似的基于模型的协同过滤：如矩阵分解、FM、SVD 等</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>- 无需领域知识<br />- 自动化程度高<br />- 性能随时间的积累而提高；</td>
+<td>- 新用户问题<br />- 冷启动问题。可以通过基于内容或 bandit 算法解决<br />- <a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1Uv41117hx/?spm_id_from=333.999.0.0&amp;vd_source=64e24aaa8fce4a43b517304bd02226fc">流行度长尾问题</a>，越热门的item越容易被系统推荐，反之越难被系统推荐。可以通过流行度算法，降低热门 item 权重；<br />- user-item行为矩阵稀疏、存储压力较大。可通过MF解决</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>矩阵分解推荐算法概览</strong></p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>矩阵分解，直观上说来简单，就是把原来的大矩阵，近似分解成两个小矩阵的乘积，在实际推荐计算时不再使用大矩阵，而是使用分解得到的两个小矩阵。<strong>主要用于评分预测！</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>输入：三元组&lt;𝑢,𝑖,𝑗&gt;，表示对用户u来说，商品i的优先级要高于商品j。</td>
+</tr>
+<tr>
+<td>类型：<br />- 矩阵分解的典型模型就是 SVD 以及其各种变体。<br />- <strong>基于矩阵分解的贝叶斯个性化排序算法</strong>：能够较好地为用户排列出更好的物品相对顺序，而非更精确的评分。适合在海量数据中选择极少量数据做推荐</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. 预测的精度高于基于内容和协同过滤；<br />2. 高维矩阵映射为两个低维矩阵节省了存储空间<br />3. 比较容易编程实现，随机梯度下降法和交替最小二乘法均可训练出模型。<br />4. 良好的拓展性，可以很方便在用户特征向量和物品特征向量中添加其它因素</td>
+<td>1. 模型训练比较费时；<br />2. 因为将用户和物品隐射到了隐因子空间，使得这些隐含特征无法使用现实生活中的概念来解释，因此推荐出的见过解释性并不好。</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>模型融合推荐算法概览</strong></p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>多路召回的推荐结果，由于分数范围、产生机制等原因，没法直接用来进行比较排序，需要一个融合模型来给多种召回策略外挂一个<strong>融合排序</strong>。</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>输入：content-based、item-based、user-based、SVD等多路召回结果</td>
+</tr>
+<tr>
+<td>类型：<br />- 逻辑回归和梯度提升决策树组合：树模型的集成模型（如RF和GBDT）可以做特征组合又能有效表达出数据中的非线性；逻辑回归负责学习特征组合的权重，最后预估 CTR。<br />- Wide and Deep：用于融合排序。由逻辑回归作为最终输出单元，深模型最后一个隐藏层作为特征，与宽模型的原始特征一起接入逻辑回归，然后训练参数。</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://www.yuque.com/ningshixian/pz10h0/om4bph#mB3T0">深宽模型具体落地</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>高级或“非传统”推荐算法概览</strong></p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>包括：深度学习Bandit 推荐算法（探索/利用）….</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Bandit：<br />- Bandit 算法是一类走一步看一步的推荐算法，基本思想是：看看选择会带来多少遗憾，遗憾越少越好。套路就是：小心翼翼地试，越确定某个选择好，就多选择它，越确定某个选择差，就越来越少选择它。<br />- Bandit 算法是一种不太常用在推荐系统的算法，究其原因，是它能同时处理的物品数量不能太多。主要用于探索利用问题，也叫 Exploit－Explore 问题</td>
+</tr>
+<tr>
+<td>精排：<br />- 表示学习：Youtube DNN 视频推荐做法、Airbnb embedding、双塔 DSSM、各种xx2vec<br />- 图表示学习：DeepWalk、Node2vec、EGES等<br />- 特征交叉模型：关注自动化的特征交叉，经典研究工作有：DCN、DeepFM、xDeepFM等；<br />- 序列模型：从历史行为序列特征学习用户的兴趣向量，典型的研究工作有：DIN、DSIN、DIEN、SIM等；<br />- 多任务学习：多种目标综合起来，归纳到一个模型里面进行学习，典型的算法有：ESSM、MMoE等。</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>- 深层特征自动组合和挖掘<br />- 效果好</td>
+<td>- 难以解释<br />- 较为复杂</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="概念篇"><a href="#概念篇" class="headerlink" title="概念篇"></a>概念篇</h2><h3 id="什么是推荐系统？"><a href="#什么是推荐系统？" class="headerlink" title="什么是推荐系统？"></a>什么是推荐系统？</h3><p>随着移动互联网的发展，越来越多的信息开始在互联网上传播，产生了严重的信息过载。因此，如何从众多信息中找到用户感兴趣的信息，这个便是推荐系统的价值。精准推荐解决了用户痛点，提升了用户体验，最终便能留住用户。</p>
+<p>推荐系统本质上就是一个信息过滤系统，通常分为：召回、排序、重排序这3个环节，每个环节逐层过滤，最终从海量的物料库中筛选出几十个用户可能感兴趣的物品推荐给用户。 </p>
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1664332612978-ffa24ee2-4fd2-46c7-9c6a-35836db14283.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<ol>
+<li>它能做什么；推荐系统需要可以找到用户和物品之间是否有关联； 这个关联是一种概率上的可能性，而不是强关联；</li>
+<li>它需要什么；推荐系统需要已经存在的连接，从已有的连接去预测未来的连接。</li>
+<li>它怎么做：预测用户评分和偏好；机器推荐和人工推荐，也就是通常说的“个性化推荐”和“编辑推荐”。</li>
+</ol>
+<h3 id="推荐系统的问题模式"><a href="#推荐系统的问题模式" class="headerlink" title="推荐系统的问题模式"></a>推荐系统的问题模式</h3><p>我们知道，推荐系统的使命是为用户和物品建立连接，建立的方式是提前找出那些隐藏的连接呈现给用户，这是一个预测问题；所以推荐系统的预测问题模式，从达成的连接目标角度区分，有两大类：</p>
+<ol>
+<li><strong>评分预测。</strong></li>
+<li><strong>行为预测。</strong></li>
+</ol>
+<p><strong>评分预测（显式反馈）</strong><br>提前预测一个用户对每一个物品会打多少分，找出那些他可能会打高分，但是还没消费的物品，然后装作若无其事地呈现在他面前，惊不惊喜，意不意外?<br>但是评分实际不易收集，数据质量不能保障，数据伪造门槛低，加上数据分布问题导致评分预测做好比较难</p>
+<p><strong>行为预测（隐式反馈）</strong><br>预测一个用户对某个物品可能会产品的行为。推荐系统预测行为方式有很多，常见的有两种：<strong>直接预测行为本身发生的概率，和预测物品的相对排序。</strong></p>
+<ul>
+<li><p>直接预测用户行为这一类技术，有一个更烂大街的名字，叫做 CTR 预估。这里的 C 原本是点击行为 Click，但这个解决问题的模式可以引申到任何其他用户行为，如收藏、购买等行为的预测</p>
+</li>
+<li><p>预测物品的相对排序：包括 pair-wise、list-wise等方法</p>
+</li>
+</ul>
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1665301184139-70153131-252b-45ec-ba2f-bcc7b88db0e1.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p><strong>评分预测 vs. 行为预测</strong></p>
+<ol>
+<li>隐式反馈数据比显式反馈更加稠密</li>
+<li>隐式反馈更代表用户的真实想法。比如不赞成川普的观点，但还是想看到他（吐槽）</li>
+<li>评分的分布不稳定，整体评分在不同时期会差别很大，个人评分在不同时期标准不同，人和人之间的标准差别很大</li>
+<li>隐式反馈通常更容易在AB 测试中和测试指标挂钩。比如CTR 预估当然关注的是点击率</li>
+</ol>
+<h3 id="几个常见顽疾"><a href="#几个常见顽疾" class="headerlink" title="几个常见顽疾"></a>几个常见顽疾</h3><p>讨论了两大类推荐系统的问题后，我们再来看几个推荐系统的隐藏顽疾。之所以说这些是隐藏顽疾，是因为它们还没有很好的通用解决方案，并且不容易被重视，这几个顽疾分别是：</p>
+<ol>
+<li>冷启动问题；</li>
+<li>探索与利用问题；</li>
+<li>安全问题。</li>
+</ol>
+<h3 id="对关键元素重要性的认识"><a href="#对关键元素重要性的认识" class="headerlink" title="对关键元素重要性的认识"></a>对关键元素重要性的认识</h3><p>要开发一个推荐系统产品，有这么四个关键的元素需要注意：</p>
+<ol>
+<li>UI 和 UE；</li>
+<li>数据；</li>
+<li>领域知识；</li>
+<li>算法。</li>
+</ol>
+<p>他们的重要性依次递减，权重大致是 4-3-2-1。</p>
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1665302972252-2007f5d2-40b2-4bd8-a373-7a19da0809e3.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>UI 和 UE<br>首先“颜值即正义”，推荐的作用是锦上添花，不能当做雪中送炭的救命稻草；</p>
+<p>数据<br>数据与 UI、UE 是几乎同等重要的元素，它是推荐系统的食材，巧妇难为无米之炊，多少算法工程师因为加入了一家没有历史数据积累的公司，那种“拔剑四顾心茫然”的无力感，谁去谁知道；</p>
+<p>领域知识<br>领域知识，与之对应的是常识和通识。可以这样说，没有哪个产品不涉及领域知识，每一个产品存在于市场上，总是有一部分价值是大多数其他产品无法替代的，这些在一个领域总结出来的普适规律，对于推荐系统的效果提升非常有用：有的是防止闹笑话自毁品牌形象，有的是大幅提高某些指标，有的是缩短模型训练周期；</p>
+<p>算法<br>最后是算法，一种对算法的常见误会就是：短期高估，长期低估。在一款个性化产品诞生之初，算法所起到的作用可以忽略，我们不能指望它能让产品起死回生、一飞冲天，但就此抛出“算法无用论”也是很愚蠢的。</p>
+<h3 id="目标思维和不确定性思维"><a href="#目标思维和不确定性思维" class="headerlink" title="目标思维和不确定性思维"></a>目标思维和不确定性思维</h3><p>传统的软件产品追求的是稳定和满足预期，背后思想强调的是逻辑和因果链条。反观推荐系统这种信息过滤系统，追求的是指标的增长，背后思想强调是目标和不确定性。</p>
+<p>目标思维：对最终目标进行量化，才能让整个团队才能知道在为什么而战，才能知道自己所做的动作是不是有意义，才能让团队自发地去寻找优化方向，一定不能停留在“感觉推荐很精准”或者“感觉推荐得很不准”这样的玄学层面。</p>
+<p>不确定思维：不能用因果逻辑严丝合缝地提前推演，而是用概率的眼光去看结果。比如说，出现了一个不是很合适的推荐，通常老板们会立即责问：“为什么出现这个”，这就是确定性思维在作祟，如果是不确定性思维，就会问：“出现这个的可能性有多大”。</p>
+<p>为什么负责推荐系统产品的人一定要有不确定性思维呢？原因有以下几个。</p>
+<ol>
+<li>绝大多数推荐算法都是概率算法，因此本身就无法保证得到确切结果，只是概率上得到好的效果；</li>
+<li>推荐系统追求的是目标的增长，而不是一城一池的得失；</li>
+<li>如果去花时间为了一个 Case 而增加补丁，那么付出的成本和得到的收益将大打折扣；</li>
+<li>本身出现意外的推荐也是有益的，可以探索用户的新兴趣，这属于推荐系统的一个经典问题：EE 问题，我也会在后面的内容中专门讲。</li>
+</ol>
+<h2 id="原理篇-·-内容推荐"><a href="#原理篇-·-内容推荐" class="headerlink" title="原理篇 · 内容推荐"></a>原理篇 · 内容推荐</h2><h3 id="什么是用户画像"><a href="#什么是用户画像" class="headerlink" title="什么是用户画像"></a>什么是用户画像</h3><p>对用户信息的向量化表示，就是 User Profile，俗称“用户画像”。所以，用户画像不是推荐系统的目的，而是在构建推荐系统的过程中产生的一个关键环节的副产品。用户画像是给机器看的，而不是给人看的。</p>
+<h3 id="用户画像构建的方法"><a href="#用户画像构建的方法" class="headerlink" title="用户画像构建的方法"></a>用户画像构建的方法</h3><ol>
+<li><strong>第一类就是查户口</strong>。直接使用原始数据作为用户画像的内容，如注册资料等人口统计学信息，或者购买历史，阅读历史等，除了数据清洗等工作，数据本身并没有做任何抽象和归纳。这就跟查户口一样，没什么技术含量，但通常对于用户冷启动等场景非常有用。</li>
+<li><strong>第二类就是堆数据</strong>。方法就是堆积历史数据，做统计工作，这是最常见的用户画像数据，常见的兴趣标签，就是这一类，就是从历史行为数据中去挖掘出标签，然后在标签维度上做数据统计，用统计结果作为量化结果。这一类数据贡献了常见的酷炫用户画像。</li>
+<li><strong>第三类就是黑盒子</strong>。就是用机器学习方法，学习出人类无法直观理解的稠密向量，也最不被非技术人员重视，但实际上在推荐系统中承担的作用非常大。</li>
+</ol>
+<h3 id="构建用户画像步骤"><a href="#构建用户画像步骤" class="headerlink" title="构建用户画像步骤"></a>构建用户画像步骤</h3><p>用户画像对于推荐系统还是非常必要的，而产品中属文本数据最多，那如何用文本数据构建出用户的画像内容呢？ 1、分析用户的文本和物品的文本，使其结构化，去粗取精，保留关键信息作为其画像内容；2、把物品的文本分析结果，按照用户历史行为把物品画像（ Item Profile ）传递给用户。</p>
+<p><strong>结构化文本</strong></p>
+<p>我们拿到的文本，常常是自然语言描述的，用行话说，就是“非结构化”的，但是计算机在处理时，只能使用结构化的数据索引，所以分析文本，就是为了将非结构化的数据结构化，好比是将模拟信号数字化一样，只有这样才能送入计算机，继续计算。</p>
+<p>几种常用的文本结构化算法</p>
+<p>关键词提取：常用 TF-IDF 和 TextRank。</p>
+<p>实体识别：</p>
+<p>内容分类：</p>
+<p>文本聚类 ：</p>
+<p>主题模型：也是一种聚类思想，主题向量也不是标签形式，也是用户画像的常用构成。</p>
+<p>嵌入：也叫作 Embedding，如大名鼎鼎的 Word2Vec</p>
+<p><strong>标签选择</strong></p>
+<p>前面说到，用户端的文本，物品端的文本如何结构化，得到了诸如标签（关键词、分类等）、主题、词嵌入向量。接下来就是第二步：如何把物品的结构化信息给用户呢？</p>
+<p>我们想一想，用户在产品上看到了很多我们用各种逻辑和理由展示给他的物品，他只从中消费了一部分物品。现在问题就是，到底是那些特性吸引了他消费呢？</p>
+<ol>
+<li>把用户产生过行为的物品标签直接累积在一起（不做筛选）</li>
+<li>把用户对物品的行为，消费或者没有消费看成是一个分类问题。用户用实际行动帮我们标注了若干数据，那么挑选出他实际感兴趣的特性就变成了特征选择问题。</li>
+</ol>
+<p>特征选择最常用的是两个方法：</p>
+<ul>
+<li>卡方检验（CHI）：本质上在检验“词和某个类别 C 相互独立”这个假设是否成立，和这个假设偏离越大，就越说明这个词和类别 C 暗中有一腿，那当然这个词就是关键词了。</li>
+<li>信息增益（IG）</li>
+</ul>
+<h3 id="内容推荐算法"><a href="#内容推荐算法" class="headerlink" title="内容推荐算法"></a>内容推荐算法</h3><p>基于内容的推荐，最重要的不是推荐算法，而是<strong>内容挖掘和分析</strong>。内容挖掘越深入，哪怕早期推荐算法仅仅是非常硬的规则，也能取得不俗的效果。举个例子，如果推荐物品是短视频，我们分几种情况看：</p>
+<ol>
+<li>如果短视频本身没有任何结构化信息，如果不挖掘内容，那么除了强推或者随机小流量，没有别的合理曝光逻辑了；</li>
+<li>如果对视频的文本描述，比如标题等能够有内容分类，比如是娱乐类，那么对于喜欢娱乐的用户来说就很合理；</li>
+<li>如果能够进一步分析文本的主题，那么对于类似主题感兴趣的用户就可能得到展示；</li>
+<li>如果还能识别出内容中主角是吴亦凡，那就更精准锁定一部分用户了；</li>
+<li>如果再对内容本身做到嵌入分析，那么潜藏的语义信息也全部抓住，更能表达内容了。</li>
+</ol>
+<p>对于基于内容的推荐系统，最简单的推荐算法当然是计算相似性即可，用户的画像内容就表示为稀疏的向量，同时内容端也有对应的稀疏向量，两者之间计算余弦相似度，根据相似度对推荐物品排序。如果再进一步，要更好地利用内容中的结构化信息，因为一个直观的认识是：不同字段的重要性不同。我们可以借鉴信息检索中的相关性计算方法来做推荐匹配计算：<strong>BM25F</strong> 算法</p>
+<h2 id="原理篇-·-近邻推荐"><a href="#原理篇-·-近邻推荐" class="headerlink" title="原理篇 · 近邻推荐"></a>原理篇 · 近邻推荐</h2><h3 id="协同过滤是什么？"><a href="#协同过滤是什么？" class="headerlink" title="协同过滤是什么？"></a>协同过滤是什么？</h3><p>协同过滤的重点在于“协同”，所谓协同，也就是群体互帮互助，互相支持是集体智慧的体现，协同过滤也是这般简单直接，历久弥新。</p>
+<p>协同过滤算法的核心就是「找相似」，它基于用户的历史行为（浏览、收藏、评论等），去发现用户对物品的喜好，并对喜好进行度量和打分，最终筛选出推荐集合。</p>
+<p>它包括两个分支：</p>
+<ul>
+<li><strong>基于用户的协同过滤：</strong>User-CF</li>
+<li><strong>基于物品的协同过滤：</strong>Item-CF</li>
+</ul>
+<h3 id="基于用户的协同过滤"><a href="#基于用户的协同过滤" class="headerlink" title="基于用户的协同过滤"></a>基于用户的协同过滤</h3><p>思想：先根据历史消费行为帮你找到一群和你口味很相似的用户；然后根据这些和你很相似的用户再消费了什么新的、你没有见过的物品，都可以推荐给你。</p>
+<p>比如下图中，用户 A 和用户 C 都购买过物品 a 和物品 b，那么可以认为 A 和 C 是相似的，因为他们共同喜欢的物品多。这样，就可以将用户 A 购买过的物品 d 推荐给用户 C。</p>
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1664332918296-dcf7ccdb-86b5-4d04-97e4-8cb8a859dd72.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>基于用户的协同过滤具体做法：</p>
+<ol>
+<li>构建“user-item”交互矩阵，行代表用户向量，列代表物品向量，维度上的取值是评分或点击次数占比；</li>
+<li>两两计算用户之间的相似度。设定一个相似度阈值或者设定一个最大数量，为每个用户保留与其最相似的用户。</li>
+<li>为每一个用户产生推荐结果。把和他“臭味相投”的用户们喜欢过的物品汇总起来，去掉用户已消费过的物品，剩下的排序输出就是推荐结果。具体的汇总方式我们用一个公式来表示：</li>
+</ol>
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1666089018024-b9d6f2dc-a00c-42fd-889b-39cee70f804f.png" srcset="/img/loading.gif" lazyload class="" title="未命名绘图.drawio.png">
+<p>这里的态度R最简单就是 0 或者 1，1 表示喜欢过，0 表示没有，如果是评分，则可以是 0 到 5 的取值。整个公式就是相似用户们的态度加权平均值。</p>
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1666089103785-0fc022e9-fc5d-423c-8eff-dc49afe7d043.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>基于用户的协同过滤-有哪些踩坑</p>
+<ol>
+<li>用户向量很稀疏。可以采用稀疏矩阵存储格式</li>
+<li>相似度计算本身如果遇到超大维度向量怎么办？对向量采样计算，或转换成矩阵计算</li>
+<li>用户数量往往比较大，两两计算相似度非常吃力？不用基于用户的协同过滤。</li>
+</ol>
+<h3 id="基于物品的协同过滤"><a href="#基于物品的协同过滤" class="headerlink" title="基于物品的协同过滤"></a>基于物品的协同过滤</h3><p>思想：和基于用户的不同，基于物品的协同过滤首先计算相似物品，然后再根据用户消费过、或者正在消费的物品为其推荐相似的。</p>
+<p>比如下图中，物品 a 和物品 b 同时被用户 A，B，C 购买了，那么物品 a 和 物品 b 被认为是相似的，因为它们的共现次数很高。这样，如果用户 D 购买了物品 a，则可以将和物品 a 最相似的物品 b 推荐给用户 D。</p>
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1664332918658-c2bb398c-fe01-4362-bf26-c573327ba9f5.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>基于物品的协同过滤具体做法：</p>
+<ol>
+<li>构建“user-item”交互矩阵，行代表用户向量，列代表物品向量，维度上的取值是评分或点击次数占比；</li>
+<li>两两计算物品之间的相似度。item 向量之间的夹角余弦。</li>
+<li>为每一个用户产生推荐结果。<strong>出发方式是汇总和“用户已经消费过的物品”相似的物品，按照汇总后分数从高到低推出。汇总的公式是这样的：</strong></li>
+</ol>
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1666090123502-83b6eb20-a387-45ce-84dc-e0e6c8ac62c4.png" srcset="/img/loading.gif" lazyload class="" title="未命名绘图.drawio.png">
+<p>遍历用户$u$评分/点击过的所有物品，假如一共有 $m$ 个，每一个物品 j 和待计算物品 $i$ 的相似度$w_{ij}$乘以用户的评分$R_{uj}$（由于评分数据很难收集到，可以用物品$j$的被点击次数占比 进行替代$R_{uj}=\frac{c_{uj}}{\sum_k^m{c_{uk}}}$），这样加权求和后，就得到了一个加权平均评分，作为用户 u 对物品 i 的分数预测。</p>
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1666090190970-121273de-2e40-465c-91c8-64876528ad95.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>举例说明：</p>
+<p><strong>第一步：整理物品的共现矩阵</strong></p>
+<p>假设有 A、B、C、D、E 5个用户，其中用户 A 喜欢物品 a、b、c，用户 B 喜欢物品 a、b等等。</p>
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1664335290906-803caf19-aded-4c49-95bc-e81d22eb9452.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>所谓共现，即：两个物品被同一个用户喜欢了。比如物品 a 和 b，由于他们同时被用户 A、B、C 喜欢，所以 a 和 b 的共现次数是3，采用这种统计方法就可以快速构建出共现矩阵。 </p>
+<p><strong>第二步：计算物品的相似度矩阵</strong></p>
+<p>对于 Item-CF 算法来说，一般不采用前面提到的余弦距离来衡量物品的相似度，而是采用下面的公式：</p>
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1664335290901-676eef25-ac11-4621-9a11-9eb174e99875.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>其中，N(u) 表示喜欢物品 u 的用户数，N(v) 表示喜欢物品 v 的用户数，两者的交集表示同时喜欢物品 u 和物品 v 的用户数。很显然，如果两个物品同时被很多人喜欢，那么这两个物品越相似。</p>
+<p>基于第1步计算出来的共现矩阵以及每个物品的喜欢人数，便可以构造出物品的相似度矩阵：</p>
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1664335290974-e5c60076-4ced-4a9f-8d9c-cb018ce7d568.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p><strong>第三步：基于相似度矩阵推荐物品</strong></p>
+<p>在得到物品相似度之后，接下来就是为用户推荐他可能会感兴趣的物品了，基于物品的协同过滤，有两种应用场景。</p>
+<ol>
+<li>第一种属于 TopK 推荐，形式上也常常属于类似“猜你喜欢”这样的。</li>
+</ol>
+<p><strong>出发方式是当用户访问首页时，汇总和“用户已经消费过的物品”相似的物品，按照汇总后分数从高到低推出。汇总的公式是这样的：</strong></p>
+<p>$P_{u i}=\sum_{j=1}^{m} \mathrm{W}_{i j} * R_{u j}$</p>
+<p>其中，${P_{u i}}$表示用户 u 对某个物品 $i$ 的感兴趣程度，值越大，越值得被推荐。</p>
+<p>遍历用户$u$评分/点击过的所有物品，假如一共有 $m$ 个，每一个物品 j 和待计算物品 $i$ 的相似度$w_{ij}$乘以用户的评分$R_{uj}$（由于评分数据很难收集到，可以用物品$j$的被点击次数占比 进行替代$R_{uj}=\frac{c_{uj}}{\sum_k^m{c_{uk}}}$），这样加权求和后，就得到了一个加权平均评分，作为用户 u 对物品 i 的分数预测。</p>
+<blockquote>
+<p>注意：我们在计算时不必对所有物品 $i$ 都计算一次，只需要按照用户评分/点击过的$m$个物品，逐一取出和它们相似的 N 个物品出来就可以了。</p>
+</blockquote>
+<p>这个过程都是离线完成后，去掉那些用户已经消费过的，保留分数最高的 k 个结果存储。当用户访问首页时，直接查询出来即可。</p>
+<p>上面的公式有点抽象，直接看例子更容易理解，假设我要给用户 E 推荐物品，前面我们已经知道用户 E 喜欢物品 b 和物品 c，喜欢程度假设分别为 0.6 和 0.4。那么，利用上面的公式计算出来的推荐结果如下：</p>
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1664335290950-c466acf7-705c-4918-a34a-e4d5d9006b29.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>因为物品 b 和物品 c 已经被用户 E 喜欢过了，所以不再重复推荐。最终对比用户 E 对物品 a 和物品 d 的感兴趣程度，因为 0.682 &gt; 0.3，因此选择推荐物品 a。</p>
+<ol>
+<li>第二种属于相关推荐</li>
+</ol>
+<p>这类推荐不需要提前合并计算，当用户访问一个物品的详情页面时，或者完成一个物品消费的结果面，直接通过物品相似度矩阵，获取这个物品的相似物品推荐，就是“看了又看”或者“买了又买”的推荐结果了。</p>
+<blockquote>
+<p>基于物品的协同过滤很好的解决了基于用户的坑。<br>首先，物品的数量，或者严格的说，可以推荐的物品数量往往少于用户数量；所以一般计算物品之间的相似度就不会成为瓶颈。<br>其次，物品之间的相似度比较静态，它们变化的速度没有用户的口味变化快；所以完全解耦了用户兴趣迁移这个问题。<br>最后，物品对应的消费者数量较大，对于计算物品之间的相似度稀疏度是好过计算用户之间相似度的。</p>
+</blockquote>
+<h3 id="协同过滤有哪些缺点呢？"><a href="#协同过滤有哪些缺点呢？" class="headerlink" title="协同过滤有哪些缺点呢？"></a>协同过滤有哪些缺点呢？</h3><ul>
+<li>由于大部分user只对很少一部分item有行为，导致user与item的<strong>行为矩阵十分稀疏</strong>，甚至有些user根本没有任何行为，影响了向量相似度计算准确性。</li>
+<li>user和item数量都很大，行为矩阵存储压力很大。</li>
+<li>矩阵稀疏也带来一个问题，就是头部热门item容易与大多数item均相似，导致极其严重的<strong>马太效应</strong>。</li>
+</ul>
+<h2 id="原理篇-·-矩阵分解"><a href="#原理篇-·-矩阵分解" class="headerlink" title="原理篇 · 矩阵分解"></a>原理篇 · 矩阵分解</h2><blockquote>
+<p><a target="_blank" rel="noopener" href="https://lumingdong.cn/recommendation-algorithm-based-on-matrix-decomposition.html">https://lumingdong.cn/recommendation-algorithm-based-on-matrix-decomposition.html</a></p>
+</blockquote>
+<p>2006 年 10 月 2 号，Netflix Prize 发出百万美元悬赏，凡是能在他们现有推荐系统基础上，把均方根误差降低 10% 的大侠，可以瓜分 100 万美元。这一<strong>评分预测问题</strong>在一百万美元的加持下，催生出无数推荐算法横空出世，其中最为著名的就是一系列矩阵分解模型，而最最著名的模型就是 SVD 以及其各种变体。</p>
+<p><strong>矩阵分解（Matrix Factorization，MF）</strong>是协同过滤的一个分支算法（model-based CF），在推荐领域具有崇高的地位，因为它同时兼具了协同过滤、隐语义以及机器学习的特性，再加上矩阵分解易于实现和拓展，使之成为当今工业界非常普遍和流行的推荐算法。</p>
+<h3 id="基本思路"><a href="#基本思路" class="headerlink" title="基本思路"></a>基本思路</h3><p>先来说说矩阵分解几个明显的特点，它具有协同过滤的 “集体智慧”，隐语义的 “深层关系”，以及机器学习的 “以目标为导向的有监督学习”。在了解了基于邻域的协同过滤算法后，集体智慧自不必多说，我们依次从 “隐因子” 和 “有监督学习” 的角度来了解矩阵分解的基本思路。</p>
+<p>推荐算法中的矩阵分解最初的想法是从奇异值分解（Singular Value Decomposition，SVD）借鉴来的，也仅仅是借鉴，并非是标准的奇异值分解，勉强算是一个伪奇异值分解。具体的区别留在相关算法这一小节详说。</p>
+<p>以 Netflix 用户对电影的评分矩阵为例，矩阵分解，直观上来说就是把原来的大矩阵，近似分解成两个小矩阵的乘积，在实际推荐计算时不再使用大矩阵，而是使用分解得到的两个小矩阵。按照矩阵分解的原理，我们会发现原来 𝑚×𝑛 的大矩阵会分解成 𝑚×𝑘 和 𝑘×𝑛 的两个小矩阵，这里多出来一个 k 维向量，就是隐因子向量（Latent Factor Vector），类似的表达还有隐因子、隐向量、隐含特征、隐语义、隐变量等。</p>
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1665202625343-6733bc2f-330b-4d0d-af78-1c123f578fa4.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p><strong>基于矩阵分解的推荐算法的核心假设是用隐语义（隐变量）来表达用户和物品，他们的乘积关系就成为了原始的元素。这种假设之所以成立，是因为我们认为实际的交互数据是由一系列的隐变量的影响下产生的（通常隐变量带有统计分布的假设，就是隐变量之间，或者隐变量和显式变量之间的关系，我们往往认为是由某种分布产生的。），这些隐变量代表了用户和物品一部分共有的特征，在物品身上表现为属性特征，在用户身上表现为偏好特征，只不过这些因子并不具有实际意义，也不一定具有非常好的可解释性，每一个维度也没有确定的标签名字，所以才会叫做 “隐变量”。而矩阵分解后得到的两个包含隐变量的小矩阵，一个代表用户的隐含特征，一个代表物品的隐含特征，矩阵的元素值代表着相应用户或物品对各项隐因子的符合程度，有正面的也有负面的。</strong></p>
+<p>依然以电影为例，电影可能具有一些隐藏因子：演员、题材、主题、年代……，而用户针对这些隐因子有偏好特征属性，为了便于理解，我们假设隐因子数量 k 是 2，分别代表着喜剧片和动作片两种题材，矩阵分解后的两个小矩阵，分布代表着电影对这两种题材的符合程度以及用户对这两种题材的偏好程度，如下图：</p>
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1665202655366-52e99476-aef0-4f11-8650-f42ea640fe2d.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>通常情况下，隐因子数量 k 的选取要远远低于用户和电影的数量，大矩阵分解成两个小矩阵实际上是用户和电影在 k 维隐因子空间上的映射，这个方法其实是也是一种 “降维”（Dimension Reduction）过程，同时将用户和电影的表示转化为在这个 k 维空间上的分布位置，电影和用户的距离越接近表示用户越有可能喜欢这部电影，表现在数值上则是各项隐因子符合程度的正负性越一致。</p>
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1665202676097-839155ca-f52a-4bc8-b6c1-33aba2cd593c.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>我们再从机器学习的角度来了解矩阵分解，我们已经知道电影评分预测实际上是一个矩阵补全的过程，在矩阵分解的时候原来的大矩阵必然是稀疏的，即有一部分有评分，有一部分是没有评过分的，不然也就没必要预测和推荐了，所以整个预测模型的最终目的是得到两个小矩阵，通过这两个小矩阵的乘积来补全大矩阵中没有评分的位置。所以对于机器学习模型来说，问题转化成了如何获得两个最优的小矩阵。因为大矩阵有一部分是有评分的，那么只要保证大矩阵有评分的位置（实际值）与两个小矩阵相乘得到的相应位置的评分（预测值）之间的误差最小即可，其实就是一个均方误差损失，这便是模型的目标函数，具体的公式可参考相关算法这一小节。</p>
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1665202690139-d2d7795b-9947-4b4f-b1a7-e2801fc91c05.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>这种带有隐因子的机器学习模型通常称为<strong>隐语义模型（Latent Factor Model，LFM)</strong>，因为隐因子的概念最早在文本领域被提出，用于找到文本的隐含语义，所以隐因子有时也称隐语义。而矩阵分解是隐语义模型的代表，在很多地方，会直接使用隐语义模型代表矩阵分解的这一类模型。隐语义模型的在推荐算法中的优势是对用户和物品信息中的隐含结构进行建模，从而能够挖掘更加深层次的用户和物品关系。</p>
+<h3 id="Traditional-SVD"><a href="#Traditional-SVD" class="headerlink" title="Traditional SVD"></a>Traditional SVD</h3><p>说到矩阵分解，我们首先想到的就是奇异值分解 SVD。理论上，SVD 也可以直接用于推荐，我们可以把 User-Item 评分矩阵 A 进行 SVD 分解，并通过选择部分较大的一些奇异值来同时进行降维，也就是说矩阵 A 此时分解为：</p>
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1665202868857-3f0774d8-6d22-4b03-9a43-87f6ae22d80a.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>其中 k 是矩阵 A 中较大的部分奇异值的个数，一般会远远的小于用户数 m 和物品数 n。如下图所示：</p>
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1665202769567-7563fe74-13cf-4397-be26-f8ad37f7e89d.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>从图中可以看出，我们上面用的公式其实是 Truncated SVD 形式，它是对完整 SVD 的一个极大近似，因为对于推荐系统来说，并不要求极致的精确度，我们更加追求效率和收益最大化，Truncated SVD 的形式可以极大地降低计算量，更符合实际需要。</p>
+<p>SVD 通常有以下几种不同的表示形式（<a target="_blank" rel="noopener" href="https://lumingdong.cn/go/1kd8k3">参考论文</a>）：</p>
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1665202787577-d77f5da7-91db-418d-be4f-89a052fd7ebf.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>1）<strong>Full SVD（完整 SVD）</strong>：左奇异矩阵 U 和右奇异矩阵 V 都是方阵，在对角矩阵 Σ 中有 P 个奇异值，其中 P=min(M, N)，图中假设 M&gt;N，那么 U 中被虚线框出的列向量的会乘以对角矩阵超出主对角线外的 0 值行向量，也就是说，对于 U 而言，虚线框出的这部分其实已经没有什么价值了，所以才会有 Reduced SVD 的表示方法。</p>
+<p>2）<strong>Reduced SVD / Compact SVD（精简/紧凑 SVD）</strong>：Reduced SVD 其实就是把 Full SVD 中的 U 和 Σ 多余的那部分去掉，对原矩阵 A 的表示并不受影响，而对应的 V 仍然是方阵（图中假设 M&gt;N）</p>
+<p>3）<strong>Truncated SVD（截断 SVD）</strong>：Truncated SVD 其实是一种<strong>近似</strong>，（从大到小排列)取前 K 个奇异值来代替原来全部的奇异值，因为很多情况下，前 10% 甚至 1% 的奇异值的和就占了全部的奇异值之和的 99% 以上了，这样做可以极大地减少计算量，但却可以保留大部分信息。</p>
+<p>通过奇异值分解，如果我们要预测第 𝑖 个用户对第 𝑗 个物品的评分 𝑎𝑖𝑗, 则只需要计算$𝑢_𝑖Σ𝑣^𝑇_𝑗$即可。通过这种方法，我们可以将评分表里面所有没有评分的位置得到一个预测评分，通过找到最高的若干个评分对应的物品推荐给用户。</p>
+<p>思路很简单，但是奇异值分解在直接用于推荐的使用过程中存在很多问题：</p>
+<ol>
+<li>SVD 分解要求矩阵是稠密的，而现实场景中的评分矩阵是稀疏的，有大量空白，无法直接使用 SVD 分解的。要想使用 SVD，必须对评分矩阵中的缺失值进行简单的补全，比如用全局平均值或者用用户物品平均值补全，得到补全后的矩阵。接着可以用 SVD 分解并降维。但填充本身会造成很多问题，其一，填充大大增加了数据量，增加了算法复杂度。其二，简单粗暴的数据填充很容易造成数据失真。</li>
+<li>SVD 分解的复杂度比较高，假设对一个 𝑚×𝑛 的矩阵进行分解，时间复杂度为$𝑂(𝑛^2∗𝑚+𝑛∗𝑚^2)$，其实就是 𝑂(𝑛3)。对于 m、n 比较小的情况，还是勉强可以接受的，但是在推荐场景的海量数据下，m 和 n 的值通常会比较大，可能是百万级别上的数据，这个时候如果再进行 SVD 分解需要的计算代价就是很大的。</li>
+</ol>
+<h3 id="贝叶斯个性化排序"><a href="#贝叶斯个性化排序" class="headerlink" title="贝叶斯个性化排序"></a>贝叶斯个性化排序</h3><p>在推荐或搜索领域，排序学习（Leaning To Rank）占有非常重要的地位，因为对于推荐或者搜索，本质上我们还是会更加关注相关内容的排序，越相关就希望它的排序越靠前。其实矩阵分解也属于排序学习的一种，也就是最为常见的 Pointwise 类型，其中 point 意思就是：只单独考虑每个物品，每个物品像是空间中孤立的点一样。而基于矩阵分解构建的<strong>贝叶斯个性化排序（Bayesian personalized ranking，BPR</strong>）则是一种 Pairwise 类型的排序学习算法，pair，顾名思义就是成对成双。确切来讲，BPR 实际上是一个基于 Pointwise 之上的算法框架，但最常见的就是基于矩阵分解的构建形式，借助于矩阵分解得到排序学习的损失函数，然后完成排序学习的任务。<br>BPR 详细的介绍也可移步到 <a target="_blank" rel="noopener" href="https://www.cnblogs.com/pinard/p/9128682.html">https://www.cnblogs.com/pinard/p/9128682.html</a></p>
+<h3 id="相对排序的评测指标-AUC"><a href="#相对排序的评测指标-AUC" class="headerlink" title="相对排序的评测指标-AUC"></a>相对排序的评测指标-AUC</h3><p>AUC 全称是 Area Under Curve，意思是曲线下的面积，这里的曲线就是 ROC 曲线。AUC 非常适合用来评价模型的排序效果，AUC 这个值在数学上等价于：模型把关心的那一类样本排在其他样本前面的概率。最大是 1，完美结果，而 0.5 就是随机排列，0 就是完美地全部排错。</p>
+<p>AUC 怎么计算呢？一般步骤如下。</p>
+<ol>
+<li>用模型给样本计算推荐分数，比如样本都是用户和物品这样一对一对的，同时还包含了有无反馈的标识；</li>
+<li>得到打过分的样本，每条样本保留两个信息，第一个是分数，第二个是 0 或者 1，1 表示用户消费过，是正样本，0 表示没有，是负样本；</li>
+<li>按照分数对样本重新排序，降序排列；</li>
+<li>给每一个样本赋一个排序值，第一位 r1 = n，第二位 r2 = n-1，以此类推；其中要注意，如果几个样本分数一样，需要将其排序值调整为他们的平均值；</li>
+<li>最终按照下面这个公式计算就可以得到 AUC 值。</li>
+</ol>
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1665128167856-15440372-d0da-4808-8200-5bf0af8d078a.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>这个公式看上去复杂，其实很简单，由两部分构成：</p>
+<ul>
+<li>第一部分： 分母是所有我们关心的那类样本，也就是正样本，有 M 个，以及其他样本有 N 个，这两类样本相对排序总共的组合可能性，是 M x N；</li>
+<li>第二部分： 分子也不复杂，原本是这样算的：第一名的排序值是 r1，它在排序上不但比过了所有的负样本，而且比过了自己以外的正样本。但后者是自己人，所以组合数要排除，于是就有 n - M 种组合，以此类推，排序值为 rM 的就贡献了 rM - 1，把这些加起来就是分子。</li>
+</ul>
+<p>详细介绍可移步到 <a target="_blank" rel="noopener" href="https://www.cnblogs.com/gatherstars/p/6084696.html">https://www.cnblogs.com/gatherstars/p/6084696.html</a> ROC曲线和AUC值</p>
+<h2 id="原理篇-·-模型融合"><a href="#原理篇-·-模型融合" class="headerlink" title="原理篇 · 模型融合"></a>原理篇 · 模型融合</h2><p>推荐系统在技术实现上一般划分为三个阶段：<strong>挖掘、召回、排序</strong>。</p>
+<ul>
+<li>挖掘的工作就是对用户和物品做非常深入的结构化分析，挖掘特征供召回阶段使用</li>
+<li>召回就是用一些手段从全量的物品中筛选出一部分比较靠谱的</li>
+<li>最后就是排序，针对筛选出的一部分靠谱的做一个统一的论资排辈，最后这个统一的排序就是今天要讲的主题：融合。</li>
+</ul>
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1664464734627-0fc95390-6e21-430c-9ad0-2d793a6c5e3d.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>在召回阶段，一般会使用多种算法来产生一批推荐结果，这些不同算法产生的推荐分数，是<strong>没办法直接用来进行比较排序</strong>的，原因如下：</p>
+<ol>
+<li>有个算法可能只给出结果，不给分数，比如用决策树产生一些推荐结果；</li>
+<li>每种算法给出结果时如果有分数，分数的范围不一定一样，所以不能互相比较，大家各自家庭背景不一样；</li>
+<li>即使强行把所有分数都归一化，仍然不能互相比较，因为产生的机制不同，有的可能普遍偏高，有的可能普遍偏低。</li>
+</ol>
+<p>既然来自各个地方的状元凑在一起，谁也不服谁，那只能再举行一次入学考试了，这个入学考试就是融合模型。也就是，不同算法只负责推举出候选结果，真正最终是否推荐给用户，由另一个统一的模型说了算，这个就叫做模型的融合。</p>
+<h3 id="GBDT-LR：逻辑回归和梯度提升决策树组合"><a href="#GBDT-LR：逻辑回归和梯度提升决策树组合" class="headerlink" title="GBDT+LR：逻辑回归和梯度提升决策树组合"></a>GBDT+LR：逻辑回归和梯度提升决策树组合</h3><p>给多种召回策略外挂一个融合排序，要以产品目标为导向。举个简单的例子，信息流推荐，如果以提高 CTR 为目标，则融合模型就要把预估 CTR 作为本职工作，这个工作谁最能胜任呢，一直以来就是逻辑回归。</p>
+<p>CTR 预估本质是一个分类问题，故完全可以采用经典的逻辑回归来解决。LR类方法的解决思路与协同过滤CF不同，它将问题构建成一个有监督分类问题。同时可以<strong>利用use和item侧的丰富特征</strong>，表达能力比CF类要强。</p>
+<p>在对召回阶段不同算法给出的候选物品计算 CTR 预估时，需要两个东西：</p>
+<ul>
+<li>特征</li>
+<li>权重</li>
+</ul>
+<p><strong>1、训练数据构造</strong></p>
+<p>有监督分类需要以数据作为驱动，一般用曝光点击作为正样本，曝光未点击作为负样本。样本方面主要问题有：</p>
+<ul>
+<li><strong>正负样本不均衡</strong> ：比如CTR任务，如果点击率是5%，则正负样本1: 20，负样本远远多于正样本，导致样本不均衡。分类问题中样本不均衡，会导致模型整体偏向样本多的那个类别，导致其他类别不准确。解决方法主要有：<ul>
+<li>负采样：对负样本进行采样，可以直接采用随机负采样。一方面可以减少样本存储和模型训练的压力，另一方面可以缓解正负样本不均衡问题。但负样本其实也有很多信息的，直接丢弃实在可惜，特别是小场景样本不足的时候。</li>
+<li>focal loss：何凯明老师在图像多分类样本不均衡中采用的方法，也可以使用到推荐场景中。通过减少负样本（易分类）在loss中的权重，使得模型更加专注于正样本（样本少，难分类）</li>
+</ul>
+</li>
+<li><strong>样本置信度问题</strong> ：曝光点击可以认为置信度较高，但曝光未点击就一定表名用户不会点击，一定是负样本吗？点击与否可能也与用户需求是否已经得到满足有关系。美团采用了skip-above采样方式，对用户最后一个点击位置以下的负样本，直接丢弃。</li>
+</ul>
+<p><strong>2、特征工程</strong><br>特征工程一定要结合业务理解，在具体业务场景上，想象自己就是一个实际用户，会有哪些特征对你是否点击、是否转化有比较大的影响。</p>
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1664348602921-1d7dce2a-4e58-4baa-a8db-1dc646b095e5.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p><strong>3、高阶特征组合用 GBDT</strong></p>
+<p>逻辑回归本身对原始特征仅仅是线性加权，并不能很好地刻画特征组合关系；而且特征组合的难点在于：组合数目非常庞大，而且并不是所有组合都有效，只有少数组合有效。<strong>树模型可以做到对原始的特征做各种有效的组合，一棵树一个叶子节点就是一种特征组合</strong>，树模型的集成模型（如RF和GBDT）效果更佳！</p>
+<p><strong>4、权重学习用逻辑回归</strong></p>
+<p>权重的学习主要看两个方面：损失函数的最小化，就是模型的偏差是否足够小；另一个就是模型的正则化，就是看模型的方差是否足够小；</p>
+<p>将两者结合在一起，用于做模型融合阶段的 CTR 预估。这是 Facebook 在其广告系统中使用的方法，GBDT所起的作用就是对原始的特征做各种有效的组合，<strong>从根结点到叶子节点的这条路径就可以看成是不同特征进行的特征组合</strong>；LR 负责学习特征组合的权重。</p>
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1664465875578-65a56211-ad5c-40d1-8ace-e36dbb3e50b0.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<h3 id="FM：一网打尽协同过滤、矩阵分解和线性模型"><a href="#FM：一网打尽协同过滤、矩阵分解和线性模型" class="headerlink" title="FM：一网打尽协同过滤、矩阵分解和线性模型"></a>FM：一网打尽协同过滤、矩阵分解和线性模型</h3><img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1666090375506-1d2182d8-faf0-43f9-a0eb-bcb2adeac3f3.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>分解机 FM（Factorization Machine）也称因子分解机。是由 Konstanz 大学 Steffen Rendle 于 2010 年最早提出的，旨在解决稀疏数据下的特征组合问题。FM 设计灵感来源于广义线性模型和矩阵分解。</p>
+<p>在线性模型中，我们会单独考察每个特征对 Label 的影响，一种策略是使用 One-hot 编码每个特征，然后使用线性模型来进行回归，但是 one-hot 编码后，一者，数据会变得稀疏，二者，很多时候，单个特征和 Label 相关性不够高。最终导致模型性能不好。为了引入关联特征，可以引入二阶项到线性模型中进行建模：</p>
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1665207740424-b223bb5e-7354-4910-b9d0-4e61749092c3.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>𝑥𝑖、𝑥𝑗 是经过 One-hot 编码后的特征，取 0 或 1。只有当二者都为 1 时，𝑤𝑖𝑗 权重才能得以学习。然后由于稀疏性的存在，满足 𝑥𝑖，𝑥𝑗 都非零的样本很少，导致组合特征权重参数缺乏足够多的样本进行学习。</p>
+<p><strong>FM 模型公式</strong></p>
+<p>矩阵分解思想此时发挥作用。借鉴协同过滤中，评分矩阵的分解思想，我们也可以对 𝑤𝑖𝑗 组成的二阶项参数矩阵进行分解，所有二次项参数 𝑤𝑖𝑗 可以组成一个对称阵 𝑊，那么这个矩阵就可以分解为$𝑊=𝑉^𝑇𝑉$，𝑉 的第 𝑗 列便是第 𝑗 维特征的隐向量。换句话说，每个参数 𝑤𝑖𝑗=⟨𝑣𝑖,𝑣𝑗⟩，这就是 FM 模型的核心思想。因此，FM 的模型方程为（常用的是二阶，本文不讨论 FM 的高阶形式）:</p>
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1665207793162-ca9665b9-6d71-4e6d-ab39-d42461ef7671.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>其中，𝑣𝑖 是第 i 维特征的隐向量，⟨⋅,⋅⟩ 代表向量点积，计算公式为</p>
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1665207806470-b17ab514-8dd2-4923-9fe1-c676f0cdb9b7.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>隐向量的长度为 𝑘(𝑘&lt;&lt;𝑛)，包含 𝑘 个隐因子。 具体解读一下这个公式</p>
+<ul>
+<li><strong>线性模型+交叉项</strong>：直观地看 FM 模型表达式，前两项是线性回归模型的表达式，最后一项是二阶特征交叉项（又称组合特征项），表示模型将两个互异的特征分量之间的关联信息考虑进来。用交叉项表示组合特征，从而建立特征与结果之间的非线性关系。</li>
+<li><strong>交叉项系数 → 隐向量内积</strong>：由于 FM 模型是在线性回归基础上加入了特征交叉项，模型求解时不直接求特征交叉项的系数 𝑤𝑖𝑗（因为对应的组合特征数据稀疏，参数学习不充分），故而采用隐向量的内积 ⟨𝑣𝑖,𝑣𝑗⟩ 表示 𝑤𝑖𝑗。具体的，FM 求解过程中的做法是：对每一个特征分量 𝑥𝑖 引入隐向量 𝑣𝑖＝(𝑣𝑖,1,𝑣𝑖,2,⋯,𝑣𝑖,𝑘)，利用$𝑣_𝑖𝑣^𝑇_𝑗$内积结果对交叉项的系数 𝑤𝑖𝑗 进行估计，公式表示：$𝑤̂ _{𝑖𝑗}=𝑣_𝑖𝑣^𝑇_𝑗$。</li>
+</ul>
+<p>根据上式，二次项的参数数量减少为 𝑘𝑛 个，远少于多项式模型的参数数量。</p>
+<blockquote>
+<p><strong>FM 模型对稀疏数据有更好的学习能力，通过交互项可以学习特征之间的关联关系，并且保证了学习效率和预估能力，在工业界使用非常多</strong>。</p>
+</blockquote>
+<h3 id="Wide-amp-Deep：深度和宽度兼具的融合模型"><a href="#Wide-amp-Deep：深度和宽度兼具的融合模型" class="headerlink" title="Wide &amp; Deep：深度和宽度兼具的融合模型"></a>Wide &amp; Deep：深度和宽度兼具的融合模型</h3><p>一个典型的推荐系统架构，其实很类似一个搜索引擎，搜索由检索和排序构成。推荐系统也有召回和排序两部构成，不过，推荐系统的检索过程并不一定有显式的检索语句，通常是拿着用户特征和场景特征去检索召回，其中用户特征也就是在前面的专栏中提到的用户画像。</p>
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1664467019538-db6b08fe-6fad-4d54-bd81-d0f290de5b2f.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>今天要说的深宽模型就是专门用于融合排序的，它是 Google 在 2016 年发表的 CTR 预估方法。<br>Wide&amp;Deep 由逻辑回归作为最终输出单元，深模型最后一个隐藏层作为特征，与宽模型的原始特征一起接入逻辑回归，然后训练参数。它与机器学习中的集成学习方法有所区别，集成学习的子模型是独立训练的，只在融合阶段才会学习权重，这里是整体。Wide&amp;Deep 由两部分组成：</p>
+<ul>
+<li>wide部分是一个广义的线性模型，输入的特征主要有两部分组成，一是原始的部分特征，二是原始特征的交叉特征； </li>
+<li>Deep部分是一个DNN模型，输入的特征主要分为两大类，一类是数值特征，一类是类别特征</li>
+</ul>
+<p>Wide部分有利于增强模型的“记忆能力”，Deep部分有利于增强模型的“泛化能力” 。两部分的输出一起接入逻辑回归，做最终的预测，输出概率值。</p>
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1664467074761-bdb8ce88-7e11-41fd-b0f2-71a61b23b56b.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p><strong>深宽模型具体落地</strong></p>
+<p>1 数据生成</p>
+<p>数据生成有几个要点：</p>
+<ul>
+<li>每一条曝光日志就生成一条样本，标签就是 1/0，安装了 App 就是 1，否则就是 0。</li>
+<li>将字符串形式的特征映射为 ID，需要用一个阈值过滤掉那些出现样本较少的特征。</li>
+<li>对连续值做归一化</li>
+</ul>
+<p>2 模型训练</p>
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1664467945506-f36dcf76-4980-4855-9027-1ece26ef0837.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>整个模型的示意如图所示。其要点，在深度模型侧：</p>
+<ol>
+<li>每个类别特征 embedding 成一个 32 维向量；</li>
+<li>将所有类别特征的 embedding 变量连成一个 1200 维度左右的大向量；</li>
+<li>1200 维度向量就送进三层以 ReLU 作为激活函数的隐藏层；</li>
+<li>最终从 Logistic Regreesion 输出。</li>
+</ol>
+<p>宽模型侧就是传统的做法：特征交叉组合。</p>
+<p>当新的样本集合到来时，先是用上一次的模型来初始化模型参数，然后在此基础上进行训练。</p>
+<p>新模型上线前，会先跑一遍，看看会不会出事，算是一个冒烟测试。</p>
+<p>3 模型应用</p>
+<p>模型验证后，就发布到模型服务器。模型服务，每次网络请求输入的是来自召回模块的 App 候选列表以及用户特征，再对输入的每个 App 进行评分。评分就是用我们的“深宽模型”计算，再按照计算的 CTR 从高到低排序。</p>
+<p>为了让每次请求响应时间在 10ms 量级，每次并不是串行地对每个候选 App 计算，而是多线程并行，将候选 App 分成若干并行批量计算。</p>
+<h2 id="原理篇-·-探索和利用问题"><a href="#原理篇-·-探索和利用问题" class="headerlink" title="原理篇 · 探索和利用问题"></a>原理篇 · 探索和利用问题</h2><blockquote>
+<p><a target="_blank" rel="noopener" href="https://lumingdong.cn/exploration-and-exploitation-in-the-recommendation-system.html">https://lumingdong.cn/exploration-and-exploitation-in-the-recommendation-system.html</a></p>
+</blockquote>
+<p><strong>探索与利用（Exploration and Exploitation）</strong>问题简称 EE 问题，是计算广告和推荐系统里最常见的两大问题之一（另外一个是冷启动问题）。EE 问题中的利用（Exploitation），表示对用户比较确定的兴趣，要利用开采迎合；而探索（Exploration）则表示光对着用户已知的兴趣使用，用户很快会腻，所以要不断探索用户新的兴趣才行。</p>
+<p>之所以会有 EE 问题，是因为给用户推荐物品本身就是一个选择的问题，从选择什么物品推荐上升到最根本的推荐策略的选择，不同的策略起到的效果是不一样的。一个极端表现就是总是按照已知用户兴趣来推荐，会让用户觉得总是重复推荐类似的东西，没有惊喜感，而如果完全随意地给用户推荐各种东西，推荐的多样性是有了，但可能大部分物品是用户不喜欢的，让用户觉得推荐得不准确。可以看出，这两种极端的选择策略本身就是矛盾的，因此实践中应以平衡推荐系统的准确性和多样性为标准来进行选择，如何能够来衡量呢？最常用的就是利用 Bandit 算法。</p>
+<h3 id="Bandit算法原理"><a href="#Bandit算法原理" class="headerlink" title="Bandit算法原理"></a>Bandit算法原理</h3><p>Bandit 算法是解决 EE 问题的一类有效算法，并不是指一个算法。Bandit 算法来源于历史悠久的赌博学，它要解决的问题是这样的：一个赌徒，要去摇老虎机，走进赌场一看，一排老虎机，外表一模一样，但是每个老虎机吐钱的概率可不一样，他不知道每个老虎机吐钱的概率分布是什么，那么每次该选择哪个老虎机可以做到最大化收益呢？这就是<strong>多臂老虎机问题（Multi-armed bandit problem, K-armed bandit problem, MAB）</strong>，因此 EE 问题也常被称为 MAB 问题。</p>
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1665215453017-05622839-2e97-43c0-9fb9-066cba74872e.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>Bandit 算法需要量化一个核心问题：错误的选择到底有多大的遗憾？能不能遗憾少一些？所以我们便有了<strong>衡量 Bandit 算法的一个指标——累积遗憾 (regret)</strong>：</p>
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1665215500944-0179ec98-be79-4898-a662-bf7fe0c605ea.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>其中，$𝑟_{𝑡,𝑎^∗_𝑡}$表示第 t 轮最优的那个 arm 所获得的收益，而$𝑟_{𝑡,𝑎_𝑡}$表示第 t 轮实际选择的 arm 所获的收益，每次都会计算当前选择的 arm 获取的收益与最优 arm 期望最大收益之间的差距，把每次差距累加起来就是总的遗憾。</p>
+<p>Bandit 常用的算法如下：</p>
+<p><strong>朴素 Bandit 算法</strong></p>
+<p>朴素算法 Bandit 算法也是一种贪心算法，其思想是：先随机试若干次，计算每个臂的平均收益，一直选均值最大那个臂。这个算法是人类在实际中最常采用的，不可否认，它还是比随机乱猜要好。</p>
+<p><strong>Epsilon-Greedy 算法</strong></p>
+<p>这也是一个朴素的 bandit 算法：</p>
+<ol>
+<li>选一个 (0, 1) 之间较小的数作为 epsilon；</li>
+<li>每次以 epsilon 的概率随机选取一个臂（用于探索）；</li>
+<li>每次以 1-epsilon 的概率选取当前平均收益收益最大的那个臂（用于利用）。</li>
+</ol>
+<p>epsilon 的值可以控制对 Exploit 和 Explore 的偏好程度，越接近 0，越保守；越接近于 1，越冒险。epsilon 可以是固定的，也可以设定为逐渐衰减的，类似于模拟退火。</p>
+<p><strong>UCB 算法</strong></p>
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1665299319023-b72be2e1-f2fd-481e-a98d-ad9c1020ea24.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p><strong>Thompson sampling 算法</strong></p>
+<p>略</p>
+<h2 id="原理篇-·-深度学习"><a href="#原理篇-·-深度学习" class="headerlink" title="原理篇 · 深度学习"></a>原理篇 · 深度学习</h2><h3 id="各种-2vec"><a href="#各种-2vec" class="headerlink" title="各种 2vec"></a>各种 2vec</h3><p>自 Embedding 的概念问世以来，Embedding 的探索和应用就没有停止过，Word2Vec、Sentence2Vec、Doc2Vec、Item2Vec，甚至 Everything2Vec。对，“万物皆可 Embedding”。几年来，Embedding 在推荐系统中的应用也越来越多，方式众多，技法新颖。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.yuque.com/ningshixian/pz10h0/fg4zr8">Word2vec</a>，用于学习词嵌入向量。当把一个词表示成一个稠密的向量后，就可以计算词的相似度，进而可以计算句子的相似度，也可以直接把这个稠密向量作为特征输入给高级的预测模型。Word2vec 可以直接应用在基于内容的推荐算法中。内容推荐的一个常用方法是通过理解内容（挖掘内容属性）去挖掘用户的兴趣点来构建推荐模型，此时 Embedding 可以作为一个非常有效的方法来辅助理解内容</li>
+<li>Sentence2vec，把一个句子表示成一个嵌入向量，通常是把其包含的词嵌入向量加起来就完事了。</li>
+<li>Doc2vec，在word2vec的基础上增加一个段落向量，该模型也有两个方法：①试图给定上下文和段落ID的情况下预测下一单词的概率。在一个句子或者段落文档训练过程中，段落ID保存不变，共享同一个段落向量；②只给定段落向量的情况下预测段落中一组（窗口）随机单词的概率。</li>
+<li>AutoEncoder，自动编码器。它是一种输入和输出一模一样的神经网络，这个神经网络就一个目的，更加清楚地认识自己，在这个优化目标指导下，学到的网络连接权重都是不同的嵌入向量。</li>
+<li>Item2Vec（MSRA）， Item2Vec 是 Word2Vec 在推荐系统领域的一个转化，它把 Word2vec 的 Skip-gram with Negative Sampling (SGNS) 的算法思路迁移到基于物品的协同过滤 (Item-Based CF) 上，以物品的共现性作为自然语言中的上下文关系，构建神经网络学习出物品在隐空间的向量表示。</li>
+</ul>
+<h3 id="各种-Graph-Embedding"><a href="#各种-Graph-Embedding" class="headerlink" title="各种 Graph Embedding"></a>各种 Graph Embedding</h3><p>Word2Vec 通过序列（sequence）式的样本：句子，学习单词的真实含义。仿照 Word2Vec 思想而生的 Item2Vec 也通过商品的组合去生成商品的 Embedding，这里商品的组合也是序列式的，我们可以称他们为 “Sequence Embedding”。然而，在更多场景下，数据对象之间更多以图（网络）的结构呈现，这种结构生成 Embedding 的方法，我们称之为图嵌入（Graph Embedding）。Graph Embedding 比 Item2Vec 能够获得更加高阶的相似和关联信息</p>
+<ul>
+<li>DeepWalk，DeepWalk认为如果一个网络中两个节点的结构相似，那么这两个点的表示也应该相似。它重点解决的就是如何从图采样到序列，其主要思想是在由物品组成的有向加权图上进行<strong>随机游走（Random Walk）</strong>，产生 K 个物品序列，然后将这些物品序列作为训练样本输入 word2vec 进行训练，得到物品的 Embedding。</li>
+</ul>
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1666091355809-1df621bb-eee7-4286-9f62-5d7ca2b0d1cd.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<ul>
+<li>缺陷：只能针对已有的 Item 而无法应对新的 Item，即无法解决冷启动问题</li>
+</ul>
+<ul>
+<li>Node2vec</li>
+</ul>
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1665240203946-30d2ecbb-d701-40fb-bb33-8c426436c330.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<ul>
+<li>EGES(2018 淘宝)(Enhanced Graph Embedding with Side information)<ul>
+<li>一定程度上解决<strong>物品冷启动</strong>问题</li>
+</ul>
+</li>
+</ul>
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1665240240177-9230fc50-fa88-4f48-84a0-92acdfb695da.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<h3 id="YouTubeDNN-思路"><a href="#YouTubeDNN-思路" class="headerlink" title="YouTubeDNN 思路"></a>YouTubeDNN 思路</h3><blockquote>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/52504407">YouTube深度学习推荐系统的十大工程问题</a></p>
+</blockquote>
+<p>首先，Youtube 把推荐的预测任务看成是一个 “超大规模” 多分类，这个和之前常规的推荐系统要么预测行为要么预测评分的做法不太一样，而是把候选物品当成多个类别，预测用户下一个会观看哪个视频，用一个 Softmax 公式表示这个条件概率：</p>
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1664982593677-bfa06d1f-9851-4000-b054-75bf2d8d5e5c.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>其中，U 是用户，C 是场景，输入是视频的嵌入向量和用户的嵌入向量。这里就涉及了先要使用深度神经网络，从用户历史反馈行为和场景信息中学习物品和用户的嵌入向量。整个<strong>推荐召回模型</strong>示意图如下：</p>
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1665225803548-57ec9b5b-80bd-407e-ad7c-6d376033a9e7.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>看这个推荐模型示意图，就可以看到深度学习应用在了哪些地方。</p>
+<ol>
+<li>模型输入包括：用户浏览历史，用户的搜索历史，地理信息以及其余上下文信息（设备、登录状态等），这些输入信息从先将变长的稀疏 ID 特征转换成固定宽度的 Embedding 向量化表示（平均）</li>
+<li>除了 Embedding 类的特征，还有一些简单的二元特征以及连续型特征（也即用户画像，比如用户性别、年龄等）归一化到 [0, 1] 区间上的实数值</li>
+<li>将<strong>多种信息拼接（concat）成一个特别宽的输入向量</strong>，经过一个三层 ReLU 全连接层，在输出层以 Softmax 作为输出函数，预测每一个视频的概率分布。</li>
+</ol>
+<p><strong>注意：</strong><br><strong>1、Softmax的前一层输出作为 User Embedding， Softmax 层中的权重矩阵的每一行向量作为 Video Embedding；</strong><br><strong>2、在模型训练时，以 Softmax 作为输出层，但是在实际线上预测服务时，由于模型关心相对顺序，所以并不需要真的去计算 Softmax，而是拿着用户的特征向量做近似的近邻搜索 ANN，只召回最相近的一些推荐结果</strong>。</p>
+<p><strong>排序阶段的模型结</strong>构和召回阶段非常类似，可见下图：</p>
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1665214901091-cd46f595-2cc2-49c7-94c9-10cb3d794191.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>与召回阶段不同的是，排序阶段需要处理计算的数据量仅仅是百数量级的，为了提高预测精度，排序阶段使用了更多精细的特征。除此之外，排序阶段本身就可以整合多源召回，上面提到的召回模型可能仅仅是一种召回策略，通常召回阶段的来源往往很多。</p>
+<h3 id="双塔模型思路"><a href="#双塔模型思路" class="headerlink" title="双塔模型思路"></a>双塔模型思路</h3><img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1666090554395-33d28a21-7f20-40a1-bc04-96b4813ee928.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1666090576855-55d14903-1444-43b2-a184-ac9cd8998f3c.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1666090600996-49ec0255-4fd5-49a3-80d0-b86a589fcaf9.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<h3 id="深度排序模型"><a href="#深度排序模型" class="headerlink" title="深度排序模型"></a>深度排序模型</h3><p>进入深度模型时代后，精排模型发展更为迅猛，借用王喆老师《<a target="_blank" rel="noopener" href="https://time.geekbang.org/column/intro/100060801">深度学习推荐系统实战</a>》课程的一张图，如下：</p>
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1664349135540-9eaf1153-070f-42b4-9303-ef425acaa427.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>想了解深度推荐模型细节，可参考董辉的双周会分享《<a target="_blank" rel="noopener" href="https://www.jianguoyun.com/p/DeXIDVkQ-_3RBhjiwd0EIAA">推荐排序CTR.ppt</a>》。深度排序主要分成 4 个方向：</p>
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1666091028138-5dadb465-9a9a-4a36-ba5f-b5a14515315a.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>特征交叉学习，主要研究如何将显式和隐式特征交互与普通全连接网络（即MLP）结合起来。代表是 DeepFM 和 DCN：</p>
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1666091108324-17db757a-e4a2-476d-9bf9-352dd779b44e.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1666091127524-fda9b17d-23cd-47ac-96a8-33ac61f93170.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>序列建模主要考虑用户行为序列 LastN 特征</p>
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1666091190763-02104347-2782-4071-b539-54a2d8c29b97.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<h2 id="模型优化目标：Learning-to-rank"><a href="#模型优化目标：Learning-to-rank" class="headerlink" title="模型优化目标：Learning to rank"></a>模型优化目标：<a target="_blank" rel="noopener" href="https://www.yuque.com/ningshixian/pz10h0/zhhpol">Learning to rank</a></h2><p>排序学习是以点击率作为衡量标准，可以根据用户反馈（点击／停留时间）来持续优化搜索结果。但随着相关度函数中特征的增多，使调参变得极其的困难。LTR通过机器学习算法训练来学习一个最佳的拟合公式，从而对文档打分并排序。</p>
+<p>以排序的评价指标作为优化目标但是评判排序好坏的这些指标的特点是<strong>不平滑、不连续（?）</strong>，无法求梯度，因此无法直接用梯度下降法求解。所以诞生了3种近似求解的训练方法（ LTR优化目标/策略）：</p>
+<ul>
+<li>pointwise将其转化为多类分类或者回归问题（LR、GBDT、DNN），</li>
+<li>pairwise将其转化为pair分类问题，</li>
+<li>Listwise为对查询下的一整个候选集作为学习目标（LambdaMART）</li>
+</ul>
+<p><strong>三者的区别在于loss不同、以及相应的标签标注方式和优化方法的不同。</strong></p>
+<p>在推荐系统领域，最常用就是二元分类的 Point-wise，比如常见的点击率（CTR）预估问题，之所以用得多，是因为二元分类的 Pointwise 模型的复杂度通常比 Pairwise 和 Listwise 要低，而且可以借助用户的点击反馈自然地完成正负样例的标注，而其他 Pairwise 和 Listwise 的模型标注就没那么容易了。成功地将排序问题转化成分类问题，也就意味着我们机器学习中那些常用的分类方法都可以直接用来解决排序问题。</p>
+<blockquote>
+<p>推荐中使用较多的 Pointwise 方法是 LR、GBDT、SVM、FM 以及结合 DNN 的各种排序算法。</p>
+</blockquote>
+<p>在推荐领域，排序学习可能会用在以下场景：</p>
+<ol>
+<li><strong>用于多路召回策略的融合排序</strong>一个推荐系统的召回阶段可能会用到多种不同召回策略，比如基于内容的召回、基于热门物品的召回、基于协同过滤的召回、基于类别和标签的召回等等，不同的召回策略召回的物品无法确切地分辨哪个策略召回更重要，所以需要一个排序学习模型，根据用户的行为反馈来对多路召回的物品进行排序推荐，这也是排序模块的一大重要作用。</li>
+<li><strong>一个排序模型完成召回排序</strong>某些简单的推荐场景下，召回排序过程区分的不够开，目标比较单一，比如相关推荐，对相关性要求比较高，此时可以用 LTR，一个排序模型就可以完成召回排序任务。</li>
+<li><strong>解决多目标排序问题</strong>通常一个推荐系统的目标是提高点击率（CTR）或转化率（CVR），但是这些并不能完全反映用户对推荐物品的满意度，以此为目标的推荐系统也无法保证用户存留。为了提高用户对推荐物品满意度，可能还需要依赖更多的指标，比如加购、收藏、分享等等。由此便产生了多种目标，如何优化最终推荐列表的顺序来使得众多指标在不同的场景下近可能达到最优或者满意，这就是推荐系统中的多目标排序问题，而排序学习是解决多目标排序问题的一种重要方法。</li>
+</ol>
+<h2 id="工程篇-·-常见架构"><a href="#工程篇-·-常见架构" class="headerlink" title="工程篇 · 常见架构"></a><strong>工程篇 · 常见架构</strong></h2><h3 id="推荐候选池的去重策略"><a href="#推荐候选池的去重策略" class="headerlink" title="推荐候选池的去重策略"></a>推荐候选池的去重策略</h3><p>在推荐系统中，有一个刚需就是去重，那么说在哪些地方有去重的需求呢？主要是在两个地方：一个是内容源去重，另一个是不重复给用户推荐。</p>
+<ul>
+<li><strong>内容去重：</strong>内容重复检测，最常用的方法，即 Simhash</li>
+<li><strong>不重复推荐</strong>：给用户推荐的内容不要重复，推荐过的内容就不再出现在推荐候选集中</li>
+</ul>
+<h3 id="推荐系统的整体架构"><a href="#推荐系统的整体架构" class="headerlink" title="推荐系统的整体架构"></a>推荐系统的整体架构</h3><ul>
+<li><strong>召回层：</strong>包括各种推荐策略或者算法，比如经典的协同过滤，基于内容的召回，基于向量的召回，用于托底的热门推荐等。为了应对线上高并发的流量，召回结果通常会预计算好，建立好倒排索引后存入缓存中。</li>
+<li><strong>融合过滤层：</strong>触发多路召回，由于召回层的每个召回源都会返回一个候选集，因此这一层需要进行融合和过滤。</li>
+<li><strong>排序层：</strong>利用机器学习或者深度学习模型（如 LG/GBDT/Wide&amp;Deep/DeepFM），以及更丰富的特征进行重排序，筛选出更小、更精准的推荐集合返回给上层业务。</li>
+</ul>
+<h3 id="总览推荐架构和搜索、广告的关系"><a href="#总览推荐架构和搜索、广告的关系" class="headerlink" title="总览推荐架构和搜索、广告的关系"></a>总览推荐架构和搜索、广告的关系</h3><p>搜索，推荐和广告本质上都在解决信息过载的问题，各自解决的手段、目标不相同，各自诞生在产品生命周期不同阶段，以至于系统实现也不尽相同</p>
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1664984792552-87eed2e1-090f-46a1-9af5-8925ad3481e2.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<ul>
+<li><strong>搜索：</strong>用户有明确的搜索意图，搜索出来的结果和用户的搜索词相关。最重要的目标是降低延迟和提高相关性（精确快速）</li>
+<li><strong>推荐：</strong>不具有目的性，更多的是起一个“锦上添花”的作用，依赖用户的历史行为和画像数据进行个性化推荐。满足多样性要求，“相对准确性”要求不高！</li>
+<li><strong>广告：</strong>借助搜索和推荐技术实现广告的精准投放，可以将广告理解成搜索推荐的一种应用场景，技术方案更复杂，涉及到智能预算控制、广告竞价等。<strong>搜索和推荐都是为人找信息，而广告是为信息找人</strong>。</li>
+</ul>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th><img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1665300378028-667c23c6-525c-473e-b9ef-bdba72086a5f.png" srcset="/img/loading.gif" lazyload class="" title="image.png"></th>
+<th><img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1665300386021-d08e3fd2-0def-424d-9e99-accc8f10de71.png" srcset="/img/loading.gif" lazyload class="" title="image.png"></th>
+<th><img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1665300399004-ee8454c2-5501-4eb7-87de-0aed18847eb3.png" srcset="/img/loading.gif" lazyload class="" title="image.png"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="工程篇-·-效果保证"><a href="#工程篇-·-效果保证" class="headerlink" title="工程篇 · 效果保证"></a>工程篇 · 效果保证</h2><h3 id="推荐系统的测试方法及常用指标介绍"><a href="#推荐系统的测试方法及常用指标介绍" class="headerlink" title="推荐系统的测试方法及常用指标介绍"></a>推荐系统的测试方法及常用指标介绍</h3><blockquote>
+<p><a target="_blank" rel="noopener" href="https://lumingdong.cn/criteria-for-evaluating-recommendation-systems-in-industry.html">https://lumingdong.cn/criteria-for-evaluating-recommendation-systems-in-industry.html</a></p>
+</blockquote>
+<p>推荐系统的测试方法有四种： 业务规则扫描、离线模拟测试、在线对比测试、用户访谈。</p>
+<ul>
+<li>业务规则扫描：本质上就是传统软件的功能测试</li>
+<li><strong>离线模拟测试</strong>：通常做法是先收集业务数据，也就是根据业务场景特点，构造用户访问推荐接口的参数。这些参数要尽量还原当时场景，然后拿这些参数数据去实时访问推荐，产生推荐结果日志，收集这些结果日志并计算评测指标，比如，可以评测<strong>推荐结果的 TopK 的准确率，或者排序效果 AUC</strong>。</li>
+<li>在线对比测试：<strong>ABTest</strong>，即在线对比测试，分流量做真实的评测。</li>
+<li>用户访谈</li>
+</ul>
+<p><strong>推荐系统的离线评价指标</strong></p>
+<ol>
+<li>评分准确度。通常就是均方根误差 RMSE，或者其他误差类指标，反映预测评分效果的好坏。</li>
+<li>排序。检测推荐系统排序能力非常重要，因为把用户偏爱的物品放在前面是推荐系统的天职。由于推荐系统输出结果是非常个人化的，除了用户本人，其他人都很难替他回答哪个好哪个不好，所以通常评价推荐系统排序效果很少采用搜索引擎排序指标，例如 MAP，MRR，NDCG。搜索引擎评价搜索结果和查询相关性，具有很强的客观属性，可以他人代替评价。<strong>推荐系统评价排序通常采用 AUC。</strong></li>
+<li>分类准确率。<strong>这个指标也是针对行为预测的，而行为预测就是分类问题</strong>，所以评价准确度就很自然。在推荐系统中，评价准确度略微特殊，一般评价 <strong>TopK 准确率</strong>，与之对应还有 TopK 召回率</li>
+</ol>
+<p>TopK 准确度计算方式如下：</p>
+<p>如果日志中用户有 A、B 两个物品有正反馈行为，推荐系统推出一个物品列表，长度为 K，这个列表中就有可能包含 A、B 两个物品中的一个或多个，下面这个表格就说明了 TopK 准确率和 TopK 召回率的含义。</p>
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1664985735987-8f9a5c82-d427-4e20-9295-ed6d26f37808.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<h3 id="和推荐系统有关的开源工具及框架介绍"><a href="#和推荐系统有关的开源工具及框架介绍" class="headerlink" title="和推荐系统有关的开源工具及框架介绍"></a>和推荐系统有关的开源工具及框架介绍</h3><p>内容分析</p>
+<p>基于内容的推荐，主要工作集中在处理文本，或者把数据视为文本去处理。文本分析相关的工作就是将非结构化的文本转换为结构化。</p>
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1664985967647-24533dcf-b321-4cdc-b03b-b1f31d015dd4.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>协同过滤</p>
+<p>基于用户、基于物品的协同过滤，矩阵分解，都依赖对用户物品关系矩阵的利用，这里面常常要涉及的工作有下面几种：KNN 相似度计算；SVD 矩阵分解；SVD++ 矩阵分解；ALS 矩阵分解；BPR 矩阵分解；低维稠密向量近邻搜索。可以做这些工作的开源工具有下面几种。</p>
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1664986008627-8bc3080c-f531-480e-b82f-4ff7a7060393.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>模型融合</p>
+<p>模型融合这部分，有线性模型、梯度提升树模型。</p>
+<img src="/2022/09/29/2022-09-29-%E3%80%8A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%89%E5%8D%81%E5%85%AD%E5%BC%8F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/1664986083943-16a306c8-6a84-4aeb-85a1-4d8da7afb81c.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>向量检索工具</p>
+<p><a target="_blank" rel="noopener" href="https://www.yuque.com/ningshixian/pz10h0/saa0yx">https://www.yuque.com/ningshixian/pz10h0/saa0yx</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/">#推荐系统</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>《推荐系统三十六式》-极客时间</div>
+      <div>http://example.com/2022/09/29/2022-09-29-《推荐系统三十六式》-极客时间/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Ning Shixian</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年9月29日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/10/27/2022-10-27-%E3%80%8A%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/" title="《深度学习推荐系统》-极客时间">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">《深度学习推荐系统》-极客时间</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/09/23/2022-09-23-%E5%90%91%E9%87%8F%E6%A3%80%E7%B4%A2%E5%BA%93%E6%80%BB%E7%BB%93/" title="向量检索库总结">
+                        <span class="hidden-mobile">向量检索库总结</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

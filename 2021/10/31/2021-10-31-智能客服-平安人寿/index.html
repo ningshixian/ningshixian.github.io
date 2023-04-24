@@ -1,0 +1,721 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="NSX">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="平安在ROCLING 2019上发表了一篇有关智能问答系统的论文，比较全面的讨论了一套智能问答的方案，这篇文章的特点在于详细系统地讲解了FAQ任务的常规方法和体系，对我们构造单论检索式对话、智能问答等任务的建设有很大意义，加之平安本身有非常强的问答需求，文章对智能问答的理解深度也体现的非常明确。 知乎上平安官博给了文章的中文版解释：https:&#x2F;&#x2F;zhuanlan.zhihu.com&#x2F;p&#x2F;1113">
+<meta property="og:type" content="article">
+<meta property="og:title" content="平安人寿智能问答系统">
+<meta property="og:url" content="http://example.com/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E5%B9%B3%E5%AE%89%E4%BA%BA%E5%AF%BF/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="平安在ROCLING 2019上发表了一篇有关智能问答系统的论文，比较全面的讨论了一套智能问答的方案，这篇文章的特点在于详细系统地讲解了FAQ任务的常规方法和体系，对我们构造单论检索式对话、智能问答等任务的建设有很大意义，加之平安本身有非常强的问答需求，文章对智能问答的理解深度也体现的非常明确。 知乎上平安官博给了文章的中文版解释：https:&#x2F;&#x2F;zhuanlan.zhihu.com&#x2F;p&#x2F;1113">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic4.zhimg.com/80/v2-fe0ea3d1c78f94457253dac585af0167_1440w.jpg">
+<meta property="og:image" content="https://pic4.zhimg.com/80/v2-70791e4ff1dad269187d5d83a6b3cc13_1440w.jpg">
+<meta property="og:image" content="https://pic2.zhimg.com/80/v2-f29aaec4c671920e47a79be947f35d25_1440w.jpg">
+<meta property="og:image" content="https://pic3.zhimg.com/80/v2-7b19bea25e5d7ccea40e6c39209e545a_1440w.jpg">
+<meta property="article:published_time" content="2021-10-30T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-23T10:28:32.067Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="智能问答系统">
+<meta property="article:tag" content="平安人寿">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://pic4.zhimg.com/80/v2-fe0ea3d1c78f94457253dac585af0167_1440w.jpg">
+  
+  
+  
+  <title>平安人寿智能问答系统 - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="平安人寿智能问答系统"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-10-31 00:00" pubdate>
+          2021年10月31日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          36 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">平安人寿智能问答系统</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>平安在ROCLING 2019上发表了一篇有关智能问答系统的论文，比较全面的讨论了一套智能问答的方案，这篇文章的特点在于详细系统地讲解了FAQ任务的常规方法和体系，对我们构造单论检索式对话、智能问答等任务的建设有很大意义，加之平安本身有非常强的问答需求，文章对智能问答的理解深度也体现的非常明确。</p>
+<p>知乎上平安官博给了文章的中文版解释：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/111380177">https://zhuanlan.zhihu.com/p/111380177</a></p>
+<p>懒人目录：</p>
+<ul>
+<li>总体框架</li>
+<li>预处理模块</li>
+<li>检索模块</li>
+<li>排序模块</li>
+<li>知识库</li>
+<li>小结</li>
+</ul>
+<span id="more"></span>
+<h2 id="总体框架"><a href="#总体框架" class="headerlink" title="总体框架"></a>总体框架</h2><p>首先介绍平安人寿智能问答引擎算法架构，如下图：</p>
+<p><img src="https://pic4.zhimg.com/80/v2-fe0ea3d1c78f94457253dac585af0167_1440w.jpg" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>从问题输入开始，这里包括用户的问题以及语境中心提供上下文，其中包含用户的历史对话信息以及一些关于用户意图的结构化数据。</p>
+<p>用户的问题输入后，首先进入<strong>预处理模块</strong>。在预处理模块里，分词、词性标注、实体识别都是比较成熟的技术，配合业务专用名词词典，我们采用Hanlp工具来做；<strong>多意图识别</strong>则用分类来做，主要处理用户一句话里有多个问题的意图，并给予不同的回答；<strong>问句改写</strong>主要是对保险名词的缩写和全称做改写；<strong>情感分析</strong>主要是通过句法分析去判断用户的话语是肯定意图或是否定意图。</p>
+<p>预处理结束后，会进入<strong>检索模块</strong>。如果预处理经过纠错和问句改写，就会是多个query并行进入检索，触发ES字面检索和深度语义匹配。经过这两个检索模块得到的答案后，我们会从知识库以及Redis本地存储，把答案拿到后做多路结果归并。然后简单计算字面得分、语义得分、关键词得分，编辑距离作为LR的feature。</p>
+<p>还有<strong>保险实体对齐</strong>，主要是重要名词、疾病、地区等的对齐。在排序模块里，比如用户问的问题是关于A保险，匹配的答案是B保险，处理的方式是在实体对齐的时候把答案去除，剩余的答案会做深度语义精排。</p>
+<p>排序后，就进入<strong>输出模块</strong>。在输出模块里，有直接问输出、推荐问输出等，如果阈值比较低，还会做问句澄清。在输出模块，关联问可能会用到用户画像。</p>
+<p>剩下的就慢慢开始展开讲吧。</p>
+<h2 id="一、问句预处理核心技术"><a href="#一、问句预处理核心技术" class="headerlink" title="一、问句预处理核心技术"></a>一、问句预处理核心技术</h2><p>但凡做过这个预处理模块，就知道Query预处理工作的繁杂，这里面列举的是非常常见的子模块了：</p>
+<ul>
+<li>分词。NLP基操。</li>
+<li>POS。词性标注，一般使用的是序列标注的方法，也可能和实体抽取一起做。</li>
+<li>NER。实体识别使用的是加入了保险专用名词词典的NLP现成工具。</li>
+<li>纠错。<strong>纠错模块</strong>主要是为了<strong>处理用户输入出现错别字的情况</strong>，因为错别字可能会对后面的模型识别造成影响，所以需要先进行纠错动作。比较直观的做法是<strong>基于字典和规则的纠错</strong>。</li>
+<li>句子压缩。NLP对于<strong>长难句</strong>处理可能不能精准识别关键信息，有的时候还需要拆句，比较直观的一种方法是<strong>语法树分析+关键词典</strong>。<ul>
+<li>第一步，通过标点或空格分割长句成若干个短句，然后对短句分类，去掉口水语句。</li>
+<li>第二步，基于概率和句法分析的句子压缩方案，只保留主谓宾等核心句子成分。配合保险关键词典，确保关键词被保留。</li>
+</ul>
+</li>
+<li>指代消解。NLP经典难题，分析“他她它”、“这个那个”之类所指代的内容。其实现思路是：<strong>分词→词性标注→依存句法分析→主谓宾提取→实体替换/指代消解</strong></li>
+<li>问句改写。有的时候用户的说法会比较多，会有自己的习惯说法，尤其是一些专名，例如英雄联盟里面用户不喜欢说“法外狂徒”、“格雷福斯”，而喜欢说“男枪”，那就需要我们进行改写。问句改写主要针对保险名。</li>
+<li>情感分析。这块在小冰那里体现的非常丰富，在平安客服中也有体现，对生气的用户进行一定的安抚。</li>
+</ul>
+<h2 id="二、检索和深度语义匹配技术"><a href="#二、检索和深度语义匹配技术" class="headerlink" title="二、检索和深度语义匹配技术"></a>二、检索和深度语义匹配技术</h2><blockquote>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/https://zhuanlan.zhihu.com/p/393130531">NLP.TM[38] |对话系统经典：检索式对话</a></p>
+</blockquote>
+<p>平安的做法是将智能客服当做是经典的检索式对话来处理，真可谓是简单快捷。</p>
+<h3 id="1-ElasticSearch字面检索"><a href="#1-ElasticSearch字面检索" class="headerlink" title="1. ElasticSearch字面检索"></a>1. ElasticSearch字面检索</h3><p>目前字面检索用的是<strong>ElasticSearch，这</strong>是一个基于lucene的高可用分布式开源搜索引擎。</p>
+<p>除了ElasticSearch外，其实还有Solr搜索引擎。选择前者的原因是，在处理实时的搜索应用时，<strong>ES的效率明显比Solr要高</strong>。线上的产品其实对运行时间有较高的要求，整个系统跑下来要求控制在100毫秒以内。</p>
+<p>我们会根据知识库去建立所有数据的索引，同时支持一些分类和机构的查询。</p>
+<p>其中ES的分词进行了统一配置的动作，里面配置了保险专用名词和同义词。ES默认为TFIDF的算法，但也支持BM25的算法。ES搜索结果的得分则会被零到一的归一化以及分片优化。</p>
+<h3 id="2-孪生网络"><a href="#2-孪生网络" class="headerlink" title="2. 孪生网络"></a>2. 孪生网络</h3><p>接下来介绍深度语义匹配模块，其中主要使用的是<strong>孪生网络Siamese CBOW</strong>。</p>
+<p>词向量会经过预训练，然后用求和取平均的方式来表征句向量，对于每个query，使用标注的相似说法作为正样本，负样本使用随机采样的方式产生，且<strong>每次迭代都进行随机采样</strong>，大大增加训练数据的随机性，提升模型的泛化能力，损失函数为<strong>Contrastive Loss</strong>，让正样本之间的句向量表征尽量相似。预先算出语料的所有句向量表征，将用户问题通过模型转化成句向量，搜索语料里最相似的若干个句向量作为候选答案列表。</p>
+<p><img src="https://pic4.zhimg.com/80/v2-70791e4ff1dad269187d5d83a6b3cc13_1440w.jpg" srcset="/img/loading.gif" lazyload alt="img"></p>
+<h3 id="3-BERT-for-QA"><a href="#3-BERT-for-QA" class="headerlink" title="3. BERT for QA"></a>3. BERT for QA</h3><p>BERT这一块的主要工作是，<strong>在BERT之后做一层微调</strong>。我们会自定义Fine-tune这块的Processor，然后把BERT表征之后的句向量再接一个孪生网络进行训练。</p>
+<p>实验结果显示，<strong>加入BERT表征会比之前存的词向量准确率提升3个点左右。</strong></p>
+<h3 id="4-交互矩阵"><a href="#4-交互矩阵" class="headerlink" title="4. 交互矩阵"></a>4. 交互矩阵</h3><p>前文提到的孪生网络Siamese CBOW其实是一个表示模型。深度语义匹配除了表示模型以外，还有一类是<strong>交互模型</strong>。从论文看，前面一种叫做<strong>representation model</strong>，后面这种交互模型主要是叫<strong>interaction model</strong>。</p>
+<p>具体可查阅博客《<a href="./2021-05-26-语义相似度&amp;对比学习.md">2021-05-26-语义相似度&amp;对比学习</a>》</p>
+<h3 id="5-检索-amp-语义匹配小结"><a href="#5-检索-amp-语义匹配小结" class="headerlink" title="5. 检索&amp;语义匹配小结"></a>5. 检索&amp;语义匹配小结</h3><p>这里要详细说的是语义召回，在对话系统里面主要是两个方案：</p>
+<ul>
+<li>第一种是将用户query向量化（例如word2vector，当然含有更复杂的方法），然后召回历史出现过的相似问题，相似问题对应的回答就可以是答案。也就是Q-&gt;Q-&gt;A的模式。</li>
+<li>第二种就是Q-&gt;A的方式。直接召回结果。</li>
+</ul>
+<p>无论是第一种还是第二种，实质上就是要对句子进行语义表征，然后通过向量召回的方式召回结果，于是解决问题的关键就落在了两个关键点上：</p>
+<ul>
+<li>平行数据的构建。</li>
+<li>语义相似度建模。</li>
+</ul>
+<p>前者是数据集构建的问题，常规方式就是直接从历史对话里面获取，然后根据效果整理、拓展、增强，这就是算法工程师的内功了。后者则是一个学术界已经被很经常谈到的问题了，以DSSM为基础，辅以多种特征抽取层进行处理，平安对LSTM、CNN、Attention、Bert都进行了尝试，虽然BERT不出意外的得到了最好的效果，但是由于耗时的原因最终选择的是cbow（呃呃呃），而在切词粒度上，使用的是词组粒度效果最好，优于简单的字和词语，语义更为丰富，大家可以参考。</p>
+<p>这里给大家推荐一个优秀的开源工具：<strong>MatchZoo</strong>，这是一个开源的Python环境下基于TensorFlow开发的文本匹配工具，实现了主流的20多种深度语义匹配算法。其主要用Keras实现，代码结构非常好。</p>
+<p><img src="https://pic2.zhimg.com/80/v2-f29aaec4c671920e47a79be947f35d25_1440w.jpg" srcset="/img/loading.gif" lazyload alt="img"></p>
+<h2 id="三、基于深度学习的问答排序算法"><a href="#三、基于深度学习的问答排序算法" class="headerlink" title="三、基于深度学习的问答排序算法"></a>三、基于深度学习的问答排序算法</h2><p>通过多路召回，检索返回与用户问最匹配的问句列表，去重归并，通过<strong>实体对齐</strong>去掉一些不合理匹配问，再经过深度学习排序打分，输出最终的相关问列表，最后以业务格式根据匹配问查找答案返回给用户。</p>
+<h3 id="1-Deeprank"><a href="#1-Deeprank" class="headerlink" title="1. Deeprank"></a>1. Deeprank</h3><p>通过索引可以得到若干个答案，将这若干个答案合并去除重复的答案之后，就进入排序模块。接下来将详细介绍我们采用的<strong>深度学习排序算法</strong>：</p>
+<ul>
+<li>构造格式为&lt;用户query，候选答案&gt;的pair对输入样本；</li>
+<li>语义向量获取，这个可以来自于各种预训练语言模型；</li>
+<li>构造打分器<code>CNN+Pooling+相似度矩阵&amp;&amp;拼接tfidf/词共现特征+MLP+Softmax</code>进行 learning to rank，使得正确匹配的样本打分尽量高（归一化后趋近于1），错误匹配的样本打分尽量低（归一化后趋近于0）</li>
+<li>可以在 learng2rank 模型的输入向量中方便地融入外部特征</li>
+</ul>
+<p><img src="https://pic3.zhimg.com/80/v2-7b19bea25e5d7ccea40e6c39209e545a_1440w.jpg" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>首先做分词，每一个词向量的维度矩阵就是<strong>sentence matrix这个矩阵高度</strong>。sentence matrix出来之后，会经过好几个过滤器去提取特征，例如下图是用tri-gram来提取。</p>
+<p>把这些特征提取之后拼接在一起，有多个Filter的话就会生成多个Feature maps。多个卷积Feature maps提取好之后，会经过pooling层，把每个Feature maps做Pooling后，再把Pooling拼接到一起。</p>
+<p>中间看到的Similarity Matching有个矩阵M。<strong>矩阵M</strong>是在模型里是通过参数训练得到的；<strong>Xd</strong>是用户匹配的问题；<strong>Xq</strong>是用户问题经过Pooing后提取的特征。</p>
+<p>通过Xd*M*Xq得到Xsim，得到Join Layer。除了Xsim向量以外，Join Layer还会有额外Feature，包括<strong>问答对的共现词情况（交集个数、重要度、占比等），如TF-IDF、BM25、编辑距离</strong>，属于文本层面的匹配；抽取关键词和实体后的关键词匹配打分、实体匹配打分；意图和标签的匹配等。</p>
+<p>实验发现，<strong>共现词特征其实影响比较大，加上这个特征之后大概会有2-3个点的提升。</strong></p>
+<p>过了join Layer之后，最后是一个MLP多层感知机接softmax，主要分5级打分S、A、B、C、D：S=完全匹配，A=非常相关，B=相关，C、D基本上不怎么相关。</p>
+<p>该排序打分模型支持<strong>对pointwise和pairwise方法进行训练</strong>。假设只是pointwise，就看用户的问题跟匹配的问句是否相关；pairwise的话，就看用户匹配的两个问题，针对用户的query到底哪个更加相关。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>平安虽然并非所谓的大厂，但是其结构化的一些思路，尤其是本篇文章，依旧给我们提供了很多具体方案上的建议，让我们在方案设计时有更多扎实可靠的参考，通读本文下来，我们能够获得的应该是一套完整的智能问答系统方案，非常稳妥可靠。划几个重点吧：</p>
+<ul>
+<li>智能团队对话系统的具体框架和流程。尤其是以检索和语义召回为中心的两条线的上下游处理。</li>
+<li>预处理模块可能需要涉及的工作，有必要的，也有升级的，可以根据项目进展迭代进程逐步增加新功能。</li>
+<li>排序上列举了不少可以使用的特征，让我们在优化效果的时候有更多明确的方向。</li>
+</ul>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/426505179">前沿重器[3] | 平安智能问答系统</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/70203821">智能问答系统：问句预处理、检索和深度语义匹配技术</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/111380177">ROCLING 2019 | 基于深度语义匹配，上下文相关的问答系统</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E6%99%BA%E8%83%BD%E9%97%AE%E7%AD%94%E7%B3%BB%E7%BB%9F/">#智能问答系统</a>
+      
+        <a href="/tags/%E5%B9%B3%E5%AE%89%E4%BA%BA%E5%AF%BF/">#平安人寿</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>平安人寿智能问答系统</div>
+      <div>http://example.com/2021/10/31/2021-10-31-智能客服-平安人寿/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>NSX</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年10月31日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E6%9D%A5%E4%B9%9F/" title="来也对话机器人平台智能问答技术拆解">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">来也对话机器人平台智能问答技术拆解</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/10/31/2021-10-31-%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-%E8%B4%9D%E5%A3%B3%E6%89%BE%E6%88%BF/" title="贝壳找房智能客服">
+                        <span class="hidden-mobile">贝壳找房智能客服</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

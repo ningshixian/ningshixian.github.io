@@ -1,0 +1,846 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="NSX">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Python 最佳实践Python 日常使用的最佳实践，包括：  Python环境搭建 项目工程的架构 单文件的结构 pythonic代码风格 优质项目代码 文档 测试 日志记录 配置文件和数据">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python 最佳实践">
+<meta property="og:url" content="http://example.com/2020/06/19/2020-06-19-Python%20%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="Python 最佳实践Python 日常使用的最佳实践，包括：  Python环境搭建 项目工程的架构 单文件的结构 pythonic代码风格 优质项目代码 文档 测试 日志记录 配置文件和数据">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://marlous.github.io/2019/04/03/Python-%E8%BD%AF%E4%BB%B6%E9%A1%B9%E7%9B%AE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E7%BB%84%E7%BB%87/%E5%9B%BE1.PNG">
+<meta property="article:published_time" content="2020-06-18T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-23T10:28:32.048Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="教程">
+<meta property="article:tag" content="技术">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://marlous.github.io/2019/04/03/Python-%E8%BD%AF%E4%BB%B6%E9%A1%B9%E7%9B%AE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E7%BB%84%E7%BB%87/%E5%9B%BE1.PNG">
+  
+  
+  
+  <title>Python 最佳实践 - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Python环境搭建&amp;Flask项目架构&amp;代码风格"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2020-06-19 00:00" pubdate>
+          2020年6月19日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          9.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          77 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Python环境搭建&amp;Flask项目架构&amp;代码风格</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="Python-最佳实践"><a href="#Python-最佳实践" class="headerlink" title="Python 最佳实践"></a>Python 最佳实践</h1><p>Python 日常使用的最佳实践，包括：</p>
+<ul>
+<li>Python环境搭建</li>
+<li>项目工程的架构</li>
+<li>单文件的结构</li>
+<li>pythonic代码风格</li>
+<li>优质项目代码</li>
+<li>文档</li>
+<li>测试</li>
+<li>日志记录</li>
+<li>配置文件和数据</li>
+</ul>
+<span id="more"></span>
+<h2 id="安装Python"><a href="#安装Python" class="headerlink" title="安装Python"></a>安装Python</h2><ol>
+<li>从Python的官方网站下载Python 3.7对应的或<a target="_blank" rel="noopener" href="https://www.python.org/ftp/python/3.8.0/python-3.8.0.exe">32位安装程序</a></li>
+<li>然后，运行下载的exe安装包。特别要注意勾上<code>Add Python 3.7 to PATH</code>，然后点“Install Now”即可完成安装。</li>
+</ol>
+<h2 id="底层虚拟环境-virtualenv"><a href="#底层虚拟环境-virtualenv" class="headerlink" title="底层虚拟环境 virtualenv"></a>底层虚拟环境 virtualenv</h2><p><a target="_blank" rel="noopener" href="https://learnku.com/docs/python-guide/2018/virtualenvs-lower-level-virtualenv/3257">参考链接1</a> <a target="_blank" rel="noopener" href="https://pythonguidecn.readthedocs.io/zh/latest/writing/structure.html">参考链接2</a></p>
+<blockquote>
+<p> <a target="_blank" rel="noopener" href="http://pypi.python.org/pypi/virtualenv">virtualenv</a> 是一个 Python 项目依赖管理工具</p>
+<p> 建议在开发项目时使用virtualenv做依赖隔离，便于使用pip freeze自动生成requirements文件</p>
+</blockquote>
+<p>通过 pip 安装 virtualenv ：</p>
+<figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs crystal"><span class="hljs-variable">$ </span>pip install virtualenv<br><span class="hljs-variable">$ </span>virtualenv --version<br></code></pre></td></tr></table></figure>
+<p>为项目创建一个虚拟环境，名叫<code>my_project</code>：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs powershell"><span class="hljs-variable">$</span> <span class="hljs-built_in">cd</span> my_project_folder<br><span class="hljs-variable">$</span> virtualenv my_project<br></code></pre></td></tr></table></figure>
+<p>virtualenv 会创建一个文件夹，其中包含使用 Python 项目所有所需的可执行文件。</p>
+<p>开始使用虚拟环境前，需要先激活：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash"><span class="hljs-built_in">source</span> my_project/bin/activate	<span class="hljs-comment"># linux</span></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">my_project\Scripts\activate		<span class="hljs-comment"># windows</span></span><br></code></pre></td></tr></table></figure>
+<p>安装包的话就与往常一样，如：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs php">$ pip install XXX<br></code></pre></td></tr></table></figure>
+<p>如果你在虚拟环境中暂时完成了工作，可以这样停用它：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs php">$ deactivate<br></code></pre></td></tr></table></figure>
+<p>为了保持环境的一致性，“冻结” 当前环境包的状态是正确的选择：</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs pgsql">$ pip <span class="hljs-keyword">freeze</span> &gt; requirements.txt<br></code></pre></td></tr></table></figure>
+<p>该命令将创建一个 requirements.txt 文件，里面包含有当前环境所有包的简单列表及对应的版本，这样就能完全搭建出与之前一致的环境了：</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cmake">$ pip <span class="hljs-keyword">install</span> -r requirements.txt<br></code></pre></td></tr></table></figure>
+<p>这样有助于在跨设备，跨部署，跨人员的情况下保证环境的一致性。</p>
+<p>最后，记得将虚拟环境文件夹从源代码控制中排除，也就是将其添加到 ignore 列表中 ( 详见 <a target="_blank" rel="noopener" href="http://docs.python-guide.org/en/latest/writing/gotchas/#version-control-ignores">Version Control Ignores</a>).</p>
+<h2 id="写出优雅的-Python-代码"><a href="#写出优雅的-Python-代码" class="headerlink" title="写出优雅的 Python 代码"></a>写出优雅的 Python 代码</h2><h3 id="结构化您的工程"><a href="#结构化您的工程" class="headerlink" title="结构化您的工程"></a>结构化您的工程</h3><p>工程化的项目目录具备让项目跑起来的所有基本内容。它里边会包含你的<strong>项目文件布局、自动化测试代码，模组，以及安装脚本</strong>。当你建立一个新项目的时候，只要把这个目录复制过去，改改目录的名字，再编辑里边的文件就行了。</p>
+<p>“结构化”意味着通过编写简洁的代码，并且正如文件系统中文件和目录的组织一样， 代码应该具有逻辑和依赖清晰。</p>
+<p>目的：为了防止各个模块的依赖混乱，一般通过模块划分，对Python项目进行结构化。之后，就只剩下架构性的工作，包括设计、实现项目各个模块，并整理清他们之间 的交互关系。</p>
+<h3 id="项目架构-amp-仓库"><a href="#项目架构-amp-仓库" class="headerlink" title="项目架构&amp;仓库"></a>项目架构&amp;仓库</h3><p>简单的仓库结构模板： <a target="_blank" rel="noopener" href="https://github.com/kennethreitz/samplemod">可以在GitHub上找到</a> 。</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>布局</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>README.rst</td>
+<td>项目介绍</td>
+</tr>
+<tr>
+<td>LICENSE</td>
+<td>许可证. 法律相关</td>
+</tr>
+<tr>
+<td>setup.py</td>
+<td>安装、部署、打包的脚本-分发管理<br/>使用 <code>python setup.py install</code> 安装</td>
+</tr>
+<tr>
+<td>requirements.txt</td>
+<td>项目所需的依赖库</td>
+</tr>
+<tr>
+<td>sample/__init__.py<br />sample/core.py<br/>sample/helpers.py<br/>sample/setting.py<br />sample/configs/<br />sample/data/<br />sample/static/<br />sample/templates/</td>
+<td>初始化应用并组合所有其它组件<br />核心代码/具体代码<br/>helpers 工具模块<br />setting 用来作变量和常量的初始化<br />configs 配置文件包<br />data 数据文件包<br />包括了公共CSS， Javascript等<br />放置应用的Jinja2模板</td>
+</tr>
+<tr>
+<td>docs/conf.py<br/>docs/index.rst</td>
+<td>项目的参考文档</td>
+</tr>
+<tr>
+<td>tests/</td>
+<td>包的集合和单元测试<br />上下文环境的文件 context.py -方便测试导包</td>
+</tr>
+<tr>
+<td>Makefile</td>
+<td>通用的管理任务</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Makefile 模板：</strong></p>
+<figure class="highlight subunit"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs subunit">init:<br>    pip install -r requirements.txt<br><br><span class="hljs-keyword">test:</span><br><span class="hljs-keyword">    </span>py.test tests<br><br>.PHONY: init test<br></code></pre></td></tr></table></figure>
+<p><strong>setup.py 模板：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs Python"><span class="hljs-keyword">from</span> setuptools <span class="hljs-keyword">import</span> setup, find_packages<br><br><span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(<span class="hljs-string">&#x27;README.rst&#x27;</span>) <span class="hljs-keyword">as</span> f:<br>    readme = f.read()<br><span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(<span class="hljs-string">&#x27;LICENSE&#x27;</span>) <span class="hljs-keyword">as</span> f:<br>    license = f.read()<br>setup(<br>    name=<span class="hljs-string">&#x27;slot-extract&#x27;</span>,<br>    version=<span class="hljs-string">&#x27;0.1.0&#x27;</span>,<br>    description=<span class="hljs-string">&#x27;龙小湖对话机器人-槽位提取服务&#x27;</span>,<br>    long_description=readme,<br>    author=<span class="hljs-string">&#x27;Ning Shixian&#x27;</span>,<br>    author_email=<span class="hljs-string">&#x27;&#x27;</span>,<br>    url=<span class="hljs-string">&#x27;http://git.longhu.net/ningshixian/slot-extract&#x27;</span>,<br>    license=license,<br>    packages=find_packages(exclude=(<span class="hljs-string">&#x27;tests&#x27;</span>, <span class="hljs-string">&#x27;docs&#x27;</span>))<br>)<br></code></pre></td></tr></table></figure>
+<h3 id="Python中global的用法"><a href="#Python中global的用法" class="headerlink" title="Python中global的用法"></a>Python中global的用法</h3><p>global 是python中的一个关键字，作用在变量上，该关键字通常放在函数块中，用来声明该变量为全局变量。</p>
+<p>例如下面变量a，定义在函数外面的是全局变量a，定义在fun函数里面的a是另一个a，是局部变量a，两者没有任何关系。好比这个地区有个叫张三的人，公办室里有个另一个叫张三的人。他们是两个不同的人。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python">a = <span class="hljs-number">10</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">fun</span>():<br>    a = <span class="hljs-number">2</span><br>fun()<br><span class="hljs-built_in">print</span>(a) <span class="hljs-comment"># 输出 10</span><br></code></pre></td></tr></table></figure>
+<p>如果想要函数里面的那个a就代表外面的全局变量a，那么就要将函数里面的a 用关键字 global 声明为全局变量</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python">a = <span class="hljs-number">10</span><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">fun</span>():<br>    <span class="hljs-keyword">global</span> a<br>    a = <span class="hljs-number">2</span><br>fun()<br><span class="hljs-built_in">print</span>(a)  <span class="hljs-comment"># 输出 2</span><br></code></pre></td></tr></table></figure>
+<h2 id="单个文件结构"><a href="#单个文件结构" class="headerlink" title="单个文件结构)"></a><a href="[https://marlous.github.io/2019/04/03/Python-%E8%BD%AF%E4%BB%B6%E9%A1%B9%E7%9B%AE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E7%BB%84%E7%BB%87/](https://marlous.github.io/2019/04/03/Python-软件项目文件结构组织/">单个文件结构</a>)</h2><p><img src="https://marlous.github.io/2019/04/03/Python-%E8%BD%AF%E4%BB%B6%E9%A1%B9%E7%9B%AE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E7%BB%84%E7%BB%87/%E5%9B%BE1.PNG" srcset="/img/loading.gif" lazyload alt="单个文件结构"></p>
+<h3 id="包"><a href="#包" class="headerlink" title="包"></a>包</h3><p>Python提供非常简单的包管理系统，即简单地将模块管理机制扩展到一个目录上(目录扩 展为包)。</p>
+<p><strong>任意包含 <code>__init__.py</code> 文件的目录都被认为是一个Python包</strong>。导入一个包里不同 模块的方式和普通的导入模块方式相似，特别的地方是 <code>__init__.py</code> 文件将集合 所有包范围内的定义。</p>
+<h3 id="模块"><a href="#模块" class="headerlink" title="模块"></a>模块</h3><p><strong>Python模块对应的是一个<code>.py</code> 文件</strong>，是最主要的抽象层之一。抽象层允许将代码分为 不同部分，每个部分包含相关的数据与功能。</p>
+<p>例如在项目中，一层控制<em>用户操作</em> 相关接口，另一层<em>处理底层数据</em> 操作。最自然分开这两 层的方式是，在一份文件里重组所有功能接口，并将所有底层操作封装到另一个文件中。这种情况下，接口文件需要导入封装底层操作的文件，可通过 <code>import</code> 和 <code>from ... import</code> 语句完成。一旦您使用 import 语句，就可以使用这个模块。</p>
+<h3 id="类"><a href="#类" class="headerlink" title="类"></a>类</h3><p>包含函数、变量。类中有属性和方法。一个对象就是一个类的实例。</p>
+<h3 id="可变和不可变类型"><a href="#可变和不可变类型" class="headerlink" title="可变和不可变类型"></a>可变和不可变类型</h3><p>Python提供两种内置或用户定义的类型。<strong>数字、字符串、元组是不可变的</strong>，<strong>列表、字典是可变的</strong>。</p>
+<p>对不可变类型的变量重新赋值，实际上是重新创建一个不可变类型的对象，并将原来的变量重新指向新创建的对象（如果没有其他变量引用原有对象的话（即引用计数为0），原有对象就会被回收）。</p>
+<p> 字符串是不可变类型。这意味着当需要组合一个 字符串时，将每一部分放到一个可变列表里，使用字符串时再组合 (‘join’) 起来的做法更高效。 </p>
+<p><strong>差</strong></p>
+<figure class="highlight hsp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs hsp"><span class="hljs-meta"># 创建将<span class="hljs-number">0</span>到<span class="hljs-number">19</span>连接起来的字符串 (例 <span class="hljs-string">&quot;012..1819&quot;</span>)</span><br>nums = <span class="hljs-string">&quot;&quot;</span><br><span class="hljs-keyword">for</span> n in range(<span class="hljs-number">20</span>):<br>    nums += <span class="hljs-keyword">str</span>(n)   <span class="hljs-meta"># 慢且低效</span><br><span class="hljs-keyword">print</span> nums<br></code></pre></td></tr></table></figure>
+<p><strong>好</strong></p>
+<figure class="highlight axapta"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs axapta"><span class="hljs-meta"># 创建将0到19连接起来的字符串 (例 &quot;012..1819&quot;)</span><br>nums = [<span class="hljs-built_in">str</span>(n) <span class="hljs-keyword">for</span> n <span class="hljs-keyword">in</span> range(<span class="hljs-number">20</span>)]<br><span class="hljs-keyword">print</span> <span class="hljs-string">&quot;&quot;</span>.<span class="hljs-keyword">join</span>(nums)<br></code></pre></td></tr></table></figure>
+<h3 id="函数的参数"><a href="#函数的参数" class="headerlink" title="函数的参数"></a>函数的参数</h3><p>函数的参数可以使用四种不同的方式传递给函数。</p>
+<ol>
+<li><strong>必选参数</strong> 是没有默认值的必填的参数 <code>point(x, y)</code></li>
+<li><strong>关键字参数</strong> 是非强制的，且有默认值  <code>point(x, y, z=None)</code></li>
+<li><strong>任意参数列表</strong> 如果函数的参数数量是动态的，该函数可以被定义成 <code>*args</code> 的结构 <code>send(message, *args)</code></li>
+<li><strong>任意关键字参数字典</strong> 如果函数要求一系列待定的命名参数，我们可以使用 <code>**kwargs</code> 的结构。在函数体中， kwargs 是一个字典，它包含所有传递给函数但没有被其他关键字参数捕捉的命名参数</li>
+</ol>
+<h3 id="返回值"><a href="#返回值" class="headerlink" title="返回值"></a>返回值</h3><p>当一个函数在其正常运行过程中有多个主要出口点时，它会变得难以调试其返回结果，所以保持单个出口点可能会更好。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">complex_function</span>(<span class="hljs-params">a, b, c</span>):<br>    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> a:<br>        <span class="hljs-keyword">return</span> <span class="hljs-literal">None</span>  <span class="hljs-comment"># 抛出一个异常可能会更好</span><br>    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> b:<br>        <span class="hljs-keyword">return</span> <span class="hljs-literal">None</span>  <span class="hljs-comment"># 抛出一个异常可能会更好</span><br><br>    <span class="hljs-comment"># 一些复杂的代码试着用 a,b,c 来计算x</span><br>    <span class="hljs-comment"># 如果成功了，抵制住返回 x 的诱惑</span><br>    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> x:<br>        <span class="hljs-comment"># 使用其他的方法来计算出 x</span><br>    <span class="hljs-keyword">return</span> x  <span class="hljs-comment"># 返回值 x 只有一个出口点有利于维护代码</span><br></code></pre></td></tr></table></figure>
+<h3 id="pythonic风格"><a href="#pythonic风格" class="headerlink" title="pythonic风格"></a>pythonic风格</h3><h4 id="代码风格"><a href="#代码风格" class="headerlink" title="代码风格:"></a>代码风格:</h4><ol>
+<li><p>每个缩进层级使用4个空格</p>
+</li>
+<li><p>每行最多79个字符</p>
+</li>
+<li><p>顶层函数或类的定义之间空两行（特别容易漏，漏的话，是报E302 expected 2 blank lines, found 1）</p>
+</li>
+<li><p>采用ASCII或者UTF-8编码文件</p>
+</li>
+<li><p>每条import导入一个模块，导入放在代码顶端，导入顺序是先标准库，第三方库，本地库</p>
+</li>
+<li><p>小括号，大括号，中括号之间的逗号没有额外的空格</p>
+</li>
+<li><p>类命名采用骆驼命名法，CamelCase;函数用小写字符</p>
+</li>
+<li><p>函数命名使用小写字符，例如xxx_xxx_xxx; 用下划线开头定义私有的属性或方法，如_xxx</p>
+</li>
+</ol>
+<h4 id="命名风格"><a href="#命名风格" class="headerlink" title="命名风格:"></a>命名风格:</h4><ol>
+<li><p>类名使用 UpperCamelCase 风格，必须遵从驼峰形式，如：XmlService</p>
+</li>
+<li><p>方法名、参数名、成员变量、局部变量都统一使用 lowerCamelCase 风格，必须遵从驼峰形式：localValue / getHttpMessage()</p>
+</li>
+<li><p>常量命名全部大写，单词间用下划线隔开</p>
+</li>
+<li><p>包名统一使用小写、单数、_</p>
+</li>
+<li><p>命名时，使用尽量完整的单词组合来表达其意</p>
+</li>
+<li><p>方法命名规约：</p>
+<pre><code class="hljs">1） 获取单个对象的方法用 get 做前缀。
+   2） 获取多个对象的方法用 list 做前缀。
+   3） 获取统计值的方法用 count 做前缀。
+   4） 插入的方法用 save/insert 做前缀。
+   5） 删除的方法用 remove/delete 做前缀。
+   6） 修改的方法用 update 做前缀。
+</code></pre></li>
+<li><p>异常处理</p>
+<p>对大段代码进行 try-catch，这是不负责任的表现。<br>捕获异常是为了处理它，不要捕获了却什么都不处理而抛弃之<br>finally 块必须对资源对象、流对象进行关闭<br>日志文件推荐至少保存 15 天</p>
+</li>
+<li><p>单元测试</p>
+<p>保证测试粒度足够小，方法级别<br>必须使用 assert 来验证<br>编写单元测试代码遵守 BCDE 原则，以保证被测试模块的交付质量</p>
+<figure class="highlight mathematica"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs mathematica"><span class="hljs-variable">B</span>： <span class="hljs-variable">Border</span>，边界值测试，包括循环边界、特殊取值、特殊时间点、数据顺序等。<br><span class="hljs-built_in">C</span>： <span class="hljs-variable">Correct</span>，正确的输入，并得到预期的结果。<br><span class="hljs-built_in">D</span>： <span class="hljs-variable">Design</span>，与设计文档相结合，来编写单元测试。<br><span class="hljs-built_in">E</span>： <span class="hljs-variable">Error</span>，强制错误信息输入（如：非法数据、异常流程、非业务允许输入等），并得到预期的结果。<br></code></pre></td></tr></table></figure>
+</li>
+<li><p>MySQL 数据库</p>
+<p>表达是与否概念的字段，必须使用 is_xxx 的方式命名，数据类型是 unsigned tinyint<br>表名、字段名必须使用小写字母或数字，如：aliyun_admin<br>小数类型为 decimal，禁止使用 float 和 double<br>varchar 是可变长字符串，不预先分配存储空间<br>表必备三字段： id, gmt_create, gmt_modified<br>表的命名最好是加上“业务名称_表的作用”    </p>
+</li>
+</ol>
+<h1 id="阅读优质的代码"><a href="#阅读优质的代码" class="headerlink" title="阅读优质的代码"></a>阅读优质的代码</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/gleitz/howdoi">Howdoi</a> Howdoi 使用 Python 实现的代码搜索工具。</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/mitsuhiko/flask">Flask</a> Flask 是基于 Werkzeug and Jinja2 的 Python 微框架。 它的目的是快速入门并开发实现你头脑中的好主意。</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/python-diamond/Diamond">Diamond</a> Diamond 是使用 python 实现的用于收集监控数据的工具，主要收集 metrics 类型的数据，并将其发布到 Graphite 或其他后台。它能够收集 cpu ， 内存， 网络， i/o ，负载和磁盘 metrics 数据。此外，它还提供 API 用以实现自定义收集器从任意来源中收集指标数据。</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/mitsuhiko/werkzeug">Werkzeug</a> Werkzeug 最初是 WSGI 应用程序的各种实用工具的简单集合，并已成为最先进的 WSGI 实用程序模块之一。它包括强大的调试器、功能齐全的请求和响应对象、处理实体标记的 HTTP 实用程序、缓存控制头、HTTP 日期、cookie 处理、文件上传、强大的 URL 路由系统和一群社区贡献的插件模块。</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/kennethreitz/requests">Requests</a> Requests 是一个用 Python 实现的 Apache2 授权的 HTTP 库供大家使用。</li>
+<li>Tablib 是用 Python 实现的无格式的表格数据集库。</li>
+</ul>
+<h1 id="项目文档"><a href="#项目文档" class="headerlink" title="项目文档"></a>项目文档</h1><p>建议提供相关函数的更多信息，包括它是做什么的， 所抛的任何异常，返回的内容或参数的相关细节。</p>
+<p>通常称为 <a target="_blank" rel="noopener" href="http://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_numpy.html">Numpy style</a> Docstrings</p>
+<h1 id="代码测试"><a href="#代码测试" class="headerlink" title="代码测试"></a>代码测试</h1><p>py.test 测试工具功能完备，并且可扩展，语法简单</p>
+<figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs crystal"><span class="hljs-variable">$ </span>pip install pytest<br><span class="hljs-variable">$ </span>pytest tests.py<br></code></pre></td></tr></table></figure>
+<h1 id="日志记录"><a href="#日志记录" class="headerlink" title="日志记录"></a>日志记录</h1><p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/df0343c59d74">python项目的日志体系构建实现</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/2c0fb3e1103d">Python日志最佳实践</a></p>
+<p>日志记录一般有两个目的：</p>
+<ul>
+<li><strong>诊断日志</strong> 记录与应用程序操作相关的日志。例如，当用户遇到程序报错时， 可通过搜索诊断日志以获得上下文信息。</li>
+<li><strong>审计日志</strong> 为商业分析而记录的日志。从审计日志中，可提取用户的交易信息， 并结合其他用户资料构成用户报告，或者用来作为优化商业目标的数据支撑。</li>
+</ul>
+<p>Python的logging模块提供了通用的日志系统，包括logger，handler，filter，formatter这四个方法：</p>
+<ol>
+<li>logger提供日志接口，供应用代码使用。<br> logger最长用的操作有两类：配置和发送日志消息。可以通过logging.getLogger(name)获取logger对象，如果不指定name则返回root对象，多次使用相同的name调用getLogger方法返回同一个logger对象。</li>
+<li>handler<br> 将日志记录（log record）发送到合适的目的地（destination）,比如文件，socket等。一个logger对象可以通过addHandler方法添加0到多个handler，每个handler又可以定义不同日志级别，以实现日志分级过滤显示。</li>
+<li>filter<br> 提供一种优雅的方式决定一个日志记录是否发送到handler。</li>
+<li>formatter<br> 指定日志记录输出的具体格式。formatter的构造方法需要两个参数：消息的格式字符串和日期字符串，这两个参数都是可选的。</li>
+</ol>
+<p>总的一个逻辑是这样的，我们需要创建一个logger,这样在代码执行中，可以使用logger.debug/info/warning/error等方法，将日志输出到指定的位置（可以是控制台、文件，可多选）；创建logger之后，需要给logger添加处理句柄addHandler()，每个句柄就对应一种输出，比如StreamHandler表示输出到控制台（当然我这里简单化了），FileHandler输出到指定文件。然后给句柄设置格式Format，这就是你想要看见的格式。</p>
+<h2 id="1-logger的定义"><a href="#1-logger的定义" class="headerlink" title="1. logger的定义"></a>1. logger的定义</h2><p>Logging.Logger：Logger是Logging模块的主体，进行以下三项工作：</p>
+<ol>
+<li>为程序提供记录日志的接口</li>
+<li>判断日志所处级别，并判断是否要过滤</li>
+<li>根据其日志级别将该条日志分发给不同handler<br> 常用函数有：<br> <code>Logger.setLevel()</code>设置日志级别<br> <code>Logger.addHandler()</code> 和<code>Logger.removeHandler()</code>添加和删除一个Handler<br> <code>Logger.addFilter()</code>添加一个Filter,过滤作用</li>
+</ol>
+<h2 id="2-handler的使用"><a href="#2-handler的使用" class="headerlink" title="2. handler的使用"></a>2. handler的使用</h2><p>所有的handler汇总，按需自取</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs cpp">StreamHandler：logging.StreamHandler；日志输出到流，可以是sys.stderr，sys.stdout或者文件<br>FileHandler：logging.FileHandler；日志输出到文件<br>BaseRotatingHandler：logging.handlers.BaseRotatingHandler；基本的日志回滚方式<br>RotatingHandler：logging.handlers.RotatingHandler；日志回滚方式，支持日志文件最大数量和日志文件回滚<br>TimeRotatingHandler：logging.handlers.TimeRotatingHandler；日志回滚方式，在一定时间区域内回滚日志文件<br>SocketHandler：logging.handlers.SocketHandler；远程输出日志到TCP/IP sockets<br>DatagramHandler：logging.handlers.DatagramHandler；远程输出日志到UDP sockets<br>SMTPHandler：logging.handlers.SMTPHandler；远程输出日志到邮件地址<br>SysLogHandler：logging.handlers.SysLogHandler；日志输出到syslog<br>NTEventLogHandler：logging.handlers.NTEventLogHandler；远程输出日志到Windows NT/<span class="hljs-number">2000</span>/XP的事件日志<br>MemoryHandler：logging.handlers.MemoryHandler；日志输出到内存中的指定buffer<br>HTTPHandler：logging.handlers.HTTPHandler；通过<span class="hljs-string">&quot;GET&quot;</span>或者<span class="hljs-string">&quot;POST&quot;</span>远程输出到HTTP服务器<br></code></pre></td></tr></table></figure>
+<h2 id="3-Formater的使用"><a href="#3-Formater的使用" class="headerlink" title="3. Formater的使用"></a>3. Formater的使用</h2><p>format：指定输出的格式和内容，format可以输出很多有用的信息</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs ruby">参数：作用<br><span class="hljs-string">%(levelno)</span>s：打印日志级别的数值<br><span class="hljs-string">%(levelname)</span>s：打印日志级别的名称<br><span class="hljs-string">%(pathname)</span>s：打印当前执行程序的路径，其实就是sys.argv[<span class="hljs-number">0</span>]<br><span class="hljs-string">%(filename)</span>s：打印当前执行程序名<br><span class="hljs-string">%(funcName)</span>s：打印日志的当前函数<br><span class="hljs-string">%(lineno)</span>d：打印日志的当前行号<br><span class="hljs-string">%(asctime)</span>s：打印日志的时间<br><span class="hljs-string">%(thread)</span>d：打印线程<span class="hljs-variable constant_">ID</span><br><span class="hljs-string">%(threadName)</span>s：打印线程名称<br><span class="hljs-string">%(process)</span>d：打印进程<span class="hljs-variable constant_">ID</span><br><span class="hljs-string">%(message)</span>s：打印日志信息<br></code></pre></td></tr></table></figure>
+<p>举个例子</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">console_fmt = <span class="hljs-string">&#x27;%(asctime)-15s [%(TASK)s] %(message)s&#x27;</span><br>console_formatter = logging.Formatter(console_fmt)<br></code></pre></td></tr></table></figure>
+<h2 id="4-Level级别"><a href="#4-Level级别" class="headerlink" title="4. Level级别"></a>4. Level级别</h2><p>level：设置日志级别，默认为logging.WARNNING；</p>
+<p>可以给logger和handler设置不同的级别，比如logger设置为debug，然后handler1设置为error,这样这个输出只会记录error以上的日志级别信息，另一个handler2设置为info,记录info级别以上的信息。有下面这几种可以设置</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs undefined">日志等级：使用范围<br><br>FATAL：致命错误<br>CRITICAL：特别糟糕的事情，如内存耗尽、磁盘空间为空，一般很少使用<br>ERROR：发生错误时，如IO操作失败或者连接问题<br>WARNING：发生很重要的事件，但是并不是错误时，如用户登录密码错误<br>INFO：处理请求或者状态变化等日常事务<br>DEBUG：调试过程中使用DEBUG等级，如算法中每个循环的中间状态<br>NOTSET：如果设置了日志级别为NOTSET,那么这里可以采取debug、info的级别的内容也可以显示在控制台上了<br></code></pre></td></tr></table></figure>
+<h2 id="示例代码"><a href="#示例代码" class="headerlink" title="示例代码"></a>示例代码</h2><figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs reasonml">import logging<br>import auxiliary_module<br><br># 创建名为&#x27;spam_application&#x27;的记录器<br>logger = logging.get<span class="hljs-constructor">Logger(&#x27;<span class="hljs-params">spam_application</span>&#x27;)</span><br>logger.set<span class="hljs-constructor">Level(<span class="hljs-params">logging</span>.DEBUG)</span><br><br># 创建级别为DEBUG的日志处理器<br>fh = logging.<span class="hljs-constructor">FileHandler(&#x27;<span class="hljs-params">spam</span>.<span class="hljs-params">log</span>&#x27;)</span><br>fh.set<span class="hljs-constructor">Level(<span class="hljs-params">logging</span>.DEBUG)</span><br><br># 创建级别为ERROR的控制台日志处理器<br>ch = logging.<span class="hljs-constructor">StreamHandler()</span><br>ch.set<span class="hljs-constructor">Level(<span class="hljs-params">logging</span>.ERROR)</span><br><br># 创建格式器，加到日志处理器中<br>formatter = logging.<span class="hljs-constructor">Formatter(&#x27;%(<span class="hljs-params">asctime</span>)</span>s - %(name)s - %(levelname)s - %(message)s&#x27;)<br>fh.set<span class="hljs-constructor">Formatter(<span class="hljs-params">formatter</span>)</span><br>ch.set<span class="hljs-constructor">Formatter(<span class="hljs-params">formatter</span>)</span><br><br>logger.add<span class="hljs-constructor">Handler(<span class="hljs-params">fh</span>)</span><br>logger.add<span class="hljs-constructor">Handler(<span class="hljs-params">ch</span>)</span><br><br>logger.debug(&#x27;debug message&#x27;)<br>logger.info(&#x27;info message&#x27;)<br>logger.warn(&#x27;warn message&#x27;)<br>logger.error(&#x27;error message&#x27;)<br>logger.critical(&#x27;critical message&#x27;)<br></code></pre></td></tr></table></figure>
+<h1 id="配置文件和数据"><a href="#配置文件和数据" class="headerlink" title="配置文件和数据"></a>配置文件和数据</h1><ol>
+<li>如框架无特殊规定，配置文件应放置于<strong>项目根目录下的<code>config</code>文件夹中</strong></li>
+<li>配置文件在部署、预发布、生产环境、开发环境等环境中会有很大差异，因此请<strong>不要将配置文件在上传到git、svn等版本库中</strong>， 而是建议在版本库中上传一个配置的<strong>示例文件</strong>（如：config.example）</li>
+<li>上传到版本库中配置示例文件<strong>不允许出现密码、证书、token等敏感信息</strong></li>
+<li>数据和程序应该尽量分离，不要将数据写在代码中，需要持久化存储数据必须使用数据库</li>
+</ol>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a target="_blank" rel="noopener" href="https://learnku.com/docs/python-guide/2018"><strong>Python 最佳实践指南 2018</strong></a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E6%95%99%E7%A8%8B/">#教程</a>
+      
+        <a href="/tags/%E6%8A%80%E6%9C%AF/">#技术</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Python 最佳实践</div>
+      <div>http://example.com/2020/06/19/2020-06-19-Python 最佳实践/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>NSX</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2020年6月19日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/06/19/2020-06-19-Python%E6%95%B0%E6%8D%AE%E5%BA%93%E5%A6%82%E4%BD%95%E8%BF%9E%E6%8E%A5/" title="Python操作数据库">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Python操作数据库</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/06/16/2020-06-16-FastAPI%20%E5%AD%A6%E4%B9%A0%E6%89%8B%E5%86%8C/" title="FastAPI 学习手册">
+                        <span class="hidden-mobile">FastAPI 学习手册</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

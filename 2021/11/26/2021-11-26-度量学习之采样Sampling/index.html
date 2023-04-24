@@ -1,0 +1,698 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="NSX">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="在metric learning中采样方法也同样重要。甚至在Sampling Matters in Deep Embedding Learning中，作者指出在metric learning中，采样方法比损失函数具有同等或更重要的作用。 为什么要采样以triplet loss为例，它的输入为（anchor，positive，negative）。如果有一个人脸训练集，共m个人（m&#x3D;10000），每个">
+<meta property="og:type" content="article">
+<meta property="og:title" content="度量学习之采样Sampling">
+<meta property="og:url" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E9%87%87%E6%A0%B7Sampling/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="在metric learning中采样方法也同样重要。甚至在Sampling Matters in Deep Embedding Learning中，作者指出在metric learning中，采样方法比损失函数具有同等或更重要的作用。 为什么要采样以triplet loss为例，它的输入为（anchor，positive，negative）。如果有一个人脸训练集，共m个人（m&#x3D;10000），每个">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=Loss+%3D+max%28d%28a%2Cp%29-d%28a%2Cn%29%2Bmargin%2C+0%29%5C%5C#id=mN8ND&amp;originHeight=40&amp;originWidth=600&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=q%28d%29+%5Cpropto+d%5E%7Bn-2%7D%5B1-%5Cfrac%7B1%7D%7B4%7Dd%5E2%5D%5E%7B%5Cfrac%7Bn-3%7D%7B2%7D%7D%5C%5C#id=lAiDa&amp;originHeight=51&amp;originWidth=600&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://pic3.zhimg.com/80/v2-fe0ee5993961a21992f69d8e851fffd6_1440w.jpg#height=273&amp;id=sFzHm&amp;originHeight=329&amp;originWidth=605&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=shadow&amp;title=&amp;width=502">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=%5Cpartial+%3D+%5Cfrac%7Bd%28a%2Cn%29%7D%7B%5Cleft%7C+%5Cleft%7C+d%28a%2Cn%29+%5Cright%7C+%5Cright%7C%7D+w%28t%29#id=uoyaI&amp;originHeight=52&amp;originWidth=151&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=%5Cpartial+%3D+%5Cfrac%7Bd%28a%2Cn%29%2Bz%7D%7B%5Cleft%7C+%5Cleft%7C+d%28a%2Cn%29%2Bz+%5Cright%7C+%5Cright%7C%7D#id=QctDM&amp;originHeight=52&amp;originWidth=148&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=Pr%28n%5E%2A+%3D+n%7Ca%29+%5Cpropto+min%28%5Clambda%2C+q%5E%7B-1%7Dd%28a%2Cn%29%29%5C%5C#id=dXI9e&amp;originHeight=43&amp;originWidth=600&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://pic2.zhimg.com/80/v2-d27a8baf9f8b2f46a2ee08407467ec89_1440w.jpg#height=290&amp;id=M8Ivf&amp;originHeight=377&amp;originWidth=591&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=shadow&amp;title=&amp;width=454">
+<meta property="article:published_time" content="2021-11-25T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-24T11:44:52.208Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="原创">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.zhihu.com/equation?tex=Loss+%3D+max%28d%28a%2Cp%29-d%28a%2Cn%29%2Bmargin%2C+0%29%5C%5C#id=mN8ND&amp;originHeight=40&amp;originWidth=600&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+  
+  
+  
+  <title>度量学习之采样Sampling - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="度量学习之采样Sampling"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-11-26 00:00" pubdate>
+          2021年11月26日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.7k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          31 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">度量学习之采样Sampling</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>在<a target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=metric+learning&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22article%22%2C%22sourceId%22%3A157900964%7D">metric learning</a>中采样方法也同样重要。甚至在<a href="https://link.zhihu.com/?target=https%3A//arxiv.org/pdf/1706.07567.pdf">Sampling Matters in Deep Embedding Learning</a>中，作者指出在metric learning中，采样方法比损失函数具有同等或更重要的作用。</p>
+<h1 id="为什么要采样"><a href="#为什么要采样" class="headerlink" title="为什么要采样"></a>为什么要采样</h1><p>以triplet loss为例，它的输入为（anchor，positive，negative）。如果有一个人脸训练集，共m个人（m=10000），每个人的人脸图片有n张（n=100），那么所有可能的<a target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=triplet+pair&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22article%22%2C%22sourceId%22%3A157900964%7D">triplet pair</a>为 $100×99×999$ 个（假设anchor固定，positive有99个选择，negative有9999个选择）。如果这些pair全参与训练，则<a target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=%E5%A4%8D%E6%9D%82%E5%BA%A6&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22article%22%2C%22sourceId%22%3A157900964%7D">复杂度</a>为O（mn^2），显然是不可行的。考虑<a target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=classification+loss&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22article%22%2C%22sourceId%22%3A157900964%7D">classification loss</a>，如果每一张人脸图片都参与训练，那么共有 $10000×100$ 张训练图片，此时复杂度是O（mn）；如果以人为单位，每个epoch随机从100张里面抽一张人脸作为这个人的训练图片，那么每个epoch的训练集为10000张，此时复杂度为O（m）。因此需要找一种对标classification loss的方法，当遍历所有图片（以图片为单位）时，为每个图片找到合适的triplet pair，此时复杂度为O（mn）；当以人为单位时，为每个人找到合适的triplet pair，此时复杂度为O（m)。为了叙述清晰，统一以后一种作为目标。</p>
+<p>为了完成上面说的目标，我们需要进行采样，包括：</p>
+<ul>
+<li><strong>随机采样（Global）</strong></li>
+<li><strong>(Semi-)Hard-negatives 采样（Local）</strong></li>
+<li><strong>distance weighted 采样</strong></li>
+</ul>
+<h1 id="1-随机采样"><a href="#1-随机采样" class="headerlink" title="1.随机采样"></a>1.随机采样</h1><p>对于某一个人，先随机选一张这个人的人脸图片作为anchor，再在这个人的其它99张人脸图片里面随机选一张图片作为positive，再随机选一张其他人的人脸图片作为negative。目标达到了吗？达到了。还有其它问题吗？有，<strong>margin</strong>。</p>
+<p>写到这里就得回顾一下metric learning中的loss function了。metric learning的所有损失函数都有一个包含margin的<a target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=max%E5%87%BD%E6%95%B0&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22article%22%2C%22sourceId%22%3A157900964%7D">max函数</a>，用来达到类内相近，类间分离的目标。这个max函数有个特性，就是如果已经满足了公式，那么它是不参与梯度回传的。例如triplet loss：</p>
+<p><img src="https://www.zhihu.com/equation?tex=Loss+%3D+max%28d%28a%2Cp%29-d%28a%2Cn%29%2Bmargin%2C+0%29%5C%5C#id=mN8ND&amp;originHeight=40&amp;originWidth=600&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""></p>
+<p>当d(a,n)小于d(a, p)+margin时，左边这一项是正数，模型通过反向传播使d(a,p)和d(a,n)分别往更小/更大的<a target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=%E6%96%B9%E5%90%91%E6%A2%AF%E5%BA%A6&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22article%22%2C%22sourceId%22%3A157900964%7D">方向梯度</a>下降；但当d(a,n)大于d(a, p)+margin时，是公式右边的0起作用，左边这一项不再参与梯度回传，对模型训练没有帮助。然而，它们依然参与计算，使计算时间增加，影响模型的收敛速度。而且越到训练后期，模型越来越好，这种无用的pair越多。因此，需要合适的采样方法选择适当的pair，至少保证它们对训练是有帮助的。</p>
+<h1 id="2-hard-semi-hard-采样"><a href="#2-hard-semi-hard-采样" class="headerlink" title="2.hard/semi-hard 采样"></a>2.<strong>hard/</strong><a target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=semi-hard&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22article%22%2C%22sourceId%22%3A157900964%7D"><strong>semi-hard</strong></a><strong> 采样</strong></h1><p>根据直觉，既然满足了公式的pair无贡献，那么我们找到不满足<a target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=%E5%85%AC%E5%BC%8F&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22article%22%2C%22sourceId%22%3A157900964%7D">公式</a>的pair，用它们训练不就可以了吗？可以，又有两个新的问题来了：（1）怎么找到这些合适的pair？如果所有pair都计算，复杂度又变高了。（2）找到合适的pair之后，从这些pair里怎么进一步挑选？</p>
+<p>问题一，<a href="https://link.zhihu.com/?target=https%3A//arxiv.org/pdf/1503.03832.pdf">FaceNet</a> 中提出了两种方法：第一种是离线计算，每隔n个epoch用当前最优模型计算；第二种是在线计算，在每个batch里面计算。如今的负采样方法基本都是选择第二种在线计算的方式。那又有问题了，如果一个batch里面都没有合适的怎么办？那只能调大batchsize了。可能一些论文就是靠调大batchsize才得到提升的，只是他们没明说：）</p>
+<p>问题二，就是各个采样方法进一步研究的问题了。一种直觉上容易想到的方法是选择所有pair里最难的pair（即d(a,n)-d(a,p)最小），这种方式就叫做<a target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=hard+sampling&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22article%22%2C%22sourceId%22%3A157900964%7D"><strong>hard sampling</strong></a>。然而，<a href="https://link.zhihu.com/?target=https%3A//arxiv.org/pdf/1503.03832.pdf">FaceNet</a> 指出：在实验中，选择最困难的负样本可能会导致训练初期收敛到不好的局部最小值，而且会导致模型崩溃。为了减轻这种情况，作者提出了<a target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=semi-hard+sampling&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22article%22%2C%22sourceId%22%3A157900964%7D"><strong>semi-hard sampling</strong></a>方法，即保证d(a,p)&lt;d(a,n)，意思是我们要选择困难的负样本，但这些负样本不要太困难，即负样本和anchor不能比正样本和anchor更相似。</p>
+<p><strong>hard/semi-hard 采样的问题</strong></p>
+<p>hard/semi-hard采样算是比较符合直觉的采样方法了。但实际使用时，作者们发现了一个问题：“ FaceNet报告了一个一致的发现：损失的减少在某个点后急剧减慢，他们的最终系统花了80天的时间进行训练。”这是为什么呢？<a href="https://link.zhihu.com/?target=https%3A//arxiv.org/pdf/1706.07567.pdf">Sampling Matters</a> 给出了解释。</p>
+<p>进一步介绍之前，需要有一个先验知识：对于n&gt;=128的n维向量，在normalize后被约束到一个n-1维的球体上。如果点在球体上分布均匀，则两个点之间距离的分布属于以下公式：</p>
+<p><img src="https://www.zhihu.com/equation?tex=q%28d%29+%5Cpropto+d%5E%7Bn-2%7D%5B1-%5Cfrac%7B1%7D%7B4%7Dd%5E2%5D%5E%7B%5Cfrac%7Bn-3%7D%7B2%7D%7D%5C%5C#id=lAiDa&amp;originHeight=51&amp;originWidth=600&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""></p>
+<p>证明：<a href="https://link.zhihu.com/?target=http%3A//faculty.madisoncollege.edu/alehnen/sphere/hypers.htm">The Sphere Game in n Dimensions</a> 。在高维空间，q(d)符合$(√2,\frac{1}{2n})$ 的<a target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=%E6%AD%A3%E6%80%81%E5%88%86%E5%B8%83&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22article%22%2C%22sourceId%22%3A157900964%7D">正态分布</a>。换句话说，如果样本分散均匀，随机采样时采样到 $√2$ 附近的概率很大。如果margin小于 $√2$ ，这个采样就没有帮助了。对于学习到的embeddings，分布类似：</p>
+<p><img src="https://pic3.zhimg.com/80/v2-fe0ee5993961a21992f69d8e851fffd6_1440w.jpg#height=273&amp;id=sFzHm&amp;originHeight=329&amp;originWidth=605&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=shadow&amp;title=&amp;width=502" srcset="/img/loading.gif" lazyload alt=""></p>
+<p>选择<a target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=hard+negative+samples&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22article%22%2C%22sourceId%22%3A157900964%7D">hard negative samples</a>导致另一个问题。负例的梯度为：</p>
+<p> <img src="https://www.zhihu.com/equation?tex=%5Cpartial+%3D+%5Cfrac%7Bd%28a%2Cn%29%7D%7B%5Cleft%7C+%5Cleft%7C+d%28a%2Cn%29+%5Cright%7C+%5Cright%7C%7D+w%28t%29#id=uoyaI&amp;originHeight=52&amp;originWidth=151&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> </p>
+<p>当d很小时，如果embedding有noise，则梯度的方向为：</p>
+<p> <img src="https://www.zhihu.com/equation?tex=%5Cpartial+%3D+%5Cfrac%7Bd%28a%2Cn%29%2Bz%7D%7B%5Cleft%7C+%5Cleft%7C+d%28a%2Cn%29%2Bz+%5Cright%7C+%5Cright%7C%7D#id=QctDM&amp;originHeight=52&amp;originWidth=148&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> </p>
+<p>梯度的方向就会被改变。</p>
+<h1 id="3-distance-weighted采样"><a href="#3-distance-weighted采样" class="headerlink" title="3.distance weighted采样"></a>3.<strong>distance weighted采样</strong></h1><p>根据以上分析，随机采样时总会采样到 $√2$ 附近的值，hard采样又会被噪声影响。那么有没有一种方法使所有区间的概率相同呢？方法很简单，乘一个概率的倒数：</p>
+<p><img src="https://www.zhihu.com/equation?tex=Pr%28n%5E%2A+%3D+n%7Ca%29+%5Cpropto+min%28%5Clambda%2C+q%5E%7B-1%7Dd%28a%2Cn%29%29%5C%5C#id=dXI9e&amp;originHeight=43&amp;originWidth=600&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""><br>其中 $\lambda$ 是为了避免噪声样本加入的cutoff。</p>
+<p><img src="https://pic2.zhimg.com/80/v2-d27a8baf9f8b2f46a2ee08407467ec89_1440w.jpg#height=290&amp;id=M8Ivf&amp;originHeight=377&amp;originWidth=591&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=shadow&amp;title=&amp;width=454" srcset="/img/loading.gif" lazyload alt=""></p>
+<p>上图比较了几个采样方法的样本分布，hard sampling总是在高方差区域采样，被噪声影响。随机采样的样本都在1.4附近。semi-hard采样找到了一个狭窄的范围，尽管一开始它可能会很快收敛，但是在某些时候，该频段内没有任何实例，网络将停止更新。distance weighted采样方法对所有分布提供了相同的可能，使得训练中总能提供有用的样本。</p>
+<h1 id="采样的实现方法"><a href="#采样的实现方法" class="headerlink" title="采样的实现方法"></a><strong>采样的实现方法</strong></h1><p>刚才我们叙述的过程中，都是以“人”为单位，为每个人找到一个合适的triplet pair。以pytorch为例，具体的实现方式是先对每一个人采样一个（anchor，positive，negative）pair，再把它们送到batch中。如果每个batch里的人数为k，则每个batch里有k个pair。把这种实现方式推到以图片为单位的情况，则对每张图片采样一个pair，再把它们送入batch中。例如batch中有2个人，每个人有3张图片。则采样到的pair为：（a1，ax，by）；（a2，ax，by）；（a3，ax，by）；（b1，bx，ay）；（b2，bx，ay）；（b3，bx，ay），其中x，y根据采样方法可能是1-3中的任意一个（positive与anchor不同）。</p>
+<p>这种实现方法有两个问题</p>
+<ul>
+<li>一是计算重复，例如a1作为anchor计算了一次，也可能作为a2的positive又计算了一次，又可能作为b1的negative再计算了一次。</li>
+<li>二是pair少，最开始的时候提到过接受不了$O(mn^2)$的复杂度，是因为m和n都很大。但当调整batchsize使m和n到合适的大小k和q时，我们在batch内已经可以接受$O(kq^2)$的复杂度了，这时我们就希望batch内能有更多的pair，使模型收敛更快。</li>
+</ul>
+<p>以上两个问题可以用同一种方法解决，思路来自<a href="https://link.zhihu.com/?target=https%3A//arxiv.org/pdf/1511.06452.pdf">Lifted Structured Loss</a>：即先组好batch（设置好每个batch里的人数和人脸图片个数），计算好每张图片的向量，再找到batch内所有满足margin条件的pair，并在此基础上进行采样（semihard、distanceweighted等）。这种方法现在已经是成为一种通用做法了。找到batch内所有满足margin条件的pair之后，如果使用semihard采样，则剔除掉所有hard的样本；或者可以把条件设置得更严格一些，例如设置一个epsilon，只选择比最难正例-epsilon大的<a target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=%E8%B4%9F%E4%BE%8B&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22article%22%2C%22sourceId%22%3A157900964%7D">负例</a>，以及比最难负例+epsilon小的正例（来自<a href="https://link.zhihu.com/?target=https%3A//openaccess.thecvf.com/content_CVPR_2019/papers/Wang_Multi-Similarity_Loss_With_General_Pair_Weighting_for_Deep_Metric_Learning_CVPR_2019_paper.pdf">Multi-Similarity Loss</a>）。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a target="_blank" rel="noopener" href="http://daniel-at-world.blogspot.com/2019/07/implementing-triplet-loss-function-in.html">Implementing Triplet Loss Function in Tensorflow 2.0</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_36387683/article/details/83583099">Tensorflow实现Triplet Loss</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/295512971">深度学习从入门到放飞自我：完全解析triplet loss</a></p>
+<p><a target="_blank" rel="noopener" href="https://omoindrot.github.io/triplet-loss">Triplet Loss and Online Triplet Mining in TensorFlow</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/365370142">triplet loss稳定在margin附近?—hardTri &amp; l2_normalize</a></p>
+<p><a target="_blank" rel="noopener" href="https://bindog.github.io/blog/2019/10/23/why-triplet-loss-works/">为什么triplet loss有效？从直观上说明为什么triplet loss不稳定?</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/157900964">*Sampling Methods of Metric Learning</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0/" class="category-chain-item">度量学习</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%8E%9F%E5%88%9B/">#原创</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>度量学习之采样Sampling</div>
+      <div>http://example.com/2021/11/26/2021-11-26-度量学习之采样Sampling/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>NSX</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年11月26日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/" title="度量学习之损失函数⭐️">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">度量学习之损失函数⭐️</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E7%AE%80%E8%BF%B0/" title="度量学习简述">
+                        <span class="hidden-mobile">度量学习简述</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

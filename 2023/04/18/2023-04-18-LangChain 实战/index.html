@@ -1,0 +1,1041 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Ning Shixian">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="参考官方文档、LangChain 的中文入门教程、LangChain CheatSheet、gkamradt&#x2F;langchain-tutorials  介绍众所周知 OpenAI 的 API 无法联网的，所以如果只使用自己的功能实现联网搜索并给出回答、总结 PDF 文档、基于某个 Youtube 视频进行问答等等的功能肯定是无法实现的。所以，我们来介绍一个非常强大的第三方开源库：LangChai">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LangChain 实战">
+<meta property="og:url" content="http://example.com/2023/04/18/2023-04-18-LangChain%20%E5%AE%9E%E6%88%98/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="参考官方文档、LangChain 的中文入门教程、LangChain CheatSheet、gkamradt&#x2F;langchain-tutorials  介绍众所周知 OpenAI 的 API 无法联网的，所以如果只使用自己的功能实现联网搜索并给出回答、总结 PDF 文档、基于某个 Youtube 视频进行问答等等的功能肯定是无法实现的。所以，我们来介绍一个非常强大的第三方开源库：LangChai">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2023/04/18/2023-04-18-LangChain%20%E5%AE%9E%E6%88%98/1681801175911-824f69b5-f3fd-4857-877e-bbb2d996c22c.png">
+<meta property="og:image" content="http://example.com/2023/04/18/2023-04-18-LangChain%20%E5%AE%9E%E6%88%98/1681457282828-768cbe71-f5ba-45a5-b6cc-d0ac93a0e1c0.png">
+<meta property="og:image" content="http://example.com/2023/04/18/2023-04-18-LangChain%20%E5%AE%9E%E6%88%98/1681462020394-312ad3ef-0371-4cd5-a7be-74905a60c6d7.png">
+<meta property="og:image" content="http://example.com/2023/04/18/2023-04-18-LangChain%20%E5%AE%9E%E6%88%98/1681977935059-0e8c9a11-30a8-4301-a146-f51476132f70.png">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/png/8420697/1681978025915-be9b653b-e4bb-4583-9fe6-1d6e13961610.png">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/png/8420697/1681978026763-37ed8eaa-6c23-44b9-99c8-9ee5dc13e26a.png">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/png/8420697/1681978269926-7b6bd947-5c4d-4b98-a6fa-675961bae56b.png">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/png/8420697/1681978284054-e83744e8-1efb-46bf-9308-c1790cca3815.png">
+<meta property="article:published_time" content="2023-04-18T15:19:00.000Z">
+<meta property="article:modified_time" content="2023-04-24T14:00:45.526Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="LangChain">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2023/04/18/2023-04-18-LangChain%20%E5%AE%9E%E6%88%98/1681801175911-824f69b5-f3fd-4857-877e-bbb2d996c22c.png">
+  
+  
+  
+  <title>LangChain 实战 - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="LangChain 实战"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-04-18 23:19" pubdate>
+          2023年4月18日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          38k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          317 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">LangChain 实战</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <blockquote>
+<p>参考<a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/getting_started/getting_started.html">官方文档</a>、<a target="_blank" rel="noopener" href="https://liaokong.gitbook.io/llm-kai-fa-jiao-cheng/">LangChain 的中文入门教程</a>、<a target="_blank" rel="noopener" href="https://github.com/Tor101/LangChain-CheatSheet">LangChain CheatSheet</a>、<a target="_blank" rel="noopener" href="https://github.com/gkamradt">gkamradt</a>/<a target="_blank" rel="noopener" href="https://github.com/gkamradt/langchain-tutorials">langchain-tutorials</a></p>
+</blockquote>
+<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>众所周知 OpenAI 的 API 无法联网的，所以如果只使用自己的功能实现联网搜索并给出回答、总结 PDF 文档、基于某个 Youtube 视频进行问答等等的功能肯定是无法实现的。所以，我们来介绍一个非常强大的第三方开源库：LangChain 。</p>
+<blockquote>
+<p>文档地址：<a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/">https://python.langchain.com/en/latest/</a></p>
+</blockquote>
+<p>LangChain 是由<a target="_blank" rel="noopener" href="https://github.com/hwchase17">Harrison Chase</a>创建的一个 Python 库，可帮助您在几分钟内构建 GPT 驱动的应用程序。他主要拥有 2 个能力：</p>
+<ol>
+<li>可以将 LLM 模型与外部数据源进行连接</li>
+<li>允许与 LLM 模型进行交互</li>
+</ol>
+<p>您可以使用 LangChain 构建的有趣应用程序包括（但不限于）：</p>
+<ul>
+<li>聊天机器人</li>
+<li>特定领域的总结和问答</li>
+<li>查询数据库以获取信息然后处理它们的应用程序</li>
+<li>解决特定问题的代理，例如数学和推理难题</li>
+</ul>
+<p>在本指南中，我们将探讨什么是 LangChain 以及您可以使用它构建什么。我们还将尝试使用 LangChain 构建一个简单的问答应用程序。</p>
+<h2 id="LangChain-模块概述"><a href="#LangChain-模块概述" class="headerlink" title="LangChain 模块概述"></a>LangChain 模块概述</h2><p>接下来我们看一下LangChain中的一些模块：</p>
+<img src="/2023/04/18/2023-04-18-LangChain%20%E5%AE%9E%E6%88%98/1681801175911-824f69b5-f3fd-4857-877e-bbb2d996c22c.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<h3 id="Models"><a href="#Models" class="headerlink" title="Models"></a>Models</h3><p>LangChain 为许多不同的 LLM 提供了通用接口，可以直接通过 API 工作，但也可以运行本地模型。</p>
+<ul>
+<li>大型语言模型 LLM：将文本字符串作为输入，并返回文本字符串作为输出</li>
+<li><strong>Chat Models：</strong>将聊天消息列表作为输入，并返回聊天消息。</li>
+<li><strong>Text Embedding Models：</strong>将文本作为输入并返回一个浮点数组成的向量</li>
+</ul>
+<h4 id="LLMs"><a href="#LLMs" class="headerlink" title="LLMs"></a>LLMs</h4><p>LLMs 是 LangChain 的基础组成部分。它本质上是一个大型语言模型的包装器，可以通过该接口与各种大模型进行交互。LLMs 类的功能如下：</p>
+<ul>
+<li>支持多种模型接口，如 <a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/models/llms/integrations/openai.html">OpenAI</a>、<a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/models/llms/integrations/huggingface_hub.html">Hugging Face Hub</a>、<a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/models/llms/integrations/anthropic_example.html">Anthropic</a>、<a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/models/llms/integrations/azure_openai_example.html">Azure OpenAI</a>、<a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/models/llms/integrations/gpt4all.html">GPT4All</a>、<a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/models/llms/integrations/llamacpp.html">Llama-cpp</a>…</li>
+<li>Fake LLM，用于测试</li>
+<li>缓存的支持，比如 in-mem（内存）、SQLite、Redis、SQL</li>
+<li><p>用量记录</p>
+</li>
+<li><p>支持流模式（就是一个字一个字的返回，类似打字效果）</p>
+</li>
+</ul>
+<details class="lake-collapse"><summary id="u649a5278"><span class="ne-text">langchain.llms 使用示例</span></summary><pre data-language="python" id="DcWr3" class="ne-codeblock language-python" style="border: 1px solid #e8e8e8; border-radius: 2px; background: #f9f9f9; padding: 16px; font-size: 13px; color: #595959">from langchain.llms import OpenAI
+llm = OpenAI(model_name="text-davinci-003", n=2, best_of=2)
+llm("Tell me a joke")
+
+llm_result = llm.generate(["Tell me a joke", "Tell me a poem"])
+llm_result.llm_output    # 返回 tokens 使用量</pre></details>
+
+<details class="lake-collapse"><summary id="u4cf70b23"><span class="ne-text" style="color: var(--pst-color-muted)">How to cache LLM calls</span></summary><pre data-language="python" id="vkq28" class="ne-codeblock language-python" style="border: 1px solid #e8e8e8; border-radius: 2px; background: #f9f9f9; padding: 16px; font-size: 13px; color: #595959">from langchain.llms import OpenAI
+import langchain
+from langchain.cache import InMemoryCache,SQLiteCache,RedisCache
+
+langchain.llm_cache = InMemoryCache()
+llm = OpenAI(model_name="text-davinci-002", n=2, best_of=2)
+llm("Tell me a joke")    # time: 1.1 s
+llm("Tell me a joke")    # time: 175 µs
+
+from redis import Redis
+from langchain.cache import RedisCache
+langchain.llm_cache = RedisCache(redis_=Redis())
+llm("Tell me a joke")    # time: 825 ms
+llm("Tell me a joke")    # time: 2.67 ms
+
+# 基于语义相似性缓存结果
+import gptcache
+from gptcache.processor.pre import get_prompt
+from gptcache.manager.factory import get_data_manager
+from langchain.cache import GPTCache
+from gptcache.manager import get_data_manager, CacheBase, VectorBase
+from gptcache import Cache
+from gptcache.embedding import Onnx
+from gptcache.similarity_evaluation.distance import SearchDistanceEvaluation
+
+# Avoid multiple caches using the same file, causing different llm model caches to affect each other
+i = 0
+file_prefix = "data_map"
+llm_cache = Cache()
+
+def init_gptcache_map(cache_obj: gptcache.Cache):
+    global i
+    cache_path = f'{file_prefix}_{i}.txt'
+    onnx = Onnx()
+    cache_base = CacheBase('sqlite')
+    vector_base = VectorBase('faiss', dimension=onnx.dimension)
+    data_manager = get_data_manager(cache_base, vector_base, max_size=10, clean_size=2)
+    cache_obj.init(
+        pre_embedding_func=get_prompt,
+        embedding_func=onnx.to_embeddings,
+        data_manager=data_manager,
+        similarity_evaluation=SearchDistanceEvaluation(),
+    )
+    i += 1
+
+langchain.llm_cache = GPTCache(init_gptcache_map)
+llm("Tell me a joke")    # time: 2.49 s
+llm("Tell me a joke")    # time: 136 ms
+# This is not an exact match, but semantically within distance so it hits!
+llm("Tell me joke")        # time: 135 ms</pre></details>
+
+<details class="lake-collapse"><summary id="u56bebd99"><span class="ne-text" style="color: rgb(50, 50, 50)">在磁盘上写入和读取 LLM 配置</span></summary><pre data-language="python" id="STiq6" class="ne-codeblock language-python" style="border: 1px solid #e8e8e8; border-radius: 2px; background: #f9f9f9; padding: 16px; font-size: 13px; color: #595959">llm.save("llm.json")
+llm = load_llm("llm.json")
+
+# {
+#     "model_name": "text-davinci-003",
+#     "temperature": 0.7,
+#     "max_tokens": 256,
+#     "top_p": 1.0,
+#     "frequency_penalty": 0.0,
+#     "presence_penalty": 0.0,
+#     "n": 1,
+#     "best_of": 1,
+#     "request_timeout": null,
+#     "_type": "openai"
+# }</pre></details>
+
+<details class="lake-collapse"><summary id="ubaba97df"><span class="ne-text">如何流式传输 LLM 和聊天模型响应</span></summary><pre data-language="python" id="COmI2" class="ne-codeblock language-python" style="border: 1px solid #e8e8e8; border-radius: 2px; background: #f9f9f9; padding: 16px; font-size: 13px; color: #595959">from langchain.llms import OpenAI, Anthropic
+from langchain.chat_models import ChatOpenAI
+from langchain.callbacks.base import CallbackManager
+from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
+from langchain.schema import HumanMessage
+
+llm = OpenAI(streaming=True, callback_manager=CallbackManager([StreamingStdOutCallbackHandler()]), verbose=True, temperature=0)
+resp = llm("请给我解释 Langchain 是什么")
+
+chat = ChatOpenAI(streaming=True, callback_manager=CallbackManager([StreamingStdOutCallbackHandler()]), verbose=True, temperature=0)
+resp = chat([HumanMessage(content="请给我解释 Langchain 是什么")])
+
+# Anthropic的claude模型
+llm = Anthropic(streaming=True, callback_manager=CallbackManager([StreamingStdOutCallbackHandler()]), verbose=True, temperature=0)
+llm("Write me a song about sparkling water.")</pre></details>
+
+
+
+<h4 id="Chat-Models"><a href="#Chat-Models" class="headerlink" title="Chat Models"></a>Chat Models</h4><details class="lake-collapse"><summary id="ube9cbe78"><span class="ne-text">langchain.chat_models 使用示例</span></summary><pre data-language="python" id="GOjMY" class="ne-codeblock language-python" style="border: 1px solid #e8e8e8; border-radius: 2px; background: #f9f9f9; padding: 16px; font-size: 13px; color: #595959">from langchain.chat_models import ChatOpenAI
+from langchain import PromptTemplate, LLMChain
+from langchain.prompts.chat import (
+    ChatPromptTemplate,
+    SystemMessagePromptTemplate,
+    AIMessagePromptTemplate,
+    HumanMessagePromptTemplate,
+)
+from langchain.schema import (
+    AIMessage,
+    HumanMessage,
+    SystemMessage
+)
+
+chat = ChatOpenAI(temperature=0)
+chat([HumanMessage(content="Translate this sentence from English to Chinese. I love programming.")])
+
+# 支持多条消息作为输入
+batch_messages = [
+    [
+        SystemMessage(content="You are a helpful assistant that translates English to French."),
+        HumanMessage(content="Translate this sentence from English to French. I love programming.")
+    ],
+    [
+        SystemMessage(content="You are a helpful assistant that translates English to French."),
+        HumanMessage(content="Translate this sentence from English to French. I love artificial intelligence.")
+    ],
+]
+result = chat.generate(batch_messages)
+print(result)
+print(result.llm_output)</pre></details>
+
+<details class="lake-collapse"><summary id="uff19a5bd"><span class="ne-text">LLM Chain 使用示例</span></summary><pre data-language="python" id="GNeit" class="ne-codeblock language-python" style="border: 1px solid #e8e8e8; border-radius: 2px; background: #f9f9f9; padding: 16px; font-size: 13px; color: #595959">from langchain.chat_models import ChatOpenAI
+from langchain import PromptTemplate, LLMChain
+from langchain.prompts.chat import (
+    ChatPromptTemplate,
+    SystemMessagePromptTemplate,
+    AIMessagePromptTemplate,
+    HumanMessagePromptTemplate,
+)
+from langchain.schema import (
+    AIMessage,
+    HumanMessage,
+    SystemMessage
+)
+
+llm = ChatOpenAI(temperature=0)
+template = """
+Please use the following context to answer questions.
+Context: {context}
+---
+Question: {question}
+Answer: Let's think step by step."""
+
+system_message_prompt = SystemMessagePromptTemplate.from_template(template)
+example_human = HumanMessagePromptTemplate.from_template("Hi")
+example_ai = AIMessagePromptTemplate.from_template("Argh me mateys")
+human_message_prompt = HumanMessagePromptTemplate.from_template("{text}")
+
+chat_prompt = ChatPromptTemplate.from_messages([system_message_prompt, example_human, example_ai, human_message_prompt])
+chat_prompt.format_prompt(context=context, question="")
+chain = LLMChain(llm=llm, prompt=chat_prompt)
+chain.run()</pre></details>
+
+<details class="lake-collapse"><summary id="u6f4c356f"><span class="ne-text">如何流式传输</span></summary><pre data-language="python" id="VaC3r" class="ne-codeblock language-python" style="border: 1px solid #e8e8e8; border-radius: 2px; background: #f9f9f9; padding: 16px; font-size: 13px; color: #595959">from langchain.chat_models import ChatOpenAI
+from langchain.schema import HumanMessage
+from langchain.callbacks.base import CallbackManager
+from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
+
+chat = ChatOpenAI(streaming=True, callback_manager=CallbackManager([StreamingStdOutCallbackHandler()]), verbose=True, temperature=0)
+resp = chat([HumanMessage(content="请给我解释 Langchain 是什么")])</pre></details>
+
+
+
+<h4 id="HuggingFace-Models"><a href="#HuggingFace-Models" class="headerlink" title="HuggingFace Models"></a>HuggingFace Models</h4><p>使用 HuggingFace 模型之前，需要先设置环境变量</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> os<br>os.environ[<span class="hljs-string">&#x27;HUGGINGFACEHUB_API_TOKEN&#x27;</span>]=<span class="hljs-string">&#x27;&#x27;</span><br><br><span class="hljs-keyword">from</span> langchain <span class="hljs-keyword">import</span> PromptTemplate, HuggingFaceHub, LLMChain<br><br>template = <span class="hljs-string">&quot;&quot;&quot;Question: &#123;question&#125;</span><br><span class="hljs-string">Answer: Let&#x27;s think step by step.&quot;&quot;&quot;</span><br><br>prompt = PromptTemplate(template=template, input_variables=[<span class="hljs-string">&quot;question&quot;</span>])<br>llm = HuggingFaceHub(repo_id=<span class="hljs-string">&quot;google/flan-t5-xl&quot;</span>, model_kwargs=&#123;<span class="hljs-string">&quot;temperature&quot;</span>:<span class="hljs-number">0</span>, <span class="hljs-string">&quot;max_length&quot;</span>:<span class="hljs-number">64</span>&#125;)<br>llm_chain = LLMChain(prompt=prompt, llm=llm)<br><br>question = <span class="hljs-string">&quot;What NFL team won the Super Bowl in the year Justin Beiber was born?&quot;</span><br><span class="hljs-built_in">print</span>(llm_chain.run(question))<br><span class="hljs-keyword">from</span> langchain.llms <span class="hljs-keyword">import</span> HuggingFacePipeline<br><span class="hljs-keyword">from</span> transformers <span class="hljs-keyword">import</span> AutoTokenizer, AutoModelForCausalLM, pipeline, AutoModelForSeq2SeqLM<br><br>model_id = <span class="hljs-string">&#x27;google/flan-t5-large&#x27;</span><br>tokenizer = AutoTokenizer.from_pretrained(model_id)<br>model = AutoModelForSeq2SeqLM.from_pretrained(model_id, load_in_8bit=<span class="hljs-literal">True</span>)<br><br>pipe = pipeline(<br>    <span class="hljs-string">&quot;text2text-generation&quot;</span>,<br>    model=model, <br>    tokenizer=tokenizer, <br>    max_length=<span class="hljs-number">100</span><br>)<br><br>local_llm = HuggingFacePipeline(pipeline=pipe)<br><span class="hljs-built_in">print</span>(local_llm(<span class="hljs-string">&#x27;What is the capital of France? &#x27;</span>))<br><br><br>llm_chain = LLMChain(prompt=prompt,  llm=local_llm)<br>question = <span class="hljs-string">&quot;What is the capital of England?&quot;</span><br><span class="hljs-built_in">print</span>(llm_chain.run(question))<br></code></pre></td></tr></table></figure>
+<p>将模型拉到本地使用的好处：</p>
+<ul>
+<li>训练模型</li>
+<li>可以使用本地的 GPU</li>
+<li>有些模型无法在 HuggingFace 运行</li>
+</ul>
+<h4 id="Text-Embedding-Models"><a href="#Text-Embedding-Models" class="headerlink" title="Text Embedding Models"></a>Text Embedding Models</h4><p>LangChain 中的基础 Embedding 类是设计用于与嵌入交互的类，它提供了两个方法：embed_documents和embed_query。最大的区别在于这两种方法具有不同的接口：一种处理多个文档，而另一种处理单个文档。</p>
+<p>Embedding 类能够帮助我们实现基于知识库的问答和semantic search，相比 fine-tuning 最大的优势就是，不用进行训练，并且可以实时添加新的内容，而不用加一次新的内容就训练一次，并且各方面成本要比 fine-tuning 低很多。</p>
+<p>文本嵌入模型集成了如下的源：<a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/models/text_embedding/examples/azureopenai.html">AzureOpenAI</a>、<a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/models/text_embedding/examples/huggingfacehub.html">Hugging Face Hub</a>、<a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/models/text_embedding/examples/instruct_embeddings.html">InstructEmbeddings</a>、<a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/models/text_embedding/examples/llamacpp.html">Llama-cpp</a>、<a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/models/text_embedding/examples/openai.html">OpenAI</a> 等</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain.embeddings <span class="hljs-keyword">import</span> HuggingFaceEmbeddings <br>embeddings = HuggingFaceEmbeddings() <br>text = <span class="hljs-string">&quot;This is a test document.&quot;</span> <br>query_result = embeddings.embed_query(text) <br>doc_result = embeddings.embed_documents([text])<br></code></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs python">!pip install llama-cpp-python<br><span class="hljs-keyword">from</span> langchain.embeddings <span class="hljs-keyword">import</span> LlamaCppEmbeddings<br>llama = LlamaCppEmbeddings(model_path=<span class="hljs-string">&quot;/path/to/model/ggml-model-q4_0.bin&quot;</span>)<br>text = <span class="hljs-string">&quot;This is a test document.&quot;</span><br>query_result = llama.embed_query(text)<br>doc_result = llama.embed_documents([text])<br></code></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain.embeddings <span class="hljs-keyword">import</span> OpenAIEmbeddings<br>embeddings = OpenAIEmbeddings()<br>text = <span class="hljs-string">&quot;This is a test document.&quot;</span><br>query_result = embeddings.embed_query(text)<br>doc_result = embeddings.embed_documents([text])<br></code></pre></td></tr></table></figure>
+<h3 id="Prompts"><a href="#Prompts" class="headerlink" title="Prompts"></a>Prompts</h3><p>“提示”是指模型的输入。PromptTemplate 负责构建此输入，LangChain 提供了可用于格式化输入和许多其他实用程序的提示模板。 </p>
+<ul>
+<li>LLM Prompt Templates</li>
+<li>Chat Prompt Templates</li>
+<li>Example Selectors</li>
+<li>Output Parsers</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain <span class="hljs-keyword">import</span> PromptTemplate<br><br>template = <span class="hljs-string">&quot;&quot;&quot;Question: &#123;question&#125;</span><br><span class="hljs-string"></span><br><span class="hljs-string">Let&#x27;s think step by step.</span><br><span class="hljs-string"></span><br><span class="hljs-string">Answer: &quot;&quot;&quot;</span><br><br>prompt = PromptTemplate(template=template, input_variables=[<span class="hljs-string">&quot;question&quot;</span>])<br>prompt.<span class="hljs-built_in">format</span>(question=<span class="hljs-string">&quot;Can Barack Obama have a conversation with George Washington?&quot;</span>)<br></code></pre></td></tr></table></figure>
+<h3 id="Indexes"><a href="#Indexes" class="headerlink" title="Indexes"></a>Indexes</h3><p>索引指的是构建文档的方式，以便 LLM 可以最好地与它们交互。Indexes主要有 4 个主要组件：</p>
+<ul>
+<li><strong>文档加载器：</strong>如何从各种来源加载文档</li>
+<li><strong>文本拆分器：</strong>拆分文本成多个chunk</li>
+<li>VectorStores<strong>：</strong>对接向量存储与搜索，比如 <a target="_blank" rel="noopener" href="https://docs.trychroma.com/">Chroma</a>、Pinecone、Qdrand。默认情况下，LangChain 使用Chroma作为向量存储来索引和搜索嵌入</li>
+<li>检索器<strong>：</strong></li>
+</ul>
+<h4 id="快速入门"><a href="#快速入门" class="headerlink" title="快速入门"></a>快速入门</h4><p>此示例展示了对文档的问答。文档问答包括四个步骤：</p>
+<ol>
+<li>创建索引</li>
+<li>从该索引创建一个检索器</li>
+<li>创建问答链</li>
+<li>问问题！<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># pip install chromadb</span><br><span class="hljs-keyword">from</span> langchain.chains <span class="hljs-keyword">import</span> RetrievalQA<br><span class="hljs-keyword">from</span> langchain.llms <span class="hljs-keyword">import</span> OpenAI<br><span class="hljs-comment"># 指定要使用的文档加载器</span><br><span class="hljs-keyword">from</span> langchain.document_loaders <span class="hljs-keyword">import</span> TextLoader<br>documents = TextLoader(<span class="hljs-string">&#x27;../state_of_the_union.txt&#x27;</span>, encoding=<span class="hljs-string">&#x27;utf8&#x27;</span>)<br><span class="hljs-comment"># 接下来，我们将文档拆分成块。</span><br><span class="hljs-keyword">from</span> langchain.text_splitter <span class="hljs-keyword">import</span> CharacterTextSplitter<br>text_splitter = CharacterTextSplitter(chunk_size=<span class="hljs-number">1000</span>, chunk_overlap=<span class="hljs-number">0</span>)<br>texts = text_splitter.split_documents(documents)<br><span class="hljs-comment"># 然后我们将选择我们想要使用的嵌入。</span><br><span class="hljs-keyword">from</span> langchain.embeddings <span class="hljs-keyword">import</span> OpenAIEmbeddings<br>embeddings = OpenAIEmbeddings()<br><span class="hljs-comment"># 我们现在创建 vectorstore 用作索引。</span><br><span class="hljs-keyword">from</span> langchain.vectorstores <span class="hljs-keyword">import</span> Chroma<br>db = Chroma.from_documents(texts, embeddings)<br><span class="hljs-comment"># 这就是创建索引。然后，我们在检索器接口中公开该索引。</span><br>retriever = db.as_retriever()<br><span class="hljs-comment"># 创建一个链并用它来回答问题！</span><br>qa = RetrievalQA.from_chain_type(llm=OpenAI(), chain_type=<span class="hljs-string">&quot;stuff&quot;</span>, retriever=retriever)<br>query = <span class="hljs-string">&quot;What did the president say about Ketanji Brown Jackson&quot;</span><br>qa.run(query)<br></code></pre></td></tr></table></figure>
+</li>
+</ol>
+<h4 id="Document-Loaders-and-Utils"><a href="#Document-Loaders-and-Utils" class="headerlink" title="Document Loaders and Utils"></a>Document Loaders and Utils</h4><p>LangChain 的<strong>Document Loaders</strong>和<strong>Utils</strong>模块分别用于连接到数据源和计算源。</p>
+<p>当使用loader加载器读取到数据源后，数据源需要转换成 <strong>Document</strong> 对象后，后续才能进行使用。</p>
+<p>假设你有大量的经济学文本语料库，你想在其上构建 NLP 应用程序。您的语料库可能是文本文件、PDF 文档、HTML 网页、图像等的混合体。那么，通过 Document Loaders 的Unstructured 可以将这些原始数据源转换为可处理的文本。</p>
+<p>The following document loaders are provided:</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/indexes/document_loaders/examples/csv.html">CSV Loader</a> CSV文件</li>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/indexes/document_loaders/examples/dataframe.html">DataFrame Loader</a> 从 pandas 数据帧加载数据</li>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/indexes/document_loaders/examples/diffbot.html">Diffbot</a> 从 URL 列表中提取 HTML 文档，并将其转换为我们可以在下游使用的文档格式</li>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/indexes/document_loaders/examples/directory_loader.html">Directory Loader</a> 加载目录中的所有文档</li>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/indexes/document_loaders/examples/evernote.html">EverNote</a> 印象笔记</li>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/indexes/document_loaders/examples/git.html">Git</a> 从 Git 存储库加载文本文件</li>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/indexes/document_loaders/examples/googledrive.html">Google Drive</a> Google网盘</li>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/indexes/document_loaders/examples/html.html">HTML</a> HTML 文档</li>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/indexes/document_loaders/examples/markdown.html">Markdown</a></li>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/indexes/document_loaders/examples/notebook.html">Notebook</a> 将 .ipynb 笔记本中的数据加载为适合 LangChain 的格式</li>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/indexes/document_loaders/examples/notion.html">Notion</a></li>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/indexes/document_loaders/examples/pdf.html">PDF</a></li>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/indexes/document_loaders/examples/powerpoint.html">PowerPoint</a></li>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/indexes/document_loaders/examples/unstructured_file.html">Unstructured File Loader</a> 使用Unstructured加载多种类型的文件，目前支持加载文本文件、powerpoints、html、pdf、图像等</li>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/indexes/document_loaders/examples/url.html">URL</a> 加载 URL 列表中的 HTML 文档内容</li>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/indexes/document_loaders/examples/word_document.html">Word Documents</a></li>
+</ul>
+<p>更多的加载器可以看看<a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/indexes/document_loaders.html">链接</a>。</p>
+<h4 id="Text-Spltters"><a href="#Text-Spltters" class="headerlink" title="Text Spltters"></a>Text Spltters</h4><p>顾名思义，文本分割就是用来分割文本的。为什么需要分割文本？因为我们每次不管是做把文本当作 prompt 发给 openai api ，还是还是使用 embedding 功能都是有字符限制的。</p>
+<p>比如我们将一份300页的 pdf 发给 openai api，让他进行总结，他肯定会报超过最大 Token 错。所以这里就需要使用文本分割器去分割我们 loader 进来的 Document。</p>
+<ul>
+<li>默认推荐的文本拆分器是 RecursiveCharacterTextSplitter。默认情况以 [“\n\n”, “\n”, “ “, “”] 字符进行拆分。其它参数说明：<code>length_function</code>如何计算块的长度。默认只计算字符数，但在这里传递令牌计数器是很常见的。<code>chunk_size</code>：块的最大大小（由长度函数测量）。<code>chunk_overlap</code>：块之间的最大重叠。有一些重叠可以很好地保持块之间的一些连续性（例如，做一个滑动窗口）</li>
+<li>CharacterTextSplitter 默认情况下以 <code>separator=&quot;\n\n&quot;</code>进行拆分</li>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/indexes/text_splitters/examples/tiktoken_splitter.html">TiktokenText Splitter</a> 使用OpenAI 的开源分词器包来估计使用的令牌</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># This is a long document we can split up.</span><br><span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(<span class="hljs-string">&#x27;../../../state_of_the_union.txt&#x27;</span>) <span class="hljs-keyword">as</span> f:<br>    state_of_the_union = f.read()<br><span class="hljs-keyword">from</span> langchain.text_splitter <span class="hljs-keyword">import</span> CharacterTextSplitter<br>text_splitter = CharacterTextSplitter(        <br>    separator = <span class="hljs-string">&quot;\n\n&quot;</span>,<br>    chunk_size = <span class="hljs-number">1000</span>,<br>    chunk_overlap  = <span class="hljs-number">200</span>,<br>    length_function = <span class="hljs-built_in">len</span>,<br>)<br>metadatas = [&#123;<span class="hljs-string">&quot;document&quot;</span>: <span class="hljs-number">1</span>&#125;, &#123;<span class="hljs-string">&quot;document&quot;</span>: <span class="hljs-number">2</span>&#125;]<br>documents = text_splitter.create_documents([state_of_the_union, state_of_the_union], metadatas=metadatas)<br><span class="hljs-built_in">print</span>(texts[<span class="hljs-number">0</span>])<br></code></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># This is a long document we can split up.</span><br><span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(<span class="hljs-string">&#x27;../../../state_of_the_union.txt&#x27;</span>) <span class="hljs-keyword">as</span> f:<br>    state_of_the_union = f.read()<br><span class="hljs-keyword">from</span> langchain.text_splitter <span class="hljs-keyword">import</span> TokenTextSplitter<br>text_splitter = TokenTextSplitter(chunk_size=<span class="hljs-number">10</span>, chunk_overlap=<span class="hljs-number">0</span>)<br>texts = text_splitter.split_text(state_of_the_union)<br><span class="hljs-built_in">print</span>(texts[<span class="hljs-number">0</span>])<br></code></pre></td></tr></table></figure>
+<h4 id="Vectorstores"><a href="#Vectorstores" class="headerlink" title="Vectorstores"></a>Vectorstores</h4><p>因为数据相关性搜索其实是向量运算。所以，不管我们是使用 openai api embedding 功能还是直接通过 向量数据库 直接查询，都需要将我们加载进来的数据 <code>Document</code> 进行向量化，才能进行向量运算搜索。转换成向量也很简单，只需要我们把数据存储到对应的向量数据库中即可完成向量的转换。</p>
+<p>官方也提供了很多的向量数据库供我们使用，包括：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/indexes/vectorstores/examples/annoy.html">Annoy</a></li>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/indexes/vectorstores/examples/chroma.html">Chroma</a></li>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/indexes/vectorstores/examples/elasticsearch.html">ElasticSearch</a></li>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/indexes/vectorstores/examples/faiss.html">FAISS</a></li>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/indexes/vectorstores/examples/milvus.html">Milvus</a></li>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/indexes/vectorstores/examples/pgvector.html">PGVector</a></li>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/indexes/vectorstores/examples/pinecone.html">Pinecone</a></li>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/indexes/vectorstores/examples/redis.html">Redis</a></li>
+</ul>
+<p>更多支持的向量数据库使用方法，可转至<a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/indexes/vectorstores.html">链接</a>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># pip install chromadb</span><br><span class="hljs-comment"># 选择我们想要使用的嵌入。</span><br><span class="hljs-keyword">from</span> langchain.embeddings <span class="hljs-keyword">import</span> OpenAIEmbeddings<br>embeddings = OpenAIEmbeddings()<br><span class="hljs-comment"># 加载索引</span><br><span class="hljs-keyword">from</span> langchain.vectorstores <span class="hljs-keyword">import</span> Chroma<br>vectordb = Chroma(persist_directory=<span class="hljs-string">&quot;./vector_store&quot;</span>, embedding_function=embeddings)<br><span class="hljs-comment"># 向量相似度计算</span><br>query = <span class="hljs-string">&quot;未入职同事可以出差吗&quot;</span><br>docs = vectordb.similarity_search(query)<br>docs2 = vectordb.similarity_search_with_score(query)<br><span class="hljs-built_in">print</span>(docs[<span class="hljs-number">0</span>].page_content)<br><span class="hljs-comment"># 在检索器接口中公开该索引</span><br>retriever = vectordb.as_retriever(search_type=<span class="hljs-string">&quot;mmr&quot;</span>)<br>docs = retriever.get_relevant_documents(query)[<span class="hljs-number">0</span>]<br><span class="hljs-built_in">print</span>(docs.page_content)<br></code></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs python">vs_path = <span class="hljs-string">&quot;./vector_store&quot;</span><br><span class="hljs-keyword">if</span> vs_path <span class="hljs-keyword">and</span> os.path.isdir(vs_path):<br>    vector_store = FAISS.load_local(vs_path, embeddings)<br>    vector_store.add_documents(docs)<br><span class="hljs-keyword">else</span>:<br>    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> vs_path:<br>        vs_path = <span class="hljs-string">f&quot;&quot;&quot;<span class="hljs-subst">&#123;VS_ROOT_PATH&#125;</span><span class="hljs-subst">&#123;os.path.splitext(file)[<span class="hljs-number">0</span>]&#125;</span>_FAISS_<span class="hljs-subst">&#123;datetime.datetime.now().strftime(<span class="hljs-string">&quot;%Y%m%d_%H%M%S&quot;</span>)&#125;</span>&quot;&quot;&quot;</span><br>    vector_store = FAISS.from_documents(docs, embeddings)<br><br>vector_store.save_local(vs_path)<br>docs = vector_store.similarity_search(query)<br>docs_and_scores = vector_store.similarity_search_with_score(query)<br></code></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python">vector_db = Milvus.from_documents(<br>    docs,<br>    embeddings,<br>    connection_args=&#123;<span class="hljs-string">&quot;host&quot;</span>: <span class="hljs-string">&quot;127.0.0.1&quot;</span>, <span class="hljs-string">&quot;port&quot;</span>: <span class="hljs-string">&quot;19530&quot;</span>&#125;,<br>)<br>docs = vector_db.similarity_search(query)<br>docs[<span class="hljs-number">0</span>]<br></code></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain.vectorstores.pgvector <span class="hljs-keyword">import</span> PGVector<br><span class="hljs-keyword">import</span> os<br>CONNECTION_STRING = PGVector.connection_string_from_db_params(<br>    driver=os.environ.get(<span class="hljs-string">&quot;PGVECTOR_DRIVER&quot;</span>, <span class="hljs-string">&quot;psycopg2&quot;</span>),<br>    host=os.environ.get(<span class="hljs-string">&quot;PGVECTOR_HOST&quot;</span>, <span class="hljs-string">&quot;localhost&quot;</span>),<br>    port=<span class="hljs-built_in">int</span>(os.environ.get(<span class="hljs-string">&quot;PGVECTOR_PORT&quot;</span>, <span class="hljs-string">&quot;5432&quot;</span>)),<br>    database=os.environ.get(<span class="hljs-string">&quot;PGVECTOR_DATABASE&quot;</span>, <span class="hljs-string">&quot;postgres&quot;</span>),<br>    user=os.environ.get(<span class="hljs-string">&quot;PGVECTOR_USER&quot;</span>, <span class="hljs-string">&quot;postgres&quot;</span>),<br>    password=os.environ.get(<span class="hljs-string">&quot;PGVECTOR_PASSWORD&quot;</span>, <span class="hljs-string">&quot;postgres&quot;</span>),<br>)<br>db = PGVector.from_documents(<br>    embedding=embeddings,<br>    documents=docs,<br>    collection_name=<span class="hljs-string">&quot;state_of_the_union&quot;</span>,<br>    connection_string=CONNECTION_STRING,<br>)<br><br>query = <span class="hljs-string">&quot;What did the president say about Ketanji Brown Jackson&quot;</span><br>docs_with_score: <span class="hljs-type">List</span>[<span class="hljs-type">Tuple</span>[Document, <span class="hljs-built_in">float</span>]] = db.similarity_search_with_score(query)<br><span class="hljs-keyword">for</span> doc, score <span class="hljs-keyword">in</span> docs_with_score:<br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;-&quot;</span> * <span class="hljs-number">80</span>)<br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Score: &quot;</span>, score)<br>    <span class="hljs-built_in">print</span>(doc.page_content)<br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;-&quot;</span> * <span class="hljs-number">80</span>)<br></code></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> pinecone <br><br><span class="hljs-comment"># Connecting to Pinecone</span><br>pinecone.deinit()<br>pinecone.init(<br>    api_key=<span class="hljs-string">&quot;YOUR_API_KEY&quot;</span>,  <span class="hljs-comment"># find at app.pinecone.io</span><br>    environment=<span class="hljs-string">&quot;YOUR_ENV&quot;</span>  <span class="hljs-comment"># next to api key in console</span><br>)<br><br><span class="hljs-comment"># similarity_search</span><br>docsearch = Pinecone.from_documents(docs, embeddings, index_name=<span class="hljs-string">&quot;langchain-demo&quot;</span>)<br>docs = docsearch.similarity_search(query)<br><span class="hljs-built_in">print</span>(docs[<span class="hljs-number">0</span>].page_content)<br><br><span class="hljs-comment"># Create a Pinecone Service</span><br>pinecone_service = pinecone.Service()<br><br><span class="hljs-comment"># Create an Embedding Model</span><br><span class="hljs-keyword">from</span> langchain.embeddings.openai <span class="hljs-keyword">import</span> OpenAIEmbeddings<br>embeddings = OpenAIEmbeddings()<br><br><span class="hljs-comment"># Create a Vectorstore</span><br><span class="hljs-keyword">from</span> langchain.vectorstores <span class="hljs-keyword">import</span> Chroma<br>vectorstore = Chroma(embeddings, pinecone_service)<br><br><span class="hljs-comment"># Upload documents to Pinecone Vectorstore</span><br><span class="hljs-keyword">from</span> langchain.vectorstores <span class="hljs-keyword">import</span> Chroma<br>docsearch = Chroma.from_documents(texts, embeddings, collection_name=<span class="hljs-string">&quot;collection_name&quot;</span>)<br></code></pre></td></tr></table></figure>
+<h4 id="Retrievers"><a href="#Retrievers" class="headerlink" title="Retrievers"></a>Retrievers</h4><p>检索器接口是一个通用接口，可以轻松地将文档与语言模型结合起来。此接口公开了一个 get_relevant_documents 方法，该方法接受一个查询（一个字符串）并返回一个文档列表。</p>
+<p>一般来说，用的都是 <a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/indexes/retrievers/examples/vectorstore-retriever.html">VectorStore Retriever</a>。顾名思义，此检索器由 VectorStore 大力支持。一旦你构造了一个 VectorStore，构造一个检索器就很容易了。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># # pip install faiss-cpu</span><br><span class="hljs-keyword">from</span> langchain.chains <span class="hljs-keyword">import</span> RetrievalQA<br><span class="hljs-keyword">from</span> langchain.llms <span class="hljs-keyword">import</span> OpenAI<br><span class="hljs-keyword">from</span> langchain.document_loaders <span class="hljs-keyword">import</span> DirectoryLoader<br><span class="hljs-comment"># 加载文件夹中的所有txt类型的文件，并转成 document 对象</span><br>loader = DirectoryLoader(<span class="hljs-string">&#x27;./data/&#x27;</span>, glob=<span class="hljs-string">&#x27;**/*.txt&#x27;</span>)<br>documents = loader.load()<br><span class="hljs-comment"># 接下来，我们将文档拆分成块。</span><br><span class="hljs-keyword">from</span> langchain.text_splitter <span class="hljs-keyword">import</span> CharacterTextSplitter<br>text_splitter = CharacterTextSplitter(chunk_size=<span class="hljs-number">1000</span>, chunk_overlap=<span class="hljs-number">0</span>)<br>texts = text_splitter.split_documents(documents)<br><span class="hljs-comment"># 然后我们将选择我们想要使用的嵌入。</span><br><span class="hljs-keyword">from</span> langchain.embeddings <span class="hljs-keyword">import</span> OpenAIEmbeddings<br>embeddings = OpenAIEmbeddings()<br><span class="hljs-keyword">from</span> langchain.vectorstores <span class="hljs-keyword">import</span> FAISS<br>db = FAISS.from_documents(texts, embeddings)<br>query = <span class="hljs-string">&quot;未入职同事可以出差吗&quot;</span><br>docs = db.similarity_search(query)<br>docs_and_scores = db.similarity_search_with_score(query)<br><span class="hljs-built_in">print</span>(docs)<br><br>retriever = db.as_retriever()	<span class="hljs-comment"># 最大边际相关性搜索 mmr</span><br><span class="hljs-comment"># retriever = db.as_retriever(search_kwargs=&#123;&quot;k&quot;: 1&#125;)	# 搜索关键字</span><br>docs = retriever.get_relevant_documents(<span class="hljs-string">&quot;未入职同事可以出差吗&quot;</span>)<br><span class="hljs-built_in">print</span>(<span class="hljs-built_in">len</span>(docs))<br><br><span class="hljs-comment"># db.save_local(&quot;faiss_index&quot;)</span><br><span class="hljs-comment"># new_db = FAISS.load_local(&quot;faiss_index&quot;, embeddings)</span><br><span class="hljs-comment"># docs = new_db.similarity_search(query)</span><br><span class="hljs-comment"># docs[0]</span><br></code></pre></td></tr></table></figure>
+<h3 id="Chains"><a href="#Chains" class="headerlink" title="Chains"></a>Chains</h3><p>Chain 可以根据特定任务将 LLM 调用链接在一起。例如，您可能需要从特定 URL 获取数据，总结返回的文本，并使用生成的摘要回答问题。链允许我们将多个组件组合在一起以创建一个单一的、连贯的应用程序。例如，我们可以创建一个接受用户输入的链，使用 PromptTemplate 对其进行格式化，然后将格式化后的响应传递给 LLM。我们可以通过将多个链组合在一起，或者通过将链与其他组件组合来构建更复杂的链。</p>
+<ul>
+<li>LLMChain</li>
+<li>各种工具Chain</li>
+<li>LangChainHub</li>
+</ul>
+<h4 id="快速入门-1"><a href="#快速入门-1" class="headerlink" title="快速入门"></a>快速入门</h4><p><strong>LLMChain是一个简单的链，它接受一个提示模板，用用户输入格式化它并返回来自 LLM 的响应。</strong>在多步骤工作流程中结合 LLM 和提示。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain <span class="hljs-keyword">import</span> LLMChain<br><br>llm_chain = LLMChain(prompt=prompt, llm=llm)<br><br>question = <span class="hljs-string">&quot;Can Barack Obama have a conversation with George Washington?&quot;</span><br><br><span class="hljs-built_in">print</span>(llm_chain.run(question))<br></code></pre></td></tr></table></figure><br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain.llms <span class="hljs-keyword">import</span> OpenAI<br><span class="hljs-keyword">from</span> langchain.docstore.document <span class="hljs-keyword">import</span> Document<br><span class="hljs-keyword">import</span> requests<br><span class="hljs-keyword">from</span> langchain.embeddings.openai <span class="hljs-keyword">import</span> OpenAIEmbeddings<br><span class="hljs-keyword">from</span> langchain.vectorstores <span class="hljs-keyword">import</span> Chroma<br><span class="hljs-keyword">from</span> langchain.text_splitter <span class="hljs-keyword">import</span> CharacterTextSplitter<br><span class="hljs-keyword">from</span> langchain.prompts <span class="hljs-keyword">import</span> PromptTemplate<br><span class="hljs-keyword">import</span> pathlib<br><span class="hljs-keyword">import</span> subprocess<br><span class="hljs-keyword">import</span> tempfile<br><span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">生成对以前撰写的博客文章有理解的博客文章，或者可以参考产品文档的产品教程</span><br><span class="hljs-string">&quot;&quot;&quot;</span><br><br>source_chunks = <span class="hljs-string">&quot;&quot;</span><br>search_index = Chroma.from_documents(source_chunks, OpenAIEmbeddings())<br><br><span class="hljs-keyword">from</span> langchain.chains <span class="hljs-keyword">import</span> LLMChain<br>prompt_template = <span class="hljs-string">&quot;&quot;&quot;Use the context below to write a 400 word blog post about the topic below:</span><br><span class="hljs-string">    Context: &#123;context&#125;</span><br><span class="hljs-string">    Topic: &#123;topic&#125;</span><br><span class="hljs-string">    Blog post:&quot;&quot;&quot;</span><br><br>PROMPT = PromptTemplate(<br>    template=prompt_template, input_variables=[<span class="hljs-string">&quot;context&quot;</span>, <span class="hljs-string">&quot;topic&quot;</span>]<br>)<br><br>llm = OpenAI(temperature=<span class="hljs-number">0</span>)<br><br>chain = LLMChain(llm=llm, prompt=PROMPT)<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">generate_blog_post</span>(<span class="hljs-params">topic</span>):<br>    docs = search_index.similarity_search(topic, k=<span class="hljs-number">4</span>)<br>    inputs = [&#123;<span class="hljs-string">&quot;context&quot;</span>: doc.page_content, <span class="hljs-string">&quot;topic&quot;</span>: topic&#125; <span class="hljs-keyword">for</span> doc <span class="hljs-keyword">in</span> docs]<br>    <span class="hljs-built_in">print</span>(chain.apply(inputs))<br><br>generate_blog_post(<span class="hljs-string">&quot;environment variables&quot;</span>)<br></code></pre></td></tr></table></figure></p>
+<h4 id="执行多个chain"><a href="#执行多个chain" class="headerlink" title="执行多个chain"></a>执行多个chain</h4><p>顺序链是按预定义顺序执行其链接的链。具体来说，我们使用SimpleSequentialChain，其中每个步骤都有一个输入/输出，一个步骤的输出是下一个步骤的输入。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain.llms <span class="hljs-keyword">import</span> OpenAI<br><span class="hljs-keyword">from</span> langchain.chains <span class="hljs-keyword">import</span> LLMChain<br><span class="hljs-keyword">from</span> langchain.prompts <span class="hljs-keyword">import</span> PromptTemplate<br><span class="hljs-keyword">from</span> langchain.chains <span class="hljs-keyword">import</span> SimpleSequentialChain<br><br><span class="hljs-comment"># location 链</span><br>llm = OpenAI(temperature=<span class="hljs-number">1</span>)<br>template = <span class="hljs-string">&quot;&quot;&quot;Your job is to come up with a classic dish from the area that the users suggests.</span><br><span class="hljs-string">% USER LOCATION</span><br><span class="hljs-string">&#123;user_location&#125;</span><br><span class="hljs-string"></span><br><span class="hljs-string">YOUR RESPONSE:</span><br><span class="hljs-string">&quot;&quot;&quot;</span><br>prompt_template = PromptTemplate(input_variables=[<span class="hljs-string">&quot;user_location&quot;</span>], template=template)<br>location_chain = LLMChain(llm=llm, prompt=prompt_template)<br><br><span class="hljs-comment"># meal 链</span><br>template = <span class="hljs-string">&quot;&quot;&quot;Given a meal, give a short and simple recipe on how to make that dish at home.</span><br><span class="hljs-string">% MEAL</span><br><span class="hljs-string">&#123;user_meal&#125;</span><br><span class="hljs-string"></span><br><span class="hljs-string">YOUR RESPONSE:</span><br><span class="hljs-string">&quot;&quot;&quot;</span><br>prompt_template = PromptTemplate(input_variables=[<span class="hljs-string">&quot;user_meal&quot;</span>], template=template)<br>meal_chain = LLMChain(llm=llm, prompt=prompt_template)<br><br><span class="hljs-comment"># 通过 SimpleSequentialChain 串联起来，第一个答案会被替换第二个中的user_meal，然后再进行询问</span><br>overall_chain = SimpleSequentialChain(chains=[location_chain, meal_chain], verbose=<span class="hljs-literal">True</span>)<br>review = overall_chain.run(<span class="hljs-string">&quot;Rome&quot;</span>)<br></code></pre></td></tr></table></figure></p>
+<h4 id="load-qa-chain"><a href="#load-qa-chain" class="headerlink" title="load_qa_chain"></a>load_qa_chain</h4><p>Load question answering chain.<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">load_qa_chain</span>(<span class="hljs-params"></span><br><span class="hljs-params">    llm: BaseLanguageModel,</span><br><span class="hljs-params">    chain_type: <span class="hljs-built_in">str</span> = <span class="hljs-string">&quot;stuff&quot;</span>,</span><br><span class="hljs-params">    verbose: <span class="hljs-type">Optional</span>[<span class="hljs-built_in">bool</span>] = <span class="hljs-literal">None</span>,</span><br><span class="hljs-params">    callback_manager: <span class="hljs-type">Optional</span>[BaseCallbackManager] = <span class="hljs-literal">None</span>,</span><br><span class="hljs-params">    **kwargs: <span class="hljs-type">Any</span>,</span><br><span class="hljs-params"></span>) -&gt; BaseCombineDocumentsChain:<br></code></pre></td></tr></table></figure><br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain.embeddings.openai <span class="hljs-keyword">import</span> OpenAIEmbeddings<br><span class="hljs-keyword">from</span> langchain.text_splitter <span class="hljs-keyword">import</span> CharacterTextSplitter<br><span class="hljs-keyword">from</span> langchain.vectorstores <span class="hljs-keyword">import</span> Chroma<br><span class="hljs-keyword">from</span> langchain.docstore.document <span class="hljs-keyword">import</span> Document<br><span class="hljs-keyword">from</span> langchain.prompts <span class="hljs-keyword">import</span> PromptTemplate<br><span class="hljs-keyword">from</span> langchain.indexes.vectorstore <span class="hljs-keyword">import</span> VectorstoreIndexCreator<br><br><span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(<span class="hljs-string">&quot;../../state_of_the_union.txt&quot;</span>) <span class="hljs-keyword">as</span> f:<br>    state_of_the_union = f.read()<br>text_splitter = CharacterTextSplitter(chunk_size=<span class="hljs-number">1000</span>, chunk_overlap=<span class="hljs-number">0</span>)<br>texts = text_splitter.split_text(state_of_the_union)<br><br>embeddings = OpenAIEmbeddings()<br>docsearch = Chroma.from_texts(texts, embeddings, metadatas=[&#123;<span class="hljs-string">&quot;source&quot;</span>: <span class="hljs-built_in">str</span>(i)&#125; <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-built_in">len</span>(texts))]).as_retriever()<br><span class="hljs-comment"># retriever=docsearch.as_retriever()</span><br><br>query = <span class="hljs-string">&quot;What did the president say about Justice Breyer&quot;</span><br>docs = docsearch.get_relevant_documents(query)<br><br><span class="hljs-keyword">from</span> langchain.chains.question_answering <span class="hljs-keyword">import</span> load_qa_chain<br><span class="hljs-keyword">from</span> langchain.llms <span class="hljs-keyword">import</span> OpenAI<br><br>chain = load_qa_chain(OpenAI(temperature=<span class="hljs-number">0</span>), chain_type=<span class="hljs-string">&quot;stuff&quot;</span>)<br>query = <span class="hljs-string">&quot;What did the president say about Justice Breyer&quot;</span><br>chain.run(input_documents=docs, question=query)<br></code></pre></td></tr></table></figure></p>
+<h4 id="RetrievalQA"><a href="#RetrievalQA" class="headerlink" title="RetrievalQA"></a>RetrievalQA</h4><p>Chain for question-answering against an index.<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">此示例展示了对文档的问答。文档问答包括四个步骤：</span><br><span class="hljs-string">1. 创建索引</span><br><span class="hljs-string">2. 从该索引创建一个检索器</span><br><span class="hljs-string">3. 创建问答链</span><br><span class="hljs-string">4. 问问题！</span><br><span class="hljs-string">&quot;&quot;&quot;</span><br><br><span class="hljs-comment"># pip install chromadb</span><br><span class="hljs-keyword">from</span> langchain.chains <span class="hljs-keyword">import</span> RetrievalQA<br><span class="hljs-keyword">from</span> langchain.chains <span class="hljs-keyword">import</span> RetrievalQAWithSourcesChain<br><span class="hljs-keyword">from</span> langchain.llms <span class="hljs-keyword">import</span> OpenAI<br><span class="hljs-keyword">from</span> langchain.document_loaders <span class="hljs-keyword">import</span> DirectoryLoader<br><span class="hljs-comment"># 加载文件夹中的所有txt类型的文件，并转成 document 对象</span><br>loader = DirectoryLoader(<span class="hljs-string">&#x27;./data/&#x27;</span>, glob=<span class="hljs-string">&#x27;**/*.txt&#x27;</span>)<br>documents = loader.load()<br><span class="hljs-comment"># 接下来，我们将文档拆分成块。</span><br><span class="hljs-keyword">from</span> langchain.text_splitter <span class="hljs-keyword">import</span> CharacterTextSplitter<br>text_splitter = CharacterTextSplitter(chunk_size=<span class="hljs-number">1000</span>, chunk_overlap=<span class="hljs-number">0</span>)<br>texts = text_splitter.split_documents(documents)<br><span class="hljs-comment"># 然后我们将选择我们想要使用的嵌入。</span><br><span class="hljs-keyword">from</span> langchain.embeddings <span class="hljs-keyword">import</span> OpenAIEmbeddings<br>embeddings = OpenAIEmbeddings()<br><span class="hljs-comment"># 我们现在创建 vectorstore 用作索引，并进行持久化</span><br><span class="hljs-keyword">from</span> langchain.vectorstores <span class="hljs-keyword">import</span> Chroma<br><span class="hljs-comment"># vector_store = Chroma.from_documents(texts, embeddings, persist_directory=&quot;./vector_store&quot;)</span><br><span class="hljs-comment"># vector_store.persist()</span><br>vector_store = Chroma(persist_directory=<span class="hljs-string">&quot;./vector_store&quot;</span>, embedding_function=embeddings)<br><span class="hljs-comment"># 这就是创建索引。然后，我们在检索器接口中公开该索引。</span><br>retriever = vector_store.as_retriever()<br><span class="hljs-comment"># 创建一个链并用它来回答问题！</span><br>qa = RetrievalQA.from_chain_type(llm=OpenAI(), chain_type=<span class="hljs-string">&quot;stuff&quot;</span>, retriever=retriever)<br><span class="hljs-built_in">print</span>(qa.input_keys, qa.output_keys)<br>query = <span class="hljs-string">&quot;出差申请单修改&quot;</span><br><span class="hljs-built_in">print</span>(qa.run(query=query))<br><br>chain = RetrievalQAWithSourcesChain.from_chain_type(llm=OpenAI(temperature=<span class="hljs-number">0</span>), chain_type=<span class="hljs-string">&quot;stuff&quot;</span>, retriever=retriever)<br><span class="hljs-built_in">print</span>(chain.input_keys, chain.output_keys)<br><span class="hljs-built_in">print</span>(chain(&#123;<span class="hljs-string">&quot;question&quot;</span>: <span class="hljs-string">&quot;出差申请单修改&quot;</span>&#125;, return_only_outputs=<span class="hljs-literal">True</span>))<br></code></pre></td></tr></table></figure></p>
+<h4 id="VectorDBQA"><a href="#VectorDBQA" class="headerlink" title="VectorDBQA"></a>VectorDBQA</h4><p>Chain for question-answering against a vector database.<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python">vector_store = Chroma.from_documents(split_docs, embeddings)<br>qa = VectorDBQA.from_chain_type(llm=OpenAI(), chain_type=<span class="hljs-string">&quot;stuff&quot;</span>, vectorstore=vector_store,return_source_documents=<span class="hljs-literal">True</span>)<br><span class="hljs-comment"># 进行问答</span><br>res = qa(&#123;<span class="hljs-string">&quot;query&quot;</span>: <span class="hljs-string">&quot;未入职同事可以出差吗&quot;</span>&#125;)<br><span class="hljs-built_in">print</span>(res)<br></code></pre></td></tr></table></figure></p>
+<h4 id="LLMRequestsChain"><a href="#LLMRequestsChain" class="headerlink" title="LLMRequestsChain"></a>LLMRequestsChain</h4><p>使用请求库从 URL 获取 HTML 结果，然后使用 LLM 解析结果<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain.llms <span class="hljs-keyword">import</span> OpenAI<br><span class="hljs-keyword">from</span> langchain.chains <span class="hljs-keyword">import</span> LLMRequestsChain, LLMChain<br><br><span class="hljs-keyword">from</span> langchain.prompts <span class="hljs-keyword">import</span> PromptTemplate<br><br>template = <span class="hljs-string">&quot;&quot;&quot;Between &gt;&gt;&gt; and &lt;&lt;&lt; are the raw search result text from google.</span><br><span class="hljs-string">Extract the answer to the question &#x27;&#123;query&#125;&#x27; or say &quot;not found&quot; if the information is not contained.</span><br><span class="hljs-string">Use the format</span><br><span class="hljs-string">Extracted:&lt;answer or &quot;not found&quot;&gt;</span><br><span class="hljs-string"><span class="hljs-meta">&gt;&gt;&gt; </span>&#123;requests_result&#125; &lt;&lt;&lt;</span><br><span class="hljs-string">Extracted:&quot;&quot;&quot;</span><br><br>PROMPT = PromptTemplate(<br>    input_variables=[<span class="hljs-string">&quot;query&quot;</span>, <span class="hljs-string">&quot;requests_result&quot;</span>],<br>    template=template,<br>)<br>chain = LLMRequestsChain(llm_chain = LLMChain(llm=OpenAI(temperature=<span class="hljs-number">0</span>), prompt=PROMPT))<br>question = <span class="hljs-string">&quot;What are the Three (3) biggest countries, and their respective sizes?&quot;</span><br>inputs = &#123;<br>    <span class="hljs-string">&quot;query&quot;</span>: question,<br>    <span class="hljs-string">&quot;url&quot;</span>: <span class="hljs-string">&quot;https://www.google.com/search?q=&quot;</span> + question.replace(<span class="hljs-string">&quot; &quot;</span>, <span class="hljs-string">&quot;+&quot;</span>)<br>&#125;<br>chain(inputs)<br></code></pre></td></tr></table></figure></p>
+<h4 id="SQLDatabaseChain"><a href="#SQLDatabaseChain" class="headerlink" title="SQLDatabaseChain"></a>SQLDatabaseChain</h4><p>如何使用SQLDatabaseChain来回答数据库中的问题。</p>
+<p>在底层，LangChain 使用 <code>SQLAlchemy</code> 连接到 SQL 数据库。因此，<code>SQLDatabaseChain</code>可以与 SQLAlchemy 支持的任何 SQL 方言一起使用，例如 MS SQL、<strong>MySQL</strong>、MariaDB、PostgreSQL、Oracle SQL 和 SQLite。有关连接到数据库的要求的更多信息，请参阅 SQLAlchemy 文档。例如，与 MySQL 的连接需要适当的连接器，例如 PyMySQL。MySQL 连接的 URI 可能类似于：</p>
+<p><code>mysql+pymysql://user:pass@some_mysql_db_address/db_name</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain <span class="hljs-keyword">import</span> SQLDatabase <br>db = SQLDatabase.from_uri(<br>    <span class="hljs-string">&quot;mysql+pymysql://user:pass@some_mysql_db_address:3306/db_name&quot;</span>,<br>    include_tables=[<span class="hljs-string">&#x27;table1&#x27;</span>, <span class="hljs-string">&#x27;table2&#x27;</span>],<br>    sample_rows_in_table_info=<span class="hljs-number">2</span><br>) <br><span class="hljs-built_in">print</span>(db.table_info)<br></code></pre></td></tr></table></figure>
+<p><strong>注意：</strong>对于数据敏感的项目，可以return_direct=True在SQLDatabaseChain初始化时指定直接返回SQL查询的输出，不做任何额外的格式化。这可以防止 LLM 查看数据库中的任何内容。但是请注意，默认情况下，LLM 仍然可以访问数据库方案（即方言、表和键名）。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain <span class="hljs-keyword">import</span> OpenAI, SQLDatabaseChain <br>llm = OpenAI(temperature=<span class="hljs-number">0</span>) <br><br>db_chain = SQLDatabaseChain(llm=llm, database=db, verbose=<span class="hljs-literal">True</span>)<br>db_chain.run(<span class="hljs-string">&quot;获取 flow=LXHITDH 且跟发票相关的知识&quot;</span>) <br><br><br><span class="hljs-comment"># 自定义提示</span><br><span class="hljs-keyword">from</span> langchain.prompts.prompt <span class="hljs-keyword">import</span> PromptTemplate<br>_DEFAULT_TEMP = <span class="hljs-string">&quot;&quot;&quot;Given an input question, first create a syntactically correct &#123;dialect&#125; query to run, then look at the results of the query and return the answer.</span><br><span class="hljs-string">Use the following format:</span><br><span class="hljs-string"></span><br><span class="hljs-string">Question: &quot;Question here&quot;</span><br><span class="hljs-string">SQLQuery: &quot;SQL Query to run&quot;</span><br><span class="hljs-string">SQLResult: &quot;Result of the SQLQuery&quot;</span><br><span class="hljs-string">Answer: &quot;Final answer here&quot;</span><br><span class="hljs-string"></span><br><span class="hljs-string">Only use the following tables:</span><br><span class="hljs-string"></span><br><span class="hljs-string">&#123;table_info&#125;</span><br><span class="hljs-string"></span><br><span class="hljs-string">If someone asks for the table foobar, they really mean the employee table.</span><br><span class="hljs-string"></span><br><span class="hljs-string">Question: &#123;input&#125;&quot;&quot;&quot;</span><br>PROMPT = PromptTemplate(<br>    input_variables=[<span class="hljs-string">&quot;input&quot;</span>, <span class="hljs-string">&quot;table_info&quot;</span>, <span class="hljs-string">&quot;dialect&quot;</span>], template=_DEFAULT_TEMP)<br><br><span class="hljs-comment"># 返回中间步骤</span><br><span class="hljs-comment"># top_k 返回最大结果数，相当于 limit</span><br>db_chain = SQLDatabaseChain(llm=llm, database=db, prompt=PROMPT, verbose=<span class="hljs-literal">True</span>, return_intermediate_steps=<span class="hljs-literal">True</span>, top_k=<span class="hljs-number">3</span>)<br>result = db_chain(<span class="hljs-string">&quot;获取跟发票相关的知识&quot;</span>)<br>result[<span class="hljs-string">&quot;intermediate_steps&quot;</span>]<br></code></pre></td></tr></table></figure></p>
+<h3 id="Agents"><a href="#Agents" class="headerlink" title="Agents"></a>Agents</h3><p>我们提到“链”可以帮助将一系列 LLM 调用链接在一起。然而，在某些任务中，调用顺序通常是不确定的。下一步可能取决于用户输入和前面步骤中的响应。 </p>
+<p>对于此类应用程序，LangChain 库提供了代理“Agents”，它们可以根据未知的输入而不是硬编码来决定下一步采取的行动。 执行过程可以参考下面这张图:</p>
+<img src="/2023/04/18/2023-04-18-LangChain%20%E5%AE%9E%E6%88%98/1681457282828-768cbe71-f5ba-45a5-b6cc-d0ac93a0e1c0.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>agent 使用LLM来确定要采取哪些行动以及按什么顺序采取的行动。操作可以使用工具并观察其输出，也可以返回用户。创建agent时的参数：</p>
+<ul>
+<li>工具：执行特定职责的功能。比如：Google搜索，数据库查找，Python Repl。工具的接口当前是一个函数，将字符串作为输入，字符串作为输出。</li>
+<li>LLM：为代理提供动力的语言模型。</li>
+<li>代理：highest level API、custom agent</li>
+</ul>
+<h4 id="快速入门-2"><a href="#快速入门-2" class="headerlink" title="快速入门"></a>快速入门</h4><p>代理使用 LLM 来确定采取哪些行动以及采取何种顺序。动作可以是使用工具并观察其输出，也可以是返回给用户。为了加载代理，您应该了解以下概念：</p>
+<ul>
+<li>工具：执行特定任务的功能。这可以是：Google 搜索、数据库查找、Python REPL、其他链。工具的接口目前是一个函数，期望将字符串作为输入，将字符串作为输出。</li>
+<li>LLM：为代理提供支持的语言模型。</li>
+<li>代理：要使用的代理。这应该是一个引用支持代理类的字符串。由于本笔记本侧重于最简单、最高级别的 API，因此仅涵盖使用标准支持的代理。如果您想实施自定义代理，请参阅自定义代理的文档（即将推出）。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># Create RetrievalQA Chain</span><br><span class="hljs-keyword">from</span> langchain.chains <span class="hljs-keyword">import</span> RetrievalQA<br>retrieval_qa = RetrievalQA.from_chain_type(llm=llm, chain_type=<span class="hljs-string">&quot;stuff&quot;</span>, retriever=docsearch.as_retriever())<br><br><span class="hljs-comment"># Create an Agent</span><br><span class="hljs-keyword">from</span> langchain.agents <span class="hljs-keyword">import</span> initialize_agent, Tool<br>tools = [<br>    Tool(<br>        name=<span class="hljs-string">&quot;Example QA System&quot;</span>,<br>        func=retrieval_qa.run,<br>        description=<span class="hljs-string">&quot;Example description of the tool.&quot;</span><br>    ),<br>]<br>agent = initialize_agent(tools, llm, agent=<span class="hljs-string">&quot;zero-shot-react-description&quot;</span>, verbose=<span class="hljs-literal">True</span>)<br><br><span class="hljs-comment"># Use Agent</span><br>agent.run(<span class="hljs-string">&quot;Ask a question related to the documents&quot;</span>)<br></code></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain.agents <span class="hljs-keyword">import</span> load_tools<br><span class="hljs-keyword">from</span> langchain.agents <span class="hljs-keyword">import</span> initialize_agent<br><span class="hljs-keyword">from</span> langchain.agents <span class="hljs-keyword">import</span> AgentType<br><span class="hljs-keyword">from</span> langchain.llms <span class="hljs-keyword">import</span> OpenAI<br><br>llm = OpenAI(temperature=<span class="hljs-number">0</span>)<br><br>tools = load_tools([<span class="hljs-string">&quot;serpapi&quot;</span>, <span class="hljs-string">&quot;llm-math&quot;</span>], llm=llm)<br><br>agent = initialize_agent(tools, llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, verbose=<span class="hljs-literal">True</span>)<br><br>agent.run(<span class="hljs-string">&quot;Who is Leo DiCaprio&#x27;s girlfriend? What is her current age raised to the 0.43 power?&quot;</span>)<br></code></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain.agents <span class="hljs-keyword">import</span> Tool, initialize_agent<br><span class="hljs-keyword">from</span> langchain.memory <span class="hljs-keyword">import</span> ConversationBufferMemory<br><span class="hljs-keyword">from</span> langchain.chat_models <span class="hljs-keyword">import</span> ChatOpenAI<br><span class="hljs-keyword">from</span> langchain.utilities <span class="hljs-keyword">import</span> SerpAPIWrapper, LLMMathChain<br><br><span class="hljs-comment"># 初始化搜索链和计算链</span><br>search = SerpAPIWrapper()<br>llm_math_chain = LLMMathChain(llm=llm, verbose=<span class="hljs-literal">True</span>)<br><br><span class="hljs-comment"># 创建一个功能列表，指明这个 agent 里面都有哪些可用工具，agent 执行过程可以看必知概念里的 Agent 那张图</span><br>tools = [<br>    Tool(<br>        name = <span class="hljs-string">&quot;Search&quot;</span>,<br>        func=search.run,<br>        description=<span class="hljs-string">&quot;useful for when you need to answer questions about current events or the current state of the world.&quot;</span><br>    ),<br>    Tool(<br>        name=<span class="hljs-string">&quot;Calculator&quot;</span>,<br>        func=llm_math_chain.run,<br>        description=<span class="hljs-string">&quot;useful for when you need to answer questions about math&quot;</span><br>    )<br>]<br><br>memory = ConversationBufferMemory(memory_key=<span class="hljs-string">&quot;chat_history&quot;</span>, return_messages=<span class="hljs-literal">True</span>)<br>llm = ChatOpenAI(temperature=<span class="hljs-number">0</span>)<br><br><span class="hljs-comment"># 初始化 agent</span><br>agent = initialize_agent(tools, llm, agent=<span class="hljs-string">&quot;chat-conversational-react-description&quot;</span>, verbose=<span class="hljs-literal">True</span>, memory=memory)<br><br><span class="hljs-comment"># 执行 agent</span><br>agent.run(<span class="hljs-string">&quot;Who is Leo DiCaprio&#x27;s girlfriend? What is her current age raised to the 0.43 power?&quot;</span>)<br></code></pre></td></tr></table></figure>
+<h4 id="Tools"><a href="#Tools" class="headerlink" title="Tools"></a>Tools</h4><p>工具是代理可以用来与世界交互的功能。这些工具可以是通用实用程序（例如搜索）、其他链，比如：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/agents/tools/examples/bash.html">Bash</a> 在终端中执行命令。输入应该是有效的命令，输出将是运行该命令的任何输出。</li>
+<li><a target="_blank" rel="noopener" href="https://apify.com/">Apify</a> 一个用于网络抓取和数据提取的云平台</li>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/agents/tools/examples/bing_search.html">Bing Search</a></li>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/agents/tools/examples/google_search.html">Google Search</a></li>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/agents/tools/examples/human_tools.html">Human as a tool</a> 人类是 AGI，当 AI 代理感到困惑时会进行询问</li>
+<li>LLM-MATH 对于您需要回答数学问题时有用。</li>
+<li>Open-Meteo-Api 对于您想从OpenMeteo API获取天气信息时很有用。</li>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/agents/tools/examples/python.html"><strong>Python REPL</strong></a><strong> 使用它来执行 python 命令。输入应该是有效的 python 命令</strong></li>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/agents/tools/examples/requests.html"><strong>Requests</strong></a><strong> 当您需要从站点获取特定内容时使用它。输入应该是一个特定的 url，输出将是该页面上的所有文本。</strong></li>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/agents/tools/examples/serpapi.html"><strong>SerpAPI</strong></a><strong> 一个搜索引擎。当您需要回答有关时事的问题时很有用。输入应该是搜索查询。</strong></li>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/agents/tools/examples/wikipedia.html">Wikipedia API</a></li>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/agents/tools/examples/wolfram_alpha.html">Wolfram Alpha</a> 当您需要回答有关数学、科学、技术、文化、社会和日常生活的问题时很有用。输入应该是搜索查询。</li>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/agents/tools/examples/zapier.html">Zapier Natural Language Actions API</a> 可以通过自然语言 API 接口访问 Zapier 平台上的 5k+ 应用程序和 20k+ 操作</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain.agents <span class="hljs-keyword">import</span> tool<br><br><span class="hljs-meta">@tool</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">search_api</span>(<span class="hljs-params">query: <span class="hljs-built_in">str</span></span>) -&gt; <span class="hljs-built_in">str</span>:<br>    <span class="hljs-string">&quot;&quot;&quot;Searches the API for the query.&quot;&quot;&quot;</span><br>    <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;Results&quot;</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain.agents <span class="hljs-keyword">import</span> load_tools<br>tools = load_tools([<span class="hljs-string">&quot;serpapi&quot;</span>, <span class="hljs-string">&quot;llm-math&quot;</span>], llm=llm)<br>tools[<span class="hljs-number">0</span>].name = <span class="hljs-string">&quot;Google Search&quot;</span><br>agent = initialize_agent(tools, llm, agent=<span class="hljs-string">&quot;zero-shot-react-description&quot;</span>, verbose=<span class="hljs-literal">True</span>)<br></code></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python">tools = [<br>    Tool(<br>        name=<span class="hljs-string">&quot;Music Search&quot;</span>,<br>        func=<span class="hljs-keyword">lambda</span> x: <span class="hljs-string">&quot;&#x27;All I Want For Christmas Is You&#x27; by Mariah Carey.&quot;</span>,<br>        description=<span class="hljs-string">&quot;A Music search engine. Use this more than the normal search if the question is about Music, like &#x27;who is the singer of yesterday?&#x27; or &#x27;what is the most popular song in 2022?&#x27;&quot;</span>,<br>    )<br>]<br></code></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain.agents <span class="hljs-keyword">import</span> initialize_agent, Tool<br><span class="hljs-keyword">from</span> langchain.agents <span class="hljs-keyword">import</span> AgentType<br><span class="hljs-keyword">from</span> langchain.agents <span class="hljs-keyword">import</span> tool<br><span class="hljs-keyword">from</span> langchain.tools <span class="hljs-keyword">import</span> BaseTool<br><span class="hljs-keyword">from</span> langchain.llms <span class="hljs-keyword">import</span> OpenAI<br><span class="hljs-keyword">from</span> langchain <span class="hljs-keyword">import</span> LLMMathChain, SerpAPIWrapper<br><br>llm = OpenAI(temperature=<span class="hljs-number">0</span>)<br><br><span class="hljs-comment"># 初始化搜索链和计算链</span><br>search = SerpAPIWrapper()<br>llm_math_chain = LLMMathChain(llm=llm, verbose=<span class="hljs-literal">True</span>)<br><br><span class="hljs-comment"># Creating custom tools with the tool decorator:</span><br><span class="hljs-meta">@tool</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">search_api</span>(<span class="hljs-params">query: <span class="hljs-built_in">str</span></span>) -&gt; <span class="hljs-built_in">str</span>:<br>    <span class="hljs-string">&quot;&quot;&quot;Searches the API for the query.&quot;&quot;&quot;</span><br>    <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;Results&quot;</span><br><br><br><span class="hljs-comment"># 创建一个功能列表，指明这个 agent 里面都有哪些可用工具，agent 执行过程可以看必知概念里的 Agent 那张图</span><br>tools = [<br>    Tool(<br>        name = <span class="hljs-string">&quot;Search&quot;</span>,<br>        func=search.run,<br>        description=<span class="hljs-string">&quot;useful for when you need to answer questions about current events&quot;</span><br>    ),<br>    Tool(<br>        name=<span class="hljs-string">&quot;Calculator&quot;</span>,<br>        func=llm_math_chain.run,<br>        description=<span class="hljs-string">&quot;useful for when you need to answer questions about math&quot;</span><br>    )<br>]<br><br><span class="hljs-comment"># 初始化 agent</span><br>agent = initialize_agent(tools, llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, verbose=<span class="hljs-literal">True</span>)<br><br><span class="hljs-comment"># 执行 agent</span><br>agent.run(<span class="hljs-string">&quot;Who is Leo DiCaprio&#x27;s girlfriend? What is her current age raised to the 0.43 power?&quot;</span>)<br><br></code></pre></td></tr></table></figure>
+<h4 id="Custom-Agent"><a href="#Custom-Agent" class="headerlink" title="Custom Agent"></a>Custom Agent</h4><ul>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/agents/agents/custom_agent.html">Custom Agent</a></li>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/agents/agents/custom_llm_agent.html">Custom LLM Agent</a></li>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/agents/agents/custom_llm_chat_agent.html">Custom LLM Agent (with a ChatModel)</a></li>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/agents/agents/custom_mrkl_agent.html">Custom MRKL Agent</a></li>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/agents/agents/custom_multi_action_agent.html">Custom MultiAction Agent</a></li>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/agents/agents/custom_agent_with_tool_retrieval.html">Custom Agent with Tool Retrieval</a></li>
+</ul>
+<p>We also have documentation for an in-depth dive into each agent type.</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/agents/agents/examples/chat_conversation_agent.html">Conversation Agent (for Chat Models)</a></li>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/agents/agents/examples/conversational_agent.html">Conversation Agent</a></li>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/agents/agents/examples/mrkl.html">MRKL</a></li>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/agents/agents/examples/mrkl_chat.html">MRKL Chat</a></li>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/agents/agents/examples/react.html">ReAct</a></li>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/agents/agents/examples/self_ask_with_search.html">Self Ask With Search</a></li>
+</ul>
+<h4 id="Toolkits"><a href="#Toolkits" class="headerlink" title="Toolkits"></a>Toolkits</h4><p>带有工具包的代理<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain.agents <span class="hljs-keyword">import</span> create_csv_agent<br><span class="hljs-keyword">from</span> langchain.llms <span class="hljs-keyword">import</span> OpenAI<br>agent = create_csv_agent(OpenAI(temperature=<span class="hljs-number">0</span>), <span class="hljs-string">&#x27;titanic.csv&#x27;</span>, verbose=<span class="hljs-literal">True</span>)<br>agent.run(<span class="hljs-string">&quot;how many rows are there?&quot;</span>)<br></code></pre></td></tr></table></figure><br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain.agents.agent_toolkits <span class="hljs-keyword">import</span> create_python_agent<br><span class="hljs-keyword">from</span> langchain.tools.python.tool <span class="hljs-keyword">import</span> PythonREPLTool<br><span class="hljs-keyword">from</span> langchain.python <span class="hljs-keyword">import</span> PythonREPL<br><span class="hljs-keyword">from</span> langchain.llms.openai <span class="hljs-keyword">import</span> OpenAI<br>agent_executor = create_python_agent(<br>    llm=OpenAI(temperature=<span class="hljs-number">0</span>, max_tokens=<span class="hljs-number">1000</span>),<br>    tool=PythonREPLTool(),<br>    verbose=<span class="hljs-literal">True</span><br>)<br>agent_executor.run(<span class="hljs-string">&quot;What is the 10th fibonacci number?&quot;</span>)<br>agent_executor.run(<span class="hljs-string">&quot;&quot;&quot;Understand, write a single neuron neural network in PyTorch.</span><br><span class="hljs-string">Take synthetic data for y=2x. Train for 1000 epochs and print every 100 epochs.</span><br><span class="hljs-string">Return prediction for x = 5&quot;&quot;&quot;</span>)<br></code></pre></td></tr></table></figure><br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain.agents <span class="hljs-keyword">import</span> create_sql_agent<br><span class="hljs-keyword">from</span> langchain.agents.agent_toolkits <span class="hljs-keyword">import</span> SQLDatabaseToolkit<br><span class="hljs-keyword">from</span> langchain.sql_database <span class="hljs-keyword">import</span> SQLDatabase<br><span class="hljs-keyword">from</span> langchain.llms.openai <span class="hljs-keyword">import</span> OpenAI<br><span class="hljs-keyword">from</span> langchain.agents <span class="hljs-keyword">import</span> AgentExecutor<br>db = SQLDatabase.from_uri(<span class="hljs-string">&quot;sqlite:///../../../../notebooks/Chinook.db&quot;</span>)<br>toolkit = SQLDatabaseToolkit(db=db)<br><br><span class="hljs-comment"># pip install langchain==0.0.136</span><br>agent_executor = create_sql_agent(<br>    llm=OpenAI(temperature=<span class="hljs-number">0</span>),<br>    toolkit=toolkit,<br>    verbose=<span class="hljs-literal">True</span><br>)<br>agent_executor.run(<span class="hljs-string">&quot;Describe the playlisttrack table&quot;</span>)<br></code></pre></td></tr></table></figure><br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain.embeddings.openai <span class="hljs-keyword">import</span> OpenAIEmbeddings<br><span class="hljs-keyword">from</span> langchain.vectorstores <span class="hljs-keyword">import</span> Chroma<br><span class="hljs-keyword">from</span> langchain.text_splitter <span class="hljs-keyword">import</span> CharacterTextSplitter<br><span class="hljs-keyword">from</span> langchain <span class="hljs-keyword">import</span> OpenAI, VectorDBQA<br>llm = OpenAI(temperature=<span class="hljs-number">0</span>)<br><span class="hljs-keyword">from</span> langchain.document_loaders <span class="hljs-keyword">import</span> TextLoader<br>loader = TextLoader(<span class="hljs-string">&#x27;../../../state_of_the_union.txt&#x27;</span>)<br>documents = loader.load()<br>text_splitter = CharacterTextSplitter(chunk_size=<span class="hljs-number">1000</span>, chunk_overlap=<span class="hljs-number">0</span>)<br>texts = text_splitter.split_documents(documents)<br><br>embeddings = OpenAIEmbeddings()<br>state_of_union_store = Chroma.from_documents(texts, embeddings, collection_name=<span class="hljs-string">&quot;state-of-union&quot;</span>)<br><br><span class="hljs-keyword">from</span> langchain.document_loaders <span class="hljs-keyword">import</span> WebBaseLoader<br>loader = WebBaseLoader(<span class="hljs-string">&quot;https://beta.ruff.rs/docs/faq/&quot;</span>)<br>docs = loader.load()<br>ruff_texts = text_splitter.split_documents(docs)<br>ruff_store = Chroma.from_documents(ruff_texts, embeddings, collection_name=<span class="hljs-string">&quot;ruff&quot;</span>)<br><br><span class="hljs-keyword">from</span> langchain.agents.agent_toolkits <span class="hljs-keyword">import</span> (<br>    create_vectorstore_agent,<br>    VectorStoreToolkit,<br>    VectorStoreInfo,<br>)<br>vectorstore_info = VectorStoreInfo(<br>    name=<span class="hljs-string">&quot;state_of_union_address&quot;</span>,<br>    description=<span class="hljs-string">&quot;the most recent state of the Union adress&quot;</span>,<br>    vectorstore=state_of_union_store<br>)<br>toolkit = VectorStoreToolkit(vectorstore_info=vectorstore_info)<br>agent_executor = create_vectorstore_agent(<br>    llm=llm,<br>    toolkit=toolkit,<br>    verbose=<span class="hljs-literal">True</span><br>)<br>agent_executor.run(<span class="hljs-string">&quot;What did biden say about ketanji brown jackson is the state of the union address?&quot;</span>)<br><br></code></pre></td></tr></table></figure></p>
+<h2 id="实战"><a href="#实战" class="headerlink" title="实战"></a>实战</h2><h3 id="1、完成一次简单问答"><a href="#1、完成一次简单问答" class="headerlink" title="1、完成一次简单问答"></a>1、完成一次简单问答</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> os<br>os.environ[<span class="hljs-string">&quot;OPENAI_API_KEY&quot;</span>] = <span class="hljs-string">&#x27;你的api key&#x27;</span><br><br><span class="hljs-keyword">from</span> langchain.llms <span class="hljs-keyword">import</span> OpenAI<br><br>llm = OpenAI(model_name=<span class="hljs-string">&quot;text-davinci-003&quot;</span>,max_tokens=<span class="hljs-number">1024</span>)<br>llm(<span class="hljs-string">&quot;怎么评价人工智能&quot;</span>)<br></code></pre></td></tr></table></figure>
+<h3 id="2、构建本地知识库问答机器人（QA）"><a href="#2、构建本地知识库问答机器人（QA）" class="headerlink" title="2、构建本地知识库问答机器人（QA）"></a>2、构建本地知识库问答机器人（QA）</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> langchain.chat_models <span class="hljs-keyword">import</span> ChatOpenAI<br><span class="hljs-keyword">from</span> langchain.embeddings.openai <span class="hljs-keyword">import</span> OpenAIEmbeddings<br><span class="hljs-keyword">from</span> langchain.vectorstores <span class="hljs-keyword">import</span> Chroma<br><span class="hljs-keyword">from</span> langchain.text_splitter <span class="hljs-keyword">import</span> CharacterTextSplitter<br><span class="hljs-keyword">from</span> langchain <span class="hljs-keyword">import</span> OpenAI,VectorDBQA<br><span class="hljs-keyword">from</span> langchain.document_loaders <span class="hljs-keyword">import</span> DirectoryLoader<br><span class="hljs-keyword">from</span> langchain.chains <span class="hljs-keyword">import</span> RetrievalQA<br><span class="hljs-keyword">from</span> langchain.chains.question_answering <span class="hljs-keyword">import</span> load_qa_chain<br><br><span class="hljs-comment"># 加载文件夹中的所有txt类型的文件</span><br>loader = DirectoryLoader(<span class="hljs-string">&#x27;/content/sample_data/data/&#x27;</span>, glob=<span class="hljs-string">&#x27;**/*.txt&#x27;</span>)<br><span class="hljs-comment"># 将数据转成 document 对象，每个文件会作为一个 document</span><br>documents = loader.load()<br><br><span class="hljs-comment"># 初始化加载器</span><br>text_splitter = CharacterTextSplitter(chunk_size=<span class="hljs-number">100</span>, chunk_overlap=<span class="hljs-number">0</span>)<br><span class="hljs-comment"># 切割加载的 document</span><br>split_docs = text_splitter.split_documents(documents)<br><br><span class="hljs-comment"># 初始化 openai 的 embeddings 对象</span><br>embeddings = OpenAIEmbeddings()<br><br><span class="hljs-comment"># 持久化数据</span><br>vector_store = Chroma.from_documents(split_docs, embeddings, persist_directory=<span class="hljs-string">&quot;D:/vector_store&quot;</span>)<br>vector_store.persist()<br><br><span class="hljs-comment"># 加载数据</span><br>vector_store = Chroma(persist_directory=<span class="hljs-string">&quot;D:/vector_store&quot;</span>, embedding_function=embeddings)<br><br><span class="hljs-comment"># 创建问答对象</span><br>qa = VectorDBQA.from_chain_type(llm=OpenAI(), chain_type=<span class="hljs-string">&quot;stuff&quot;</span>, vectorstore=vector_store,return_source_documents=<span class="hljs-literal">True</span>)<br><span class="hljs-comment"># 进行问答</span><br>result = qa(&#123;<span class="hljs-string">&quot;query&quot;</span>: <span class="hljs-string">&quot;科大讯飞今年第一季度收入是多少？&quot;</span>&#125;)<br><span class="hljs-built_in">print</span>(result)<br></code></pre></td></tr></table></figure>
+<img src="/2023/04/18/2023-04-18-LangChain%20%E5%AE%9E%E6%88%98/1681462020394-312ad3ef-0371-4cd5-a7be-74905a60c6d7.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<h3 id="3、Question-Answering-over-Docs"><a href="#3、Question-Answering-over-Docs" class="headerlink" title="3、Question Answering over Docs"></a>3、Question Answering over Docs</h3><p>对您的文档数据进行问答，可以使用: load_qa_chain, RetrievalQA, VectorstoreIndexCreator, ConversationalRetrievalChain</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/chains/index_examples/question_answering.html">Question Answering Notebook</a>: A notebook walking through how to accomplish this task.</li>
+<li><a target="_blank" rel="noopener" href="https://python.langchain.com/en/latest/modules/chains/index_examples/vector_db_qa.html">VectorDB Question Answering Notebook</a>: A notebook walking through how to do question answering over a vector database. <h3 id="4、使用GPT3-5模型构建油管频道问答机器人"><a href="#4、使用GPT3-5模型构建油管频道问答机器人" class="headerlink" title="4、使用GPT3.5模型构建油管频道问答机器人"></a>4、使用GPT3.5模型构建油管频道问答机器人</h3>在 chatgpt api（也就是 GPT-3.5-Turbo）模型出来后，因钱少活好深受大家喜爱，所以 LangChain 也加入了专属的链和模型，我们来跟着这个例子看下如何使用他。<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> os<br><br><span class="hljs-keyword">from</span> langchain.document_loaders <span class="hljs-keyword">import</span> YoutubeLoader<br><span class="hljs-keyword">from</span> langchain.embeddings.openai <span class="hljs-keyword">import</span> OpenAIEmbeddings<br><span class="hljs-keyword">from</span> langchain.vectorstores <span class="hljs-keyword">import</span> Chroma<br><span class="hljs-keyword">from</span> langchain.text_splitter <span class="hljs-keyword">import</span> RecursiveCharacterTextSplitter<br><span class="hljs-keyword">from</span> langchain.chains <span class="hljs-keyword">import</span> ChatVectorDBChain, ConversationalRetrievalChain<br><br><span class="hljs-keyword">from</span> langchain.chat_models <span class="hljs-keyword">import</span> ChatOpenAI<br><span class="hljs-keyword">from</span> langchain.prompts.chat <span class="hljs-keyword">import</span> (<br>  ChatPromptTemplate,<br>  SystemMessagePromptTemplate,<br>  HumanMessagePromptTemplate<br>)<br><br><span class="hljs-comment"># 加载 youtube 频道</span><br>loader = YoutubeLoader.from_youtube_channel(<span class="hljs-string">&#x27;https://www.youtube.com/watch?v=Dj60HHy-Kqk&#x27;</span>)<br><span class="hljs-comment"># 将数据转成 document</span><br>documents = loader.load()<br><br><span class="hljs-comment"># 初始化文本分割器</span><br>text_splitter = RecursiveCharacterTextSplitter(<br>  chunk_size=<span class="hljs-number">1000</span>,<br>  chunk_overlap=<span class="hljs-number">20</span><br>)<br><br><span class="hljs-comment"># 分割 youtube documents</span><br>documents = text_splitter.split_documents(documents)<br><br><span class="hljs-comment"># 初始化 openai embeddings</span><br>embeddings = OpenAIEmbeddings()<br><br><span class="hljs-comment"># 将数据存入向量存储</span><br>vector_store = Chroma.from_documents(documents, embeddings)<br><span class="hljs-comment"># 通过向量存储初始化检索器</span><br>retriever = vector_store.as_retriever()<br><br>system_template = <span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">Use the following context to answer the user&#x27;s question.</span><br><span class="hljs-string">If you don&#x27;t know the answer, say you don&#x27;t, don&#x27;t try to make it up. And answer in Chinese.</span><br><span class="hljs-string">-----------</span><br><span class="hljs-string">&#123;context&#125;</span><br><span class="hljs-string">-----------</span><br><span class="hljs-string">&#123;chat_history&#125;</span><br><span class="hljs-string">&quot;&quot;&quot;</span><br><br><span class="hljs-comment"># 构建初始 messages 列表，这里可以理解为是 openai 传入的 messages 参数</span><br>messages = [<br>  SystemMessagePromptTemplate.from_template(system_template),<br>  HumanMessagePromptTemplate.from_template(<span class="hljs-string">&#x27;&#123;question&#125;&#x27;</span>)<br>]<br><br><span class="hljs-comment"># 初始化 prompt 对象</span><br>prompt = ChatPromptTemplate.from_messages(messages)<br><br><span class="hljs-comment"># 初始化问答链</span><br>qa = ConversationalRetrievalChain.from_llm(ChatOpenAI(temperature=<span class="hljs-number">0.1</span>,max_tokens=<span class="hljs-number">2048</span>),retriever,qa_prompt=prompt)<br><br>chat_history = []<br><span class="hljs-keyword">while</span> <span class="hljs-literal">True</span>:<br>  question = <span class="hljs-built_in">input</span>(<span class="hljs-string">&#x27;问题：&#x27;</span>)<br>  <span class="hljs-comment"># 开始发送问题 chat_history 为必须参数,用于存储对话历史</span><br>  result = qa(&#123;<span class="hljs-string">&#x27;question&#x27;</span>: question, <span class="hljs-string">&#x27;chat_history&#x27;</span>: chat_history&#125;)<br>  chat_history.append((question, result[<span class="hljs-string">&#x27;answer&#x27;</span>]))<br>  <span class="hljs-built_in">print</span>(result[<span class="hljs-string">&#x27;answer&#x27;</span>])<br></code></pre></td></tr></table></figure>
+<img src="/2023/04/18/2023-04-18-LangChain%20%E5%AE%9E%E6%88%98/1681977935059-0e8c9a11-30a8-4301-a146-f51476132f70.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+</li>
+</ul>
+<h3 id="5、langchain-zapier"><a href="#5、langchain-zapier" class="headerlink" title="5、langchain + zapier"></a>5、langchain + zapier</h3><p>我们主要是结合使用 zapier 来实现将万种工具连接起来。</p>
+<p>所以我们第一步依旧是需要申请账号和他的自然语言 api key。</p>
+<p><a target="_blank" rel="noopener" href="https://zapier.com/l/natural-language-actions">https://zapier.com/l/natural-language-actions</a></p>
+<p>他的 api key 虽然需要填写信息申请。但是基本填入信息后，基本可以秒在邮箱里看到审核通过的邮件。然后，我们通过右键里面的连接打开我们的api 配置页面。我们点击右侧的 Manage Actions 来配置我们要使用哪些应用。</p>
+<details class="lake-collapse"><summary id="u04b16d10"><span class="ne-text">api 配置</span></summary><p id="u8f059fc7" class="ne-p" style="margin: 0; padding: 0; min-height: 24px"><span class="ne-text">我在这里配置了 Gmail 读取和发邮件的 action，并且所有字段都选的是通过 AI 猜。</span></p><p id="u7a2b05b7" class="ne-p" style="margin: 0; padding: 0; min-height: 24px"><img src="https://cdn.nlark.com/yuque/0/2023/png/8420697/1681978025915-be9b653b-e4bb-4583-9fe6-1d6e13961610.png" srcset="/img/loading.gif" lazyload width="650" id="u8eef1c55" class="ne-image"></p><p id="u705da2bb" class="ne-p" style="margin: 0; padding: 0; min-height: 24px"><span class="ne-text">image-20230406233319250</span></p><p id="uf73e7a68" class="ne-p" style="margin: 0; padding: 0; min-height: 24px"><img src="https://cdn.nlark.com/yuque/0/2023/png/8420697/1681978026763-37ed8eaa-6c23-44b9-99c8-9ee5dc13e26a.png" srcset="/img/loading.gif" lazyload width="620" id="u566fa606" class="ne-image"></p><p id="ucb24a1a7" class="ne-p" style="margin: 0; padding: 0; min-height: 24px"><span class="ne-text">image-20230406234827815</span></p></details>
+
+<p>配置好之后，开始写代码</p>
+<details class="lake-collapse"><summary id="udfefb8e5"><span class="ne-text">Zapier 发邮件使用示例</span></summary><pre data-language="python" id="ayqX1" class="ne-codeblock language-python" style="border: 1px solid #e8e8e8; border-radius: 2px; background: #f9f9f9; padding: 16px; font-size: 13px; color: #595959">import os
+os.environ["ZAPIER_NLA_API_KEY"] = ''
+
+from langchain.llms import OpenAI
+from langchain.agents import initialize_agent
+from langchain.agents.agent_toolkits import ZapierToolkit
+from langchain.utilities.zapier import ZapierNLAWrapper
+
+
+llm = OpenAI(temperature=.3)
+zapier = ZapierNLAWrapper()
+toolkit = ZapierToolkit.from_zapier_nla_wrapper(zapier)
+agent = initialize_agent(toolkit.get_tools(), llm, agent="zero-shot-react-description", verbose=True)
+
+# 我们可以通过打印的方式看到我们都在 Zapier 里面配置了哪些可以用的工具
+for tool in toolkit.get_tools():
+  print (tool.name)
+  print (tool.description)
+  print ("\n\n")
+
+agent.run('请用中文总结最后一封"******@qq.com"发给我的邮件。并将总结发送给"******@qq.com"')</pre><p id="ub6132d77" class="ne-p" style="margin: 0; padding: 0; min-height: 24px"><img src="https://cdn.nlark.com/yuque/0/2023/png/8420697/1681978269926-7b6bd947-5c4d-4b98-a6fa-675961bae56b.png" srcset="/img/loading.gif" lazyload width="715" id="u5d7eba3a" class="ne-image"></p><p id="uadc640b3" class="ne-p" style="margin: 0; padding: 0; min-height: 24px"><img src="https://cdn.nlark.com/yuque/0/2023/png/8420697/1681978284054-e83744e8-1efb-46bf-9308-c1790cca3815.png" srcset="/img/loading.gif" lazyload width="455.5" id="u3abe19d8" class="ne-image"></p></details>
+
+<p>这只是个小例子，因为 zapier 有数以千计的应用，所以我们可以轻松结合 openai api 搭建自己的工作流。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/LangChain/">#LangChain</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>LangChain 实战</div>
+      <div>http://example.com/2023/04/18/2023-04-18-LangChain 实战/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Ning Shixian</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年4月18日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/04/21/2023-04-21-%E5%A4%A7%E7%99%BD%E8%AF%9D%20ChatGPT%20%E5%8F%8A%E5%A4%A7%E6%A8%A1%E5%9E%8B/" title="大白话 ChatGPT 及大模型">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">大白话 ChatGPT 及大模型</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/04/14/2023-04-14-LlamaIndex%20%E5%AE%9E%E6%88%98/" title="LlamaIndex 实战">
+                        <span class="hidden-mobile">LlamaIndex 实战</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

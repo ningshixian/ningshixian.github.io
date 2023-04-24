@@ -1,0 +1,700 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="NSX">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="转载自：经典算法—Aho-Corasick automaton  Aho–Corasick automaton，简称AC自动机，著名的多模匹配算法，由Alfred V. Aho和Margaret J.Corasick于1975年在贝尔实验室发明，主要用于多模式串匹配问题，即给几个关键词（模式串），再给一篇文章，判断关键词是否在文章中出现，或出现的次数。 Aho-Corasick算法，通过将模式串">
+<meta property="og:type" content="article">
+<meta property="og:title" content="模式匹配技术总结（AC自动机）">
+<meta property="og:url" content="http://example.com/2020/03/31/2020-03-31-%E6%A8%A1%E5%BC%8F%E5%8C%B9%E9%85%8D%E6%8A%80%E6%9C%AF%E6%80%BB%E7%BB%93%EF%BC%88AC%E8%87%AA%E5%8A%A8%E6%9C%BA%EF%BC%89/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="转载自：经典算法—Aho-Corasick automaton  Aho–Corasick automaton，简称AC自动机，著名的多模匹配算法，由Alfred V. Aho和Margaret J.Corasick于1975年在贝尔实验室发明，主要用于多模式串匹配问题，即给几个关键词（模式串），再给一篇文章，判断关键词是否在文章中出现，或出现的次数。 Aho-Corasick算法，通过将模式串">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2020/03/31/2020-03-31-%E6%A8%A1%E5%BC%8F%E5%8C%B9%E9%85%8D%E6%8A%80%E6%9C%AF%E6%80%BB%E7%BB%93%EF%BC%88AC%E8%87%AA%E5%8A%A8%E6%9C%BA%EF%BC%89/1644547099604-84d6051f-a20b-4c2c-a948-36377a7ce793.png">
+<meta property="article:published_time" content="2020-03-30T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-24T11:32:23.645Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="模式匹配">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2020/03/31/2020-03-31-%E6%A8%A1%E5%BC%8F%E5%8C%B9%E9%85%8D%E6%8A%80%E6%9C%AF%E6%80%BB%E7%BB%93%EF%BC%88AC%E8%87%AA%E5%8A%A8%E6%9C%BA%EF%BC%89/1644547099604-84d6051f-a20b-4c2c-a948-36377a7ce793.png">
+  
+  
+  
+  <title>模式匹配技术总结（AC自动机） - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="模式匹配技术总结（AC自动机）"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2020-03-31 00:00" pubdate>
+          2020年3月31日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          6.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          51 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">模式匹配技术总结（AC自动机）</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <blockquote>
+<p>转载自：<a target="_blank" rel="noopener" href="https://carlos9310.github.io/2020/01/01/Aho-Corasick/">经典算法—Aho-Corasick automaton</a></p>
+</blockquote>
+<p>Aho–Corasick automaton，简称AC自动机，著名的多模匹配算法，由Alfred V. Aho和Margaret J.Corasick于1975年在贝尔实验室发明，主要用于多模式串匹配问题，即给几个关键词（模式串），再给一篇文章，判断关键词是否在文章中出现，或出现的次数。</p>
+<p>Aho-Corasick算法，通过将模式串预处理为确定有限状态自动机，扫描文本一遍就能结束。其复杂度为O(n)，即与模式串的数量和长度无关。</p>
+<h2 id="单模匹配"><a href="#单模匹配" class="headerlink" title="单模匹配"></a>单模匹配</h2><p>在介绍AC自动机这种多模匹配算法前，先回顾下单模匹配问题，即给定一个文本串和一个模式串，求解模式串在文本串中的匹配情况。</p>
+<h3 id="1-1-朴素匹配"><a href="#1-1-朴素匹配" class="headerlink" title="1.1 朴素匹配"></a>1.1 朴素匹配</h3><p>最直接的想法是暴力(Brute Force)匹配，即将文本串的第一个字符与模式串的第一个字符进行匹配，若相等则继续比较文本串的第二个字符与模式串的第二个字符。若不等，则比较目标串的第二个字符与模式串的第一个字符，依次比较下去，直到得到最后的匹配结果。</p>
+<p>相关代码如下：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 每次匹配失败时</span><br><span class="hljs-comment"># 文本串T的指针回退到开始匹配位置的下一个位置</span><br><span class="hljs-comment"># 模式串P的指针回退到初始位置，然后重新开始匹配</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">bfMatch</span>(<span class="hljs-params">T,P</span>):<br>    tLen,pLen = <span class="hljs-built_in">len</span>(T),<span class="hljs-built_in">len</span>(P)<br>    indexs = []<br>    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(tLen - pLen + <span class="hljs-number">1</span>):<br>        <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(pLen):<br>            <span class="hljs-keyword">if</span> T[i+j] == P[j]:<br>                <span class="hljs-keyword">if</span> j == pLen - <span class="hljs-number">1</span>:<br>                    indexs.append(i)<br>                <span class="hljs-keyword">continue</span><br>            <span class="hljs-keyword">break</span><br>    <span class="hljs-keyword">return</span> indexs<br><br>T=<span class="hljs-string">&#x27;ushershe&#x27;</span> <br>P=<span class="hljs-string">&#x27;he&#x27;</span> <br><span class="hljs-built_in">print</span>(bfMatch(T,P))<br></code></pre></td></tr></table></figure><br>ps: 上述匹配过程存在重复匹配，KMP算法优化了上述匹配过程。<strong>在匹配失败时，文本串的指针不需要回退。</strong></p>
+<h3 id="1-2-KMP算法"><a href="#1-2-KMP算法" class="headerlink" title="1.2 KMP算法"></a>1.2 KMP算法</h3><p>与朴素匹配不同，KMP算法在匹配到某个字符失败时，文本串的匹配指针不会回退，模式串则根据<strong>部分匹配表(也叫next数组)</strong> 向右滑动一定距离后继续与上次在文本串中不匹配的位置进行匹配，若仍不匹配，则继续根据部分匹配表向右滑动模式串，重复上述不匹配–滑动的过程，当匹配指针指到模式串的初始位置依然不匹配，则模式串向右滑动一位，文本串的匹配指针向前移动一位；若匹配，则继续匹配其他位置的字符。当匹配指针连续匹配的字符数与模式串的长度相等，则匹配完成。形象图解可参考<a target="_blank" rel="noopener" href="http://www.ruanyifeng.com/blog/2013/05/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm.html">字符串匹配的KMP算法</a>。</p>
+<p>相应代码为：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 部分匹配表是针对模式串构建的</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">kmpMatch</span>(<span class="hljs-params">T,P</span>):<br>    tLen,pLen = <span class="hljs-built_in">len</span>(T),<span class="hljs-built_in">len</span>(P)<br>    Next = partialMatchTable(P)<br>    q = <span class="hljs-number">0</span> <span class="hljs-comment"># 模式串P的下标</span><br>    indexs = []<br>    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(tLen):<br>        <span class="hljs-keyword">while</span> q &gt; <span class="hljs-number">0</span> <span class="hljs-keyword">and</span> P[q] != T[i]:<br>            q = Next[q-<span class="hljs-number">1</span>]<br>        <span class="hljs-keyword">if</span> P[q] == T[i]:<br>            q += <span class="hljs-number">1</span><br>        <span class="hljs-keyword">if</span> q == pLen:<br>            indexs.append(i-pLen+<span class="hljs-number">1</span>)<br>            q=<span class="hljs-number">0</span><br>    <span class="hljs-keyword">return</span> indexs<br></code></pre></td></tr></table></figure></p>
+<p>部分匹配表中的数值是指<strong>某个子串的前缀和后缀的最长共有元素的长度。</strong> 其有两种构建方式。一种是手动法，详见<a target="_blank" rel="noopener" href="http://www.ruanyifeng.com/blog/2013/05/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm.html">字符串匹配的KMP算法</a>。相关代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 手动法求部分匹配表</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">partialMatchTable</span>(<span class="hljs-params">p</span>): <span class="hljs-comment"># 也叫next数组</span><br>    prefix,suffix = <span class="hljs-built_in">set</span>(),<span class="hljs-built_in">set</span>()<br>    pLen = <span class="hljs-built_in">len</span>(p)<br>    Next = [<span class="hljs-number">0</span>]<br>    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">1</span>,pLen):<br>        prefix.add(p[:i]) <br>        suffix = &#123;p[j:i+<span class="hljs-number">1</span>] <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">1</span>,i+<span class="hljs-number">1</span>)&#125;<br>        common_len = <span class="hljs-built_in">len</span>((prefix &amp; suffix <span class="hljs-keyword">or</span> &#123;<span class="hljs-string">&#x27;&#x27;</span>&#125;).pop())<br><span class="hljs-comment">#         print(p[:i+1],prefix,suffix,common_len)</span><br>        Next.append(common_len) <br>    <span class="hljs-keyword">return</span> Next<br><br>p=<span class="hljs-string">&#x27;ababaca&#x27;</span><br>partialMatchTable(p)<br></code></pre></td></tr></table></figure>
+<p>另一种是程序法，模式串针对自己的前后缀的匹配。详见<a target="_blank" rel="noopener" href="https://blog.csdn.net/qingdujun/article/details/85281936">KMP算法：线性时间O(n)字符串匹配算法</a>中的部分匹配表部分。相关代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 由模式串生成的部分匹配表，其存储的是前缀尾部 的位置。有前缀尾部 = next(后缀尾部)，</span><br><span class="hljs-comment"># 当后缀之后q不匹配时，通过查询部分匹配表，确定前缀尾部的位置k,然后将前缀滑动过来与后缀对齐，继续后续匹配工作</span><br><span class="hljs-comment"># 程序法计算部分匹配表 </span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">partialMatchTable</span>(<span class="hljs-params">p</span>):<br>    pLen = <span class="hljs-built_in">len</span>(p)<br>    Next = [<span class="hljs-number">0</span>]<br>    k = <span class="hljs-number">0</span> <span class="hljs-comment"># 模式串nP的下标</span><br>    <span class="hljs-keyword">for</span> q <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">1</span>,pLen): <span class="hljs-comment"># 文本串nT的下标</span><br>        <span class="hljs-keyword">while</span> k &gt; <span class="hljs-number">0</span> <span class="hljs-keyword">and</span> p[k] != p[q]:<br>            k = Next[k-<span class="hljs-number">1</span>]<br>        <span class="hljs-keyword">if</span> p[k] == p[q]:<br>            k += <span class="hljs-number">1</span><br>        Next.append(k)<br>    <span class="hljs-keyword">return</span> Next<br><br>p=<span class="hljs-string">&#x27;ababaca&#x27;</span><br>partialMatchTable(p)<br></code></pre></td></tr></table></figure>
+<h2 id="多模匹配"><a href="#多模匹配" class="headerlink" title="多模匹配"></a>多模匹配</h2><p>给定多个模式串和一个文本串，求解多模串在文本串中存在的情况(包括是否存在、存在几次、存在于哪些位置等)。</p>
+<h3 id="2-1-Trie"><a href="#2-1-Trie" class="headerlink" title="2.1 Trie"></a>2.1 Trie</h3><p>Trie又叫前缀树或字典树，是一种多叉树结构。Trie这个术语来源于re<strong>trie</strong>val(检索)，其是一种用于快速检索的数据结构。其核心思想是利用字符串的<strong>公共前缀</strong>最大限度地减少不必要的字符串比较，提高查询(检索)效率，缺点是内存消耗大。</p>
+<p>Trie树的基本性质：</p>
+<ul>
+<li>根节点不包含字符，除根节点外的每一个子节点都包含一个字符</li>
+<li>从根节点到某一个节点，路径上经过的字符连起来为该节点对应的字符串</li>
+<li>每个节点的所有子节点包含的字符互不相同</li>
+</ul>
+<p>应用场景</p>
+<ul>
+<li>前缀匹配(自动补全)：返回所有<strong>前缀相同</strong>的字符串</li>
+<li>词频统计：将每个节点是否构成单词的标志位改成构成单词的数量</li>
+<li>字典序排序：将所有待排序集合逐个加入到Trie中，然后按照先序遍历输出所有值</li>
+<li>分词</li>
+<li>检索</li>
+</ul>
+<p>代码示例<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Trie</span>(<span class="hljs-title class_ inherited__">object</span>):<br>    <span class="hljs-string">&quot;&quot;&quot;自定义Trie树对象，用来保存知识库</span><br><span class="hljs-string">    &quot;&quot;&quot;</span><br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, value_key=-<span class="hljs-number">1</span></span>):<br>        self.data = &#123;&#125;<br>        self.value_key = <span class="hljs-built_in">str</span>(value_key)<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__setitem__</span>(<span class="hljs-params">self, key, value</span>):<br>        <span class="hljs-string">&quot;&quot;&quot;传入一对(key, value)到前缀树中</span><br><span class="hljs-string">        &quot;&quot;&quot;</span><br>        data = self.data<br>        <span class="hljs-keyword">for</span> k <span class="hljs-keyword">in</span> key:<br>            k = <span class="hljs-built_in">str</span>(k)<br>            <span class="hljs-keyword">if</span> k <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> data:<br>                data[k] = &#123;&#125;<br>            data = data[k]<br>        data[self.value_key] = value<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__getitem__</span>(<span class="hljs-params">self, key</span>):<br>        <span class="hljs-string">&quot;&quot;&quot;获取key对应的value</span><br><span class="hljs-string">        &quot;&quot;&quot;</span><br>        data = self.data<br>        <span class="hljs-keyword">for</span> k <span class="hljs-keyword">in</span> key:<br>            k = <span class="hljs-built_in">str</span>(k)<br>            data = data[k]<br>        <span class="hljs-keyword">return</span> data[self.value_key]<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">next_ones</span>(<span class="hljs-params">self, prefix</span>):<br>        <span class="hljs-string">&quot;&quot;&quot;获取prefix后一位的容许集</span><br><span class="hljs-string">        &quot;&quot;&quot;</span><br>        data = self.data<br>        <span class="hljs-keyword">for</span> k <span class="hljs-keyword">in</span> prefix:<br>            k = <span class="hljs-built_in">str</span>(k)<br>            data = data[k]<br>        <span class="hljs-keyword">return</span> [k <span class="hljs-keyword">for</span> k <span class="hljs-keyword">in</span> data <span class="hljs-keyword">if</span> k != self.value_key]<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">keys</span>(<span class="hljs-params">self, prefix=<span class="hljs-literal">None</span>, data=<span class="hljs-literal">None</span></span>):<br>        <span class="hljs-string">&quot;&quot;&quot;获取以prefix开头的所有key</span><br><span class="hljs-string">        &quot;&quot;&quot;</span><br>        data = data <span class="hljs-keyword">or</span> self.data<br>        prefix = prefix <span class="hljs-keyword">or</span> []<br>        <span class="hljs-keyword">for</span> k <span class="hljs-keyword">in</span> prefix:<br>            k = <span class="hljs-built_in">str</span>(k)<br>            <span class="hljs-keyword">if</span> k <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> data:<br>                <span class="hljs-keyword">return</span> []<br>            data = data[k]<br>        results = []<br>        <span class="hljs-keyword">for</span> k <span class="hljs-keyword">in</span> data:<br>            <span class="hljs-keyword">if</span> k == self.value_key:<br>                results.append([])<br>            <span class="hljs-keyword">else</span>:<br>                results.extend([[k] + j <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> self.keys(<span class="hljs-literal">None</span>, data[k])])<br>        <span class="hljs-keyword">return</span> [prefix + i <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> results]<br><br><span class="hljs-comment"># # 测试前缀树</span><br><span class="hljs-comment"># KG = Trie()</span><br><span class="hljs-comment"># # key = [872, 1962, 102, 872, 738, 1962]</span><br><span class="hljs-comment"># KG[[872, 1962]] = &quot;首都&quot;</span><br><span class="hljs-comment"># KG[[872, 1962, 78]] = &quot;capital&quot;</span><br><span class="hljs-comment"># KG[[872, 1962, 44]] = &quot;capital2&quot;</span><br><span class="hljs-comment"># KG[[23, 82, 62]] = &quot;冲冲冲&quot;</span><br><span class="hljs-comment"># # KG.save(&#x27;data/KG.json&#x27;)</span><br><span class="hljs-comment"># print(KG[[872, 1962]])  # get 首都</span><br><span class="hljs-comment"># print(KG.next_ones([872, 1962]))    # [&#x27;78&#x27;, &#x27;44&#x27;]</span><br><span class="hljs-comment"># print(KG.keys([872]))   # [[872, &#x27;1962&#x27;], [872, &#x27;1962&#x27;, &#x27;78&#x27;], [872, &#x27;1962&#x27;, &#x27;44&#x27;]]</span><br><span class="hljs-comment"># KG = Trie()</span><br><span class="hljs-comment"># KG.load(&quot;data/KG.json&quot;)</span><br><span class="hljs-comment"># print(KG.keys([872])) </span><br><span class="hljs-comment"># exit()</span><br></code></pre></td></tr></table></figure></p>
+<h3 id="2-2-AC自动机"><a href="#2-2-AC自动机" class="headerlink" title="2.2 AC自动机"></a>2.2 AC自动机</h3><p>简单地讲，AC自动机就是字典树+kmp算法+失配指针。在Trie树上通过KMP来实现多模串的匹配。其中Trie树负责状态转移，KMP负责减少重复匹配。</p>
+<p><strong>AC自动机的实现</strong><br>在多模式环境中，AC自动是使用前缀树来存放所有模式串的前缀，然后通过失配指针来处理失配的情况。分为三个步骤：构建前缀树（生成goto表），添加失配指针（生成fail表），模式匹配（构造output表）。以经典的ushers为例，模式串是“he、she、his、hers”，文本为“ushers”。构建的自动机如下图所示：</p>
+<img src="/2020/03/31/2020-03-31-%E6%A8%A1%E5%BC%8F%E5%8C%B9%E9%85%8D%E6%8A%80%E6%9C%AF%E6%80%BB%E7%BB%93%EF%BC%88AC%E8%87%AA%E5%8A%A8%E6%9C%BA%EF%BC%89/1644547099604-84d6051f-a20b-4c2c-a948-36377a7ce793.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>其中实线部分是一颗Trie树，虚线部分为各节点的fail路径。</p>
+<p><strong>匹配过程：</strong></p>
+<ol>
+<li>按字符转移成功，但不是模式串的结尾。即成功转移到另一个状态，对应success表/goto表；</li>
+<li>按字符转移成功，是模式串的结尾。即命中一个模式串，对应emits/output；</li>
+<li><strong>按字符转移失败，此时跳转到一个特定的节点，对应failure。从根节点到这个特定的节点的路径恰好是失败前的文本的一部分，类似KMP算法中利用部分匹配表来加速模式串的滑动从而减少重复匹配</strong></li>
+</ol>
+<p>上述匹配过程只需扫描一遍文本串，其时间复杂度为O(n)，与模式串的数量和长度无关。</p>
+<p>以上图为例进行演示。自动机从根节点0出发，</p>
+<ol>
+<li>首先尝试按success表转移（图中实线）。按照文本的指示转移，也就是接收一个u。此时success表中并没有相应路线，转移失败。</li>
+<li>失败了则按照failure表回去（图中虚线）。按照文本指示，这次接收一个s，转移到状态3。</li>
+<li>成功了继续按success表转移，直到失败跳转步骤2，或者遇到output表中标明的“可输出状态”（图中红色状态）。此时输出匹配到的模式串，然后将此状态视作普通的状态继续转移。</li>
+</ol>
+<p>算法高效之处在于，当自动机接受了“ushe”之后，再接受一个r会导致无法按照success表转移，此时自动机会聪明地按照failure表转移到2号状态，并经过几次转移后输出“hers”。来到2号状态的路不止一条，从根节点一路往下，“h→e”也可以到达。而这个“he”恰好是“ushe”的结尾，状态机就仿佛是压根就没失败过（没有接受r），也没有接受过中间的字符“us”，直接就从初始状态按照“he”的路径走过来一样（到达同一节点，状态完全相同）。</p>
+<p>AC自动机的构建虽然与Trie树的构建类似，但其fail路径(<strong>本质是一种回溯，避免重复匹配</strong>)是AC自动机中特有的。goto表、output 表、failure 表的具体构建逻辑可参考《<a target="_blank" rel="noopener" href="https://www.hankcs.com/program/algorithm/implementation-and-analysis-of-aho-corasick-algorithm-in-java.html">Aho-Corasick算法的Java实现与分析</a>-hankcs》</p>
+<h3 id="基于AC自动机的开源工具"><a href="#基于AC自动机的开源工具" class="headerlink" title="基于AC自动机的开源工具"></a>基于AC自动机的开源工具</h3><p>包括：pyahocorasick、Acora、esmre等</p>
+<ul>
+<li><strong>pyahocorasick</strong>是个python模块，由两种数据结构实现：trie和Aho-Corasick自动机，根据一组关键词进行匹配，返回关键词出现的位置，底层用C实现，python包装。使用经验表明，pyahocorasick存在两个问题：<ul>
+<li>一个是关键词匹配不完整，如果目标关键词里面有宝马和马，那么用python的ahocorasick库只会得到宝马，而不会得到马，问题是处在马这个字节是在宝马的链条里面的。</li>
+<li>另一个是内存泄漏问题，这个问题在esmre中得到了解决。</li>
+</ul>
+</li>
+<li><strong>acora</strong>是python的“fgrep”，是一个基于Aho-Corasick以及NFA-to-DFA自动机的方式快速的多关键字文本搜索引擎。</li>
+<li><strong>esmre</strong>同样使用的AhoCorasick自动机的方式，做了一些细微的修改，也是用C实现，python包装。与pyhrocorasick相比，esmre库不存在内存异常泄露等问题。</li>
+<li><strong>Flashtext</strong>是一个高效的字符搜索和替换算法，基于Trie字典数据结构和AhoCorasick 的算法时间复杂度不依赖于搜索或替换的字符的数量。与AhoCorasick算法不同，Flashtext算法不匹配子字符串，只匹配最长字符（完整的单词），首先匹配最长字符串。<ul>
+<li>比如，输入一个单词 {Apple}，算法就不会匹配 “I like Pineapple” 中的 apple，输入单词集合 {Machine， Learning，Machine Learning}和文档“I like Machine Learning”，算法只会去匹配 “Machine Learning” 。</li>
+</ul>
+</li>
+</ul>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a target="_blank" rel="noopener" href="http://www.ruanyifeng.com/blog/2013/05/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm.html">字符串匹配的KMP算法</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/qingdujun/article/details/85281936">KMP算法：线性时间O(n)字符串匹配算法</a></li>
+<li><a target="_blank" rel="noopener" href="https://benarvintec.com/2018/11/26/%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E4%B9%8BAho-Corasick/">算法学习之Aho-Corasick</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/lemon_tree12138/article/details/49335051">深入理解Aho-Corasick自动机算法</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.hankcs.com/program/algorithm/implementation-and-analysis-of-aho-corasick-algorithm-in-java.html">Aho-Corasick算法的Java实现与分析</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/wenzhixin/p/9448045.html">Aho-Corasick automaton（AC自动机）解析及其在算法竞赛中的典型应用举例</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/cFFQzxyrhXT5lx3CSjDdDg">NLP模式高效匹配技术总结：模式匹配常见落地场景、AC自动机原理及高效开源工具总结</a></li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E6%A8%A1%E5%BC%8F%E5%8C%B9%E9%85%8D/">#模式匹配</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>模式匹配技术总结（AC自动机）</div>
+      <div>http://example.com/2020/03/31/2020-03-31-模式匹配技术总结（AC自动机）/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>NSX</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2020年3月31日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/03/31/2020-03-31-%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%A8%A1%E7%B3%8A%E5%8C%B9%E9%85%8D%E6%96%B9%E6%B3%95/" title="字符串模糊匹配指南">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">字符串模糊匹配指南</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/03/09/2020-03-09-linux%E7%A8%8B%E5%BA%8F%E5%B4%A9%E6%BA%83%E7%94%9F%E6%88%90core%E6%96%87%E4%BB%B6/" title="linux程序崩溃生成core文件">
+                        <span class="hidden-mobile">linux程序崩溃生成core文件</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,914 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="NSX">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Rasa简介 Rasa安装 Windows系统下的环境要求 NLU 管道依赖项 首选spaCy 第二个选择:MITIE     Rasa教程 1.创建新的项目 2.构建NLU样本 3.构建Core样本 4.定义域 5.定义你的模型配置 6.训练NLU和CORE模型 7.配置Http和Action 8.和你的助手谈谈 9.启动web服务   Rasa命令备忘单 Rasa架构">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Rasa安装以及项目初尝试">
+<meta property="og:url" content="http://example.com/2020/12/14/2020-12-14-Rasa%E5%AE%89%E8%A3%85%E4%BB%A5%E5%8F%8A%E9%A1%B9%E7%9B%AE%E5%88%9D%E5%B0%9D%E8%AF%95/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="Rasa简介 Rasa安装 Windows系统下的环境要求 NLU 管道依赖项 首选spaCy 第二个选择:MITIE     Rasa教程 1.创建新的项目 2.构建NLU样本 3.构建Core样本 4.定义域 5.定义你的模型配置 6.训练NLU和CORE模型 7.配置Http和Action 8.和你的助手谈谈 9.启动web服务   Rasa命令备忘单 Rasa架构">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200215170601829.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0FuZHJFeHBlcnQ=,size_16,color_FFFFFF,t_70">
+<meta property="article:published_time" content="2020-12-13T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-23T10:28:32.059Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="Rasa">
+<meta property="article:tag" content="聊天机器人">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/20200215170601829.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0FuZHJFeHBlcnQ=,size_16,color_FFFFFF,t_70">
+  
+  
+  
+  <title>Rasa安装以及项目初尝试 - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Rasa安装以及项目初尝试"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2020-12-14 00:00" pubdate>
+          2020年12月14日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          7.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          61 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Rasa安装以及项目初尝试</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <ul>
+<li>Rasa简介</li>
+<li>Rasa安装<ul>
+<li>Windows系统下的环境要求</li>
+<li>NLU 管道依赖项<ul>
+<li>首选spaCy</li>
+<li>第二个选择:MITIE</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Rasa教程<ul>
+<li>1.创建新的项目</li>
+<li>2.构建NLU样本</li>
+<li>3.构建Core样本</li>
+<li>4.定义域</li>
+<li>5.定义你的模型配置</li>
+<li>6.训练NLU和CORE模型</li>
+<li>7.配置Http和Action</li>
+<li>8.和你的助手谈谈</li>
+<li>9.启动web服务</li>
+</ul>
+</li>
+<li>Rasa命令备忘单</li>
+<li><p>Rasa架构</p>
+<span id="more"></span>
+</li>
+</ul>
+<h1 id="Rasa简介"><a href="#Rasa简介" class="headerlink" title="Rasa简介"></a>Rasa简介</h1><p><em>Rasa</em>是一个开源机器学习框架，用于构建上下文AI助手和聊天机器人。Rasa Open Source有两个主要模块：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://rasa.com/docs/rasa/nlu/about/">NLU</a>：实现<code>意图识别</code>和<code>槽值</code>提取，它把用户的输入转换为结构化数据；</li>
+<li><a target="_blank" rel="noopener" href="https://rasa.com/docs/rasa/core/about/">Core</a>：是一个对话管理平台，用于预测、决定下一步做什么；</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://rasa.com/docs/rasa-x/">Rasa X</a>是一个工具，可帮助您构建、改进和部署由Rasa框架提供支持的AI Assistants</p>
+<h1 id="Rasa安装"><a href="#Rasa安装" class="headerlink" title="Rasa安装"></a>Rasa安装</h1><ul>
+<li>创建环境</li>
+</ul>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs routeros">$ conda create -n rasa <span class="hljs-attribute">python</span>=3.6<br></code></pre></td></tr></table></figure>
+<ul>
+<li>激活环境</li>
+</ul>
+<figure class="highlight gams"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs gams"><span class="hljs-meta"><span class="hljs-keyword">$conda</span> activate rasa</span><br></code></pre></td></tr></table></figure>
+<ul>
+<li>Rasa 的推荐安装方式是通过<code>pip</code>:</li>
+</ul>
+<figure class="highlight axapta"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs axapta">pip --<span class="hljs-literal">default</span>-timeout=<span class="hljs-number">500</span> --extra-<span class="hljs-keyword">index</span>-url https:<span class="hljs-comment">//pypi.rasa.com/simple install -U rasa-x</span><br></code></pre></td></tr></table></figure>
+<p>这将同时安装Rasa和Rasa X。如果你不想使用Rasa X,只需要运行<code>pip --default-timeout=500 install -U rasa</code></p>
+<p>在安装的过程中有可能会出现超时中断，可以尝试多执行几次上面的命令</p>
+<h2 id="Windows系统下的环境要求"><a href="#Windows系统下的环境要求" class="headerlink" title="Windows系统下的环境要求"></a>Windows系统下的环境要求</h2><p>确保安装了Microsoft vc++编译器，这样python就可以编译任何依赖项。你可以从<a target="_blank" rel="noopener" href="https://visualstudio.microsoft.com/zh-hans/visual-cpp-build-tools/?rr=https%3A%2F%2Frasa.com%2Fdocs%2Frasa%2Fuser-guide%2Finstallation%2F">Visual Studio</a>获得编译器。下载安装程序并在列表中选择vc++构建工具。</p>
+<p>VS 2017社区版（Community）下载地址：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1jJXyRMA">百度网盘</a>，密码: ub6c</li>
+</ul>
+<p>在单个XX中，需要勾选“<code>用于 CMake 的 Visual C++ 工具</code>”。安装完毕后，将如下路径添加到环境变量PATH中，再重启电脑使之生效；</p>
+<figure class="highlight livescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs livescript">C:<span class="hljs-string">\Program</span> Files (x86)<span class="hljs-string">\Microsoft</span> Visual Studio<span class="hljs-string">\2017\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin</span><br><br>C:<span class="hljs-string">\Program</span> Files (x86)<span class="hljs-string">\Microsoft</span> Visual Studio <span class="hljs-number">14.0</span><span class="hljs-string">\VC\bin</span><br></code></pre></td></tr></table></figure>
+<h2 id="NLU-管道依赖项"><a href="#NLU-管道依赖项" class="headerlink" title="NLU 管道依赖项"></a>NLU 管道依赖项</h2><p>Rasa NLU有用于识别意图和实体的不同组件，其中大多数都有一些额外的依赖项。</p>
+<p>当你训练NLU模型时，Rasa将检查是否安装了所有必需的依赖项，并告诉你缺少哪一个依赖项。<a target="_blank" rel="noopener" href="http://rasachatbot.com/1_Installation/">选择管道</a>的页面将帮助你选择要使用的管道。</p>
+<h3 id="首选spaCy"><a href="#首选spaCy" class="headerlink" title="首选spaCy"></a>首选spaCy</h3><p>你可以用以下命令安装:</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">pip</span> install rasa[spacy]==<span class="hljs-number">2</span>.<span class="hljs-number">1</span>.<span class="hljs-number">2</span><br><span class="hljs-attribute">python</span> -m spacy download zh_core_web_md<br></code></pre></td></tr></table></figure>
+<p>若要使用spacy 中文模型，需要通过代理下载并安装：</p>
+<ul>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/explosion/spacy-models/releases/zh_core_web_md-2.3.1">spacy 中文模型下载地址</a></p>
+</li>
+<li><p>spacy 中文模型安装<br>（模型版本2.3.1支持spacy&gt;=2.3.0,&lt;2.4.0）：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">pip</span> install zh_core_web_md-<span class="hljs-number">2</span>.<span class="hljs-number">3</span>.<span class="hljs-number">1</span>.tar.gz<br></code></pre></td></tr></table></figure>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs awk">pip install https:<span class="hljs-regexp">//gi</span>thub.com<span class="hljs-regexp">/explosion/</span>spacy-models<span class="hljs-regexp">/releases/</span>download<span class="hljs-regexp">/zh_core_web_md-2.3.1/</span>zh_core_web_md-<span class="hljs-number">2.3</span>.<span class="hljs-number">1</span>.tar.gz<br></code></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="第二个选择-MITIE"><a href="#第二个选择-MITIE" class="headerlink" title="第二个选择:MITIE"></a>第二个选择:MITIE</h3><p>MITIE后端对于小型数据集执行得很好，但是如果你有数百个示例，那么训练可能会花费很长时间。我们可能会在未来弃用MITIE后端。</p>
+<p>下载<a target="_blank" rel="noopener" href="https://github.com/mit-nlp/MITIE">MITIE源码</a>和中文词向量模型<a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1kNENvlHLYWZIddmtWJ7Pdg">total_word_feature_extractor_zh.dat(密码：p4vx)</a>，这里需要将该模型拷贝到创建的python项目data目录下(可任意位置)，后面训练NLU模型时用到；</p>
+<p>Mitie源码安装:</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs vim"><span class="hljs-keyword">python</span> setup.<span class="hljs-keyword">py</span> build<br><span class="hljs-keyword">python</span> setup.<span class="hljs-keyword">py</span> install<br></code></pre></td></tr></table></figure>
+<h2 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h2><p>待安装完毕后，使用如下命令查看详情</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs dart">pip <span class="hljs-keyword">show</span> rasa<br></code></pre></td></tr></table></figure>
+<h1 id="Rasa项目初尝试"><a href="#Rasa项目初尝试" class="headerlink" title="Rasa项目初尝试"></a>Rasa项目初尝试</h1><h2 id="1-创建新的项目"><a href="#1-创建新的项目" class="headerlink" title="1.创建新的项目"></a>1.创建新的项目</h2><p>第一步是创建一个新的Rasa项目。要做到这一点，运行下面的代码:</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs nginx"><span class="hljs-attribute">rasa</span> init --<span class="hljs-literal">no</span>-prompt<br></code></pre></td></tr></table></figure>
+<p><code>rasa init</code>命令创建rasa项目所需的所有文件，并根据一些示例数据训练一个简单的机器人。如果你省略了<code>——no-prompt</code>参数，将会询问你一些关于项目设置的问题。这将创建以下文件:</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs stylus">.<br>├── __init__<span class="hljs-selector-class">.py</span><br>├── actions<span class="hljs-selector-class">.py</span><br>├── config<span class="hljs-selector-class">.yml</span><br>├── credentials<span class="hljs-selector-class">.yml</span><br>├── data<br>│   ├── nlu<span class="hljs-selector-class">.md</span><br>│   └── stories<span class="hljs-selector-class">.md</span><br>├── domain<span class="hljs-selector-class">.yml</span><br>├── endpoints<span class="hljs-selector-class">.yml</span><br>└── models<br>    └── &lt;timestamp&gt;<span class="hljs-selector-class">.tar</span>.gz<br></code></pre></td></tr></table></figure>
+<p>文件说明如下：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>文件名称</th>
+<th>作用说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>init</strong>.py</td>
+<td>帮助python查找操作的空文件</td>
+</tr>
+<tr>
+<td>actions.py</td>
+<td>为你的自定义操作编写代码</td>
+</tr>
+<tr>
+<td>config.yml ‘*’</td>
+<td>配置NLU和Core模型</td>
+</tr>
+<tr>
+<td>credentials.yml</td>
+<td>连接到其他服务的详细信息</td>
+</tr>
+<tr>
+<td>data/nlu.md ‘*’</td>
+<td>你的NLU训练数据</td>
+</tr>
+<tr>
+<td>data/stories.md ‘*’</td>
+<td>你的故事</td>
+</tr>
+<tr>
+<td>domain.yml ‘*’</td>
+<td>你的助手的域</td>
+</tr>
+<tr>
+<td>endpoints.yml</td>
+<td>接到fb messenger等通道的详细信息</td>
+</tr>
+<tr>
+<td>models/.tar.gz</td>
+<td>你的初始模型</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>最重要的文件用“<code>*</code>”标记。你将在本教程中了解所有这些文件。</p>
+<h2 id="2-构建NLU样本"><a href="#2-构建NLU样本" class="headerlink" title="2.构建NLU样本"></a>2.构建NLU样本</h2><p>Rasa助手的第一个部分是NLU模型。NLU代表自然语言理解，这意味着将用户消息转换为结构化数据。要使用Rasa做到这一点，你需要提供一些训练示例，展示Rasa应该如何理解用户消息，然后通过展示的这些示例来训练模型。</p>
+<p>查看并添加NLU模型的训练样本数据（即intent）：<code>data/nlu.md</code>。以添加【点外卖】为例：</p>
+<ul>
+<li>确定 意图 名称：request_takeway；</li>
+<li>确定需要的 槽位：refreshments、tea、address、phone_number；</li>
+<li>确定 用户 query；</li>
+<li>确定 当 某个 槽位 为空时，Bot 通过回复 什么获取 对应 槽位值</li>
+</ul>
+<figure class="highlight nestedtext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs nestedtext"><span class="hljs-bullet">-</span> <span class="hljs-string">intent: request_takeway</span><br>  <span class="hljs-attribute">examples</span><span class="hljs-punctuation">:</span> <span class="hljs-string">|</span><br>	<span class="hljs-bullet">-</span> <span class="hljs-string">点份外卖</span><br>	<span class="hljs-bullet">-</span> <span class="hljs-string">点一份[肠粉](refreshments)，一杯[茉莉花茶](tea)，送到[南山区](address)，电话号码为[13025240602](phone_number)</span><br>	<span class="hljs-bullet">-</span> <span class="hljs-string">麻烦送一份[蛋糕](refreshments)到[南山区](address)</span><br>	<span class="hljs-bullet">-</span> <span class="hljs-string">...</span><br><br><span class="hljs-bullet">-</span> <span class="hljs-string">intent: request_weather</span><br>  <span class="hljs-attribute">examples</span><span class="hljs-punctuation">:</span> <span class="hljs-string">|</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-string">天气</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-string">查询天气</span><br></code></pre></td></tr></table></figure>
+<p>Rasa的工作是预测用户向助手发送新消息时的正确意图。你可以在<a target="_blank" rel="noopener" href="http://rasachatbot.com/2_Rasa_Tutorial/">训练数据格式</a>中找到数据格式的所有细节。</p>
+<h2 id="3-构建Core样本"><a href="#3-构建Core样本" class="headerlink" title="3.构建Core样本"></a>3.构建Core样本</h2><p>在这个阶段，你将教会你的助手如何回复你的信息。这称为对话管理(dialogue management)，由你的Core模型来处理。</p>
+<p>Core模型以训练“故事”的形式从真实的会话数据中学习。故事是用户和助手之间的真实对话。</p>
+<p>在 NLU 识别出 query 的意图和槽位之后，需要确定其所触发的对应事件！</p>
+<p>下面是一个简单对话的例子 <code>stories.md</code></p>
+<figure class="highlight nestedtext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs nestedtext"><span class="hljs-attribute">stories</span><span class="hljs-punctuation">:</span><br><span class="hljs-punctuation"></span><br><span class="hljs-bullet">-</span> <span class="hljs-string">story: greet</span><br>  <span class="hljs-attribute">steps</span><span class="hljs-punctuation">:</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-string">intent: greet</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-string">action: utter_greet</span><br></code></pre></td></tr></table></figure>
+<h2 id="4-定义域"><a href="#4-定义域" class="headerlink" title="4.定义域"></a>4.定义域</h2><p>领域文件：<code>domain.yml</code></p>
+<p>域相当于AI助手的大脑，定义了助手所处的环境:它应该期望得到什么用户输入、它应该能够预测什么操作、如何响应以及存储什么信息。</p>
+<figure class="highlight nestedtext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs nestedtext"><span class="hljs-attribute">intents</span><span class="hljs-punctuation">:</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-string">greet</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-string">request_weather</span><br><br><span class="hljs-attribute">slots</span><span class="hljs-punctuation">:</span><br>  <span class="hljs-attribute">date-time</span><span class="hljs-punctuation">:</span><br>    <span class="hljs-attribute">type</span><span class="hljs-punctuation">:</span> <span class="hljs-string">unfeaturized</span><br>  <span class="hljs-attribute">address</span><span class="hljs-punctuation">:</span><br>    <span class="hljs-attribute">type</span><span class="hljs-punctuation">:</span> <span class="hljs-string">unfeaturized</span><br><br><span class="hljs-attribute">entities</span><span class="hljs-punctuation">:</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-string">date-time</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-string">address</span><br><br><span class="hljs-attribute">actions</span><span class="hljs-punctuation">:</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-string">utter_greet</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-string">action_default_fallback</span><br><br><span class="hljs-attribute">forms</span><span class="hljs-punctuation">:</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-string">weather_form</span><br><br><span class="hljs-attribute">responses</span><span class="hljs-punctuation">:</span><br>  <span class="hljs-attribute">utter_greet</span><span class="hljs-punctuation">:</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-string">text: &quot;Hey! How are you?&quot;</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-string">text: &quot;您好！请问我可以帮到您吗？&quot;</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-string">text: &quot;您好！很高兴为您服务。请说出您要查询的功能？&quot;</span><br>  <br><span class="hljs-attribute">session_config</span><span class="hljs-punctuation">:</span><br>  <span class="hljs-attribute">session_expiration_time</span><span class="hljs-punctuation">:</span> <span class="hljs-string">60</span><br>  <span class="hljs-attribute">carry_over_slots_to_new_session</span><span class="hljs-punctuation">:</span> <span class="hljs-string">true</span><br></code></pre></td></tr></table></figure>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>解释说明</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>intents</td>
+<td>你希望用户说的话</td>
+</tr>
+<tr>
+<td>actions</td>
+<td>你的助手能做的和能说的</td>
+</tr>
+<tr>
+<td>templates</td>
+<td>你的助手可以说的东西的模板字符串</td>
+</tr>
+</tbody>
+</table>
+</div>
+<ul>
+<li><p>Rasa Core 工作机制：</p>
+<p>在对话的每个步骤中选择正确的操作来执行。在本例中，我们的操作只是向用户发送一条消息。这些简单的话语操作是从域中以utter_开头的操作。助手将根据templates部分中的模板返回一条消息。</p>
+</li>
+</ul>
+<h2 id="5-定义你的模型配置"><a href="#5-定义你的模型配置" class="headerlink" title="5.定义你的模型配置"></a>5.定义你的模型配置</h2><p>配置文件：config.yml</p>
+<p>配置文件定义了模型将使用的NLU和Core组件。你可以在<a target="_blank" rel="noopener" href="http://rasachatbot.com/2_Rasa_Tutorial/">这里</a>了解不同的NLU管道。</p>
+<figure class="highlight xquery"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs xquery">language: <span class="hljs-string">&quot;zh&quot;</span><br><br>pipeline:<br>-<span class="hljs-built_in"> name</span>: <span class="hljs-string">&quot;MitieNLP&quot;</span><br>  model: <span class="hljs-string">&quot;data/total_word_feature_extractor_zh.dat&quot;</span><br>-<span class="hljs-built_in"> name</span>: <span class="hljs-string">&quot;JiebaTokenizer&quot;</span><br>  dictionary_path: <span class="hljs-string">&quot;data/dict&quot;</span><br>-<span class="hljs-built_in"> name</span>: <span class="hljs-string">&quot;MitieEntityExtractor&quot;</span><br>-<span class="hljs-built_in"> name</span>: <span class="hljs-string">&quot;EntitySynonymMapper&quot;</span><br>-<span class="hljs-built_in"> name</span>: <span class="hljs-string">&quot;RegexFeaturizer&quot;</span><br>-<span class="hljs-built_in"> name</span>: <span class="hljs-string">&quot;MitieFeaturizer&quot;</span><br>-<span class="hljs-built_in"> name</span>: <span class="hljs-string">&quot;SklearnIntentClassifier&quot;</span><br><br>policies:<br>  -<span class="hljs-built_in"> name</span>: TEDPolicy<br>    epochs: <span class="hljs-number">100</span><br>    max_history: <span class="hljs-number">5</span><br>  -<span class="hljs-built_in"> name</span>: FallbackPolicy<br>    fallback_action_name: <span class="hljs-string">&#x27;action_default_fallback&#x27;</span><br>  -<span class="hljs-built_in"> name</span>: MemoizationPolicy<br>    max_history: <span class="hljs-number">5</span><br>  -<span class="hljs-built_in"> name</span>: FormPolicy<br></code></pre></td></tr></table></figure>
+<p><code>language</code>和<code>pipeline</code>键指定应该如何构建NLU模型。<code>policies</code>键定义Core模型将使用的策略。</p>
+<h2 id="6-训练NLU和CORE模型"><a href="#6-训练NLU和CORE模型" class="headerlink" title="6.训练NLU和CORE模型"></a>6.训练NLU和CORE模型</h2><p>每当我们添加新的NLU或Core数据，或更新域或配置时，我们都需要根据示例故事和NLU数据重新训练一个神经网络。为此，运行下面的命令。该命令将调用Rasa Core和NLU训练函数，并将训练后的模型存储到<code>models/</code>目录中。该命令只会在数据或配置发生更改时自动对不同的模型部件进行重新训练。</p>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs ada">训练模型：rasa train<br>数据增强：rasa train <span class="hljs-comment">--augmentation 20</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">python -m rasa train --config configs/config.yml --domain configs/domain.yml --data data/<br></code></pre></td></tr></table></figure>
+<h2 id="7-配置Http和Action"><a href="#7-配置Http和Action" class="headerlink" title="7.配置Http和Action"></a>7.配置Http和Action</h2><p>要在生产中运行AI助手，请在<code>credentials.yml</code>中配置所需的<a target="_blank" rel="noopener" href="http://rasachatbot.com/9_Running_Rasa_with_Docker/">消息和语音通道</a>。</p>
+<p>当我们需要通过Http的形式访问Rasa Server时，就需要在该文件中配置<code>rest:</code>。rest通道将为您提供一个rest端点（即Rasa Server），用于向其发送消息，响应该请求将发送回bots消息。根据<a target="_blank" rel="noopener" href="https://rasa.com/docs/rasa/user-guide/connectors/your-own-website/#rest-channels">这个文档</a>的说明，当我们请求Rasa Server的URL应为：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs awk">http:<span class="hljs-regexp">//</span>rasaServerIP:rasaServerPort<span class="hljs-regexp">/webhooks/</span>rest/webhook<br></code></pre></td></tr></table></figure>
+<p>如果希望rasa server(<code>注：指rasa core</code>)能够连接到其他web，我们可以再<code>endpoints.yml</code>这个文件中进行配置，比如为了<strong>实现custom action</strong>，我们就需要在该文件中对action server进行配置，又比如我们将nlu模块放到其他的web项目中，就需要在该文件中配置nlu server等等。endpoints.yml文件内容如下：</p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs 1c"><span class="hljs-meta"># 指定action server的url</span><br><span class="hljs-meta"># 当然，也可以将action server单独实现在一个web server项目中</span><br><span class="hljs-meta"># 那么这个url为&quot;https:<span class="hljs-comment">//yourWebIp:yourWebPort/webhook“</span></span><br>action_endpoint:<br> url: <span class="hljs-string">&quot;http://localhost:5055/webhook&quot;</span><br> <br><span class="hljs-meta"># 配置nlu(单独创建一个web项目):</span><br><span class="hljs-meta">#  url: &quot;http:<span class="hljs-comment">//10.0.0.153:5000/&quot;</span></span><br></code></pre></td></tr></table></figure>
+<p>当Rasa NLU识别到用户输入Message的意图后，Rasa Core对话管理模块就会对其作出回应，而完成这个回应的模块就是action。</p>
+<h2 id="8-和你的助手谈谈"><a href="#8-和你的助手谈谈" class="headerlink" title="8.和你的助手谈谈"></a>8.和你的助手谈谈</h2><p>恭喜你! 🚀 你刚刚建立了一个完全由机器学习驱动的助手。 下一步就是尝试一下!</p>
+<p>运行以下命令在本地终端与助手对话：</p>
+<figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs angelscript">rasa shell<br>rasa <span class="hljs-built_in">int</span>eractive<br></code></pre></td></tr></table></figure>
+<p>你也可以用Rasa X来收集更多的对话以提高你的助手: 尝试安装<a target="_blank" rel="noopener" href="https://rasa.com/docs/rasa-x/installation-and-setup/install/local-mode">Rasa X</a></p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-comment"># 仅支持和兼容ujson 1.35, 下载ujson 1.35的wheel文件</span><br><span class="hljs-attribute">pip</span> install ujson-<span class="hljs-number">1</span>.<span class="hljs-number">35</span>-cp37-cp37m-win_amd64.whl<br><span class="hljs-comment"># </span><br><span class="hljs-attribute">pip</span> install rasa-x --extra-index-url https://pypi.rasa.com/simple<br></code></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://forum.rasa.com/t/error-failed-building-wheel-for-ujson-while-installing-rasa-x-using-pip/31377/4">https://forum.rasa.com/t/error-failed-building-wheel-for-ujson-while-installing-rasa-x-using-pip/31377/4</a></p>
+<h2 id="9-启动web服务"><a href="#9-启动web服务" class="headerlink" title="9.启动web服务"></a>9.启动web服务</h2><p><strong>（1）启动Rasa服务</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">启动rasa服务</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">该服务实现自然语言理解(NLU)和对话管理(Core)功能</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">注：该服务的--port默认为5005，如果使用默认则可以省略</span><br>python -m rasa run --port 5005 --endpoints configs/endpoints.yml --credentials configs/credentials.yml --debug<br></code></pre></td></tr></table></figure>
+<p><strong>（2）启动Custom Action服务</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">Then start action manager</span><br>rasa run actions<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">启动action服务</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">注：该服务的--port默认为5055，如果使用默认则可以省略</span><br>Python -m rasa run actions --port 5055 --actions actions --debug <br></code></pre></td></tr></table></figure>
+<p><strong>（3）创建、启动server.py</strong></p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs stylus">uvicorn api<span class="hljs-selector-class">.main</span>:app <span class="hljs-attr">--reload</span> <span class="hljs-attr">--port</span> <span class="hljs-number">8089</span><br></code></pre></td></tr></table></figure>
+<p><strong>（4）效果演示</strong></p>
+<p>当<strong>Rasa Server</strong>、<strong>Action Server</strong>和<strong>Server.py</strong>运行后，在浏览器输入测试：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs awk">http:<span class="hljs-regexp">//</span><span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">8088</span>/ai?content=你好<br></code></pre></td></tr></table></figure>
+<h1 id="Rasa命令行-备忘单"><a href="#Rasa命令行-备忘单" class="headerlink" title="Rasa命令行 备忘单"></a>Rasa命令行 备忘单</h1><p>命令行界面(CLI)为你提供易于记忆的常见任务命令。</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>作用说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>rasa init</td>
+<td>使用示例训练数据，操作和配置文件创建新项目</td>
+</tr>
+<tr>
+<td>rasa train</td>
+<td>使用你的NLU数据和故事训练模型，在<code>./model</code>中保存训练的模型</td>
+</tr>
+<tr>
+<td>rasa interactive</td>
+<td>启动交互式学习会话，通过聊天创建新的训练数据</td>
+</tr>
+<tr>
+<td>rasa shell</td>
+<td>加载已训练的模型，并让你在命令行上与助手交谈</td>
+</tr>
+<tr>
+<td>rasa run</td>
+<td>使用已训练的的模型启动Rasa服务。有关详细信息，请参阅<a target="_blank" rel="noopener" href="http://rasachatbot.com/3_Command_Line_Interface/">运行服务</a>文档</td>
+</tr>
+<tr>
+<td>rasa run actions</td>
+<td>使用Rasa SDK启动操作服务</td>
+</tr>
+<tr>
+<td>rasa visualize</td>
+<td>可视化故事</td>
+</tr>
+<tr>
+<td>rasa data validate</td>
+<td>验证域文件，NLU数据或故事数据中是否存在任何错误</td>
+</tr>
+<tr>
+<td>rasa test</td>
+<td>使用你的测试NLU数据和故事测试已训练的Rasa模型</td>
+</tr>
+<tr>
+<td>rasa data split nlu</td>
+<td>根据指定的百分比执行NLU数据的拆分</td>
+</tr>
+<tr>
+<td>rasa data convert nlu</td>
+<td>在不同格式之间转换NLU训练数据</td>
+</tr>
+<tr>
+<td>rasa x</td>
+<td>在本地启动Rasa X</td>
+</tr>
+<tr>
+<td>rasa -h</td>
+<td>显示所有可用命令</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>具体介绍，可以查看 <a target="_blank" rel="noopener" href="http://rasachatbot.com/3_Command_Line_Interface/">Rasa 命令行界面</a></p>
+<h1 id="Rasa架构"><a href="#Rasa架构" class="headerlink" title="Rasa架构"></a>Rasa架构</h1><p>此图显示了使用Rasa构建的助手如何响应消息的基本步骤：</p>
+<p><img src="https://img-blog.csdnimg.cn/20200215170601829.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0FuZHJFeHBlcnQ=,size_16,color_FFFFFF,t_70" srcset="/img/loading.gif" lazyload alt="在这里插入图片描述"></p>
+<ol>
+<li>用户输入Message，送入Rasa NLU</li>
+<li>NLU识别Message中的”意图(intent)“和提取所有”实体”(entity)数据</li>
+<li>Tracker用于跟踪对话状态，输出Embedding<br>用户意图的Embedding<br>上一步系统动作的Embedding<br>实体的Embedding</li>
+<li>Policy记录Tracker对象的当前状态，并选择执行相应的action</li>
+<li>Tracker记录系统行为action，下一次提供给Policy使用</li>
+<li>返回消息给用户</li>
+</ol>
+<h1 id="在Docker上运行Rasa"><a href="#在Docker上运行Rasa" class="headerlink" title="在Docker上运行Rasa"></a>在Docker上运行Rasa</h1><p><a target="_blank" rel="noopener" href="http://rasachatbot.com/9_Running_Rasa_with_Docker/">http://rasachatbot.com/9_Running_Rasa_with_Docker/</a></p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>Rasa中文聊天机器人开发指南</p>
+<p><a target="_blank" rel="noopener" href="https://jiangdg.blog.csdn.net/article/details/104328946">https://jiangdg.blog.csdn.net/article/details/104328946</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/jiangdongguo/ChitChatAssistant">RASA中文聊天机器人Github地址：ChitChatAssistant</a></p>
+<p><a target="_blank" rel="noopener" href="http://rasachatbot.com/">Rasa 聊天机器人中文官方文档|磐创AI</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Rasa/">#Rasa</a>
+      
+        <a href="/tags/%E8%81%8A%E5%A4%A9%E6%9C%BA%E5%99%A8%E4%BA%BA/">#聊天机器人</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Rasa安装以及项目初尝试</div>
+      <div>http://example.com/2020/12/14/2020-12-14-Rasa安装以及项目初尝试/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>NSX</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2020年12月14日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/12/14/2020-12-14-Rasa%20NLU%20%E8%AF%A6%E8%A7%A3/" title="Rasa NLU 详解">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Rasa NLU 详解</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/12/09/2020-12-09-AB%20%E6%B5%8B%E8%AF%95%EF%BC%88AB%20test%EF%BC%89/" title="A/B 测试（A/B test）">
+                        <span class="hidden-mobile">A/B 测试（A/B test）</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

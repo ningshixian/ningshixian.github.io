@@ -1,0 +1,845 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="NSX">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="一个码农的秋招笔面试经验整理个人背景 普通本科，985硕士 计算机科学与技术专业 本科期间只做过一些app开发和网站开发的工作 读研期间主要研究方向是自然语言处理，有一些实验室项目 除此之外，无任何比赛获奖和实习经历  投递方向国内的NLP方向的岗位一般叫做NLP研究员&#x2F;算法工程师&#x2F;工程师 一点点经验总结 校招是社会和企业为从未步入职场的同学特意准备的一个绿色通道。在这个通道里，我们将候选人当做一">
+<meta property="og:type" content="article">
+<meta property="og:title" content="个人秋招笔面试经验整理">
+<meta property="og:url" content="http://example.com/2019/01/03/2019-01-03-%E4%B8%AA%E4%BA%BA%E7%A7%8B%E6%8B%9B%E7%AC%94%E9%9D%A2%E8%AF%95%E7%BB%8F%E9%AA%8C%E6%95%B4%E7%90%86/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="一个码农的秋招笔面试经验整理个人背景 普通本科，985硕士 计算机科学与技术专业 本科期间只做过一些app开发和网站开发的工作 读研期间主要研究方向是自然语言处理，有一些实验室项目 除此之外，无任何比赛获奖和实习经历  投递方向国内的NLP方向的岗位一般叫做NLP研究员&#x2F;算法工程师&#x2F;工程师 一点点经验总结 校招是社会和企业为从未步入职场的同学特意准备的一个绿色通道。在这个通道里，我们将候选人当做一">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79ly1fytkbko0m4j30gq06074w.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79ly1fytkc3bgzoj31ke0icwhc.jpg">
+<meta property="article:published_time" content="2019-01-02T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-23T10:28:32.036Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="笔面试">
+<meta property="article:tag" content="NLP">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ws4.sinaimg.cn/large/006tNc79ly1fytkbko0m4j30gq06074w.jpg">
+  
+  
+  
+  <title>个人秋招笔面试经验整理 - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="一个码农的秋招笔面试经验整理"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2019-01-03 00:00" pubdate>
+          2019年1月3日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.6k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          39 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">一个码农的秋招笔面试经验整理</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="一个码农的秋招笔面试经验整理"><a href="#一个码农的秋招笔面试经验整理" class="headerlink" title="一个码农的秋招笔面试经验整理"></a>一个码农的秋招笔面试经验整理</h2><h3 id="个人背景"><a href="#个人背景" class="headerlink" title="个人背景"></a>个人背景</h3><ul>
+<li>普通本科，985硕士</li>
+<li>计算机科学与技术专业</li>
+<li>本科期间只做过一些app开发和网站开发的工作</li>
+<li>读研期间主要研究方向是自然语言处理，有一些实验室项目</li>
+<li>除此之外，无任何比赛获奖和实习经历</li>
+</ul>
+<h3 id="投递方向"><a href="#投递方向" class="headerlink" title="投递方向"></a>投递方向</h3><p>国内的NLP方向的岗位一般叫做NLP研究员/算法工程师/工程师</p>
+<h3 id="一点点经验总结"><a href="#一点点经验总结" class="headerlink" title="一点点经验总结"></a>一点点经验总结</h3><ul>
+<li><p>校招是社会和企业为从未步入职场的同学特意准备的一个绿色通道。在这个通道里，我们将候选人当做一张白纸，可以没有经验、没有行业常识，只要对工作充满热情、有还算聪明的头脑，基本都算是合格的。企业会为这些同学准备培训，并留足适应期，有的甚至还会安排一对一的老员工来带。</p>
+</li>
+<li><p>项目很重要</p>
+</li>
+</ul>
+<span id="more"></span>
+<h3 id="投递公司心路历程："><a href="#投递公司心路历程：" class="headerlink" title="投递公司心路历程："></a>投递公司心路历程：</h3><ul>
+<li>8月底-9月初：只投递BATJ、TMD、网易这种知名的大厂，以及自己感兴趣的方向</li>
+<li><script type="math/tex">9月初-9月底</script>：经历N多次失败后，开始眼界放低，开启互联网领域广撒网模式，互联网巨头+独角兽公司+新兴企业，开始大批量投递</li>
+<li>10月初：国庆回家休息了7天。秋招基本颗粒无收+全程崩溃，感觉是受挫到不行，一度觉得找不到工作了%&gt;_&lt;%</li>
+<li>10月中旬-11月中旬：开始想传统行业巨头（伊利、蒙牛）、移动、房地产开始投递。</li>
+</ul>
+<h3 id="Research-or-Product"><a href="#Research-or-Product" class="headerlink" title="Research or Product ?"></a>Research or Product ?</h3><ul>
+<li>想做research，有不错的论文或比赛经历，对某个方向研究的比较深入，但做系统的经历相对匮乏，则偏research的部门可能更赏识你；</li>
+<li>想做产品，并且做系统、啪代码的能力不错，论文也刷了不少但是科研热情不高，则你可能跟业务部门更match。</li>
+</ul>
+<h4 id="偏research-通用平台的："><a href="#偏research-通用平台的：" class="headerlink" title="偏research/通用平台的："></a>偏research/通用平台的：</h4><ul>
+<li>百度：AIG NLP部（以前的IDL的NLP团队合并进去了，方向全覆盖没弱项，王海峰和吴华两位巨佬坐镇，没争议的国内最强NLP团队（忽略MSRA的话））</li>
+<li>阿里：达摩院（以前的idst合并进去了，主要做NLP基础技术，近年来SQuAD也刷的风生水起，不过对话方向貌似在小蜜）</li>
+<li>腾讯：AI lab（属于TEG事业群，论文高产，听说最近也在努力跟业务结合）</li>
+<li>网易游戏：伏羲AI实验室（新成立不久的，不过终面时感觉面试官实力挺赞）</li>
+<li>京东：AI lab（感觉方向有点对标阿里，团队实力不错的）</li>
+<li>滴滴：AI lab（感觉滴滴还是DM领域比较厉害，NLP领域业务不多，主要是语言模型，检索和翻译，不过package挺给力的）</li>
+<li>商汤：商汤研究院（没错，商汤研究院也有NLP，不过当然没有CV做的好）</li>
+</ul>
+<h4 id="偏业务-产品的："><a href="#偏业务-产品的：" class="headerlink" title="偏业务/产品的："></a>偏业务/产品的：</h4><ul>
+<li>百度：度秘部（高T云集，百度主战略DuerOS所在部门，NLP实力没得质疑）、智能客服部（听说团队拿过百度最高奖的百万美金，技术落地to B业务没得说）</li>
+<li>阿里：智能服务部（阿里小蜜，杭州的X lab实力派，北京的Y lab也前景不错）、AI labs（比较新，主要做产品，比如天猫精灵）</li>
+<li>腾讯：微信事业群（北京的模式识别中心应该是腾讯内部AI做的最靠谱的部门了，有微信这种10亿用户的业务，感觉NLP想做的烂都难）</li>
+<li>网易：有道事业部（当时面试时间冲突放弃了，不过有道NLP产品这么成功，想必也不会差）</li>
+</ul>
+<h3 id="网申（NLP算法工程师）"><a href="#网申（NLP算法工程师）" class="headerlink" title="网申（NLP算法工程师）"></a>网申（NLP算法工程师）</h3><blockquote>
+<p>把握提前批，虽然比较难，但是相当于多一次机会；(很多核心部门的NLP岗的hc在提前批就用光了)<br>尽量寻找内推，一般可以直接进笔试环节</p>
+</blockquote>
+<ul>
+<li>途家 没消息</li>
+<li>顺丰 做完性格测试没消息</li>
+<li>唯品会 没消息</li>
+<li>网易有道 没消息</li>
+<li>新浪 没消息</li>
+<li>伊利 没消息</li>
+<li>流利说 没消息</li>
+<li>Oppo 没消息</li>
+<li>快手 没消息</li>
+<li>腾讯内推 没消息</li>
+<li>微策略 没消息</li>
+</ul>
+<hr>
+<ul>
+<li>小米 投递内推成功，笔试挂</li>
+<li>商汤科技 听说很难，没做笔试</li>
+<li>科大讯飞 笔试挂</li>
+<li>网易（NLP算法工程师） 挂</li>
+<li>作业帮 提前批一面挂 网申笔试挂</li>
+<li>深信服 （笔试挂，记得是只能用C++，不会）</li>
+<li>猎豹移动 宣讲会现场笔试挂</li>
+<li>爱奇艺 笔试挂</li>
+<li>招行网络科技 笔试错过了</li>
+<li>携程 笔试挂</li>
+<li>美团 笔试挂</li>
+<li>平安科技 笔试挂</li>
+<li>瓜子二手车 笔试挂</li>
+<li>马蜂窝 现场宣讲笔试挂</li>
+<li>搜狗 笔试挂</li>
+<li>58 笔试挂</li>
+<li><p>多益网络 笔试挂，还要下载多益专用的软件，体验不好<br><img src="https://ws4.sinaimg.cn/large/006tNc79ly1fytkbko0m4j30gq06074w.jpg" srcset="/img/loading.gif" lazyload alt=""></p>
+</li>
+<li><p>小红书 笔试挂</p>
+</li>
+<li>Vipkid 现场宣讲笔试挂(我记得宣讲抽奖环节抽中一个U盘)</li>
+<li>知乎 笔试挂</li>
+<li>贝壳 现场宣讲笔试挂（贝壳今年给的很高，投递很晚，有点可惜）</li>
+<li>CVTE 笔试挂</li>
+<li>去哪儿 笔试挂</li>
+<li>华润集团 笔试挂</li>
+<li>途家 笔试挂</li>
+<li>阿里巴巴 笔试挂（太难）</li>
+<li>滴滴 笔试挂</li>
+<li>B站 笔试挂</li>
+<li>拼多多 笔试挂</li>
+<li>迅雷 笔试挂</li>
+</ul>
+<hr>
+<ul>
+<li><p>京东 笔试过一面挂<br><img src="https://ws3.sinaimg.cn/large/006tNc79ly1fytkc3bgzoj31ke0icwhc.jpg" srcset="/img/loading.gif" lazyload alt=""></p>
+</li>
+<li><p>华为 笔试过（一般3道编程题，做出一道即可）一面挂（撞枪口上了）</p>
+</li>
+<li>海康威视 电话面挂</li>
+<li>头条 笔试过一面挂</li>
+<li>360 内推的，一面挂</li>
+<li>最右 一面挂</li>
+<li>百度 笔试过一面过二面挂(面试官是我见过的最nice的，问的问题比较基础，手撕两道简单的编程题，大部分是关于项目的问题)</li>
+<li>中兴（开发） 直接面试，很随意很简单，薪资太低</li>
+<li>南方航空 笔试过面试放弃</li>
+<li>中国建行 笔试挂面试放弃</li>
+<li>中移动 北京一面，聊了聊项目和工作意向，二面放弃</li>
+<li>各种国企银行…</li>
+<li>龙湖地产 直接一面（聊项目，python，Linux相关），二面就定了谈岗位和薪资（整个过程很快很快，薪资待遇很好，让人有种中彩票的感觉？）</li>
+</ul>
+<h3 id="建议学习路径"><a href="#建议学习路径" class="headerlink" title="建议学习路径"></a>建议学习路径</h3><p>我是研二下学期暑假快结束了才开始准备，已经是很晚了，后面只能边复习边刷题边准备笔面试，很辛苦~<br>以下是我给出的秋招准备方法，当然春招的时候走一波实习是最好的，可以拿来练手增加经验。</p>
+<h5 id="复习路径"><a href="#复习路径" class="headerlink" title="复习路径"></a>复习路径</h5><ol>
+<li><p>笔试基础（很重要）</p>
+<p><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/24964987">互联网公司最常见的面试算法题有哪些？</a></p>
+<blockquote>
+<p>基本都是leetcode简单级别的或者剑指offer上的原题；</p>
+<p>编程语言的话，放心的用python就好；</p>
+<p>概率统计记得要翻一翻回忆下</p>
+<p>数据结构：字符串、链表、数组、堆、哈希表、树（Trie树、后缀树、红黑树、B树、R树）、图（遍历：BFS、DFS、Dijkstra）</p>
+<p>算法：基于各个数据结构的查找（二分、二叉树）、排序、树的遍历、排列组合概率、分治递归回溯、贪心算法、动态规划（套路：最大、最小，最长、最优，计数；离散问题：容易设计状态（01背包）；最优子结构：N-1可以推导出N）、递归（递归（递推公式)+缓存（重叠子问题）+边界条件；最优子结构：子问题最优决策可导出原问题最优决策+无后效性；重叠子问题：去冗余+空间换时间；边界条件：递归结束的设计、海量数据、字符串匹配相关</p>
+</blockquote>
+<ul>
+<li>一开始是刷<a target="_blank" rel="noopener" href="https://leetcode.com/">LeetCode</a>，但是不太习惯英文，刷了不到50题放弃了（刚开始做leetcode中等难度都要想好久甚至做不出来，后来刷了一段时间后基本就很容易了）；</li>
+<li>后来是在<a target="_blank" rel="noopener" href="https://www.nowcoder.com/">牛客网</a>上，根据《剑指offer》学习数据结构的面试算法题</li>
+<li>王道程序员求职宝典</li>
+<li><a target="_blank" rel="noopener" href="https://oi-wiki.org/">OI-wiki</a> 是一个整合了编程竞赛有趣又实用的知识站点，内容含有竞赛中的基础知识、常见题型、解题思&lt;路以及常用工具等</li>
+<li>《王道程序员求职宝典》</li>
+</ul>
+</li>
+<li><p>面试基础（按顺序来）</p>
+<ul>
+<li>七月在线的课程，看完后会对给的代码进行复现，自己敲一遍(不止一遍)。</li>
+</ul>
+</li>
+</ol>
+<ul>
+<li><p><a target="_blank" rel="noopener" href="https://www.coursera.org/learn/machine-learning"><strong>吴恩达的机器学习课程</strong></a>，是 Coursera上最受欢迎的机器学习课程 ★★</p>
+</li>
+<li><p>周志华的《西瓜书》</p>
+</li>
+<li><p>李航的《统计学习方法》</p>
+</li>
+<li><p>《Speech and Language Processing》<a target="_blank" rel="noopener" href="https://web.stanford.edu/~jurafsky/slp3/ed3book.pdf">PDF</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="http://t.cn/RCvrRIO">斯坦福CS224n</a></p>
+</li>
+<li><p>Ian Goodfellow，Yoshua Bengio和Aaron Courville 合著的<strong>《深度学习》</strong>，这是学习深度学习最全面的书籍，涵盖了比其他所有课程都要多的主题。★★★ （<a target="_blank" rel="noopener" href="http://www.deeplearningbook.org/）（必读）">http://www.deeplearningbook.org/）（必读）</a> <a target="_blank" rel="noopener" href="https://github.com/exacity/deeplearningbook-chinese/releases/download/v0.5-beta/dlbook_cn_v0.5-beta.pdf">中文版下载</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="http://www.cnblogs.com/tornadomeet/p/3395593.html">《机器学习&amp;数据挖掘笔记_16（常见面试之机器学习算法思想简单梳理）》</a></p>
+<ul>
+<li><p><a target="_blank" rel="noopener" href="http://deeplearning.stanford.edu/wiki/index.php/Main_Page">《UFLDL-斯坦福大学Andrew Ng教授“Deep Learning”教程》</a></p>
+<p>介绍:本教程将阐述无监督特征学习和深度学习的主要观点。通过学习，你也将实现多个功能学习/深度学习算法，能看到它们为你工作，并学习如何应用/适应这些想法到新问题上。</p>
+</li>
+<li><p><a href="PRML algorithms implemented in Python">PRML一书中所有算法的python实现！！</a></p>
+</li>
+</ul>
+</li>
+</ul>
+<h5 id="资料整理（2020-04-20更新）"><a href="#资料整理（2020-04-20更新）" class="headerlink" title="资料整理（2020-04-20更新）"></a>资料整理（2020-04-20更新）</h5><ul>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/DarLiner/Algorithm_Interview_Notes-Chinese">DarLiner/Algorithm_Interview_Notes-Chinese</a>✨ 564</p>
+<p>2018/2019/校招/春招/秋招/自然语言处理(NLP)/深度学习(Deep Learning)/机器学习(Machine Learning)/C/C++/Python/面试笔记.强烈建议学习！一个关于国内知名互联网企业笔试和面试经验的资源库，除了初步梳理和介绍的机器学习领域重要的基础知识和脉络结构之外，还总结了一些国内互联网名企网招、校招笔试面试时的内容和套路，非常值得立志进入这些企业的小伙伴们参考，而且是纯中文的哦！</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/amusi/AI-Job-Notes">AI算法岗求职攻略（涵盖准备攻略、刷题指南、内推和AI公司清单等资料）</a>✨ 2.1K<br>AI算法岗求职攻略：涵盖校招时间表、准备攻略、刷题指南、内推、AI公司清单和答疑等资料</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/scutan90/DeepLearning-500-questions">深度学习500问</a> ✨37.5K</p>
+<p>深度学习500问，以问答形式对常用的概率知识、线性代数、机器学习、深度学习、计算机视觉等热点问题进行阐述，以帮助自己及有需要的读者。 全书分为18个章节，50余万字。</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/TheAlgorithms/Python">All Algorithms implemented in Python</a>✨69.9K<br>该项目用Python实现了所有的排序算法，包括插入排序、冒泡排序、快速排序、选择排序、归并排序等+动图</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/taizilongxu/interview_python">关于Python的面试题</a> ✨12.3K</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="http://www.liaoxuefeng.com/wiki/0014316089557264a6b348958f449949df42a6d3a2e542c000">廖雪峰的Python教程</a> （推荐）</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/CyC2018/CS-Notes">CyC2018/CS-Notes</a>✨97.9K<br>技术面试必备基础知识、Leetcode、计算机操作系统、计算机网络、系统设计、Java、Python、C++ </p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/apachecn/Interview">apachecn/Interview</a> ✨ 5.8K</p>
+<p>结构化算法刷题训练指南（Interview = 简历指南 + LeetCode + Kaggle）</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/kriadmin/30-seconds-of-python-code">30-seconds-of-python-code</a> ✨6.3K</p>
+<p>精选的有用python代码段集合，开发者可以在30秒或更短的时间内理解这些代码段。</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/keon/algorithms">algorithms</a> ✨17.2K</p>
+<p>Minimal examples of data structures and algorithms in Python</p>
+</li>
+<li><p><strong><a target="_blank" rel="noopener" href="https://github.com/MLEveryday/100-Days-Of-ML-Code">100天掌握机器学习</a> ✨15.3K</strong></p>
+<p>100-Days-Of-ML-Code中文版</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/fengdu78/lihang-code">《统计学习方法》的Python 3.6复现</a> ✨9.9K</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/lijin-THU/notes-python">lijin-THU/notes-python</a> ✨5.5K<br>中文 Python 笔记笔记的实体书：《自学Python——编程基础、科学计算及数据分析》</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/norvig/pytudes">完善编程技巧Python程序</a> ✨13.6K</p>
+<p>资源 | 想用Python学机器学习？Google大神替你写好了所有的编程示范代码<br>全球第一的AI教科书作者、Google Research总监Peter Novig就专门为初学者做了一个关于Python编程示范操作的GitHub项目</p>
+</li>
+</ul>
+<h2 id="找工作的必备工具"><a href="#找工作的必备工具" class="headerlink" title="找工作的必备工具"></a>找工作的必备工具</h2><h3 id="1、简历工具"><a href="#1、简历工具" class="headerlink" title="1、简历工具"></a>1、简历工具</h3><ul>
+<li><a target="_blank" rel="noopener" href="https://www.wondercv.com">超级简历（推荐）</a>√</li>
+<li><a target="_blank" rel="noopener" href="https://www.zhiyeapp.com/">知页简历</a></li>
+<li><a target="_blank" rel="noopener" href="http://cv.ftqq.com/#">冷熊简历</a></li>
+<li><a target="_blank" rel="noopener" href="http://cv.qiaobutang.com/tpl/">乔布简历</a></li>
+<li><a target="_blank" rel="noopener" href="http://jayveehe.github.io/about/resume.html">Jayvee He的简历</a></li>
+</ul>
+<h3 id="2、收集面经类"><a href="#2、收集面经类" class="headerlink" title="2、收集面经类"></a>2、收集面经类</h3><p>（1）应届生论坛</p>
+<p>（2）牛客网</p>
+<p>没事就多看看，自己多做整理，内化成自己的知识。</p>
+<h3 id="3、了解公司八卦吐槽类"><a href="#3、了解公司八卦吐槽类" class="headerlink" title="3、了解公司八卦吐槽类"></a>3、了解公司八卦吐槽类</h3><p>（1）脉脉</p>
+<p>（2）看准网</p>
+<p>（3）职友集</p>
+<p>但也不要全当真哈，适当参考即可～</p>
+<h3 id="4、薪酬参考类"><a href="#4、薪酬参考类" class="headerlink" title="4、薪酬参考类"></a>4、薪酬参考类</h3><p>（1）看准网</p>
+<p>（2）校招薪水（公主号）对应小程序—offershow</p>
+<p>薪酬一般不好直接打听嘛，所以可以参考一下这些渠道，做到心里有数～</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://ask.julyedu.com/question/86859?from=timeline">非科班生拿BAT算法SP offer面经</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/jwasham/coding-interview-university">一个完整的计算机科学研究计划成为一名Google软件工程师</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/conanhujinming/tips_for_interview/blob/master/就业分享_浙江大学计算机学院_conanhujinming.pdf">https://github.com/conanhujinming/tips_for_interview/blob/master/%E5%B0%B1%E4%B8%9A%E5%88%86%E4%BA%AB_%E6%B5%99%E6%B1%9F%E5%A4%A7%E5%AD%A6%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%AD%A6%E9%99%A2_conanhujinming.pdf</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E7%AC%94%E9%9D%A2%E8%AF%95/">#笔面试</a>
+      
+        <a href="/tags/NLP/">#NLP</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>个人秋招笔面试经验整理</div>
+      <div>http://example.com/2019/01/03/2019-01-03-个人秋招笔面试经验整理/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>NSX</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2019年1月3日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/01/08/2019-01-08-%E5%82%85%E9%87%8C%E5%8F%B6%E5%8F%98%E6%8D%A2/" title="傅里叶变换">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">傅里叶变换</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2019/01/01/2019-01-01-%E2%9C%A8NLP%E5%85%A5%E9%97%A8%E6%9E%81%E7%AE%80%E6%95%99%E7%A8%8B/" title="✨NLP入门极简教程">
+                        <span class="hidden-mobile">✨NLP入门极简教程</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

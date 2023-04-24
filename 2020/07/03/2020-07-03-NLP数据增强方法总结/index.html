@@ -1,0 +1,827 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="NSX">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="在这篇文章中，我将基于我的发现概述当前用于文本数据扩充的方法。  词汇替代 反向翻译 文字表面转换 随机噪声注入 实例交叉扩展 语法树操作 文字混合 生成方法  中文EDA工具">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NLP数据增强方法总结">
+<meta property="og:url" content="http://example.com/2020/07/03/2020-07-03-NLP%E6%95%B0%E6%8D%AE%E5%A2%9E%E5%BC%BA%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="在这篇文章中，我将基于我的发现概述当前用于文本数据扩充的方法。  词汇替代 反向翻译 文字表面转换 随机噪声注入 实例交叉扩展 语法树操作 文字混合 生成方法  中文EDA工具">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/Psho9dm7oDFmusIPsxmtmk9xx34XRFQrASyNXS1T6VYkbUB3v5vLZV1L8P4nrwcj9edzWJ6ys1iaSDMnGoEFJQg/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/51jnKjdIjAMmv8N07dZWXER0G2JD77LAmMo3dmWPJCVLSQdav5ib3VpIdojib062zX5VaATDm1NdOQsia3fTu0zow/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/nlp-aug-wordnet.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/nlp-aug-embedding.png">
+<meta property="og:image" content="https://amitness.com/images/nlp-aug-embedding-example.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/nlp-aug-bert-mlm.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/nlp-aug-bert-augmentations.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/nlp-aug-tf-idf-word-replacement.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/nlp-aug-back-translation.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/nlp-aug-backtranslation-multi.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/nlp-aug-contraction.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/nlp-aug-contraction-ambiguity.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/nlp-aug-contraction-solution.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/nlp-aug-spelling-example.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/nlp-aug-keyboard-error-example.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/nlp-aug-unigram-noise.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/nlp-aug-blank-noising.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/nlp-aug-sentence-shuffle.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/nlp-aug-random-insertion.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/nlp-aug-random-swap.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/nlp-aug-random-deletion.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/nlp-aug-instance-crossover.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/nlp-aug-instance-crossover-result.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/nlp-aug-syntax-tree-manipulation.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/nlp-aug-mixup-image.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/nlp-aug-wordmixup.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/nlp-aug-sentmixup.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/nlp-aug-generation-training.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/nlp-aug-gpt2-finetuning.png">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/nlp-aug-gpt2.png">
+<meta property="article:published_time" content="2020-07-02T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-23T10:28:32.049Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="数据增强">
+<meta property="article:tag" content="EDA">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://mmbiz.qpic.cn/mmbiz_png/Psho9dm7oDFmusIPsxmtmk9xx34XRFQrASyNXS1T6VYkbUB3v5vLZV1L8P4nrwcj9edzWJ6ys1iaSDMnGoEFJQg/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+  
+  
+  
+  <title>NLP数据增强方法总结 - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Data Augmentation"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2020-07-03 00:00" pubdate>
+          2020年7月3日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.7k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          48 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Data Augmentation</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>在这篇文章中，我将基于我的发现概述当前用于文本数据扩充的方法。</p>
+<ol>
+<li>词汇替代</li>
+<li>反向翻译</li>
+<li>文字表面转换</li>
+<li>随机噪声注入</li>
+<li>实例交叉扩展</li>
+<li>语法树操作</li>
+<li>文字混合</li>
+<li>生成方法</li>
+</ol>
+<p>中文EDA工具</p>
+<span id="more"></span>
+<p>2021.08.13补充《最新综述：用于文本分类的数据增强方法》</p>
+<p><strong>论文标题：</strong></p>
+<p>A Survey on Data Augmentation for Text Classification</p>
+<p><strong>论文链接：</strong></p>
+<p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2107.03158">https://arxiv.org/abs/2107.03158</a></p>
+<p><strong>数据增强方法分类</strong></p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/Psho9dm7oDFmusIPsxmtmk9xx34XRFQrASyNXS1T6VYkbUB3v5vLZV1L8P4nrwcj9edzWJ6ys1iaSDMnGoEFJQg/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" srcset="/img/loading.gif" lazyload alt="图片" style="zoom: 67%;" /></p>
+<p><strong>用于文本分类的的数据增强方法集合</strong></p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/51jnKjdIjAMmv8N07dZWXER0G2JD77LAmMo3dmWPJCVLSQdav5ib3VpIdojib062zX5VaATDm1NdOQsia3fTu0zow/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" srcset="/img/loading.gif" lazyload alt="图片" style="zoom:67%;" /></p>
+<h1 id="NLP数据扩充技术"><a href="#NLP数据扩充技术" class="headerlink" title="NLP数据扩充技术"></a>NLP数据扩充技术</h1><h2 id="1-词汇替代"><a href="#1-词汇替代" class="headerlink" title="1.词汇替代"></a>1.词汇替代</h2><p>此工作尝试在不更改句子含义的情况下替换文本中出现的单词。</p>
+<ul>
+<li><p><strong>基于同义词库的替换</strong></p>
+<p>在此技术中，我们从句子中抽取一个随机单词，然后使用同义词库将其替换为其同义词。例如，我们可以使用<a target="_blank" rel="noopener" href="https://wordnet.princeton.edu/">WordNet</a>数据库中的英语查找同义词，然后执行替换。它是一个人工策划的数据库，具有单词之间的关系。</p>
+<p><img src="https://ningshixian.github.io/resources/images/nlp-aug-wordnet.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1509.01626">张等。</a>在他们的2015年论文“用于文本分类的字符级卷积网络”中使用了该技术。<a target="_blank" rel="noopener" href="https://www.aaai.org/ocs/index.php/AAAI/AAAI16/paper/download/12195/12023">Mueller等。</a>使用类似的策略为其句子相似性模型生成额外的10K训练示例。<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1901.11196">Wei等人</a>也使用了这种技术<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1901.11196">。</a>作为“轻松数据扩充”论文中四个随机扩充库中的一项技术。</p>
+<p>为了实现，NLTK提供了对WordNet 的编程<a target="_blank" rel="noopener" href="https://www.nltk.org/howto/wordnet.html">访问</a>。您也可以使用<a target="_blank" rel="noopener" href="https://textblob.readthedocs.io/en/dev/quickstart.html#wordnet-integration">TextBlob API</a>。此外，还有一个名为<a target="_blank" rel="noopener" href="http://paraphrase.org/#/download">PPDB</a>的数据库，<a target="_blank" rel="noopener" href="http://paraphrase.org/#/download">其中</a>包含数百万个可以通过编程方式下载和使用的复述。</p>
+</li>
+<li><p><strong>词嵌入替换</strong></p>
+<p>在这种方法中，我们采用了经过预训练的词嵌入，例如Word2Vec，GloVe，FastText，Sent2Vec，并使用嵌入空间中最近的邻居词代替句子中某个词。<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1909.10351">焦等。</a>在他们的论文“ <em>TinyBert</em> ” <em>中将</em>这种技术与GloVe嵌入一起使用，以改进其语言模型在下游任务上的通用性。<a target="_blank" rel="noopener" href="https://www.aclweb.org/anthology/D15-1306.pdf">Wang等。</a>用它来增强学习主题模型所需的推文。</p>
+<p><img src="https://ningshixian.github.io/resources/images/nlp-aug-embedding.png" srcset="/img/loading.gif" lazyload alt="单词向量最近的邻居"></p>
+<p>例如，您可以将单词替换为最接近的3个单词，并获得文本的三种变体。</p>
+<p><img src="https://amitness.com/images/nlp-aug-embedding-example.png" srcset="/img/loading.gif" lazyload alt="用词嵌入来增强文本"></p>
+<p>使用Gensim之类的包来访问预先训练的单词向量并获取最近的邻居是很容易的。例如，在这里我们使用在推特上训练的单词向量找到单词“ awesome”的同义词。</p>
+</li>
+</ul>
+<figure class="highlight clean"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs clean"># pip install gensim<br><span class="hljs-keyword">import</span> gensim.downloader <span class="hljs-keyword">as</span> api<br><br>model = api.load(<span class="hljs-string">&#x27;glove-twitter-25&#x27;</span>)  <br>model.most_similar(<span class="hljs-string">&#x27;awesome&#x27;</span>, topn=<span class="hljs-number">5</span>)<br></code></pre></td></tr></table></figure>
+<p>您将获得5个最相似的词以及余弦相似度。</p>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs scheme">[(<span class="hljs-symbol">&#x27;amazing</span>&#x27;, <span class="hljs-number">0.9687871932983398</span>),<br> (<span class="hljs-symbol">&#x27;best</span>&#x27;, <span class="hljs-number">0.9600659608840942</span>),<br> (<span class="hljs-symbol">&#x27;fun</span>&#x27;, <span class="hljs-number">0.9331520795822144</span>),<br> (<span class="hljs-symbol">&#x27;fantastic</span>&#x27;, <span class="hljs-number">0.9313924312591553</span>),<br> (<span class="hljs-symbol">&#x27;perfect</span>&#x27;, <span class="hljs-number">0.9243415594100952</span>)]<br></code></pre></td></tr></table></figure>
+<ul>
+<li><p>诸如BERT，ROBERTA和ALBERT之类的<strong>屏蔽语言模型</strong> Transformer模型已使用称为“屏蔽语言模型”的预置任务在大量文本上进行了训练，其中该模型必须根据上下文预测屏蔽词。</p>
+<p>这可以用来扩充一些文本。例如，我们可以使用预训练的BERT模型，对文本的某些部分进行遮罩，然后要求BERT模型为遮罩预测令牌。</p>
+<p><img src="https://ningshixian.github.io/resources/images/nlp-aug-bert-mlm.png" srcset="/img/loading.gif" lazyload alt="掩蔽词预测"></p>
+<p>因此，我们可以使用遮罩预测来生成文本的变体。与以前的方法相比，生成的文本在语法上更加连贯，因为模型在进行预测时会考虑上下文。</p>
+<p><img src="https://ningshixian.github.io/resources/images/nlp-aug-bert-augmentations.png" srcset="/img/loading.gif" lazyload alt="使用BERT的文本增强"></p>
+<p>使用诸如<a target="_blank" rel="noopener" href="https://huggingface.co/transformers/">转换器之</a>类的开源库很容易实现拥抱脸。您可以设置要替换的令牌<code>&lt;mask&gt;</code>并生成预测。</p>
+</li>
+</ul>
+<figure class="highlight clean"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs clean"><span class="hljs-keyword">from</span> transformers <span class="hljs-keyword">import</span> pipeline<br>nlp = pipeline(<span class="hljs-string">&#x27;fill-mask&#x27;</span>)<br>nlp(<span class="hljs-string">&#x27;This is &lt;mask&gt; cool&#x27;</span>)<br>[&#123;<span class="hljs-string">&#x27;score&#x27;</span>: <span class="hljs-number">0.515411913394928</span>,<br>  <span class="hljs-string">&#x27;sequence&#x27;</span>: <span class="hljs-string">&#x27;&lt;s&gt; This is pretty cool&lt;/s&gt;&#x27;</span>,<br>  <span class="hljs-string">&#x27;token&#x27;</span>: <span class="hljs-number">1256</span>&#125;,<br> &#123;<span class="hljs-string">&#x27;score&#x27;</span>: <span class="hljs-number">0.1166248694062233</span>,<br>  <span class="hljs-string">&#x27;sequence&#x27;</span>: <span class="hljs-string">&#x27;&lt;s&gt; This is really cool&lt;/s&gt;&#x27;</span>,<br>  <span class="hljs-string">&#x27;token&#x27;</span>: <span class="hljs-number">269</span>&#125;,<br> &#123;<span class="hljs-string">&#x27;score&#x27;</span>: <span class="hljs-number">0.07387523353099823</span>,<br>  <span class="hljs-string">&#x27;sequence&#x27;</span>: <span class="hljs-string">&#x27;&lt;s&gt; This is super cool&lt;/s&gt;&#x27;</span>,<br>  <span class="hljs-string">&#x27;token&#x27;</span>: <span class="hljs-number">2422</span>&#125;,<br> &#123;<span class="hljs-string">&#x27;score&#x27;</span>: <span class="hljs-number">0.04272908344864845</span>,<br>  <span class="hljs-string">&#x27;sequence&#x27;</span>: <span class="hljs-string">&#x27;&lt;s&gt; This is kinda cool&lt;/s&gt;&#x27;</span>,<br>  <span class="hljs-string">&#x27;token&#x27;</span>: <span class="hljs-number">24282</span>&#125;,<br> &#123;<span class="hljs-string">&#x27;score&#x27;</span>: <span class="hljs-number">0.034715913236141205</span>,<br>  <span class="hljs-string">&#x27;sequence&#x27;</span>: <span class="hljs-string">&#x27;&lt;s&gt; This is very cool&lt;/s&gt;&#x27;</span>,<br>  <span class="hljs-string">&#x27;token&#x27;</span>: <span class="hljs-number">182</span>&#125;]<br></code></pre></td></tr></table></figure>
+<p>但是，此方法的一个警告是，确定要掩盖文本的哪一部分并非易事。您将必须使用启发式方法来确定掩码，否则生成的文本可能不会保留原始句子的含义。</p>
+<ul>
+<li><strong>基于TF-IDF的单词替换</strong><br>此扩展方法由<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1904.12848">Xie等人</a>提出<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1904.12848">。</a>在无监督数据增强论文中。基本思想是，TF-IDF分数较低的单词是无意义的，因此可以替换而不会影响句子的真实标签。</li>
+</ul>
+<p><img src="https://ningshixian.github.io/resources/images/nlp-aug-tf-idf-word-replacement.png" srcset="/img/loading.gif" lazyload alt="基于TF-IDF的单词替换"></p>
+<p>通过计算整个文档中单词的TF-IDF得分并取最低得分来选择替换原始单词的单词。您可以在<a target="_blank" rel="noopener" href="https://github.com/google-research/uda/blob/master/text/augmentation/word_level_augment.py">此处</a>的原始文件中参考此代码的实现。</p>
+<h2 id="2-反向翻译"><a href="#2-反向翻译" class="headerlink" title="2.反向翻译"></a>2.反向翻译</h2><p>在这种方法中，我们利用机器翻译来释义文本，同时重新训练其含义。<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1904.12848">谢等</a>使用此方法来扩充未标记的文本，并仅使用20个标记的示例在IMDB数据集上学习半监督模型。他们的模型优于以前在25,000个带标签的示例上训练的最新模型。</p>
+<p>反向翻译过程如下：</p>
+<ul>
+<li><p>用一些句子（例如英语）并翻译成另一种语言，例如法语</p>
+</li>
+<li><p>将法语句子翻译回英语句子</p>
+</li>
+<li><p>检查新句子是否与我们的原始句子不同。如果是这样，那么我们将这个新句子用作原始文本的增强版本。</p>
+<p><img src="https://ningshixian.github.io/resources/images/nlp-aug-back-translation.png" srcset="/img/loading.gif" lazyload alt="回译的想法"></p>
+</li>
+</ul>
+<p>您还可以一次使用不同的语言进行反向翻译，以产生更多的变化。如下所示，我们将英语句子翻译成目标语言，然后再将英语翻译成三种目标语言：法语，普通话和意大利语。</p>
+<p><img src="https://ningshixian.github.io/resources/images/nlp-aug-backtranslation-multi.png" srcset="/img/loading.gif" lazyload alt="多步回译"></p>
+<p>该技术还被用在Kaggle上的“有毒评论分类挑战” 的<a target="_blank" rel="noopener" href="https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge/discussion/52557">第一名解决方案</a>中。获胜者将其用于训练数据的扩充以及测试期间，在测试期间，英语句子的预测概率以及使用三种语言（法语，德语，西班牙语）的反向翻译的平均值将得到最终预测。</p>
+<p>对于实施反向翻译，可使用 <code>python translate</code> 包和 <code>textblob</code> 包（少量翻译），或者使用百度翻译或谷歌翻译的api通过python实现。</p>
+<p>反向翻译一般用于机器翻译和<a target="_blank" rel="noopener" href="https://liweinlp.com/?p=5000">中文文本纠错任务</a>。</p>
+<h2 id="3-文字表面转换"><a href="#3-文字表面转换" class="headerlink" title="3.文字表面转换"></a>3.文字表面转换</h2><p>这些是使用正则表达式应用的简单模式匹配转换，由<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1812.04718">Claude Coulombe</a>在他的论文中介绍。</p>
+<p>在本文中，他提供了一个将言语形式从收缩转变为扩张，反之亦然的例子。我们可以通过应用此生成增强文本。</p>
+<p><img src="https://ningshixian.github.io/resources/images/nlp-aug-contraction.png" srcset="/img/loading.gif" lazyload alt="文本的收缩和扩展"></p>
+<p>由于转换不应该改变句子的含义，因此我们可以看到，在展开歧义语言形式的情况下，这样做可能会失败：</p>
+<p><img src="https://ningshixian.github.io/resources/images/nlp-aug-contraction-ambiguity.png" srcset="/img/loading.gif" lazyload alt="语言形式扩展中的歧义"></p>
+<p>为解决此问题，本文建议我们允许歧义收缩，但跳过歧义扩展。</p>
+<p><img src="https://ningshixian.github.io/resources/images/nlp-aug-contraction-solution.png" srcset="/img/loading.gif" lazyload alt="解决语言形式扩展中的歧义"></p>
+<p>您可以<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Wikipedia%3aList_of_English_contractions">在此处</a>找到英语的收缩列表。为了扩展，您可以使用Python中的<a target="_blank" rel="noopener" href="https://github.com/kootenpv/contractions">收缩</a>库。</p>
+<h2 id="4-随机噪声注入"><a href="#4-随机噪声注入" class="headerlink" title="4.随机噪声注入"></a>4.随机噪声注入</h2><p>这些方法的思想是在文本中注入噪声，以便训练的模型对扰动具有鲁棒性。</p>
+<ul>
+<li><p><strong>拼写错误注入</strong><br>在这种方法中，我们向句子中的某些随机单词添加了拼写错误。这些拼写错误可以通过编程方式添加，也可以使用常见拼写错误的映射（例如英语<a target="_blank" rel="noopener" href="https://github.com/makcedward/nlpaug/blob/master/model/spelling_en.txt">列表）</a>来添加。</p>
+<p><img src="https://ningshixian.github.io/resources/images/nlp-aug-spelling-example.png" srcset="/img/loading.gif" lazyload alt="拼写错误注入"></p>
+</li>
+<li><p><strong>QWERTY键盘错误注入</strong><br>此方法尝试模拟在QWERTY布局键盘上键入时由于彼此之间非常接近的键而发生的常见错误。根据键盘距离插入错误。</p>
+<p><img src="https://ningshixian.github.io/resources/images/nlp-aug-keyboard-error-example.png" srcset="/img/loading.gif" lazyload alt="QUERTY键盘错误注入"></p>
+</li>
+<li><p><strong>Unigram噪声</strong><br>此方法已由<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1703.02573">Xie等人使用。</a>和<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1904.12848">UDA</a>文件。这个想法是用从字法频率分布中采样的单词进行替换。这个频率基本上是每个单词在训练语料库中出现的次数。</p>
+<p><img src="https://ningshixian.github.io/resources/images/nlp-aug-unigram-noise.png" srcset="/img/loading.gif" lazyload alt="会标噪声"></p>
+</li>
+<li><p><strong>空白噪声</strong><br>该方法由<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1703.02573">Xie等人</a>提出<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1703.02573">。</a>在他们的论文中。这个想法是用一个占位符标记代替一些随机词。本文使用“ _”作为占位符标记。在本文中，他们将其用作避免在特定上下文上过度拟合的方法以及语言模型的平滑机制。该技术有助于提高困惑度和BLEU分数。</p>
+<p><img src="https://ningshixian.github.io/resources/images/nlp-aug-blank-noising.png" srcset="/img/loading.gif" lazyload alt="空白噪声"></p>
+</li>
+<li><p><strong>句子改组</strong><br>这是一种幼稚的技术，我们可以对训练文本中存在的<strong>句子进行改组</strong>以创建增强版本。</p>
+<p><img src="https://ningshixian.github.io/resources/images/nlp-aug-sentence-shuffle.png" srcset="/img/loading.gif" lazyload alt="句子改组"></p>
+</li>
+<li><p><strong>随机插入</strong><br>该技术由<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1901.11196">Wei等人</a>提出<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1901.11196">。</a>在他们的论文“轻松数据增强”中。在这种技术中，我们首先从不是停用词的句子中选择一个随机词。然后，找到其同义词，并将其插入句子中的随机位置。</p>
+<p><img src="https://ningshixian.github.io/resources/images/nlp-aug-random-insertion.png" srcset="/img/loading.gif" lazyload alt="随机插入"></p>
+</li>
+<li><p><strong>随机交换</strong><br>此技术也由<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1901.11196">Wei等人</a>提出<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1901.11196">。</a>在他们的论文“轻松数据增强”中。想法是随机交换句子中的任何两个单词。</p>
+<p><img src="https://ningshixian.github.io/resources/images/nlp-aug-random-swap.png" srcset="/img/loading.gif" lazyload alt="随机交换"></p>
+</li>
+<li><p><strong>随机删除</strong><br>该技术也是由<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1901.11196">Wei等人</a>提出的<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1901.11196">。</a>在他们的论文“轻松数据增强”中。在这种情况下，我们以一定概率p随机删除句子中的每个单词。</p>
+<p><img src="https://ningshixian.github.io/resources/images/nlp-aug-random-deletion.png" srcset="/img/loading.gif" lazyload alt="随机删除"></p>
+</li>
+</ul>
+<h2 id="5-实例交叉扩展"><a href="#5-实例交叉扩展" class="headerlink" title="5.实例交叉扩展"></a>5.实例交叉扩展</h2><p>这项技术是<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1909.11241">Luque</a>在他对TASS 2019的情感分析的论文中引入的。它受到遗传学中发生的染色体交叉操作的启发。<br>在该方法中，一条推文被分为两半，并且两个极性相同（即正/负）的随机推文被互换。假设是，即使结果将是不合语法且语义上不合理的，新文本仍将保留情感。</p>
+<p><img src="https://ningshixian.github.io/resources/images/nlp-aug-instance-crossover.png" srcset="/img/loading.gif" lazyload alt="实例交叉扩展"></p>
+<p>该技术对准确性没有影响，但有助于提高F1分数，表明该技术可帮助减少诸如Tweet的中性类等少数群体。</p>
+<p><img src="https://ningshixian.github.io/resources/images/nlp-aug-instance-crossover-result.png" srcset="/img/loading.gif" lazyload alt="实例交叉扩展对F1的影响"></p>
+<h2 id="6-语法树操作"><a href="#6-语法树操作" class="headerlink" title="6.语法树操作"></a>6.语法树操作</h2><p>此技术已在<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1812.04718">Coulombe</a>的论文中使用。想法是解析并生成原始句子的依存关系树，使用规则对其进行转换并生成释义的句子。<br>例如，一种不改变句子含义的转换是从主动语态到被动语态的转换，反之亦然。</p>
+<p><img src="https://ningshixian.github.io/resources/images/nlp-aug-syntax-tree-manipulation.png" srcset="/img/loading.gif" lazyload alt="语音变化的语法树处理"></p>
+<h2 id="7-文字混合"><a href="#7-文字混合" class="headerlink" title="7.文字混合"></a>7.文字混合</h2><p>混合是<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1710.09412">张等人</a>介绍的一种简单而有效的图像增强技术<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1710.09412">。</a>这是在2017年提出的。想法是将两个随机图像按一定比例组合在一个小批量中，以生成用于训练的合成示例。对于图像，这意味着将两种不同类别的图像像素组合在一起。它是培训期间的一种正规化形式。</p>
+<p><img src="https://ningshixian.github.io/resources/images/nlp-aug-mixup-image.png" srcset="/img/loading.gif" lazyload alt="视觉的原始混合算法"></p>
+<p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1905.08941">郭等人</a>将此思想带给了自然语言处理<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1905.08941">。</a>修改了Mixup以处理文本。他们提出了两种新颖的方法来将Mixup应用于文本：</p>
+<ul>
+<li><p><strong>wordMixup</strong>：<br>在这种方法中，在一个小批量中获取两个随机句子，并将它们零填充到相同的长度。然后，它们的词嵌入按一定比例组合。生成的单词嵌入将传递到常规流程以进行文本分类。对于给定比例的原始文本的两个标签，计算交叉熵损失。</p>
+<p><img src="https://ningshixian.github.io/resources/images/nlp-aug-wordmixup.png" srcset="/img/loading.gif" lazyload alt="单词嵌入混合"></p>
+</li>
+<li><p><strong>sentMixup</strong>：<br>在此方法中，采用两个句子并将它们零填充为相同的长度。然后，它们的词嵌入通过LSTM / CNN编码器传递，我们将最后的隐藏状态作为句子嵌入。这些嵌入按一定比例组合，然后传递到最终分类层。交叉熵损失是基于给定比例的原始句子的两个标签来计算的。</p>
+<p><img src="https://ningshixian.github.io/resources/images/nlp-aug-sentmixup.png" srcset="/img/loading.gif" lazyload alt="句子嵌入的混合"></p>
+</li>
+</ul>
+<h2 id="8-生成方法"><a href="#8-生成方法" class="headerlink" title="8.生成方法"></a>8.生成方法</h2><p>此工作尝试在保留班级标签的同时生成其他培训数据。</p>
+<ul>
+<li><p><strong>条件预训练语言模型</strong><br>这项技术由Anaby-Tavor等人首先提出。在他们的论文<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1911.03118">“数据不足？深度学习进行救援！</a>。<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2003.02245">Kumar等人的</a>最新论文。在多个基于变压器的预训练模型中评估了这个想法。问题表述如下：</p>
+<ul>
+<li><p>将班级标签附加到训练数据中的每个文本</p>
+<p><img src="https://ningshixian.github.io/resources/images/nlp-aug-generation-training.png" srcset="/img/loading.gif" lazyload alt="添加SEP和EOS令牌"></p>
+</li>
+<li><p>在修改后的训练数据上微调大型的预训练语言模型（BERT / GPT2 / BART）。对于GPT2，微调任务是生成，而对于BERT，目标将是屏蔽令牌预测。</p>
+<p><img src="https://ningshixian.github.io/resources/images/nlp-aug-gpt2-finetuning.png" srcset="/img/loading.gif" lazyload alt="在标签和文本上微调GPT-2"></p>
+</li>
+<li><p>使用微调的语言模型，可以通过使用类标签和少量的初始单词作为模型提示来生成新样本。本文使用每个训练文本的3个初始单词，并为训练数据中的每个点生成一个综合示例。</p>
+<p><img src="https://ningshixian.github.io/resources/images/nlp-aug-gpt2.png" srcset="/img/loading.gif" lazyload alt="使用GPT-2生成新样本"></p>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="EDA工具"><a href="#EDA工具" class="headerlink" title="EDA工具"></a>EDA工具</h1><ul>
+<li><p>诸如<a target="_blank" rel="noopener" href="https://github.com/makcedward/nlpaug">nlpaug</a>和<a target="_blank" rel="noopener" href="https://github.com/QData/TextAttack">textattack之</a>类的库提供了简单而一致的API，以便在Python中应用上述NLP数据增强方法。它们与框架无关，可以轻松集成到您的管道中。</p>
+</li>
+<li><p><strong><a target="_blank" rel="noopener" href="https://github.com/Asia-Lee/EDA_NLP_for_Chinese">中文语料的EDA数据增强工具</a></strong>：提供了四种简单的操作来进行数据增强，可以防止过拟合，并提高模型的泛化能力。<a target="_blank" rel="noopener" href="https://github.com/Asia-Lee/EDA_NLP_for_Chinese#%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95">使用方法（推荐）</a></p>
+</li>
+<li><strong><a target="_blank" rel="noopener" href="https://github.com/huyingxi/Synonyms/">Synonyms中文近义词工具包</a></strong></li>
+</ul>
+<h1 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h1><p>我从文献综述中得出的结论是，这些NLP增强方法中的许多方法都是特定于任务的，并且仅针对某些特定用例研究了它们对性能的影响。系统地比较这些方法并分析它们对许多任务的性能的影响将是一项有趣的研究。</p>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><ul>
+<li>谢其哲，等。<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1904.12848">“用于一致性培训的无监督数据增强”</a></li>
+<li>Claude Coulombe <a target="_blank" rel="noopener" href="https://arxiv.org/abs/1812.04718">“通过利用NLP Cloud API使文本数据增强变得简单”</a></li>
+<li>焦小琦，等。<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1909.10351">“ TinyBERT：提炼BERT以了解自然语言”</a></li>
+<li>张翔，等。<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1509.01626">“用于文本分类的字符级卷积网络”</a></li>
+<li>佛朗哥·卢克（Franco M. Luque）<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1909.11241">“ ATALaya在TASS 2019：情感分析的数据增强和强大嵌入”</a></li>
+<li>子ang等。<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1703.02573">“数据噪声作为神经网络语言模型中的平滑处理”</a></li>
+<li>郭宏宇，等。<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1905.08941">“使用混合来扩充数据以进行句子分类：一项实证研究”</a></li>
+<li>张鸿yi，等。<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1710.09412">“混合：超越经验风险最小化”</a></li>
+<li>Varun Kumar等。<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2003.02245">“使用预训练的变压器模型进行数据增强”</a></li>
+<li>Jason Wei等。<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1901.11196">“ EDA：简单的数据增强技术，可提高文本分类任务的性能”</a></li>
+<li>Ateret Anaby-Tavor等。<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1911.03118">“数据不足？深度学习抢救！”</a></li>
+</ul>
+<p>EDA工具论文<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1901.11196">《EDA: Easy Data Augmentation Techniques for Boosting Performance on Text Classification Tasks》</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhpmatrix.github.io/2019/03/08/preprocess-augmentation-in-nlp/">聊一聊，预处理和数据增强技术</a></p>
+<p>相对全面的总结：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/75207641">让机器自动生成文本数据—NLP文本数据增强方法简述</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/76957566?utm_source=qq&amp;utm_medium=social&amp;utm_oi=52727124066304">思考为什么要做预处理，预处理做到什么程度的文章，非常棒。</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/quincyliang/nlp-data-augmentation">NLP中的数据增强总结，包括多个NLP的具体任务</a></p>
+<p>总结的非常全面的NLP中的数据增强方法：<a target="_blank" rel="noopener" href="https://amitness.com/2020/05/data-augmentation-for-nlp/">A Visual Survey of Data Augmentation in NLP</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E6%95%B0%E6%8D%AE%E5%A2%9E%E5%BC%BA/">#数据增强</a>
+      
+        <a href="/tags/EDA/">#EDA</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>NLP数据增强方法总结</div>
+      <div>http://example.com/2020/07/03/2020-07-03-NLP数据增强方法总结/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>NSX</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2020年7月3日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/07/21/2020-07-21-%E6%90%9C%E7%B4%A2%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%A0%94/" title="搜索系统调研">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">搜索系统调研</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/06/19/2020-06-19-Python%E6%95%B0%E6%8D%AE%E5%BA%93%E5%A6%82%E4%BD%95%E8%BF%9E%E6%8E%A5/" title="Python操作数据库">
+                        <span class="hidden-mobile">Python操作数据库</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

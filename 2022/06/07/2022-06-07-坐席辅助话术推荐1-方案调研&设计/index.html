@@ -1,0 +1,754 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Ning Shixian">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="方案调研关注点：   这个方案的baseline是什么，最简单和快捷的方式是哪些，都有什么优缺点。 大厂常用的方案是什么，有没有什么特别地操作，为什么要做这个操作。 论文，科研界的主要方式是什么，需要关注哪些方面。  1、美团人工辅助——话术推荐 美团智能客服核心技术与实践  智能辅助目的：  自动匹配历史对话日志，便于人工座席了解客户背景诉求； 自动匹配历史优秀座席回答话术，供其他座席参考； 场">
+<meta property="og:type" content="article">
+<meta property="og:title" content="坐席辅助话术推荐1-方案调研&amp;设计">
+<meta property="og:url" content="http://example.com/2022/06/07/2022-06-07-%E5%9D%90%E5%B8%AD%E8%BE%85%E5%8A%A9%E8%AF%9D%E6%9C%AF%E6%8E%A8%E8%8D%901-%E6%96%B9%E6%A1%88%E8%B0%83%E7%A0%94&%E8%AE%BE%E8%AE%A1/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="方案调研关注点：   这个方案的baseline是什么，最简单和快捷的方式是哪些，都有什么优缺点。 大厂常用的方案是什么，有没有什么特别地操作，为什么要做这个操作。 论文，科研界的主要方式是什么，需要关注哪些方面。  1、美团人工辅助——话术推荐 美团智能客服核心技术与实践  智能辅助目的：  自动匹配历史对话日志，便于人工座席了解客户背景诉求； 自动匹配历史优秀座席回答话术，供其他座席参考； 场">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2022/06/07/2022-06-07-%E5%9D%90%E5%B8%AD%E8%BE%85%E5%8A%A9%E8%AF%9D%E6%9C%AF%E6%8E%A8%E8%8D%901-%E6%96%B9%E6%A1%88%E8%B0%83%E7%A0%94&%E8%AE%BE%E8%AE%A1/1647238292862-27d4822d-7389-477c-bfce-8383df113cd8.png">
+<meta property="og:image" content="http://example.com/2022/06/07/2022-06-07-%E5%9D%90%E5%B8%AD%E8%BE%85%E5%8A%A9%E8%AF%9D%E6%9C%AF%E6%8E%A8%E8%8D%901-%E6%96%B9%E6%A1%88%E8%B0%83%E7%A0%94&%E8%AE%BE%E8%AE%A1/1647360987158-49f5b087-2579-42cd-ab28-06ea3acd4feb.png">
+<meta property="og:image" content="http://example.com/2022/06/07/2022-06-07-%E5%9D%90%E5%B8%AD%E8%BE%85%E5%8A%A9%E8%AF%9D%E6%9C%AF%E6%8E%A8%E8%8D%901-%E6%96%B9%E6%A1%88%E8%B0%83%E7%A0%94&%E8%AE%BE%E8%AE%A1/1647361118030-703dab57-1908-4b4b-95d7-ea7a5ff33e02.png">
+<meta property="og:image" content="http://example.com/2022/06/07/2022-06-07-%E5%9D%90%E5%B8%AD%E8%BE%85%E5%8A%A9%E8%AF%9D%E6%9C%AF%E6%8E%A8%E8%8D%901-%E6%96%B9%E6%A1%88%E8%B0%83%E7%A0%94&%E8%AE%BE%E8%AE%A1/1647872975533-856f89df-836d-411d-bc03-5c1ca78ecb2e.png">
+<meta property="og:image" content="http://example.com/2022/06/07/2022-06-07-%E5%9D%90%E5%B8%AD%E8%BE%85%E5%8A%A9%E8%AF%9D%E6%9C%AF%E6%8E%A8%E8%8D%901-%E6%96%B9%E6%A1%88%E8%B0%83%E7%A0%94&%E8%AE%BE%E8%AE%A1/1647236107118-7e705281-8676-4e53-b32f-ed37d93ba3fa.png">
+<meta property="og:image" content="http://example.com/2022/06/07/2022-06-07-%E5%9D%90%E5%B8%AD%E8%BE%85%E5%8A%A9%E8%AF%9D%E6%9C%AF%E6%8E%A8%E8%8D%901-%E6%96%B9%E6%A1%88%E8%B0%83%E7%A0%94&%E8%AE%BE%E8%AE%A1/1647236335834-dca470a9-f60b-4e7f-a95a-301e6b3c687e.png">
+<meta property="og:image" content="http://example.com/2022/06/07/2022-06-07-%E5%9D%90%E5%B8%AD%E8%BE%85%E5%8A%A9%E8%AF%9D%E6%9C%AF%E6%8E%A8%E8%8D%901-%E6%96%B9%E6%A1%88%E8%B0%83%E7%A0%94&%E8%AE%BE%E8%AE%A1/1647237281146-36d6b508-10fb-40c4-a64d-8f5cee122267.png">
+<meta property="og:image" content="http://example.com/2022/06/07/2022-06-07-%E5%9D%90%E5%B8%AD%E8%BE%85%E5%8A%A9%E8%AF%9D%E6%9C%AF%E6%8E%A8%E8%8D%901-%E6%96%B9%E6%A1%88%E8%B0%83%E7%A0%94&%E8%AE%BE%E8%AE%A1/image-20230424202724667.png">
+<meta property="article:published_time" content="2022-06-07T03:03:00.000Z">
+<meta property="article:modified_time" content="2023-04-24T12:34:55.366Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="坐席辅助">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2022/06/07/2022-06-07-%E5%9D%90%E5%B8%AD%E8%BE%85%E5%8A%A9%E8%AF%9D%E6%9C%AF%E6%8E%A8%E8%8D%901-%E6%96%B9%E6%A1%88%E8%B0%83%E7%A0%94&%E8%AE%BE%E8%AE%A1/1647238292862-27d4822d-7389-477c-bfce-8383df113cd8.png">
+  
+  
+  
+  <title>坐席辅助话术推荐1-方案调研&amp;设计 - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="坐席辅助话术推荐1-方案调研&amp;设计"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-06-07 11:03" pubdate>
+          2022年6月7日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          28 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">坐席辅助话术推荐1-方案调研&amp;设计</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="方案调研"><a href="#方案调研" class="headerlink" title="方案调研"></a>方案调研</h1><p>关注点： </p>
+<ul>
+<li>这个方案的baseline是什么，最简单和快捷的方式是哪些，都有什么优缺点。</li>
+<li>大厂常用的方案是什么，有没有什么特别地操作，为什么要做这个操作。</li>
+<li>论文，科研界的主要方式是什么，需要关注哪些方面。</li>
+</ul>
+<h2 id="1、美团人工辅助——话术推荐"><a href="#1、美团人工辅助——话术推荐" class="headerlink" title="1、美团人工辅助——话术推荐"></a>1、<a target="_blank" rel="noopener" href="https://tech.meituan.com/2021/09/30/artificial-intelligence-customer-service.html">美团人工辅助——话术推荐</a></h2><blockquote>
+<p><a target="_blank" rel="noopener" href="https://tech.meituan.com/2021/09/30/artificial-intelligence-customer-service.html">美团智能客服核心技术与实践</a></p>
+</blockquote>
+<p><strong>智能辅助目的：</strong></p>
+<ul>
+<li>自动匹配历史对话日志，便于人工座席了解客户背景诉求；</li>
+<li>自动匹配历史优秀座席回答话术，供其他座席参考；</li>
+<li>场景话术推荐，分步规范座席对话流程；</li>
+</ul>
+<p>面向座席的场景：</p>
+<p>座席在与用户的对话聊天中经常回复相似甚至相同的话术，提供<strong>话术推荐</strong>的能力可以提升人工座席的工作效率，改善人工座席的工作体验。</p>
+<p>那么，话术推荐具体要怎么做呢？常见的做法是先准备好常用通用话术库（直接从对话日志里面挖回复），部分座席或商家也会准备个人常见话术库，然后系统根据用户的Query及上下文来检索最合适的话术，预测接下来可能的回复话术</p>
+<p>美团的做法是：将历史聊天记录构建成“N+1”QA问答对的形式建模，前N句看作问题Q，后1句作为回复话术A，整个框架就可以转化成检索式的问答模型。在召回阶段，除了文本信息召回外，还加入了上文多轮槽位标签，Topic标签等召回优化（我理解是 ES 建向量索引，top 相似度召回）；排序为基于BERT的模型，将“N+1”QA问答对拼接，并加入角色信息建模（角色为用户、商家或者座席）作为输入，利用 0/1 二分类做训练，利用xx相似度匹配做推理….</p>
+<img src="/2022/06/07/2022-06-07-%E5%9D%90%E5%B8%AD%E8%BE%85%E5%8A%A9%E8%AF%9D%E6%9C%AF%E6%8E%A8%E8%8D%901-%E6%96%B9%E6%A1%88%E8%B0%83%E7%A0%94&%E8%AE%BE%E8%AE%A1/1647238292862-27d4822d-7389-477c-bfce-8383df113cd8.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<h2 id="2、基于LM的生成式多轮对话模型"><a href="#2、基于LM的生成式多轮对话模型" class="headerlink" title="2、基于LM的生成式多轮对话模型"></a>2、基于LM的生成式多轮对话模型</h2><blockquote>
+<p><a target="_blank" rel="noopener" href="https://spaces.ac.cn/archives/7718">动手做个DialoGPT：基于LM的生成式多轮对话模型</a></p>
+</blockquote>
+<ol>
+<li>数据集：大规模的中文闲聊语料库LCCC，包含了部分多轮对话聊天…所有样本都被处理成双人对话。</li>
+<li>考虑训练一个模型，预测下一个该回复什么。同时还要求这个模型支持多轮对话。</li>
+<li>考虑对话历史的最简单的方式，就是把直到当前句的所有历史对话都拼接成单句文本，来作为模型的输入信息了。</li>
+<li>选择就是单向语言模型（LM、GPT），做法如下图所示。选择当前主流的Transformer模型，按照BERT / GPT 的常规输入格式，将每句对话用[SEP]拼接起来，然后就训练一个从左往右的单向语言模型。为了区分不同的说话角色，我们对不同的说话者用不同的Segment Id区分。</li>
+<li>此外，考虑到BERT和GPT都是用了绝对位置编码，可处理的文本长度存在一个上限，而对话轮数理论上是无限的，这里可以采用相对位置编码的<strong>NEZHA</strong>作为基本结构，并使用NEZHA的预训练权重作为模型的初始化权重。</li>
+</ol>
+<p><a target="_blank" rel="noopener" href="https://spaces.ac.cn/usr/uploads/2020/09/603395458.png"><img src="/2022/06/07/2022-06-07-%E5%9D%90%E5%B8%AD%E8%BE%85%E5%8A%A9%E8%AF%9D%E6%9C%AF%E6%8E%A8%E8%8D%901-%E6%96%B9%E6%A1%88%E8%B0%83%E7%A0%94&%E8%AE%BE%E8%AE%A1/1647360987158-49f5b087-2579-42cd-ab28-06ea3acd4feb.png" srcset="/img/loading.gif" lazyload class=""></a></p>
+<p>利用单向语言模型做多轮对话示意图</p>
+<p>另外，<a target="_blank" rel="noopener" href="https://github.com/thu-coai/CDial-GPT">CDial-GPT</a>也开源了自己训练的预训练模型，如下图：</p>
+<p><a target="_blank" rel="noopener" href="https://spaces.ac.cn/usr/uploads/2020/09/727199313.png"><img src="/2022/06/07/2022-06-07-%E5%9D%90%E5%B8%AD%E8%BE%85%E5%8A%A9%E8%AF%9D%E6%9C%AF%E6%8E%A8%E8%8D%901-%E6%96%B9%E6%A1%88%E8%B0%83%E7%A0%94&%E8%AE%BE%E8%AE%A1/1647361118030-703dab57-1908-4b4b-95d7-ea7a5ff33e02.png" srcset="/img/loading.gif" lazyload class=""></a></p>
+<p>CDial-GPT模型示意图</p>
+<p>如图所示，CDial-GPT跟前述设计的主要不同是多轮对话之间的拼接方式，我们之前是直接用[SEP]连接，它是用[speaker1]、[speaker2]（图中简记为S1、S2）这样的角色标记来连接，最后才用一个[SEP]表示回复结束。这样一来，由于预测部分的格式跟历史的格式不一样，因此每次只能训练一句回复，多轮对话要拆分为多个样本来训练，理论上是增加了训练复杂性的（要训练多步才能把一个多轮对话样本训练完）。</p>
+<h2 id="3、Seq2Seq-前缀树⭐️"><a href="#3、Seq2Seq-前缀树⭐️" class="headerlink" title="3、Seq2Seq+前缀树⭐️"></a>3、Seq2Seq+前缀树⭐️</h2><blockquote>
+<p><a target="_blank" rel="noopener" href="https://spaces.ac.cn/archives/8802">Seq2Seq+前缀树：检索任务新范式（以KgCLUE为例）</a></p>
+</blockquote>
+<p>对于相似问检索来说，我们输入一个问句，希望输出数据库中与之最相近的句子；对于话术推荐，输入一个问句，希望输出话术库中与最合适的回复。这些任务本质即 <a target="_blank" rel="noopener" href="https://www.yuque.com/ningshixian/pz10h0/ep4qy2">seq2seq</a>，再利用<a target="_blank" rel="noopener" href="https://www.yuque.com/ningshixian/pz10h0/wob6k0">前缀树</a>来约束解码过程，即可保证生成的结果在数据库/话术库中。</p>
+<p>具体来说，我们用<strong>UNILM方案</strong>来训练一个Seq2Seq模型。将用户上下文 query 当作Seq2Seq的输入，将坐席客服回复（type=out）用[SEP]连接起来作为目标；推理/解码的时候，我们先把所有的坐席回复（即答案）建立成前缀树，然后按照前缀树进行 <a target="_blank" rel="noopener" href="https://www.yuque.com/ningshixian/pz10h0/occzbt">beam search 解码</a> and 输出结果。</p>
+<p>注意，利用前缀树约束Seq2Seq解码其实很简单，即根据树上的每一条路径（以[BOS]开头、[EOS]结尾）查找到以某个前缀开头的字/句有哪些。然后，把模型预测其他字的概率都置零，这样模型只可能从这些字中选其一。依此类推，通过将不在前缀树上的候选token置零，保证解码过程只走前缀树的分支，而且必须走到最后，这样解码出来的结果必然是话术库中已有的句子。<br><img src="/2022/06/07/2022-06-07-%E5%9D%90%E5%B8%AD%E8%BE%85%E5%8A%A9%E8%AF%9D%E6%9C%AF%E6%8E%A8%E8%8D%901-%E6%96%B9%E6%A1%88%E8%B0%83%E7%A0%94&%E8%AE%BE%E8%AE%A1/1647872975533-856f89df-836d-411d-bc03-5c1ca78ecb2e.png" srcset="/img/loading.gif" lazyload class="" title="image.png"></p>
+<p>在“Seq2Seq+前缀树”方案中，Seq2Seq（Roberta / UER / RoFormer+UniLM)并不是真的要去生成任意文本，而是在前缀树的约束下做本质上是检索的操作。</p>
+<p>“Seq2Seq+前缀树”对标的是传统的稠密向量检索任务。理论上“Seq2Seq+前缀树”的检索时间是固定的，也就是说不管数据库中有多少句子，其预测时间都是常数级别。待检索句子的多少，影响的是前缀树的空间占用，基本不影响检索速度。</p>
+<h1 id="方案设计"><a href="#方案设计" class="headerlink" title="方案设计"></a>方案设计</h1><h2 id="算法设计"><a href="#算法设计" class="headerlink" title="算法设计"></a>算法设计</h2><ul>
+<li>数据：C2 坐席半年的对话数据(20211001~20220301)，通过二八分拆出训练集和评测集；<ol>
+<li>把直到当前句的所有历史对话都拼接成单句文本（q1+a1+…+qn+an）作为输入，预测回复话术(分类)；</li>
+<li>将历史聊天记录构建成“N+1”QA问答对的形式，前N句看作问题Q，后1句作为回复话术A，通过[SEP]占位符拼接；</li>
+</ol>
+</li>
+<li>在线更新。需要设计在线实时更新的pipeline。</li>
+<li>机器。阿波罗的多gpu的机器（8 卡），搭建Docker+配置Conda+安装依赖包；</li>
+<li>模型的训练策略：<ol>
+<li>当做单标签多分类任务，类别数很大，效果不一定好；</li>
+<li>类似nlu度量学习，转化成检索式的问答模型：多分类任务训练，保存编码模型，最后向量相似度检索；</li>
+<li>交互精排：拼接【问题+话术】作为模型的输入，二分类任务（相似/不相似），需要一个召回模型~</li>
+<li>双塔模型，问题bert+话术bert（二者可共享权重），预测（相似/不相似）；</li>
+<li>seq2seq+前缀树（参考方案调研 3）</li>
+</ol>
+</li>
+<li>算法效果评估，分类方案使用<strong> pearson和spearman</strong>系数双50%，生成方案使用 <a target="_blank" rel="noopener" href="https://coladrill.github.io/2018/10/20/%E6%B5%85%E8%B0%88BLEU%E8%AF%84%E5%88%86/"><strong>BLEU评分</strong></a>；<ul>
+<li>_坐席推荐选 pearson和spearman 系数进行评测，这里说下原因：（_评测集<q,a>的情况下_）_<ol>
+<li>_省去了需要召回阶段才能评测，省事_</li>
+<li>_直接对QA对进行打分，然后用pearson和spearman去计算 socre list 和 label list 的趋势契合度_</li>
+<li>_如果以 ACC/F1 来评测，需要人工卡阈值，才能评估模型的分类准确性；_</li>
+<li>_如果以 pearson/spearman 评测，看趋势，可以评估模型的排序相关性；_</li>
+<li>_话术推荐是一个非二分类问题，不关心绝对得分大小，而是关心相对得分大小，只要整体得分趋势接近，即可用于特征的对比排序_<ol>
+<li>_好比有一个q，它有一个正例a1和一个难负例a2，推理出的分数为0.9和0.8，如果是走ACC，默认0.5的阈值，会得到俩1，0.5的ACC。而如果是走spearman或pearson，会是[0.8,0.9]对应[0,1]的label，趋势是一致的_</li>
+</ol>
+</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>模型的训练策略C，精排策略的具体细节：</strong></p>
+<ol>
+<li>问题的拼接：<br>首先将查询和每一个候选文档一起作为Bert模型的输入，开始加入[CLS]标记。查询和文档之间加入[SEP]标记。利用BPE算法等进行分词，得到Bert模型的输入特征向量。</li>
+<li>相似度计算：<br>将特征向量输入Bert后，经计算将得到BERT的输出（句子中每个词的向量表示），取[CLS] 标记的向量表示，通过一个单层或多层的线性神经网络，得到两个文档的相似度得分（相似的概率)。</li>
+</ol>
+<img src="/2022/06/07/2022-06-07-%E5%9D%90%E5%B8%AD%E8%BE%85%E5%8A%A9%E8%AF%9D%E6%9C%AF%E6%8E%A8%E8%8D%901-%E6%96%B9%E6%A1%88%E8%B0%83%E7%A0%94&%E8%AE%BE%E8%AE%A1/1647236107118-7e705281-8676-4e53-b32f-ed37d93ba3fa.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p><strong>模型的训练策略D，孪生策略的具体细节：</strong></p>
+<ol>
+<li>BERT 模型共享权重；</li>
+<li>将两个 CLS 取出作差 or 级联，最后通过Dense+Softmax进行分类；</li>
+<li>使用交叉熵计算二分类损失 or margin loss</li>
+</ol>
+<img src="/2022/06/07/2022-06-07-%E5%9D%90%E5%B8%AD%E8%BE%85%E5%8A%A9%E8%AF%9D%E6%9C%AF%E6%8E%A8%E8%8D%901-%E6%96%B9%E6%A1%88%E8%B0%83%E7%A0%94&%E8%AE%BE%E8%AE%A1/1647236335834-dca470a9-f60b-4e7f-a95a-301e6b3c687e.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>1、通用 margin loss 如下：</p>
+<img src="/2022/06/07/2022-06-07-%E5%9D%90%E5%B8%AD%E8%BE%85%E5%8A%A9%E8%AF%9D%E6%9C%AF%E6%8E%A8%E8%8D%901-%E6%96%B9%E6%A1%88%E8%B0%83%E7%A0%94&%E8%AE%BE%E8%AE%A1/1647237281146-36d6b508-10fb-40c4-a64d-8f5cee122267.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>2、Triple loss function为：</p>
+<img src="/2022/06/07/2022-06-07-%E5%9D%90%E5%B8%AD%E8%BE%85%E5%8A%A9%E8%AF%9D%E6%9C%AF%E6%8E%A8%E8%8D%901-%E6%96%B9%E6%A1%88%E8%B0%83%E7%A0%94&%E8%AE%BE%E8%AE%A1/image-20230424202724667.png" srcset="/img/loading.gif" lazyload class="" title="image-20230424202724667">
+<h2 id="工程设计"><a href="#工程设计" class="headerlink" title="工程设计"></a>工程设计</h2><ul>
+<li>算法模块在整个流程中的角色是什么，上下游接口怎么样。</li>
+<li>数据流是怎么走的，需要确认，包括离在线，搜索系统的话不仅考虑用户query等信息，还有物料的信息怎么存储，另外如果个性化，还有用户画像的数据问题。</li>
+<li>中间件的使用和维护，如常用的数据库mysql、ES、redis之类的，还有些类似kafka、hadoop全家桶之类的。</li>
+<li>……</li>
+</ul>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/J5f39bTGjjEuHZHd1DomhQ">心法利器[56] | 算法技术设计思路小结</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/NLP/" class="category-chain-item">NLP</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%9D%90%E5%B8%AD%E8%BE%85%E5%8A%A9/">#坐席辅助</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>坐席辅助话术推荐1-方案调研&amp;设计</div>
+      <div>http://example.com/2022/06/07/2022-06-07-坐席辅助话术推荐1-方案调研&amp;设计/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Ning Shixian</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年6月7日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/08/03/2022-08-03-%E5%B9%B6%E8%A1%8C%E8%AE%AD%E7%BB%83%E5%A4%A7%E5%9E%8B%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%EF%BC%88%E8%BD%AC%E8%BD%BD%EF%BC%89/" title="并行训练大型神经网络（转载）">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">并行训练大型神经网络（转载）</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/06/07/2022-06-07-%E5%9D%90%E5%B8%AD%E8%BE%85%E5%8A%A9%E8%AF%9D%E6%9C%AF%E6%8E%A8%E8%8D%902-%E8%AF%A6%E7%BB%86%E6%8A%80%E6%9C%AF%E6%96%B9%E6%A1%88/" title="坐席辅助话术推荐2-详细技术方案">
+                        <span class="hidden-mobile">坐席辅助话术推荐2-详细技术方案</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

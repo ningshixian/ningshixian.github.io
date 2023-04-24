@@ -1,0 +1,842 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="NSX">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Git指令整理&amp;代码版本管理Git可视化学习可以参考 🌳🚀 CS Visualized: Useful Git Commands，基本上看完就会了！！！  Git是什么？ 基本命令（init clone add commit push pull） 分支（brach checkout merge rebase） 如何使用Git进行团队协作 其他命令（前置拉取更新）1. Git是什么？">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Git指令整理&amp;代码版本管理">
+<meta property="og:url" content="http://example.com/2019/08/12/2019-08-12-Git%E6%8C%87%E4%BB%A4%E4%BB%8B%E7%BB%8D&%E7%89%88%E6%9C%AC%E7%AE%A1%E7%90%86/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="Git指令整理&amp;代码版本管理Git可视化学习可以参考 🌳🚀 CS Visualized: Useful Git Commands，基本上看完就会了！！！  Git是什么？ 基本命令（init clone add commit push pull） 分支（brach checkout merge rebase） 如何使用Git进行团队协作 其他命令（前置拉取更新）1. Git是什么？">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/Git%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E5%9B%BE.png#id=mgulq&amp;originHeight=263&amp;originWidth=853&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://raw.githubusercontent.com/goto456/markdown-pictures/master/wengeblog/git/git-20.png#id=YI7KL&amp;originHeight=268&amp;originWidth=1297&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://raw.githubusercontent.com/goto456/markdown-pictures/master/wengeblog/git/git-21.png#id=VTMXk&amp;originHeight=230&amp;originWidth=1298&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://raw.githubusercontent.com/goto456/markdown-pictures/master/wengeblog/git/git-22.png#height=565&amp;id=DSALF&amp;originHeight=816&amp;originWidth=786&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=&amp;width=544">
+<meta property="og:image" content="https://ningshixian.github.io/resources/images/%E5%A4%9A%E4%BA%BA%E5%8D%8F%E5%90%8C%E5%BC%80%E5%8F%91%E4%BB%A3%E7%A0%81%E7%89%88%E6%9C%AC%E7%AE%A1%E7%90%86%E6%B5%81%E7%A8%8B.png#id=jvG4X&amp;originHeight=440&amp;originWidth=898&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="article:published_time" content="2019-08-11T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-24T09:47:41.707Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="Git">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ningshixian.github.io/resources/images/Git%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E5%9B%BE.png#id=mgulq&amp;originHeight=263&amp;originWidth=853&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+  
+  
+  
+  <title>Git指令整理&amp;代码版本管理 - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="多人协同开发代码版本管理流程"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2019-08-12 00:00" pubdate>
+          2019年8月12日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          11k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          92 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">多人协同开发代码版本管理流程</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="Git指令整理-amp-代码版本管理"><a href="#Git指令整理-amp-代码版本管理" class="headerlink" title="Git指令整理&amp;代码版本管理"></a>Git指令整理&amp;代码版本管理</h1><p>Git可视化学习可以参考 <a target="_blank" rel="noopener" href="https://dev.to/lydiahallie/cs-visualized-useful-git-commands-37p1">🌳🚀 CS Visualized: Useful Git Commands</a>，基本上看完就会了！！！</p>
+<ol>
+<li>Git是什么？</li>
+<li>基本命令（init clone add commit push pull）</li>
+<li>分支（brach checkout merge rebase）</li>
+<li>如何使用Git进行团队协作</li>
+<li>其他命令（前置拉取更新）<h2 id="1-Git是什么？"><a href="#1-Git是什么？" class="headerlink" title="1. Git是什么？"></a>1. Git是什么？</h2></li>
+</ol>
+<ul>
+<li>Linus(Linux之父)花了两周时间自己用C写了一个分布式版本控制系统，这就是Git！ </li>
+<li>Git是目前世界上最先进的分布式版本控制系统。 </li>
+</ul>
+<h3 id="工作原理-流程："><a href="#工作原理-流程：" class="headerlink" title="工作原理 / 流程："></a>工作原理 / 流程：</h3><p><img src="https://ningshixian.github.io/resources/images/Git%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E5%9B%BE.png#id=mgulq&amp;originHeight=263&amp;originWidth=853&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""></p>
+<ul>
+<li>Workspace：工作区</li>
+<li>Index / Stage：暂存区</li>
+<li>Repository：仓库区（或本地仓库）</li>
+<li>Remote：远程仓库</li>
+</ul>
+<h2 id="2-基本命令"><a href="#2-基本命令" class="headerlink" title="2. 基本命令"></a>2. 基本命令</h2><h3 id="2-1-git-config-环境设置命令"><a href="#2-1-git-config-环境设置命令" class="headerlink" title="2.1. git config: 环境设置命令"></a>2.1. git config: 环境设置命令</h3><p>通常情况下，安装完Git后的第一件事就是设置<strong>用户名称</strong>和<strong>邮件地址</strong>。每一个Git的提交都会使用这些信息，如果不设置则无法进行提交。</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs stylus">$ git config <span class="hljs-attr">--global</span> user<span class="hljs-selector-class">.name</span> <span class="hljs-string">&quot;goto456&quot;</span> <span class="hljs-comment">// 设置用户名称</span><br>$ git config <span class="hljs-attr">--global</span> user<span class="hljs-selector-class">.email</span> <span class="hljs-string">&quot;goto456@126.com&quot;</span> <span class="hljs-comment">// 设置邮件地址</span><br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>使用<code>--global</code>参数表示设置了全局的环境，如果想对与特定的项目使用不同的用户名和邮件地址，则可已在该项目目录下不使用<code>--global</code>参数设置不同的用户名和邮件地址。</p>
+</blockquote>
+<p><code>git config --list</code>命令可以列出当前Git所有的配置信息。</p>
+<h3 id="2-2-git-init-初始化本地仓库"><a href="#2-2-git-init-初始化本地仓库" class="headerlink" title="2.2. git init: 初始化本地仓库"></a>2.2. git init: 初始化本地仓库</h3><p>获取一个 Git 仓库有2中方法：</p>
+<blockquote>
+<ol>
+<li>本地初始化一个仓库</li>
+<li>从远程克隆一个仓库到本地</li>
+</ol>
+</blockquote>
+<p>对于第1种方式，如果想对本地现有的一个项目用 Git 来管理，可以直接进入该项目的目录下执行如下命令，就可以将其初始化成一个 Git 仓库了。</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs mipsasm">git init<br>git remote <span class="hljs-keyword">add </span><span class="hljs-keyword">origin </span>...<br>git <span class="hljs-keyword">add </span>.     <br>git commit -m <span class="hljs-string">&quot;Initial commit&quot;</span><br>git push -u <span class="hljs-keyword">origin </span>master<br></code></pre></td></tr></table></figure>
+<h3 id="2-3-git-clone-克隆远程仓库到本地"><a href="#2-3-git-clone-克隆远程仓库到本地" class="headerlink" title="2.3. git clone: 克隆远程仓库到本地"></a>2.3. git clone: 克隆远程仓库到本地</h3><p>对于第二种方式，也是最常用的方式，比如你在 GitHub 上（或者其他代码托管网站）已经建立了一个项目，你就可以将该项目从远程克隆到本地，这就有了该项目在本地的 Git 仓库。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">git <span class="hljs-built_in">clone</span> git@github.com:goto456/leetcode.git // 通过ssh方式克隆</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">git <span class="hljs-built_in">clone</span> https://github.com/goto456/leetcode.git // 通过https方式克隆</span><br></code></pre></td></tr></table></figure>
+<p>以上2种方式有如下区别：</p>
+<blockquote>
+<p><strong>1. https方式</strong>：不管是谁，只要拿到该项目的 url 可以随便 clone，但是在 push 到远程的时候需要验证用户名和密码；<br><strong>2. ssh方式</strong>：需要现将你电脑的SSH key（SSH公钥）添加到GitHub（或者其他代码托管网站）上，这样在 clone 项目和 push 项目到远程时都不需要输入用户名和密码。</p>
+</blockquote>
+<p>如何生成<code>SSH key</code>，参见下一条命令：ssh-keygen</p>
+<h3 id="2-4-ssh-keygen-生成SSH公钥"><a href="#2-4-ssh-keygen-生成SSH公钥" class="headerlink" title="2.4. ssh-keygen: 生成SSH公钥"></a>2.4. ssh-keygen: 生成SSH公钥</h3><p>生成公钥之前先检查系统中是否已经有了公钥，公钥一般在<code>~/.ssh/</code>目录下。如果该目录下存在<code>id_rsa.pub</code>文件，这就是公钥（id_rsa 文件是私钥）；如果不存在此文件，甚至连<code>.ssh</code>目录都不存在，则需要用 ssh-keygen 命令来生成。如下所示：</p>
+<figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs crystal"><span class="hljs-variable">$ </span>ssh-keygen -t rsa<br><span class="hljs-variable">$ </span>ssh-keygen -t rsa –C “youremail<span class="hljs-variable">@example</span>.com” /<span class="hljs-regexp">/ 然后一直按回车键</span><br></code></pre></td></tr></table></figure>
+<p>这就可以生成 SSH key 了，id_rsa是私钥，不能泄露出去，id_rsa.pub是公钥，可以放心地告诉任何人。</p>
+<p>登录github，打开” settings”中的SSH Keys页面，然后点击“Add SSH Key”，填上任意title，在Key文本框里黏贴id_rsa.pub文件的内容。_PS: 秘钥所在目录 ~/.ssh_</p>
+<h3 id="2-5-git-status-查看当前状态"><a href="#2-5-git-status-查看当前状态" class="headerlink" title="2.5. git status 查看当前状态"></a>2.5. git status 查看当前状态</h3><p>可以在任何时候使用该命令查看当前的状态。一般会显示当前所处的分支，以及当前工作区是否干净，是否有文件要提交。</p>
+<h3 id="2-6-git-add-添加到暂存区"><a href="#2-6-git-add-添加到暂存区" class="headerlink" title="2.6. git add: 添加到暂存区"></a>2.6. git add: 添加到暂存区</h3><p>无论你新增了一个文件或者对已有的文件进行了修改，都需要将其添加到暂存区，然后提交到版本库。</p>
+<h3 id="2-7-git-commit-提交到版本库"><a href="#2-7-git-commit-提交到版本库" class="headerlink" title="2.7. git commit: 提交到版本库"></a>2.7. git commit: 提交到版本库</h3><p>该命令是将添加到暂存去的变更提交到版本库，主要有一下几个常用的：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs awk">$ git commit -m <span class="hljs-string">&quot;变更的说明信息&quot;</span>       <span class="hljs-regexp">//</span>标准用法，提交到版本库并填写相关说明信息<br>$ git commit -am <span class="hljs-string">&quot;变更的说明信息&quot;</span>     <span class="hljs-regexp">//</span>加上-a参数，则不需要上一步的git add过程，可以直接将修改过的变更直接提交到版本库，但不会把新增的文件提交<br></code></pre></td></tr></table></figure>
+<p><strong>注：第2条命令一般在不想把新增的文件提交到版本库时用的比较多</strong></p>
+<p>执行完git commit命令提交到版本库后，一次简单的流程就算走完了。接下来可以通过git log命令来查看所有的提交历史。</p>
+<h3 id="2-8-git-log-查看提交历史"><a href="#2-8-git-log-查看提交历史" class="headerlink" title="2.8. git log: 查看提交历史"></a>2.8. git log: 查看提交历史</h3><p>如果发现提交了一个错误版本，想回退到上个版本时，就可以通过该命令来查看所有的历史版本，以选择回退到历史的哪个版本。</p>
+<figure class="highlight gams"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs gams"><span class="hljs-symbol">$</span> git <span class="hljs-built_in">log</span>                  <span class="hljs-comment">//查看历史版本</span><br><span class="hljs-symbol">$</span> git <span class="hljs-built_in">log</span> –-pretty=oneline<br><span class="hljs-symbol">$</span> git <span class="hljs-built_in">log</span> --graph     <span class="hljs-comment">//以图形的方式查看历史（这个我比较常用，能很好的显示各个分支之间的关系）</span><br></code></pre></td></tr></table></figure>
+<h3 id="2-9-git-diff-显示变更内容"><a href="#2-9-git-diff-显示变更内容" class="headerlink" title="2.9. git diff: 显示变更内容"></a>2.9. git diff: 显示变更内容</h3><p>当你对文件进行了修改，想查看进行了哪些修改时，可以通过该命令查看。<br><code>git diff</code>命令会显示修改的文件中哪些内容进行了修改，包括新增了哪些内容，删除了哪些内容。</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs awk">$ git diff                            <span class="hljs-regexp">//</span>后面不接参数，表示显示所有修改文件的变更<br>$ git diff README.md      <span class="hljs-regexp">//</span>后面接文件名，表示只显示该文件的变更<br></code></pre></td></tr></table></figure>
+<p><strong>git比较两个分支的文件的差异</strong></p>
+<figure class="highlight gcode"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs gcode">git diff bra<span class="hljs-symbol">nch1</span> bra<span class="hljs-symbol">nch2</span> --stat   <span class="hljs-comment">//显示出所有有差异的文件列表</span><br>git diff bra<span class="hljs-symbol">nch1</span> bra<span class="hljs-symbol">nch2</span> 文件名<span class="hljs-comment">(带路径)</span>   <span class="hljs-comment">//显示指定文件的详细差异</span><br>git diff bra<span class="hljs-symbol">nch1</span> bra<span class="hljs-symbol">nch2</span>                   <span class="hljs-comment">//显示出所有有差异的文件的详细差异</span><br></code></pre></td></tr></table></figure>
+<h3 id="2-10-⭐️git-reset-回退版本"><a href="#2-10-⭐️git-reset-回退版本" class="headerlink" title="2.10. ⭐️git reset: 回退版本"></a>2.10. ⭐️git reset: 回退版本</h3><p>常用于回退版本或者在各个版本间进行跳跃切换。 我们可以先用 <code>git log</code> 看一下当前历史版本，如果要回退到前一个版本，则只需要输入：<code>git reset HEAD~1</code>，如果需要回退到前2个版本，命令是：<code>git reset HEAD~2</code>，回退到前n个版本就是：<code>git reset HEAD~n</code></p>
+<p><strong>注意：在 Git 中，用 </strong><code>**HEAD**</code><strong> 表示指向当前版本的指针</strong></p>
+<p>如果需要回退到任何一个版本，则需要替换成该版本的 <code>commit id</code> 就可以了，例如：</p>
+<figure class="highlight dns"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs dns">git reset a8336834b50daafa<span class="hljs-number">0793370</span><br></code></pre></td></tr></table></figure>
+<p><strong>一般情况下会加一个 </strong><code>**--hard**</code><strong> 参数：</strong><code>**git reset --hard HEAD~1**</code><strong> 或 </strong><code>**git reset --hard a8336834b50daafa0793370**</code><strong>，表示回退到某个版本并且丢弃调工作区进行的修改，而不加该参数表示回退到某个版本但保留工作区的修改。</strong></p>
+<p>再次提交-强制:</p>
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs crmsh">git push -u origin <span class="hljs-keyword">master</span> <span class="hljs-title">-f</span><br></code></pre></td></tr></table></figure>
+<p><strong>在重置之前可以通过从master创建一个分支来维护当前的本地提交：</strong></p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs pgsql"># 新建一个分支，并切换到该分支<br>git checkout -b [branch]<br><br># 下载远程仓库的所有变动，而不尝试合并或rebase任何东西<br>git <span class="hljs-keyword">fetch</span> <span class="hljs-comment">--all</span><br><br># 重置当前分支的HEAD为指定<span class="hljs-keyword">commit</span>，同时重置暂存区和工作区，与指定<span class="hljs-keyword">commit</span>一致<br>git <span class="hljs-keyword">reset</span> <span class="hljs-comment">--hard origin/master</span><br></code></pre></td></tr></table></figure>
+<h3 id="2-11-git-push-推送本地分支到远程"><a href="#2-11-git-push-推送本地分支到远程" class="headerlink" title="2.11. git push: 推送本地分支到远程"></a>2.11. git push: 推送本地分支到远程</h3><p>当修改完成，本地的改动都已经提交到本地库，则可以将本地分支推送到远程代码库了。</p>
+<p>命令：<code>git push origin master</code><br><code>origin</code> 表示远程代码库的一个别名（也可以修改为其他名字，可通过 <code>git remote</code> 修改），<code>master</code> 表示需要推送的分支名称。</p>
+<p>如果，push 的过程中提示当前分支进度落后于远程的分支，则需要通过 <code>git pull</code> 命令来拉取远程最新状态和本地分支进行合并，完成之后再 push 到远程就可以了。</p>
+<p><strong>如果本地新建了一个分支，如何提交分支数据到远程服务器？</strong><br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">git push origin &lt;local_branch_name&gt;:&lt;remote_branch_name&gt;<br></code></pre></td></tr></table></figure><br>例如：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">git push origin branch_abc: branch_abc<br></code></pre></td></tr></table></figure></p>
+<h3 id="2-12-git-pull-拉取远程分支到本地并合并"><a href="#2-12-git-pull-拉取远程分支到本地并合并" class="headerlink" title="2.12. git pull: 拉取远程分支到本地并合并"></a>2.12. git pull: 拉取远程分支到本地并合并</h3><p>一般是本地分支的进度落后于远程分支时，需要使用该命令<strong>（pull = fetch + merge）</strong></p>
+<p>命令：<code>git pull origin master</code><br><code>origin</code> 表示远程代码库的一个别名（也可以修改为其他名字，可通过 <code>git remote</code> 修改），<code>master</code> 表示需要拉取合并的分支名称。</p>
+<p><strong>常用 </strong><code>**git pull --rebase origin master**</code><strong> 用 rebase 的方式进行，不会产生 merge 保持分支干净、整洁</strong></p>
+<p><strong>PS：强制拉取更新</strong></p>
+<ul>
+<li>回到远程仓库的状态 </li>
+<li><strong>抛弃本地所有的修改</strong>，回到远程仓库的状态。 </li>
+</ul>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs applescript"><span class="hljs-comment"># 下载远程仓库的所有变动，而不尝试合并或rebase任何东西</span><br>git fetch <span class="hljs-comment">--all</span><br><br><span class="hljs-comment"># 将主分支重置为您刚刚获取的内容</span><br>git reset <span class="hljs-comment">--hard origin/master</span><br></code></pre></td></tr></table></figure>
+<h2 id="3-分支"><a href="#3-分支" class="headerlink" title="3. 分支"></a>3. 分支</h2><h3 id="3-1-git-branch-分支操作"><a href="#3-1-git-branch-分支操作" class="headerlink" title="3.1. git branch: 分支操作"></a>3.1. git branch: 分支操作</h3><p>命令：<code>git branch</code> 用于显示本地所有分支以及当前所在哪个分支</p>
+<p>命令：<code>git branch branchName</code> 用于新建名为 branchName 的新分</p>
+<p>命令：<code>git branch -d branchName</code> 用于删除名为 branchName 的分支。</p>
+<p>命令：<code>git branch -D branchName</code> 用于强制删除分支。</p>
+<p>删除一个远程分支:<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">(main)$ git push origin --delete my-branch<br></code></pre></td></tr></table></figure><br>你也可以:<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">(main)$ git push origin :my-branch<br></code></pre></td></tr></table></figure></p>
+<h3 id="3-2-git-checkout-分支间切换"><a href="#3-2-git-checkout-分支间切换" class="headerlink" title="3.2. git checkout: 分支间切换"></a>3.2. git checkout: 分支间切换</h3><p>该命令除了进行分支间切换功能外，还可以用来丢弃工作区中的修改内容，这里就不作介绍了，仅介绍分之间的切换功能。</p>
+<p>命令：<code>git checkout branchName</code> 用于从当前分支切换到名为 branchName 的分支上。</p>
+<p>命令：<code>git checkout -b branchName</code> 用于新建名为 branchName 的分支并切换到该分支上。</p>
+<p>从别人正在工作的远程分支签出(checkout)一个分支：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 首先, 从远程拉取(fetch) 所有分支:</span><br>git fetch --<span class="hljs-built_in">all</span><br><br><span class="hljs-comment"># 假设你想要从远程的daves分支签出到本地的daves</span><br>git checkout --track origin/daves<br><br><span class="hljs-comment"># --track 是 git checkout -b [branch] [remotename]/[branch] 的简写)</span><br><span class="hljs-comment"># 这样就得到了一个daves分支的本地拷贝, 任何推过(pushed)的更新，远程都能看到.</span><br></code></pre></td></tr></table></figure></p>
+<h3 id="3-3-git-merge-合并分支"><a href="#3-3-git-merge-合并分支" class="headerlink" title="3.3. git merge: 合并分支"></a>3.3. git merge: 合并分支</h3><p>该命令用于合并两个分支。</p>
+<p><strong>命令：</strong><code>**git merge branchName**</code><strong> 用于将名为 branchName 的分支合并到当前分支。</strong></p>
+<p>有两种合并方式：</p>
+<ol>
+<li>fast-forward 方式合并：<br>命令：<code>git merge dev</code></li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/goto456/markdown-pictures/master/wengeblog/git/git-20.png#id=YI7KL&amp;originHeight=268&amp;originWidth=1297&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""></p>
+<ol>
+<li>非fast-forward 方式合并：<br>命令：<code>git merge dev</code></li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/goto456/markdown-pictures/master/wengeblog/git/git-21.png#id=VTMXk&amp;originHeight=230&amp;originWidth=1298&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""></p>
+<p><strong>注意两种方式的区别：fast-forward 方式仅仅是移动了 HEAD 指针，而非 fast-forward 方式则是新建了一个节点</strong></p>
+<h3 id="3-4-git-rebase-分支的变基"><a href="#3-4-git-rebase-分支的变基" class="headerlink" title="3.4. git rebase: 分支的变基"></a>3.4. git rebase: 分支的变基</h3><p>命令：<code>git rebase master</code> 将当前分支 rebase 到 master 分支<br>命令：<code>git rebase master dev</code> 将 dev 分支 rebase 到 master 分支</p>
+<p>这种操作很难用语言解释，我用一个图来说明其与 merge 操作的区别：</p>
+<p><img src="https://raw.githubusercontent.com/goto456/markdown-pictures/master/wengeblog/git/git-22.png#height=565&amp;id=DSALF&amp;originHeight=816&amp;originWidth=786&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=&amp;width=544" srcset="/img/loading.gif" lazyload alt=""><br>由图可知，<strong>rebase 操作相当于将 C3 节点拿下来换了一个位置重新放置</strong>。最后不会产生合并的痕迹，所有分支都是同一条直线。</p>
+<h3 id="3-5-rebase合并多个提交commit"><a href="#3-5-rebase合并多个提交commit" class="headerlink" title="3.5 rebase合并多个提交commit"></a>3.5 rebase合并多个提交commit</h3><p>当你的项目充满了无用的 <code>commit</code> 纪录，如果有一天线上出现了紧急问题，你需要回滚代码，却发现海量的 <code>commit</code> 需要一条条来看。</p>
+<p>rebase用途：合并多次提交纪录，然后再merge到主干</p>
+<figure class="highlight autohotkey"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs autohotkey">git rebase -i  [startpoint]  [endpoint]<br><br>`-i`的意思是`--interactive`，即弹出交互式的界面让用户编辑完成合并操作<br>`[startpoint] [endpoint]`则指定了一个编辑区间<br>如果不指定`[endpoint]`，则该区间的终点默认是当前分支<br></code></pre></td></tr></table></figure>
+<ol>
+<li>我们来合并最近的 4 次提交纪录，执行：</li>
+</ol>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">git</span> rebase -i HEAD~<span class="hljs-number">4</span><br></code></pre></td></tr></table></figure>
+<ol>
+<li>这时候，会自动进入 <code>vi</code> 编辑模式：<br>将后面两个改成squash，就是合并到第一个上去</li>
+</ol>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs livecodeserver">p cacc52da <span class="hljs-built_in">add</span>: qrcode<br>s f072ef48 update: indexeddb hack<br>s <span class="hljs-number">4e84901</span><span class="hljs-keyword">a</span> feat: <span class="hljs-built_in">add</span> indexedDB floder<br>s <span class="hljs-number">8</span>f33126c feat: <span class="hljs-built_in">add</span> test2.js<br></code></pre></td></tr></table></figure>
+<ul>
+<li>4次提交的信息会倒序排列，最上面的是第四次提交，最下面的是最近一次提交。 <ul>
+<li>有几个命令需要注意一下：</li>
+<li>pick：保留该commit（缩写:p）</li>
+<li>reword：保留该commit，但我需要修改该commit的注释（缩写:r）</li>
+<li>edit：保留该commit, 但我要停下来修改该提交(不仅仅修改注释)（缩写:e）</li>
+<li>squash：将该commit和前一个commit合并（缩写:s）</li>
+<li>fixup：将该commit和前一个commit合并，但我不要保留该提交的注释信息（缩写:f）</li>
+<li>exec：执行shell命令（缩写:x）</li>
+<li>drop：我要丢弃该commit（缩写:d）</li>
+</ul>
+</li>
+</ul>
+<ol>
+<li>按照如上命令来修改你的提交纪录，然后<code>wq</code>保存退出，Git会压缩提交历史。 </li>
+<li>最后，修改一下合并后的commit的描述信息，编辑完保存即可完成了. </li>
+<li><p>如果你想放弃这次压缩的话，执行以下命令：  </p>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ada">git rebase <span class="hljs-comment">--abort</span><br></code></pre></td></tr></table></figure>
+</li>
+<li><p>同步到远程仓库<br>若强制推送提示后出现 “You are not allowed to force push code to a protected branch on this project.”<br>解决方案: <a target="_blank" rel="noopener" href="https://github.com/LeachZhou/blog/issues/11">https://github.com/LeachZhou/blog/issues/11</a><br>解决方案: <a target="_blank" rel="noopener" href="https://backlog.com/git-tutorial/cn/stepup/stepup2_8.html">https://backlog.com/git-tutorial/cn/stepup/stepup2_8.html</a> </p>
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs crmsh">git push -u origin <span class="hljs-keyword">master</span><br><span class="hljs-title">git</span> push -u origin <span class="hljs-keyword">master</span> <span class="hljs-title">-f</span>		<span class="hljs-comment"># 强制push</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight subunit"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs subunit">E:\xxx&gt;git push -f origin master<br>Total 0 (delta 0), reused 0 (delta 0)<br>remote: GitLab: You are not allowed to force push code to a protected branch on this project.<br>To http://git.xxx.cn/xxx/xxx<br> ! [remote rejected] master -&gt; master (pre-receive hook declined)<br><span class="hljs-keyword">error: </span>failed to push some refs to &#x27;http://xxx@git.xxx.cn/xxx/xxx.git&#x27;<br></code></pre></td></tr></table></figure>
+</li>
+<li><p>git放弃修改，强制覆盖本地代码  </p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs awk"><span class="hljs-regexp">//</span> 从远程拉取所有内容<br>git fetch --all<br><br><span class="hljs-regexp">//</span> reset 本地代码<br>git reset --hard origin/master<br><br><span class="hljs-regexp">//</span> 重启拉取对齐<br>git pull<br></code></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="3-6-提交-Merge-Request"><a href="#3-6-提交-Merge-Request" class="headerlink" title="3.6 提交 Merge Request"></a>3.6 提交 Merge Request</h3><p>当完成功能后提交到远程后，需要经过下述流程：</p>
+<ol>
+<li>提交 Merge Request：通过「＋Create Merge Request」按钮创建一个 Merge Request；</li>
+<li>必须指定「Assignee」：指定需要 review 你代码的同学，禁止指定自己；</li>
+<li>更改「Target branch」：改变为需要合并进去的目标分支；</li>
+<li>设置合并后删除被合并分支的选项：勾选「Remove source branch when merge request is accepted.」选项，在合并完成后删除源分支，控制分支总数量；</li>
+<li>使用「Submit Merge Request」提交合并请求。</li>
+</ol>
+<p>完成上述设置后，相关同学将会收到邮件通知，此时可进入 GitLab 进行 code review。<br>如果发现问题则对问题代码进行点评并拒绝关闭申请，反之则通过合并申请。<br>合并申请通过后留下的 Merge Request 记录，也就记录了 code reviewer 。</p>
+<h2 id="4-多人协同开发代码版本管理流程"><a href="#4-多人协同开发代码版本管理流程" class="headerlink" title="4. 多人协同开发代码版本管理流程"></a>4. 多人协同开发代码版本管理流程</h2><p>在团队协作过程中一般会有多个分支，比如有默认的 master 分支，有用于开发的 dev 分支，还有用于测试的 test 分支，用于对外发布的 release 分支，以及每个开发人员开发不同功能时用到的 feature_xx 分支等等。</p>
+<p>公司中一般是用 GitLab 搭建的代码托管服务，几个人的小团队也可以自己搭建。</p>
+<p>每个团队业务不一样，分支数量的设置也会不一样，下面我介绍一下我们团队的分支设置，以及普通开发人员和项目 leader 对不同分支的不同权限以及不同的操作。</p>
+<p><img src="https://ningshixian.github.io/resources/images/%E5%A4%9A%E4%BA%BA%E5%8D%8F%E5%90%8C%E5%BC%80%E5%8F%91%E4%BB%A3%E7%A0%81%E7%89%88%E6%9C%AC%E7%AE%A1%E7%90%86%E6%B5%81%E7%A8%8B.png#id=jvG4X&amp;originHeight=440&amp;originWidth=898&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""></p>
+<h3 id="4-1-分支设置"><a href="#4-1-分支设置" class="headerlink" title="4.1 分支设置"></a>4.1 分支设置</h3><p>我们常用的分支有3个（master 分支、dev 分支、test 分支）以及若干个 feature_xx 分支。</p>
+<ol>
+<li><code>master</code> 分支：是主分支，是最终上线代码的分支，该分支被设置被保护分支（锁住），普通开发人员没有权限操作，只有团队 leader 有合并的权限；</li>
+<li><code>dev</code> 分支：是用于开发的分支，该分支被设置为默认 clone 的分支，也用于合并到 master 之前进行测试的分支，普通开发人员从远程 clone 到本地的默认分支，可以进行合并等操作；</li>
+<li><code>test</code> 分支：是用于测试的分支，测试人员可以将自己开发分支中的修改合并到 test 分支在测试环境进行测试，一般该分支不合并到任何分支；</li>
+<li><code>feature_xx</code> 分支：是用户开发自己模块功能的特征分支，可以叫 feature_login, feature_ui, feature_payment 等与开发的功能相关的名称，该分支上的功能开发完、测试无误后可合并到 dev 分支上。</li>
+</ol>
+<h3 id="4-2-普通开发人员的操作"><a href="#4-2-普通开发人员的操作" class="headerlink" title="4.2 普通开发人员的操作"></a>4.2 普通开发人员的操作</h3><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_34206198/article/details/52055395">将master分支内容合并到dev分支</a></p>
+<p>普通开发人员，一般按照如下几个步骤来进行开发、测试工作就可以了：</p>
+<ol>
+<li>将远程 dev 分支 clone 到本地，例如：<code>git clone git@github.com:goto456/test.git</code>；</li>
+<li>从 dev 分支拉出（新建）自己的 feature 分支用于开发，例如：<code>git checkout -b feature_login</code>；</li>
+<li>在自己的 feature 分支上进行开发工作；</li>
+<li>开发完了用 add、commit 等操作提交到当前分支；</li>
+<li>如果需要在测试环境进行测试，则将远程 test 分支拉到本地，例如：<code>git branch test origin/test</code>;</li>
+<li>将自己的 feature 分支合并到 test 分支，并将 test 分支 push 到远程，例如：<code>git rebase test</code>, <code>git checkout test</code>, <code>git merge feature_login</code>, <code>git push origin test</code>；<strong>（注意：我们推荐用 rebase 来合并，以保证分支的整洁、美观）</strong></li>
+<li>通过公司的发布平台将远程 test 分支发布到测试环境进行测试；</li>
+<li>如果测试没问题或者开始就不需要测试，这可以直接将当前 feature 分支合并到 dev 分支，并 push 到远程库，例如：<code>git rebase dev</code>, <code>git checkout dev</code>, <code>git merge feature_login</code>, <code>git push origin dev</code>；<strong>（注意：我们推荐用 rebase 来合并，以保证分支的整洁、美观）</strong></li>
+<li>这时表示该功能已经开发完成了，代码的 review 以及发布，需要团队 leader 在合并到 master 操作时进行；这时可以删除了自己的 feature 分支，例如：<code>git branch -d feature_login</code>；</li>
+<li><strong>如果在 push 到远程的时候提示需要先 pull 时，我们推荐使用 rebase 的方式：</strong><code>**git pull --rebase**</code><strong> 以保持分支的整洁、美观。</strong></li>
+</ol>
+<h3 id="4-3-团队-leader-的操作"><a href="#4-3-团队-leader-的操作" class="headerlink" title="4.3 团队 leader 的操作"></a>4.3 团队 leader 的操作</h3><p>因为只有 leader 有操作 master 分支的权限，所以需要完成 dev 分支到 master 分支的合并，以及后续打 tag 和正式上线发布的工作：</p>
+<ol>
+<li>先切换到 dev 分支，并拉取最新的状态，例如：<code>git checkout dev</code>, <code>git pull --rebase origin dev</code>；</li>
+<li>进行代码 review 等过程后，合并到 master 分支，例如：<code>git rebase master</code>, <code>git checkout master</code>, <code>git merge dev</code>;<strong>（注意：我们推荐用 rebase 来合并，以保证分支的整洁、美观）</strong></li>
+<li>为本次完成的版本打上标签，例如：<code>git tag v1.0 -m &quot;release version 1.0&quot;</code>；</li>
+<li>将本地合并后的 master 分支以及标签 push 到远程库，例如：<code>git push orgin master --tags</code>。</li>
+</ol>
+<h2 id="5-其他命令"><a href="#5-其他命令" class="headerlink" title="5. 其他命令"></a>5. 其他命令</h2><h3 id="查看分支的版本历史"><a href="#查看分支的版本历史" class="headerlink" title="查看分支的版本历史"></a>查看分支的版本历史</h3><figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs 1c">git <span class="hljs-built_in">log</span><br>git reflog	<span class="hljs-meta"># 显示当前分支的最近几次提交</span><br>git <span class="hljs-built_in">log</span> –-pretty=oneline<br>git <span class="hljs-built_in">log</span> -S [keyword]	<span class="hljs-meta"># 搜索提交历史，根据关键词</span><br><br><span class="hljs-meta"># 开头的即是commit id号</span><br></code></pre></td></tr></table></figure>
+<h3 id="删除上一次提交-commit"><a href="#删除上一次提交-commit" class="headerlink" title="删除上一次提交(commit)"></a>删除上一次提交(commit)</h3><p>如果你需要删除推了的提交(pushed commits)，你可以使用下面的方法。可是，这会不可逆的改变你的历史，也会搞乱那些已经从该仓库拉取(pulled)了的人的历史。简而言之，如果你不是很确定，千万不要这么做。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs python">$ git reset --hard HEAD^<br>$ git push -f [remote] [branch]<br></code></pre></td></tr></table></figure><br>如果你还没有推到远程, 把Git重置(reset)到你最后一次提交前的状态就可以了(同时保存暂存的变化):<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">git reset --soft HEAD~<span class="hljs-number">1</span><br></code></pre></td></tr></table></figure></p>
+<h3 id="我需要提交到一个新分支，但错误的提交到了main"><a href="#我需要提交到一个新分支，但错误的提交到了main" class="headerlink" title="我需要提交到一个新分支，但错误的提交到了main"></a>我需要提交到一个新分支，但错误的提交到了main</h3><p>在main下创建一个新分支，不切换到新分支,仍在main下:<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">(main)$ git branch my-branch<br></code></pre></td></tr></table></figure><br>把main分支重置到前一个提交:<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">(main)$ git reset --hard HEAD^<br></code></pre></td></tr></table></figure><br>签出(checkout)刚才新建的分支继续工作:<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">(main)$ git checkout my-branch<br></code></pre></td></tr></table></figure></p>
+<h3 id="commit写错-撤销重写"><a href="#commit写错-撤销重写" class="headerlink" title="commit写错-撤销重写"></a>commit写错-撤销重写</h3><p>或者说，把暂存的内容添加到上一次的提交(commit)<br><figure class="highlight dsconfig"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs dsconfig"><span class="hljs-string">git</span> <span class="hljs-string">commit</span> <span class="hljs-built_in">--m</span> <span class="hljs-string">&#x27;提交信息&#x27;</span><br><span class="hljs-string">git</span> <span class="hljs-string">commit</span> <span class="hljs-built_in">--amend</span> -<span class="hljs-string">m</span> <span class="hljs-string">&#x27;修改后的提交信息&#x27;</span><br></code></pre></td></tr></table></figure></p>
+<h3 id="强制-push-报错"><a href="#强制-push-报错" class="headerlink" title="强制 push 报错"></a>强制 push 报错</h3><blockquote>
+<p>E:\xxx&gt;git push -f origin master<br>Total 0 (delta 0), reused 0 (delta 0)<br>remote: GitLab: You are not allowed to force push code to a protected branch on this project.<br>To <a target="_blank" rel="noopener" href="http://git.xxx.cn/xxx/xxx">http://git.xxx.cn/xxx/xxx</a><br> ! [remote rejected] master -&gt; master (pre-receive hook declined)<br>error: failed to push some refs to ‘<a target="_blank" rel="noopener" href="http://xxx@git.xxx.cn/xxx/xxx.git&#39;">http://xxx@git.xxx.cn/xxx/xxx.git’</a></p>
+</blockquote>
+<p>问题：若强制推送 push -f 提示 You are not allowed to force push code to a protected branch on this project.<br>解决方案: <a target="_blank" rel="noopener" href="https://github.com/LeachZhou/blog/issues/11">Gitlab强制推送提示”You are not allowed to force push code to a protected branch on this project.” #11 </a><br>PS：由于当前分支的版本低于远程分支的版本，强制推送—force 将新的代码覆盖掉远程仓库版本代码，这样子就达到了撤销远程仓库代码一样的效果</p>
+<h3 id="意外硬重置-hard-reset-，如何找回修改的内容"><a href="#意外硬重置-hard-reset-，如何找回修改的内容" class="headerlink" title="意外硬重置(hard reset)，如何找回修改的内容"></a>意外硬重置(hard reset)，如何找回修改的内容</h3><p>如果你意外的做了 git reset —hard, 你通常能找回你的提交(commit), 因为Git对每件事都会有日志，且都会保存几天。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">git reflog<br></code></pre></td></tr></table></figure><br>你将会看到一个你过去提交(commit)的列表, 和一个重置的提交。选择你想要回到的提交(commit)的SHA，再重置一次:<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">git reset --hard SHA1234<br></code></pre></td></tr></table></figure><br>这样就完成了。</p>
+<h3 id="★★强制拉取更新"><a href="#★★强制拉取更新" class="headerlink" title="★★强制拉取更新"></a>★★强制拉取更新</h3><figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs pgsql"># 新建一个分支，并切换到该分支<br>git checkout -b [branch]<br><br># 下载远程仓库的所有变动，而不尝试合并或rebase任何东西<br>git <span class="hljs-keyword">fetch</span> <span class="hljs-comment">--all</span><br><br># 重置当前分支的HEAD为指定<span class="hljs-keyword">commit</span>，同时重置暂存区和工作区，与指定<span class="hljs-keyword">commit</span>一致<br>git <span class="hljs-keyword">reset</span> <span class="hljs-comment">--hard origin/master</span><br></code></pre></td></tr></table></figure>
+<h3 id="★★git-添加-gitignore-规则无效"><a href="#★★git-添加-gitignore-规则无效" class="headerlink" title="★★git 添加 gitignore 规则无效"></a>★★git 添加 gitignore 规则无效</h3><p>在使用git的时候我们有时候需要忽略一些文件或者文件夹。我们一般在仓库的根目录创建.gitignore文件</p>
+<p>在提交之前，修改.gitignore文件，添加需要忽略的文件。然后再做 <code>add commit push</code> 等</p>
+<p>但是有时在使用过称中，需要对.gitignore文件进行再次的修改。</p>
+<p>这次我们需要清除一下缓存cache，才能是.gitignore 生效。</p>
+<p>具体做法：</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs mipsasm">git rm -r --<span class="hljs-keyword">cached </span>.  <span class="hljs-comment">#清除缓存</span><br>git <span class="hljs-keyword">add </span>. <span class="hljs-comment">#重新trace file</span><br>git commit -m <span class="hljs-string">&quot;update .gitignore&quot;</span> <span class="hljs-comment">#提交和注释</span><br>git push <span class="hljs-keyword">origin </span>master <span class="hljs-comment">#可选，如果需要同步到remote上的话</span><br></code></pre></td></tr></table></figure>
+<p>这样就能够使修改后的.gitignore生效。</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/mingjie1212/article/details/51689606">参考1</a>、<a target="_blank" rel="noopener" href="https://blog.csdn.net/u010940300/article/details/49204597">参考2</a></p>
+<h3 id="git拉取指定分支下的文件"><a href="#git拉取指定分支下的文件" class="headerlink" title="git拉取指定分支下的文件"></a>git拉取指定分支下的文件</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">git checkkout 「branch」&lt;file_name&gt;<br></code></pre></td></tr></table></figure>
+<p>实例如下：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">git checkout origin/feature forms/common/commen.php<br></code></pre></td></tr></table></figure></p>
+<h3 id="★★常见问题"><a href="#★★常见问题" class="headerlink" title="★★常见问题"></a>★★常见问题</h3><blockquote>
+<p>ssh登录出现异常警告：WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!</p>
+</blockquote>
+<p><strong>原因分析：</strong></p>
+<p>It is also possible that a host key has just been changed.</p>
+<p>之前，与远程库建立首次连接时，双方相互记录了对方的公钥（ssh基于非对称密钥技术），在ssh服务主机重装系统后，公钥改变了，而ssh连接仍以旧版本公钥，自然是无法与新系统连接的。</p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/johnchain/archive/2013/04/08/3006631.html"><strong>解决方案：</strong></a></p>
+<p>删除~/.ssh/known_hosts文件，或者如果你可以判断出known_hosts中原ssh服务器的公钥，删去那部分，然后后再次建立新的连接，即可获得新的公钥。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzUzMjk1MDI0OQ==&amp;mid=2247485617&amp;idx=3&amp;sn=ca65184052665495c51494454a19fade&amp;chksm=faaa3537cdddbc21333656c70319507b728e314c186426b26329e6a882da80ffe6c26cf265bd&amp;scene=0&amp;xtrack=1#rd">Git使用教程：最详细、最傻瓜、最浅显、真正手把手教！</a><br><a href="">简明 Git 教程。浅显易懂，快速入门</a><br><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/PXu2YcNXvaRVxliKvnnYQg">45 个 Git 经典操作场景，专治不会合代码</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Git/">#Git</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Git指令整理&amp;代码版本管理</div>
+      <div>http://example.com/2019/08/12/2019-08-12-Git指令介绍&amp;版本管理/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>NSX</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2019年8月12日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/08/12/2019-08-12-Git%E5%85%8D%E8%BE%93%E5%85%A5%E8%B4%A6%E5%8F%B7%E5%AF%86%E7%A0%81%E8%AE%BE%E7%BD%AE%E6%96%B9%E6%B3%95/" title="     Git免输入账号密码设置方法">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">     Git免输入账号密码设置方法</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2019/08/12/2019-08-12-%E4%BC%98%E9%9B%85%E9%83%A8%E7%BD%B2python%E4%BB%A3%E7%A0%81/" title="优雅部署python代码">
+                        <span class="hidden-mobile">优雅部署python代码</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

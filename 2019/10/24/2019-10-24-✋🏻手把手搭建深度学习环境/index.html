@@ -1,0 +1,845 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="NSX">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="预告：三种套餐组合方式第一种  Nvidia GPU 驱动（v375）——允许系统获得 GPU 带来的加速。 CUDA（v8.0）——GPU C 语言库。「计算同一设备架构」。 cuDNN（v6.0.21）——基于 CUDA 的深度学习基元库。「CUDA 深度学习库」。 TensorFlow（v1.3）——谷歌开发的深度学习框架，保证TensorFlow&lt;&#x3D;1.4  第二种  Nvidia">
+<meta property="og:type" content="article">
+<meta property="og:title" content="✋🏻手把手搭建深度学习环境">
+<meta property="og:url" content="http://example.com/2019/10/24/2019-10-24-%E2%9C%8B%F0%9F%8F%BB%E6%89%8B%E6%8A%8A%E6%89%8B%E6%90%AD%E5%BB%BA%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%8E%AF%E5%A2%83/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="预告：三种套餐组合方式第一种  Nvidia GPU 驱动（v375）——允许系统获得 GPU 带来的加速。 CUDA（v8.0）——GPU C 语言库。「计算同一设备架构」。 cuDNN（v6.0.21）——基于 CUDA 的深度学习基元库。「CUDA 深度学习库」。 TensorFlow（v1.3）——谷歌开发的深度学习框架，保证TensorFlow&lt;&#x3D;1.4  第二种  Nvidia">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-10-23T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-24T09:56:18.216Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="环境搭建">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>✋🏻手把手搭建深度学习环境 - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="✋🏻手把手搭建深度学习环境"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2019-10-24 00:00" pubdate>
+          2019年10月24日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          15k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          128 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">✋🏻手把手搭建深度学习环境</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="预告：三种套餐组合方式"><a href="#预告：三种套餐组合方式" class="headerlink" title="预告：三种套餐组合方式"></a>预告：三种套餐组合方式</h2><p>第一种</p>
+<ol>
+<li>Nvidia GPU 驱动（v375）——允许系统获得 GPU 带来的加速。</li>
+<li>CUDA（v8.0）——GPU C 语言库。「计算同一设备架构」。</li>
+<li>cuDNN（v6.0.21）——基于 CUDA 的深度学习基元库。「CUDA 深度学习库」。</li>
+<li>TensorFlow（v1.3）——谷歌开发的深度学习框架，保证TensorFlow&lt;=1.4</li>
+</ol>
+<p>第二种</p>
+<ol>
+<li>Nvidia GPU 驱动（v384）——允许系统获得 GPU 带来的加速。</li>
+<li>CUDA（v9.0）——GPU C 语言库。「计算同一设备架构」。</li>
+<li>cuDNN（v7.4.2）——基于 CUDA 的深度学习基元库。「CUDA 深度学习库」。</li>
+<li>TensorFlow（v1.12.0）——谷歌开发的深度学习框架，保证TensorFlow&gt;=1.5</li>
+</ol>
+<p>第三种</p>
+<ol>
+<li>Nvidia GPU 驱动（v418）——允许系统获得 GPU 带来的加速。</li>
+<li>CUDA（v10.1）——GPU C 语言库。「计算同一设备架构」。</li>
+<li>cuDNN（v7.6.4）——基于 CUDA 的深度学习基元库。「CUDA 深度学习库」。</li>
+<li>TensorFlow（v1.14.0）——谷歌开发的深度学习框架<h2 id="安装准备"><a href="#安装准备" class="headerlink" title="安装准备"></a>安装准备</h2></li>
+</ol>
+<p>前提机器上面有支持CUDA的Nvidia GPU，查看支持CUDA的GPU列表:</p>
+<p><a target="_blank" rel="noopener" href="https://developer.nvidia.com/cuda-gpus">https://developer.nvidia.com/cuda-gpus</a></p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs 1c">lspci <span class="hljs-string">| grep -i nvidia</span><br></code></pre></td></tr></table></figure>
+<p>我这边服务器使用 <strong>NVIDIA显卡的版本信息</strong>:</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">Tesla</span> V100 SXM2 <span class="hljs-number">16</span>GB<br></code></pre></td></tr></table></figure>
+<p><strong>验证系统是否是受支持的Linux版本</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">uname</span> -m &amp;&amp; <span class="hljs-built_in">cat</span> /etc/redhat-release<br><span class="hljs-comment"># CentOS Linux release 7.6.1810 (Core)</span><br></code></pre></td></tr></table></figure>
+<p>到这里查看受支持的Linux版本：<a target="_blank" rel="noopener" href="http://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#system-requirements">http://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#system-requirements</a></p>
+<p><strong>验证系统是否有GCC编译环境</strong></p>
+<figure class="highlight gcode"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs gcode">gcc -v<br><span class="hljs-attr"># gcc version 4</span><span class="hljs-number">.8</span><span class="hljs-number">.5</span> <span class="hljs-number">20150623</span> <span class="hljs-comment">(Red Hat 4.8.5-36)</span> <span class="hljs-comment">(GCC)</span><br></code></pre></td></tr></table></figure>
+<p>没有的话需要先安装GCC，Centos7的最小化安装一般勾选上开发软件都会自动安装GCC</p>
+<p><strong>验证系统是否安装了正确的内核头文件和开发包</strong></p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs reasonml">sudo yum install kernel-devel-<span class="hljs-constructor">$(<span class="hljs-params">uname</span> -<span class="hljs-params">r</span>)</span> kernel-headers-<span class="hljs-constructor">$(<span class="hljs-params">uname</span> -<span class="hljs-params">r</span>)</span><br></code></pre></td></tr></table></figure>
+<h2 id="开始安装"><a href="#开始安装" class="headerlink" title="开始安装"></a>开始安装</h2><p><strong>禁用nouveau</strong></p>
+<p>nouveau是一个第三方开源的Nvidia驱动，一般Linux安装的时候默认会安装这个驱动。 这个驱动会与Nvidia官方的驱动冲突，在安装Nvidia驱动和和CUDA之前应先禁用nouveau</p>
+<p><strong>查看系统是否正在使用nouveau</strong></p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs 1c">lsmod <span class="hljs-string">| grep nouveau</span><br></code></pre></td></tr></table></figure>
+<p><strong>如果有显示内容，则进行以下的步骤： Centos7禁用方法</strong></p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs reasonml">#新建一个配置文件sudo vim /etc/modprobe.d/blacklist-nouveau.conf#写入以下内容blacklist nouveauoptions nouveau modeset=<span class="hljs-number">0</span>#保存并退出:wq#备份当前的镜像sudo mv /boot/initramfs-<span class="hljs-constructor">$(<span class="hljs-params">uname</span> -<span class="hljs-params">r</span>)</span>.img /boot/initramfs-<span class="hljs-constructor">$(<span class="hljs-params">uname</span> -<span class="hljs-params">r</span>)</span>.img.bak#建立新的镜像sudo dracut /boot/initramfs-<span class="hljs-constructor">$(<span class="hljs-params">uname</span> -<span class="hljs-params">r</span>)</span>.img <span class="hljs-constructor">$(<span class="hljs-params">uname</span> -<span class="hljs-params">r</span>)</span>#重启sudo reboot#最后输入上面的命令验证lsmod <span class="hljs-pattern-match">| grep nouveau</span><br></code></pre></td></tr></table></figure>
+<p><strong>安装驱动</strong></p>
+<p>GPU 服务器正常工作需安装正确的基础设施软件，对 NVIDIA 系列 GPU 而言，有两个层次的软件包需要安装：</p>
+<ul>
+<li>驱动 GPU 工作的硬件驱动程序。</li>
+<li>上层应用程序所需要的库。</li>
+</ul>
+<p>若把 NVIDIA GPU 用作通用计算，需要安装 Tesla Driver + CUDA：</p>
+<p><strong>rpm 包安装</strong></p>
+<ol>
+<li>打开 NVIDIA 驱动下载链接 <a target="_blank" rel="noopener" href="http://www.nvidia.com/Download/Find.aspx">http://www.nvidia.com/Download/Find.aspx</a> 。 </li>
+<li>选择支持 RPM 包的操作系统，并获取该 RPM 包的下载链接。例如：选择 Linux 64-bit  CUDA Toolkit: 10.1， 得到下载链接：<a target="_blank" rel="noopener" href="https://www.nvidia.cn/Download/driverResults.aspx/152484/cn，按照提示下载并安装驱动。">https://www.nvidia.cn/Download/driverResults.aspx/152484/cn，按照提示下载并安装驱动。</a> </li>
+<li>使用<code>rpm</code>命令安装 rpm 包。 <figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">rpm</span> -i nvidia-driver-local-repo-rhel7-<span class="hljs-number">418</span>.<span class="hljs-number">87</span>.<span class="hljs-number">01</span>-<span class="hljs-number">1</span>.<span class="hljs-number">0</span>-<span class="hljs-number">1</span>.x86_64.rpm<br></code></pre></td></tr></table></figure>
+</li>
+</ol>
+<ol>
+<li>使用<code>yum</code>命令清除缓存。 <figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ada">yum clean <span class="hljs-keyword">all</span><br></code></pre></td></tr></table></figure>
+</li>
+</ol>
+<ol>
+<li>使用yum命令安装驱动。 <figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cmake">yum <span class="hljs-keyword">install</span> cuda-drivers<br></code></pre></td></tr></table></figure>
+</li>
+</ol>
+<ol>
+<li>重启机器 <figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ebnf"><span class="hljs-attribute">reboot</span><br></code></pre></td></tr></table></figure>
+</li>
+</ol>
+<ol>
+<li>运行<code>nvidia-smi</code>能输出正确信息代表驱动安装成功。 </li>
+</ol>
+<h2 id="CUDA-安装"><a href="#CUDA-安装" class="headerlink" title="CUDA 安装"></a>CUDA 安装</h2><p>CUDA (Compute Unified Device Architecture) 是显卡厂商 NVIDIA 推出的运算平台。 CUDA™ 是一种由 NVIDIA 推出的通用并行计算架构，该架构使 GPU 能够解决复杂的计算问题。 它包含了 CUDA 指令集架构（ISA）以及 GPU 内部的并行计算引擎。 开发人员现在可以使用 C 语言, C++ , FORTRAN 来为 CUDA™ 架构编写程序，所编写出的程序可以在支持 CUDA™ 的处理器上以超高性能运行。</p>
+<blockquote>
+<p>最快捷的安装方法：conda install cudatoolkit=10.0</p>
+</blockquote>
+<p>采用 NVIDIA 显卡的GPU 云服务器，需要安装 CUDA 开发运行环境：</p>
+<ol>
+<li>先查看<a target="_blank" rel="noopener" href="https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html">官方给的CUDA和显卡驱动Driver的匹配兼容性</a>，进行CUDA Toolkit的版本选择 （9.0~10.1 应该均可） </li>
+<li>选择操作系统和安装包。以 <a target="_blank" rel="noopener" href="https://developer.nvidia.com/cuda-downloads?target_os=Linux&amp;target_arch=x86_64&amp;target_distro=CentOS&amp;target_version=7&amp;target_type=rpmlocal">CentOS 7 64 位的CUDA驱动下载</a>为例，下载 Base 以及 Patch 补丁 </li>
+<li>在 CUDA 安装包所在目录下运行如下命令<strong>（run_file）</strong><br>下载10.0版本的CUDA <figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs awk">wget -c https:<span class="hljs-regexp">//</span>developer.nvidia.com<span class="hljs-regexp">/compute/</span>cuda<span class="hljs-regexp">/10.0/</span>Prod<span class="hljs-regexp">/local_installers/</span>cuda_10.<span class="hljs-number">0.130</span>_410.<span class="hljs-number">48</span>_linux<br>wget https:<span class="hljs-regexp">//</span>developer.download.nvidia.com<span class="hljs-regexp">/compute/</span>cuda<span class="hljs-regexp">/10.2/</span>Prod<span class="hljs-regexp">/local_installers/</span>cuda_10.<span class="hljs-number">2.89</span>_440.<span class="hljs-number">33.01</span>_linux.run<br>sudo sh cuda_10.<span class="hljs-number">2.89</span>_440.<span class="hljs-number">33.01</span>_linux.run<br></code></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>下载10.1版本的CUDA<br>安装  </p>
+<ul>
+<li>安装具体细节：之前已经安装过显卡驱动程序，因此在提问是否安装显卡驱动时选择no，其他默认(NVIDIA Accelerated Graphics Driver) <figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><code class="hljs gradle">（是否同意条款，必须同意才能继续安装）<br>  accept<span class="hljs-regexp">/decline/</span>quit: accept<br><br>  （这里不要安装驱动，因为已经安装最新的驱动了，否则可能会安装旧版本的显卡驱动，导致重复登录的情况）<br>  Install NVIDIA Accelerated Graphics Driver <span class="hljs-keyword">for</span> Linux-x86_64 <span class="hljs-number">410.48</span>?<br>  (y)es<span class="hljs-regexp">/(n)o/</span>(q)uit: n<br><br>  Install the CUDA <span class="hljs-number">10.0</span> Toolkit?（是否安装CUDA <span class="hljs-number">10</span> ，这里必须要安装）<br>  (y)es<span class="hljs-regexp">/(n)o/</span>(q)uit: y<br><br>  Enter Toolkit Location（安装路径，使用默认，直接回车就行）<br>   [ <span class="hljs-keyword">default</span> is <span class="hljs-regexp">/usr/</span>local/cuda-<span class="hljs-number">10.0</span> ]:  <br><br>  <span class="hljs-keyword">Do</span> you want to install a symbolic link at <span class="hljs-regexp">/usr/</span>local/cuda?（同意创建软链接）<br>  (y)es<span class="hljs-regexp">/(n)o/</span>(q)uit: y<br><br>  Install the CUDA <span class="hljs-number">10.0</span> Samples?（不用安装测试，本身就有了）<br>  (y)es<span class="hljs-regexp">/(n)o/</span>(q)uit: n<br><br>  Installing the CUDA Toolkit in <span class="hljs-regexp">/usr/</span>local/cuda-<span class="hljs-number">10.0</span> ...（开始安装）<br>  <br>  ===========<br>  = Summary =<br>  ===========<br><br>  Driver:   Not Selected<br>  Toolkit:  Installed in <span class="hljs-regexp">/usr/</span>local<span class="hljs-regexp">/cuda-10.1/</span><br>  Samples:  Installed in <span class="hljs-regexp">/home/</span>lhadmin/, but missing recommended libraries<br><br>  Please make sure that<br>   -   PATH <span class="hljs-keyword">includes</span> <span class="hljs-regexp">/usr/</span>local<span class="hljs-regexp">/cuda-10.1/</span>bin<br>   -   LD_LIBRARY_PATH <span class="hljs-keyword">includes</span> <span class="hljs-regexp">/usr/</span>local<span class="hljs-regexp">/cuda-10.1/</span>lib64, or, add <span class="hljs-regexp">/usr/</span>local<span class="hljs-regexp">/cuda-10.1/</span>lib64 to <span class="hljs-regexp">/etc/</span>ld.so.conf and run ldconfig as root<br><br>  To uninstall the CUDA Toolkit, run cuda-uninstaller in <span class="hljs-regexp">/usr/</span>local<span class="hljs-regexp">/cuda-10.1/</span>bin<br><br>  Please see CUDA_Installation_Guide_Linux.pdf in <span class="hljs-regexp">/usr/</span>local<span class="hljs-regexp">/cuda-10.1/</span>doc/pdf <span class="hljs-keyword">for</span> detailed information on setting up CUDA.<br></code></pre></td></tr></table></figure>
+</li>
+</ul>
+<ol>
+<li>添加CUDA环境变量<br>在 ~/.bashrc 里再设置一下cuda的环境变量： <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash">vi ~/.bashrc<br><span class="hljs-built_in">export</span> PATH=/usr/local/cuda-10.1/bin<span class="hljs-variable">$&#123;PATH:+:<span class="hljs-variable">$&#123;PATH&#125;</span>&#125;</span><br><span class="hljs-built_in">export</span> LD_LIBRARY_PATH=/usr/local/cuda-10.1/lib64<span class="hljs-variable">$&#123;LD_LIBRARY_PATH:+:<span class="hljs-variable">$&#123;LD_LIBRARY_PATH&#125;</span>&#125;</span><br><span class="hljs-built_in">export</span> CUDA_HOME=/usr/local/cuda-10.1<br><span class="hljs-built_in">source</span> ~/.bashrc<br></code></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>在 /etc/profile 里也设置一下cuda的安装路径及相应的库文件：(这个似乎可以不改)<br>配置LD路径(这个似乎也可以不改)：  </p>
+<ol>
+<li>查看cuda版本： <figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs awk">nvcc -V<br>cat <span class="hljs-regexp">/usr/</span>local<span class="hljs-regexp">/cuda/</span>version.txt<br></code></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>_卸载CUDA_</p>
+<p>To uninstall the CUDA Toolkit, run cuda-uninstaller in /usr/local/cuda-10.1/bin</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs awk">sudo <span class="hljs-regexp">/usr/</span>local<span class="hljs-regexp">/cuda-10.1/</span>bin/cuda-uninstaller<br>sudo rm -rf <span class="hljs-regexp">/usr/</span>local<span class="hljs-regexp">/cuda-10.1/</span><br></code></pre></td></tr></table></figure>
+<h2 id="CuDNN-安装"><a href="#CuDNN-安装" class="headerlink" title="CuDNN 安装"></a>CuDNN 安装</h2><ol>
+<li>最快捷的方法（有一定概率安装成功仍找不到cudnn，以及和你安装的cuda版本不对应的情况…）</li>
+</ol>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">conda</span> install cudnn=<span class="hljs-number">7</span>.<span class="hljs-number">6</span>.<span class="hljs-number">5</span><br></code></pre></td></tr></table></figure>
+<ol>
+<li>传统安装方法</li>
+</ol>
+<ul>
+<li>在<a target="_blank" rel="noopener" href="https://developer.nvidia.com/rdp/cudnn-archive">cuDNN Archive</a>中，选择合适的CuDNN版本； </li>
+<li><a target="_blank" rel="noopener" href="https://developer.nvidia.com/compute/machine-learning/cudnn/secure/7.6.3.30/Production/10.1_20190822/cudnn-10.1-linux-x64-v7.6.3.30.tgz">Download cuDNN Library cudnn-10.1-linux-x64-v7.6.3.30.tgz</a><br>PS：<a target="_blank" rel="noopener" href="https://www.twblogs.net/a/5ca15f6ebd9eee5b1a06a4da/zh-cn"><strong>cuDNN需要注册NVIDIA的会员(免费)才能下载，无法在远程机器上用curl或者wget下载!!</strong></a> 用户名：qq邮箱    密码：zX1994???721<br>问题：要经过登录授权的，就算你在网页上登录了得到下载链接，直接在命令行中:wget 下载链接，也是会报403禁止错误。<br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/HankTown/p/13943534.html">解决方案</a>：linux下载高版本cudnn可以用下面的网址绕过授权检查： <figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs awk">sudo wget http:<span class="hljs-regexp">//</span>developer.download.nvidia.com<span class="hljs-regexp">/compute/</span>redist<span class="hljs-regexp">/cudnn/</span>v7.<span class="hljs-number">6.5</span>/cudnn-<span class="hljs-number">10.0</span>-linux-x64-v7.<span class="hljs-number">6.5</span>.<span class="hljs-number">32</span>.tgz<br></code></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>可以根据你想要的cudnn版本号对其中的cuda版本（如10.0）和cudnn版本（v7.6.5）进行修改，然后就可以下载cudnn了。 </p>
+<ul>
+<li>下载完毕后解压 <figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs jboss-cli"><span class="hljs-keyword">cd</span> ~<span class="hljs-string">/Downloads/</span><br>tar -zxvf cudnn-*<span class="hljs-string">.tgz</span><br></code></pre></td></tr></table></figure>
+</li>
+</ul>
+<ul>
+<li>然后将cuDNN中的bin、include、lib文件<strong>覆盖</strong>cuda安装目录下即可 <figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs awk">cd <span class="hljs-regexp">/software/</span><br>sudo cp cuda<span class="hljs-regexp">/include/</span>cudnn.h <span class="hljs-regexp">/usr/</span>local<span class="hljs-regexp">/cuda/i</span>nclude/<br>sudo cp cuda<span class="hljs-regexp">/lib64/</span>libcudnn* <span class="hljs-regexp">/usr/</span>local<span class="hljs-regexp">/cuda/</span>lib64/<br>sudo chmod a+r <span class="hljs-regexp">/usr/</span>local<span class="hljs-regexp">/cuda/i</span>nclude/cudnn.h<br>sudo chmod a+r <span class="hljs-regexp">/usr/</span>local<span class="hljs-regexp">/cuda/</span>lib64/libcudnn*<br></code></pre></td></tr></table></figure>
+</li>
+</ul>
+<ul>
+<li>验证 <figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs awk">cat <span class="hljs-regexp">/usr/</span>local<span class="hljs-regexp">/cuda/i</span>nclude/cudnn.h | grep CUDNN_MAJOR -A <span class="hljs-number">2</span><br><span class="hljs-comment">#or</span><br>git clone https:<span class="hljs-regexp">//gi</span>thub.com<span class="hljs-regexp">/wilhelmguo/</span>cudnn_samples_v7.git<br>cd cudnn_samples_v7/mnistCUDNN<br>make <br>./mnistCUDNN<br></code></pre></td></tr></table></figure>
+</li>
+</ul>
+<ul>
+<li>可能遇到<code>ibcudnn.so.5 is not a symbolic link</code>错误 <figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs awk">ls -lha <span class="hljs-regexp">/usr/</span>local<span class="hljs-regexp">/cuda/</span>lib64/libcudnn*<br></code></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>If libcudnn.so and libcudnn.so.5 are not symlinks then this is the reason why you got this error.<br>If so, this is what you need to do:<br>PS: 最好参照本文最后一节 错误解决 进行软链接 </p>
+<h2 id="配置Pip国内镜像"><a href="#配置Pip国内镜像" class="headerlink" title="配置Pip国内镜像"></a>配置Pip国内镜像</h2><ul>
+<li>临时使用：pip install -i <a target="_blank" rel="noopener" href="https://pypi.tuna.tsinghua.edu.cn/simple">https://pypi.tuna.tsinghua.edu.cn/simple</a> tensorflow-gpu </li>
+<li><p>永久修改，一劳永逸：<br>Linux下，修改 ~/.pip/pip.conf (没有就创建一个文件夹及文件。文件夹要加“.”，表示是隐藏文件夹)<br>内容如下： </p>
+<ul>
+<li><p>阿里源（非常快）</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs pgsql">[<span class="hljs-keyword">global</span>]<br><span class="hljs-keyword">index</span>-url = https://mirrors.aliyun.com/pypi/simple/<br><br>[install]<br><span class="hljs-keyword">trusted</span>-host=mirrors.aliyun.com<br></code></pre></td></tr></table></figure>
+</li>
+<li><p>清华源（贼鸡儿的快）</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs pgsql">[<span class="hljs-keyword">global</span>]<br><span class="hljs-keyword">index</span>-url = https://pypi.tuna.tsinghua.edu.cn/simple<br><br>[install]<br><span class="hljs-keyword">trusted</span>-host = https://pypi.tuna.tsinghua.edu.cn<br></code></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<p>PS: windows下，直接在user目录中创建一个pip目录，如：C:\Users\xx\pip，新建文件pip.ini。内容同上。</p>
+<h2 id="安装-Anaconda3"><a href="#安装-Anaconda3" class="headerlink" title="安装 Anaconda3"></a>安装 Anaconda3</h2><figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">yum</span> -y install wget<br><span class="hljs-attribute">sudo</span> wget -c https://mirrors.tuna.tsinghua.edu.cn/anaconda/archive/Anaconda3-<span class="hljs-number">2022</span>.<span class="hljs-number">10</span>-Linux-x86_64.sh<br><span class="hljs-attribute">bash</span> Anaconda3-<span class="hljs-number">2022</span>.<span class="hljs-number">10</span>-Linux-x86_64.sh<br></code></pre></td></tr></table></figure>
+<figure class="highlight gams"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs gams"><span class="hljs-symbol">$</span> Do you accept the license terms? [<span class="hljs-keyword">yes</span>|<span class="hljs-keyword">no</span>]<br><span class="hljs-symbol">$</span> [<span class="hljs-keyword">no</span>] &gt;&gt;&gt;<br><span class="hljs-symbol">$</span> Please answer <span class="hljs-string">&#x27;yes&#x27;</span> <span class="hljs-keyword">or</span> <span class="hljs-string">&#x27;no&#x27;</span>:<br><span class="hljs-symbol">$</span> &gt;&gt;&gt; <span class="hljs-keyword">yes</span><br><span class="hljs-symbol">$</span> ...<br><span class="hljs-symbol">$</span> Anaconda3 will now be installed into this location:<br><span class="hljs-symbol">$</span> /root/anaconda3<br><span class="hljs-symbol">$</span> /home/ningshixian/anaconda3<br><span class="hljs-symbol">$</span> <br><span class="hljs-symbol">$</span> - Press ENTER to confirm the location<br><span class="hljs-symbol">$</span> - Press CTRL-C to <span class="hljs-keyword">abort</span> the installation<br><span class="hljs-symbol">$</span> - <span class="hljs-keyword">Or</span> specify a different location below<br><span class="hljs-symbol">$</span> <br><span class="hljs-symbol">$</span> [/root/anaconda3] &gt;&gt;&gt; 更改要输入绝对路径<br><span class="hljs-symbol">$</span> ...<br><span class="hljs-symbol">$</span> Do you wish the installer to initialize Anaconda3<br><span class="hljs-symbol">$</span> by running conda init? [<span class="hljs-keyword">yes</span>|<span class="hljs-keyword">no</span>]<br><span class="hljs-symbol">$</span> [<span class="hljs-keyword">no</span>] &gt;&gt;&gt; <span class="hljs-keyword">no</span><br><span class="hljs-symbol">$</span> ...<br></code></pre></td></tr></table></figure>
+<p>安装成功之后，配置环境变量</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">vi ~/.bashrc				<span class="hljs-comment"># 每次启动新shell时运行的命令</span><br>vi ~/.bash_profile	<span class="hljs-comment"># 只运行一次，如定义环境变量PATH</span><br></code></pre></td></tr></table></figure>
+<p>在文件最后加入如下语句（路径需要根据自己的安装位置更改）</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs routeros"><span class="hljs-built_in">export</span> <span class="hljs-attribute">PATH</span>=<span class="hljs-string">&quot;/home/ningshixian/anaconda3/bin:<span class="hljs-variable">$PATH</span>&quot;</span><br></code></pre></td></tr></table></figure>
+<p>按住shift键+:键，输入wq，保存文件并退出；最后使用如下命令刷新环境变量即可：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">source</span> ~/.bashrc<br></code></pre></td></tr></table></figure>
+<p>检查是否成功</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">which</span> conda<br><span class="hljs-built_in">which</span> pip<br></code></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=anaconda&amp;spm=1001.2101.3001.7020">anaconda</a>安装完成后需要更换为清华源以提高相关包的下载速度，在终端依次执行这些命令：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs python">conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/conda-forge/<br>conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/<br>conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/<br>conda config --append channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/fastai/<br>conda config --append channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/pytorch/<br>conda config --append channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/bioconda/<br> <br><span class="hljs-comment"># 搜索时显示通道地址</span><br>conda config --<span class="hljs-built_in">set</span> show_channel_urls yes<br></code></pre></td></tr></table></figure>
+<h2 id="Conda-虚拟环境"><a href="#Conda-虚拟环境" class="headerlink" title="Conda 虚拟环境"></a>Conda 虚拟环境</h2><p>创建</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs awk">conda create --name gptenv python=<span class="hljs-number">3.9</span><br><br>python -m pip install -i https:<span class="hljs-regexp">//mi</span>rrors.aliyun.com<span class="hljs-regexp">/pypi/</span>simple/ -U setuptools<br></code></pre></td></tr></table></figure>
+<p>_安装好后，使用activate激活某个环境_</p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs applescript"><span class="hljs-built_in">activate</span> python34 <span class="hljs-comment"># for Windows</span><br> <br>source <span class="hljs-built_in">activate</span> python34 <span class="hljs-comment"># for Linux &amp; Mac</span><br></code></pre></td></tr></table></figure>
+<p>退出虚拟环境</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">deactivate python34 <span class="hljs-comment"># for Windows</span><br><br><span class="hljs-built_in">source</span> deactivate python34 <span class="hljs-comment"># for Linux &amp; Mac</span><br></code></pre></td></tr></table></figure>
+<p>查看所有已安装虚拟环境</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">conda <span class="hljs-built_in">env</span> list<br></code></pre></td></tr></table></figure>
+<p><strong>复制别人的虚拟环境</strong></p>
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs crmsh">conda create -n BBB --<span class="hljs-keyword">clone</span> <span class="hljs-title">AAA</span><br></code></pre></td></tr></table></figure>
+<p>_删除一个已有的环境_</p>
+<figure class="highlight fortran"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs fortran">conda remove -<span class="hljs-keyword">name</span> myenv --<span class="hljs-built_in">all</span><br></code></pre></td></tr></table></figure>
+<h2 id="Poetry-虚拟环境-推荐使用"><a href="#Poetry-虚拟环境-推荐使用" class="headerlink" title="Poetry 虚拟环境(推荐使用)"></a><a target="_blank" rel="noopener" href="https://blog.kyomind.tw/python-poetry/">Poetry 虚拟环境(推荐使用)</a></h2><p>Poetry 是后期之秀，支持多种虚拟环境管理，提供依赖关系校验，和依赖的 poetry.lock 文件，也有自动管理依赖的操作。同时可以用于 Python 工程打包和发布。</p>
+<p>它允许您声明您的项目所依赖的库，它将为您管理（安装/更新）它们。Poetry 提供了一个锁定文件以确保可重复安装，并可以构建您的项目以供分发。 poetry 通过配置文件 pyproject.toml 来完成依赖管理、环境配置、基本信息配置等功能，相当于把 Python 项目中的 Pipfile、setup.py、setup.cfg、requirements.txt、MANIFEST.in 融合到一起。</p>
+<p><strong>安装：</strong><br><figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs ada">pip install poetry<br>poetry <span class="hljs-comment">--version</span><br></code></pre></td></tr></table></figure></p>
+<p><strong>使用：</strong><br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 初始化项目，创建当前项目的虚拟环境，生成 `pyproject.toml` 文件</span><br>poetry init<br><br><span class="hljs-comment"># 进入当前项目的虚拟环境</span><br>poetry shell<br><br><span class="hljs-comment"># 安装依赖</span><br>poetry add tox requests<br><span class="hljs-comment"># 更新指定的依赖</span><br>poetry update requests==<span class="hljs-number">1.2</span><span class="hljs-number">.1</span><br><span class="hljs-comment"># 卸载依赖库</span><br>poetry remove scrapy<br><br><span class="hljs-comment"># 部署&amp;安装pyproject.toml文件中的全部依赖</span><br>poetry install<br><br><span class="hljs-comment"># 查看所有依赖</span><br>poetry show<br><span class="hljs-comment"># 仅所有开发依赖</span><br>poetry show --only dev <br><span class="hljs-comment"># 生成 requirements.txt</span><br>poetry export -f requirements.txt --output --without-hashes<br><br><span class="hljs-comment"># 查找当前项目的虚拟环境</span><br>poetry enb <span class="hljs-built_in">list</span> --full-path<br><span class="hljs-comment"># 删除虚拟环境路径，指定对应的解析器版本即可</span><br>poetry env remove &lt;python3&gt;<br><br><span class="hljs-comment"># 构建项目（略）</span><br>poetry build<br><br><span class="hljs-comment"># 发布项目（略）</span><br>poetry publish<br></code></pre></td></tr></table></figure></p>
+<h2 id="安装TensorFlow"><a href="#安装TensorFlow" class="headerlink" title="安装TensorFlow"></a>安装TensorFlow</h2><ul>
+<li>先查看<a target="_blank" rel="noopener" href="https://tensorflow.google.cn/install/source#linux">tensorflow CUDA cudnn 版本对应关系</a> ↓ </li>
+<li><figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">pip</span> install tensorflow-gpu==<span class="hljs-number">1</span>.<span class="hljs-number">14</span>.<span class="hljs-number">0</span><br></code></pre></td></tr></table></figure>
+</li>
+</ul>
+<ul>
+<li>验证是否安装成功 (<a target="_blank" rel="noopener" href="https://blog.csdn.net/Zlase/article/details/79261348">确定自己的TensorFlow是CPU还是GPU的版本</a>) <figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs haskell"><span class="hljs-keyword">import</span> tensorflow <span class="hljs-keyword">as</span> tf<br><span class="hljs-title">tf</span>.test.gpu_device_name()<br><span class="hljs-title">tf</span>.test.is_gpu_available()<br><br><span class="hljs-meta">#下方有大段显示GPU信息表示安装成功</span><br></code></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="安装-Keras"><a href="#安装-Keras" class="headerlink" title="安装 Keras"></a>安装 Keras</h2><figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cmake">sudo pip <span class="hljs-keyword">install</span> keras<br></code></pre></td></tr></table></figure>
+<h2 id="错误解决"><a href="#错误解决" class="headerlink" title="错误解决"></a>错误解决</h2><h3 id="1-so文件找不到的错误"><a href="#1-so文件找不到的错误" class="headerlink" title="1. so文件找不到的错误"></a>1. so文件找不到的错误</h3><figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">2019</span>-<span class="hljs-number">11</span>-<span class="hljs-number">04</span> <span class="hljs-number">21</span>:<span class="hljs-number">46</span>:<span class="hljs-number">44</span>.<span class="hljs-number">297090</span>: W tensorflow/stream_executor/platform/default/dso_loader.cc:<span class="hljs-number">55</span>] Could not load dynamic library &#x27;libcudart.so.<span class="hljs-number">10</span>.<span class="hljs-number">0</span>&#x27;; dlerror: libcudart.so.<span class="hljs-number">10</span>.<span class="hljs-number">0</span>: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /usr/local/cuda-<span class="hljs-number">10</span>.<span class="hljs-number">1</span>/lib64:/usr/local/cuda-<span class="hljs-number">10</span>.<span class="hljs-number">1</span>/lib64<br><br><span class="hljs-attribute">2019</span>-<span class="hljs-number">11</span>-<span class="hljs-number">04</span> <span class="hljs-number">21</span>:<span class="hljs-number">46</span>:<span class="hljs-number">44</span>.<span class="hljs-number">300375</span>: I tensorflow/stream_executor/platform/default/dso_loader.cc:<span class="hljs-number">44</span>] Successfully opened dynamic library libcublas.so.<span class="hljs-number">10</span>.<span class="hljs-number">0</span><br><br><span class="hljs-attribute">2019</span>-<span class="hljs-number">11</span>-<span class="hljs-number">04</span> <span class="hljs-number">21</span>:<span class="hljs-number">46</span>:<span class="hljs-number">44</span>.<span class="hljs-number">300532</span>: W tensorflow/stream_executor/platform/default/dso_loader.cc:<span class="hljs-number">55</span>] Could not load dynamic library &#x27;libcufft.so.<span class="hljs-number">10</span>.<span class="hljs-number">0</span>&#x27;; dlerror: libcufft.so.<span class="hljs-number">10</span>.<span class="hljs-number">0</span>: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /usr/local/cuda-<span class="hljs-number">10</span>.<span class="hljs-number">1</span>/lib64:/usr/local/cuda-<span class="hljs-number">10</span>.<span class="hljs-number">1</span>/lib64<br><br><span class="hljs-attribute">2019</span>-<span class="hljs-number">11</span>-<span class="hljs-number">04</span> <span class="hljs-number">21</span>:<span class="hljs-number">46</span>:<span class="hljs-number">44</span>.<span class="hljs-number">300625</span>: W tensorflow/stream_executor/platform/default/dso_loader.cc:<span class="hljs-number">55</span>] Could not load dynamic library &#x27;libcurand.so.<span class="hljs-number">10</span>.<span class="hljs-number">0</span>&#x27;; dlerror: libcurand.so.<span class="hljs-number">10</span>.<span class="hljs-number">0</span>: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /usr/local/cuda-<span class="hljs-number">10</span>.<span class="hljs-number">1</span>/lib64:/usr/local/cuda-<span class="hljs-number">10</span>.<span class="hljs-number">1</span>/lib64<br><br><span class="hljs-attribute">2019</span>-<span class="hljs-number">11</span>-<span class="hljs-number">04</span> <span class="hljs-number">21</span>:<span class="hljs-number">46</span>:<span class="hljs-number">44</span>.<span class="hljs-number">300739</span>: W tensorflow/stream_executor/platform/default/dso_loader.cc:<span class="hljs-number">55</span>] Could not load dynamic library &#x27;libcusolver.so.<span class="hljs-number">10</span>.<span class="hljs-number">0</span>&#x27;; dlerror: libcusolver.so.<span class="hljs-number">10</span>.<span class="hljs-number">0</span>: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /usr/local/cuda-<span class="hljs-number">10</span>.<span class="hljs-number">1</span>/lib64:/usr/local/cuda-<span class="hljs-number">10</span>.<span class="hljs-number">1</span>/lib64<br><br><span class="hljs-attribute">2019</span>-<span class="hljs-number">11</span>-<span class="hljs-number">04</span> <span class="hljs-number">21</span>:<span class="hljs-number">46</span>:<span class="hljs-number">44</span>.<span class="hljs-number">300822</span>: W tensorflow/stream_executor/platform/default/dso_loader.cc:<span class="hljs-number">55</span>] Could not load dynamic library &#x27;libcusparse.so.<span class="hljs-number">10</span>.<span class="hljs-number">0</span>&#x27;; dlerror: libcusparse.so.<span class="hljs-number">10</span>.<span class="hljs-number">0</span>: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /usr/local/cuda-<span class="hljs-number">10</span>.<span class="hljs-number">1</span>/lib64:/usr/local/cuda-<span class="hljs-number">10</span>.<span class="hljs-number">1</span>/lib64<br><br><span class="hljs-attribute">2019</span>-<span class="hljs-number">11</span>-<span class="hljs-number">04</span> <span class="hljs-number">21</span>:<span class="hljs-number">46</span>:<span class="hljs-number">44</span>.<span class="hljs-number">309809</span>: I tensorflow/stream_executor/platform/default/dso_loader.cc:<span class="hljs-number">44</span>] Successfully opened dynamic library libcudnn.so.<span class="hljs-number">7</span><br><br><span class="hljs-attribute">2019</span>-<span class="hljs-number">11</span>-<span class="hljs-number">04</span> <span class="hljs-number">21</span>:<span class="hljs-number">46</span>:<span class="hljs-number">44</span>.<span class="hljs-number">309870</span>: W tensorflow/core/common_runtime/gpu/gpu_device.cc:<span class="hljs-number">1641</span>] Cannot dlopen some GPU libraries. Please make sure the missing libraries mentioned above are installed properly if you would like to use GPU. Follow the guide at https://www.tensorflow.org/install/gpu for how to download and setup the required libraries for your platform.<br><span class="hljs-attribute">Skipping</span> registering GPU devices...<br></code></pre></td></tr></table></figure>
+<p>主要错误信息为<code>Could not dlopen library &#39;libcublas.so.10.0&#39;</code>。造成这样的原因是链接文件不对造成的。这种问题很好解决，下面我罗列一些常发生这样错误的<code>so</code>文件解决办法，首先大家要确定报错的<code>so</code>文件名称是什么，例如上面报错的是<code>libcublas.so.10.0</code>这个文件，那么就找到对应的<code>libcublas</code>库文件，然后在<code>/usr/local/cuda-10.1/lib64/</code>目录下创建一个<code>libbcublas.so.10.0</code>链接文件即可。</p>
+<p>出现该错误消息，表示会使用CPU，它可以识别GPU，但找不到与cuda相关的库文件。（CUDA 10.1或10.0文件内容似乎没有太大不同……<a target="_blank" rel="noopener" href="http://ejklike.github.io/2019/08/19/insatall-tensorflow-2.0.0-beta1-in-ubuntu-with-cuda-10-1.html">参考</a>）</p>
+<p><strong>解决方法</strong></p>
+<ol>
+<li>要么将cuda降为10.0;</li>
+<li>要么则执行软链接命令</li>
+</ol>
+<blockquote>
+<p>根据配置文件  LD_LIBRARY_PATH=lib_.so.10.1_<br>将相应的库文件软链接到<code>/usr/local/cuda-10.0/lib64/</code>，使得可以找到<code>*.so.10.0</code><br>在路径中找到对应的文件，为找不到的lib*.so.10.0创建符号链接</p>
+</blockquote>
+<p>创建一个CUDA 10.0文件夹（可省略此步）</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs awk">sudo cp -r <span class="hljs-regexp">/usr/</span>local<span class="hljs-regexp">/cuda-10.1 /u</span>sr<span class="hljs-regexp">/local/</span>cuda-<span class="hljs-number">10.0</span><br></code></pre></td></tr></table></figure>
+<p>针对性软链接</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs gradle"># libcudart也可能是这个 sudo ln -s <span class="hljs-regexp">/usr/</span>local<span class="hljs-regexp">/cuda-10.1/</span>lib64<span class="hljs-regexp">/libcudart.so.10.1.243 /u</span>sr<span class="hljs-regexp">/local/</span>cuda-<span class="hljs-number">10.0</span><span class="hljs-regexp">/lib64/</span>libcudart.so.<span class="hljs-number">10.0</span><br><br>sudo ln -s <span class="hljs-regexp">/usr/</span>local<span class="hljs-regexp">/cuda-10.1/</span>lib64<span class="hljs-regexp">/libcudart.so.10.1.1.243 /u</span>sr<span class="hljs-regexp">/local/</span>cuda-<span class="hljs-number">10.0</span><span class="hljs-regexp">/lib64/</span>libcudart.so.<span class="hljs-number">10.0</span><br>sudo ln -s <span class="hljs-regexp">/usr/</span>local<span class="hljs-regexp">/cuda-10.1/</span>lib64<span class="hljs-regexp">/libcublas.so.10.1.1.243 /u</span>sr<span class="hljs-regexp">/local/</span>cuda-<span class="hljs-number">10.0</span><span class="hljs-regexp">/lib64/</span>libcublas.so.<span class="hljs-number">10.0</span><br>sudo ln -s <span class="hljs-regexp">/usr/</span>local<span class="hljs-regexp">/cuda-10.1/</span>lib64<span class="hljs-regexp">/libcufft.so.10.1.1.243 /u</span>sr<span class="hljs-regexp">/local/</span>cuda-<span class="hljs-number">10.0</span><span class="hljs-regexp">/lib64/</span>libcufft.so.<span class="hljs-number">10.0</span><br>sudo ln -s <span class="hljs-regexp">/usr/</span>local<span class="hljs-regexp">/cuda-10.1/</span>lib64<span class="hljs-regexp">/libcurand.so.10.1.1.243 /u</span>sr<span class="hljs-regexp">/local/</span>cuda-<span class="hljs-number">10.0</span><span class="hljs-regexp">/lib64/</span>libcurand.so.<span class="hljs-number">10.0</span><br>sudo ln -s <span class="hljs-regexp">/usr/</span>local<span class="hljs-regexp">/cuda-10.1/</span>lib64<span class="hljs-regexp">/libcusolver.so.10.2.0.243 /u</span>sr<span class="hljs-regexp">/local/</span>cuda-<span class="hljs-number">10.0</span><span class="hljs-regexp">/lib64/</span>libcusolver.so.<span class="hljs-number">10.0</span><br>sudo ln -s <span class="hljs-regexp">/usr/</span>local<span class="hljs-regexp">/cuda-10.1/</span>lib64<span class="hljs-regexp">/libcusparse.so.10.3.0.243 /u</span>sr<span class="hljs-regexp">/local/</span>cuda-<span class="hljs-number">10.0</span><span class="hljs-regexp">/lib64/</span>libcusparse.so.<span class="hljs-number">10.0</span><br><br>sudo ln -s <span class="hljs-regexp">/usr/</span>lib64<span class="hljs-regexp">/libcublas.so.10.2.1.243 /u</span>sr<span class="hljs-regexp">/local/</span>cuda-<span class="hljs-number">10.0</span><span class="hljs-regexp">/lib64/</span>libcublas.so.<span class="hljs-number">10.0</span><br></code></pre></td></tr></table></figure>
+<p>再次修改环境配置</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs bash">vi ~/.bashrc<br><br><span class="hljs-built_in">export</span> PATH=/usr/local/cuda-10.0/bin<span class="hljs-variable">$&#123;PATH:+:<span class="hljs-variable">$&#123;PATH&#125;</span>&#125;</span><br><span class="hljs-built_in">export</span> LD_LIBRARY_PATH=/usr/local/cuda-10.0/lib64<span class="hljs-variable">$&#123;LD_LIBRARY_PATH:+:<span class="hljs-variable">$&#123;LD_LIBRARY_PATH&#125;</span>&#125;</span><br><span class="hljs-built_in">export</span> LD_LIBRARY_PATH=/usr/local/cuda-10.0/extras/CUPTI/lib64:<span class="hljs-variable">$LD_LIBRARY_PATH</span><br><br><span class="hljs-built_in">source</span> ~/.bashrc<br></code></pre></td></tr></table></figure>
+<p>PS: 以上 <code>cuda-10.0</code> 应该都可以换成 <code>cuda-10.1</code></p>
+<p>若出现 Error: failed to create symbolic link，可采取强制覆盖方法</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs awk">ln -sf sudo ln -s <span class="hljs-regexp">/usr/</span>local<span class="hljs-regexp">/cuda-10.1/</span>lib64<span class="hljs-regexp">/libcudart.so.10.1.243 /u</span>sr<span class="hljs-regexp">/local/</span>cuda-<span class="hljs-number">10.0</span><span class="hljs-regexp">/lib64/</span>libcudart.so.<span class="hljs-number">10.0</span><br></code></pre></td></tr></table></figure>
+<h3 id="2-cuda-driver的驱动器跟cuda不匹配"><a href="#2-cuda-driver的驱动器跟cuda不匹配" class="headerlink" title="2. cuda driver的驱动器跟cuda不匹配"></a>2. cuda driver的驱动器跟cuda不匹配</h3><blockquote>
+<p>Failed to initialize NVML: Driver/library version mismatch</p>
+</blockquote>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ada">在版本不匹配时，适当降低或者更新驱动器版本即可。另外驱动器版本更新之后可能需要重启系统，当然通过如下方法不用重启也可以更新版本。首先尝试删除nvidia相关的kernel <span class="hljs-keyword">mod</span>。<br></code></pre></td></tr></table></figure>
+<p>sudo rmmod nvidia<br><figure class="highlight oxygene"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs oxygene"><br>当然这里一般会报个<span class="hljs-keyword">Module</span> nvidia <span class="hljs-keyword">is</span> <span class="hljs-keyword">in</span> use <span class="hljs-keyword">by</span>的错误。不碍事，我们先查看下kernel <span class="hljs-keyword">mod</span> 的依赖情况：<br></code></pre></td></tr></table></figure><br>ls mod | grep nvidia<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs"><br>根据根据结果逐一rmmod即可。<br></code></pre></td></tr></table></figure><br>sudo rmmod nvidia_uvm<br>sudo rmmod nvidia_modeset<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs"><br>最后再rmmod nvidia即可达到驱动器更新效果。<br></code></pre></td></tr></table></figure><br>sudo rmmod nvidia<br>nvidia-smi<br><figure class="highlight clean"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs clean">```<br><br>### <span class="hljs-number">3.</span>多个 cuda 版本之间进行切换<br><br></code></pre></td></tr></table></figure></p>
+<h1 id="在切换cuda版本时"><a href="#在切换cuda版本时" class="headerlink" title="在切换cuda版本时"></a>在切换cuda版本时</h1><p>rm -rf /usr/local/cuda#删除之前创建的软链接<br>sudo ln -s /usr/local/cuda-8.0/ /usr/local/cuda/<br>nvcc —version #查看当前 cuda 版本</p>
+<p>nvcc: NVIDIA (R) Cuda compiler driver<br>Copyright (c) 2005-2016 NVIDIA Corporation<br>Built on Mon_Jan_23_12:24:11_CST_2017<br>Cuda compilation tools, release 8.0, V8.0.62</p>
+<h1 id="cuda8-0-切换到-cuda9-0"><a href="#cuda8-0-切换到-cuda9-0" class="headerlink" title="cuda8.0 切换到 cuda9.0"></a>cuda8.0 切换到 cuda9.0</h1><p>rm -rf /usr/local/cuda<br>sudo ln -s /usr/local/cuda-9.0/ /usr/local/cuda/<br>nvcc —version<br><figure class="highlight node-repl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs node-repl"><br>### 4. tensorflow-gpu运行出错: Could not create cudnn handle<br><br>错误信息如下：<br><br><span class="hljs-meta prompt_">&gt;</span> <span class="language-javascript"><span class="hljs-title class_">Successfully</span> opened dynamic library libcublas.<span class="hljs-property">so</span><span class="hljs-number">.10</span><span class="hljs-number">.0</span></span><br><span class="hljs-meta prompt_">&gt;</span> <span class="language-javascript"> </span><br><span class="hljs-meta prompt_">&gt;</span> <span class="language-javascript">failed to create **cublas** <span class="hljs-attr">handle</span>: **<span class="hljs-variable constant_">CUBLAS</span>**_STATUS_NOT_INITIALIZED</span><br><span class="hljs-meta prompt_">&gt;</span> <span class="language-javascript"> </span><br><span class="hljs-meta prompt_">&gt;</span> <span class="language-javascript"><span class="hljs-title class_">Successfully</span> opened dynamic library libcudnn.<span class="hljs-property">so</span><span class="hljs-number">.7</span></span><br><span class="hljs-meta prompt_">&gt;</span> <span class="language-javascript"> </span><br><span class="hljs-meta prompt_">&gt;</span> <span class="language-javascript"><span class="hljs-title class_">Could</span> not create **cudnn** <span class="hljs-attr">handle</span>: **<span class="hljs-variable constant_">CUDNN</span>**_STATUS_NOT_INITIALIZED</span><br><span class="hljs-meta prompt_">&gt;</span> <span class="language-javascript"> </span><br><span class="hljs-meta prompt_">&gt;</span> <span class="language-javascript"><span class="hljs-title class_">Possibly</span> insufficient driver <span class="hljs-attr">version</span>: <span class="hljs-number">418.87</span><span class="hljs-number">.0</span></span><br><br><br>[解决：](https://github.com/pcpLiu/DeepSeqPan/issues/2)<br><br></code></pre></td></tr></table></figure><br>In the end, the problem was that it did not use the system’s Cudnn version but an incompatible version which came with the creation of the Anaconda environment. By overwriting this with the system’s version manually, I could solve the problem.<br><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs awk"><br>无效解决方案<span class="hljs-number">1</span>：也即cudnn的版本错误（按照conda list显示的cuda版本[必须低于](https:<span class="hljs-regexp">//</span>webcache.googleusercontent.com<span class="hljs-regexp">/search?q=cache:8vC2brZLV20J:https:/</span><span class="hljs-regexp">/www.machunjie.com/m</span>essage-board+&amp;cd=<span class="hljs-number">19</span>&amp;hl=zh-CN&amp;ct=clnk&amp;gl=us)nvcc -V查看的系统版本），导致[对应cublas64_10.dll出错](https:<span class="hljs-regexp">//</span>www.geek-share.com<span class="hljs-regexp">/detail/</span><span class="hljs-number">2806021724</span>.html)，重新将手动安装的cudnn文件覆盖就行？<br><br>无效解决方案<span class="hljs-number">2</span>：pytorch构建数据集时调用了gpu导致tensorflow不能占用gpu了？<br><br>无效解决方案<span class="hljs-number">3</span>：`sudo rm -f ~/.nv`<br><br>**有效解决方案：**重新建一个虚拟环境，重新安装依赖包，记得在 ~/.bashrc 里再设置一下对应版本cuda的环境变量，问题解决👍🏻<br><br><span class="hljs-comment">## 免费的GPU资源</span><br><br>colab地址：<br><br></code></pre></td></tr></table></figure><br><a target="_blank" rel="noopener" href="https://colab.research.google.com/notebooks/">https://colab.research.google.com/notebooks/</a><br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs"><br>kaggle地址：<br><br></code></pre></td></tr></table></figure><br><a target="_blank" rel="noopener" href="https://www.kaggle.com/">https://www.kaggle.com/</a><br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs"><br>nvidia官方文档地址：<br><br></code></pre></td></tr></table></figure><br><a target="_blank" rel="noopener" href="https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html">https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html</a><br>```</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://wilhelmguo.cn/blog/post/william/Centos-7-%E5%AE%89%E8%A3%85-Nvidia-GPU-%E9%A9%B1%E5%8A%A8%E5%8F%8A-CUDA">Centos 7 安装 Nvidia GPU 驱动及 CUDA</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_34374211/article/details/81018320">找不到libcublas.so.10.0文件</a> <ol>
+<li><code>tensorflow</code>版本与<code>CUDA</code>的版本不对应</li>
+<li>软链接有误，重新进行链接 （<a target="_blank" rel="noopener" href="http://ejklike.github.io/2019/08/19/insatall-tensorflow-2.0.0-beta1-in-ubuntu-with-cuda-10-1.html">Could not dlopen library ‘libcurand.so.10.0’…LD_LIBRARY_PATH…</a>）</li>
+</ol>
+</li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/chenjiyou363753068/article/details/84374661">cuda程序执行出错: libcudart.so.10.0: cannot open shared object file: No such file or directory</a></li>
+<li><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1055872">用wget下载需要用户名和密码认证的网站或者ftp服务器文件</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_33200967/article/details/80689543">Ubuntu安装和卸载CUDA和CUDNN</a></li>
+<li><a target="_blank" rel="noopener" href="http://queirozf.com/entries/installing-cuda-tk-and-tensorflow-on-a-clean-ubuntu-16-04-install#-sbin-ldconfig-real-usr-local-cuda-lib64-libcudnn-so-5-is-not-a-symbolic-link">Installing CUDA TK 8 and Tensorflow on a Clean Ubuntu 16.04 Install</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzI4MDYzNzg4Mw==&amp;mid=2247490876&amp;idx=5&amp;sn=69c0a904542967d4f97f0a859e6ebcca&amp;chksm=ebb425e8dcc3acfe323e22e3b0a9e69fd00d80c6e93e6718267aff4bfbd680cd055a025822f0&amp;scene=0&amp;xtrack=1#rd">深度学习环境配置有哪些坑？</a></li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">#环境搭建</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>✋🏻手把手搭建深度学习环境</div>
+      <div>http://example.com/2019/10/24/2019-10-24-✋🏻手把手搭建深度学习环境/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>NSX</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2019年10月24日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/10/30/2019-10-30-Python%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%EF%BC%88%E7%BA%BF%E7%A8%8B%20vs%20%E8%BF%9B%E7%A8%8B%EF%BC%89/" title="python并发编程">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">python并发编程</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2019/10/22/2019-10-22-%E2%9C%8D%F0%9F%8F%BBLogging%E5%A6%82%E4%BD%95%E4%BC%98%E9%9B%85%E8%AE%B0%E6%97%A5%E5%BF%97/" title="✍🏻Logging如何优雅记日志">
+                        <span class="hidden-mobile">✍🏻Logging如何优雅记日志</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

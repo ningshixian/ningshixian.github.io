@@ -1,0 +1,676 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="NSX">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="dimsim介绍 论文解读dimsim的python实现   中文的语音相似性Phonetic similarity算法，可以用于语音纠错spelling correction，比如将稀饭修改为喜欢。  dimsim三方库介绍：给定两个相同长度的中文单词，模型确定两个单词之间的距离，并返回几个与给定单词接近的候选单词。它包括 2 个API接口：  get_distance：接收两个短语字符串，返回">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于模糊音的中文匹配Dimsim">
+<meta property="og:url" content="http://example.com/2020/03/31/2020-03-31-Dimsim%E5%9F%BA%E4%BA%8E%E6%A8%A1%E7%B3%8A%E9%9F%B3%E7%9A%84%E4%B8%AD%E6%96%87%E5%8C%B9%E9%85%8D%E7%AE%97%E6%B3%95/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="dimsim介绍 论文解读dimsim的python实现   中文的语音相似性Phonetic similarity算法，可以用于语音纠错spelling correction，比如将稀饭修改为喜欢。  dimsim三方库介绍：给定两个相同长度的中文单词，模型确定两个单词之间的距离，并返回几个与给定单词接近的候选单词。它包括 2 个API接口：  get_distance：接收两个短语字符串，返回">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic1.zhimg.com/80/v2-dfe43afccc8d2fcfce9d1ba9cf69d60c_720w.jpg#height=140&amp;id=T8hIo&amp;originHeight=235&amp;originWidth=652&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=shadow&amp;title=&amp;width=388">
+<meta property="article:published_time" content="2020-03-30T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-24T10:02:50.794Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="Dimsim">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://pic1.zhimg.com/80/v2-dfe43afccc8d2fcfce9d1ba9cf69d60c_720w.jpg#height=140&amp;id=T8hIo&amp;originHeight=235&amp;originWidth=652&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=shadow&amp;title=&amp;width=388">
+  
+  
+  
+  <title>基于模糊音的中文匹配Dimsim - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="基于模糊音的中文匹配Dimsim"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2020-03-31 00:00" pubdate>
+          2020年3月31日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          20 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">基于模糊音的中文匹配Dimsim</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="dimsim介绍"><a href="#dimsim介绍" class="headerlink" title="dimsim介绍"></a>dimsim介绍</h2><blockquote>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/63119038">论文解读</a><br><a target="_blank" rel="noopener" href="https://github.com/System-T/DimSim"><strong>dimsim</strong>的python实现</a> </p>
+</blockquote>
+<p>中文的语音相似性Phonetic similarity算法，可以用于语音纠错spelling correction，比如将<strong>稀饭</strong>修改为<strong>喜欢</strong>。</p>
+<p><img src="https://pic1.zhimg.com/80/v2-dfe43afccc8d2fcfce9d1ba9cf69d60c_720w.jpg#height=140&amp;id=T8hIo&amp;originHeight=235&amp;originWidth=652&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=shadow&amp;title=&amp;width=388" srcset="/img/loading.gif" lazyload alt=""></p>
+<p>dimsim三方库介绍：给定两个相同长度的中文单词，模型确定两个单词之间的距离，并返回几个与给定单词接近的候选单词。它包括 2 个API接口：</p>
+<ul>
+<li>get_distance：接收两个短语字符串，返回两个词语的发音相似度数值，数值越小表示越相似</li>
+<li>get_candidates：接收一个短语字符串，返回相似短语</li>
+</ul>
+<p>代码示例如下：<br><figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs haskell"><span class="hljs-keyword">import</span> dimsim<br><br><span class="hljs-meta"># 计算词语间的发音相似度</span><br><span class="hljs-title">score_py</span> = dimsim.get_distance(<span class="hljs-string">&quot;星辰&quot;</span>, <span class="hljs-string">&quot;姓陈&quot;</span>)<br></code></pre></td></tr></table></figure></p>
+<h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>在语音识别领域，由于我国方言众多，所以需要精准地匹配每个地方的方言目前还不太现实。市面上的语音识别服务基本上对普通话的识别率是最高的，但是也需要用户用很标准的普通话来讲。这就涉及到模糊音匹配的问题了。</p>
+<h2 id="提出问题"><a href="#提出问题" class="headerlink" title="提出问题"></a>提出问题</h2><p>用户说：“大娘水饺好吃吗”，被语音识别成了“大亮睡觉好吃嘛”（举个栗子而已），这个时候怎么将语音识别后的结果转换成我想要的结果。</p>
+<h2 id="单词纠错"><a href="#单词纠错" class="headerlink" title="单词纠错"></a>单词纠错</h2><p>一般来说中文单词的拼写错误大致有这么几种类型：</p>
+<ol>
+<li>字形相似<br>这种在手写字时特别容易出现，比如 “彬彬有礼“ 写成 ”杉杉有礼”。</li>
+<li>读音相似<br>手写字或者拼音输入法时容易出现，比如 “南通市” 写成 “难通市”，前后的读音都是 “nan tong shi”。</li>
+</ol>
+<p>因为汉语表达比较精炼，使用编辑距离去做纠错，效果就很不好，比如 “南通市 – 难通市 – 北通市”，这三者的编辑距离都是 1，就不好判断了。但这时结合拼音去判断，就会发现 “南通市” 与 “难通市” 的相似度高于 “南通市” 与 “北通市” 了。</p>
+<p>所以对于汉字的纠错，我们需要同时结合拼音和字形上的特点：</p>
+<ol>
+<li>读音相似度。示例：<code>胡</code> -&gt; <code>hú</code>，<code>福</code> -&gt; <code>fú</code><br>读音上相对来说好处理一点，我们可以将汉字转成对于的拼音，比如说 “南” 字转成 “nan2”，其中 2 为声调部分，然后对拼音构成的字符串再用传统的相似度匹配算法，比如编辑距离，就可以达到很好的效果。<br>也可以使用 <strong>Soundex 语音算法</strong>，在拼音文字中有时会有会念但不能拼出正确字的情形，可用Soundex做类似模糊匹配的效果。 <blockquote>
+<p>不同这里有一点需要注意，由于不同地区有着各自截然不同的方言，所以在计算相似度时需要适当调整。</p>
+<p>比如许多南方人很难分辨 “L” 和 “N’，他们常常会将这两个音弄混，将“篮球”读作“南球”，而“刘德华”就变成了“牛德华”。</p>
+<p>另外有汉字是多音字，在汉字转拼音时不好处理，因为要考虑所有可能的拼音组合，在极端情况下会导致指数爆炸！例如美团的实现(枚举多音字全排列)。所以我们一般就取该汉字拼音出现次数较多的那个读音</p>
+</blockquote>
+</li>
+</ol>
+<ol>
+<li>字形相似度。示例：<code>门</code> -&gt; <code>37001</code>，<code>闩</code> -&gt; <code>37101</code><br>字形相似读计算是个特别难的问题，一种朴素的思想，便是首先将汉字转化成一组的字母数字的序列，而这个转化所用到的hash算法必须能够将该汉字的字形特征保留下来。利用这样的转化，我们便将汉字字形的相似度问题，变成了两组字母数字序列的相似度问题。而这正是传统相似度匹配算法的强项。<br>这种解决方案的核心，就在于找到一个恰当的hash算法，能够将汉字进行适当的转化，并在转化结果中，保留住汉字的字形特征。<br>曾经有人发明了一种名为 <strong>四角编码</strong> 的汉字检字法来实现这样的算法。四角算法是由王云五于1925年发明，这种编码方式根据汉字所含的单笔或复笔对汉字进行编号，取汉字的左上角，右上角，左下角以及右下角四个角的笔形，将汉字转化成最多五位的阿拉伯数字。 通过将汉字转化成四角编码，再对四角编码的相似度进行计算，便可以得出两个汉字在字形上的相似程度。 <blockquote>
+<p>四角编码：<a target="_blank" rel="noopener" href="http://baike.baidu.com/view/67253.htm?fr=aladdin">http://baike.baidu.com/view/67253.htm?fr=aladdin</a></p>
+</blockquote>
+</li>
+</ol>
+<p>这种编码可以在一定程度上解决形近词的问题，但也有其自身的问题，由于只取汉字的四角笔形，有些外形截然不同的汉字，因为四角结构相同，也拥有同样的四角编码。<br>比如：量 - 6010 ，日 - 6010 ，但它们是不一样的。 </p>
+<p>所以为了解决汉字相似度计算问题，我们可以结合汉字的拼音、声调、四角编码、笔画数、字形结构等来考虑。</p>
+<h2 id="解决思路"><a href="#解决思路" class="headerlink" title="解决思路"></a>解决思路</h2><p>我们的做法：将ASR的2元结果跟姓氏库进行一一模糊匹配，检查用户的拼写是否有错误，如果有的话，给出正确的姓氏，完成姓氏读音纠错。</p>
+<ul>
+<li>中文汉字大致有几个特征：<br>1）声母；2）韵母；3）声调；4）偏旁；5）结构；6）笔画<br>这几个特征中，在语音识别后的处理过程中，1、2、3的权重要高一些，其中，1、2最为重要，也就是语音识别为什么出错的原因，要做的事情就是通过模糊音将声母、韵母来进行匹配。 </li>
+<li>基于语言模型做文本自动纠错 </li>
+<li>查词典 </li>
+</ul>
+<h3 id="词典"><a href="#词典" class="headerlink" title="词典"></a>词典</h3><p>检查一个单词是否拼写错误，我们可以通过查词典找同音词，在词典中查找相似度阈值大于某个特定值的关键词即为候选正确词。</p>
+<h3 id="排序"><a href="#排序" class="headerlink" title="排序"></a>排序</h3><p>如果得到多个正确词，但是通常显示给用户只有一个，按照下面规则对它们进行排序，越前面的规则权重越高。</p>
+<ol>
+<li>同音词优先，同音词之间的顺序由同音词的搜索建议权重决定。搜索建议权重由搜索词的商品数目、搜索次数、添加方式决定。</li>
+<li>拼写相近词的顺序由相似度决定，越相似的词排在越前面。</li>
+</ol>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="http://theautomatic.net/2019/11/13/guide-to-fuzzy-matching-with-python/">PYTHON模糊匹配指南</a><br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/21d13b5778a7">浅谈基于模糊音的中文匹配算法</a><br><a target="_blank" rel="noopener" href="https://jingpeicomp.gitbooks.io/search-platform/algorithm/keyword_corrector.html">搜索关键词纠错算法</a><br>ALi, Min and Danilevsky, Marina and Noeman, Sara and Li, Yunyao_, <a target="_blank" rel="noopener" href="http://aclweb.org/anthology/K18-1043">“DIMSIM: An Accurate Chinese Phonetic Similarity Algorithm Based on Learned High Dimensional Encoding”</a>, Proceedings of the 22nd Conference on Computational Natural Language Learning, 2018.</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Dimsim/">#Dimsim</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>基于模糊音的中文匹配Dimsim</div>
+      <div>http://example.com/2020/03/31/2020-03-31-Dimsim基于模糊音的中文匹配算法/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>NSX</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2020年3月31日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/04/01/2020-04-01-%E9%80%9A%E8%BF%87Python%E6%9D%A5%E6%93%8D%E4%BD%9Ckylin%E6%95%B0%E6%8D%AE/" title="通过Python来操作kylin数据">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">通过Python来操作kylin数据</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/03/31/2020-03-31-FlashText%E5%85%B3%E9%94%AE%E8%AF%8D%E5%BF%AB%E9%80%9F%E5%8C%B9%E9%85%8D/" title="FlashText高效关键词查找与替换">
+                        <span class="hidden-mobile">FlashText高效关键词查找与替换</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

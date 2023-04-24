@@ -1,0 +1,741 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="NSX">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="目录：  Dropout简介 1.1 Dropout出现的原因 1.2 什么是Dropout  Dropout工作流程及使用 2.1 Dropout具体工作流程 2.2 Dropout在神经网络中的使用  为什么说Dropout可以解决过拟合  Dropout在Keras中源码分析">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【转载】深度学习中Dropout原理解析">
+<meta property="og:url" content="http://example.com/2021/08/30/2021-08-30-Dropout%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="目录：  Dropout简介 1.1 Dropout出现的原因 1.2 什么是Dropout  Dropout工作流程及使用 2.1 Dropout具体工作流程 2.2 Dropout在神经网络中的使用  为什么说Dropout可以解决过拟合  Dropout在Keras中源码分析">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic2.zhimg.com/80/v2-5530bdc5d49f9e261975521f8afd35e9_1440w.jpg">
+<meta property="og:image" content="https://pic3.zhimg.com/80/v2-a7b5591feb14da95d29103913b61265a_1440w.jpg">
+<meta property="og:image" content="https://pic3.zhimg.com/80/v2-24f1ffc4ef118948501eb713685c068a_1440w.jpg">
+<meta property="og:image" content="https://pic3.zhimg.com/80/v2-543a000fcfe9778cd64c898c01743aae_1440w.jpg">
+<meta property="og:image" content="https://pic1.zhimg.com/80/v2-11fd2a086d59490cf8121d90c4ec4e68_1440w.jpg">
+<meta property="og:image" content="https://pic4.zhimg.com/80/v2-61933b0548270880aa5d5497ede5b383_1440w.jpg">
+<meta property="og:image" content="https://pic4.zhimg.com/80/v2-335782876686a248b51ff739c7e9b1ff_1440w.jpg">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=w_%7Btest%7D%5E%7B%28l%29%7D%3DpW%5E%7B%28l%29%7D">
+<meta property="og:image" content="https://pic4.zhimg.com/80/v2-696f4b51d51ebc7fa1e50a03785ffc57_1440w.jpg">
+<meta property="article:published_time" content="2021-08-29T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-23T10:28:32.063Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="Dropout">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://pic2.zhimg.com/80/v2-5530bdc5d49f9e261975521f8afd35e9_1440w.jpg">
+  
+  
+  
+  <title>【转载】深度学习中Dropout原理解析 - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="https://zhuanlan.zhihu.com/p/38200980"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-08-30 00:00" pubdate>
+          2021年8月30日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          46 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">https://zhuanlan.zhihu.com/p/38200980</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>目录：</p>
+<ol>
+<li><p>Dropout简介</p>
+<p>1.1 Dropout出现的原因</p>
+<p>1.2 什么是Dropout</p>
+</li>
+<li><p>Dropout工作流程及使用</p>
+<p>2.1 Dropout具体工作流程</p>
+<p>2.2 Dropout在神经网络中的使用</p>
+</li>
+<li><p>为什么说Dropout可以解决过拟合</p>
+</li>
+<li><p>Dropout在Keras中源码分析</p>
+</li>
+</ol>
+<span id="more"></span>
+<h2 id="1-Dropout简介"><a href="#1-Dropout简介" class="headerlink" title="1. Dropout简介"></a><strong>1. Dropout简介</strong></h2><h2 id="1-1-Dropout出现的原因"><a href="#1-1-Dropout出现的原因" class="headerlink" title="1.1 Dropout出现的原因"></a><strong>1.1 Dropout出现的原因</strong></h2><p>在机器学习的模型中，如果模型的参数太多，而训练样本又太少，训练出来的模型很容易产生过拟合的现象。在训练神经网络的时候经常会遇到过拟合的问题，过拟合具体表现在：模型在训练数据上损失函数较小，预测准确率较高；但是在测试数据上损失函数比较大，预测准确率较低。</p>
+<p>过拟合是很多机器学习的通病。如果模型过拟合，那么得到的模型几乎不能用。为了解决过拟合问题，一般会采用模型集成的方法，即训练多个模型进行组合。此时，训练模型费时就成为一个很大的问题，不仅训练多个模型费时，测试多个模型也是很费时。</p>
+<p>综上所述，训练深度神经网络的时候，总是会遇到两大缺点：</p>
+<p>（1）容易过拟合</p>
+<p>（2）费时</p>
+<p>Dropout可以比较有效的缓解过拟合的发生，在一定程度上达到正则化的效果。</p>
+<h2 id="1-2-什么是Dropout"><a href="#1-2-什么是Dropout" class="headerlink" title="1.2 什么是Dropout"></a><strong>1.2 什么是Dropout</strong></h2><p>在2012年，Hinton在其论文《Improving neural networks by preventing co-adaptation of feature detectors》中提出Dropout。当一个复杂的前馈神经网络被训练在小的数据集时，容易造成过拟合。为了防止过拟合，可以通过阻止特征检测器的共同作用来提高神经网络的性能。</p>
+<p>在2012年，Alex、Hinton在其论文《ImageNet Classification with Deep Convolutional Neural Networks》中用到了Dropout算法，用于防止过拟合。并且，这篇论文提到的AlexNet网络模型引爆了神经网络应用热潮，并赢得了2012年图像识别大赛冠军，使得CNN成为图像分类上的核心算法模型。</p>
+<p>随后，又有一些关于Dropout的文章《Dropout:A Simple Way to Prevent Neural Networks from Overfitting》、《Improving Neural Networks with Dropout》、《Dropout as data augmentation》。</p>
+<p>从上面的论文中，我们能感受到Dropout在深度学习中的重要性。那么，到底什么是Dropout呢？</p>
+<p>Dropout可以作为训练深度神经网络的一种trick供选择。在每个训练批次中，通过忽略一半的特征检测器（让一半的隐层节点值为0），可以明显地减少过拟合现象。这种方式可以减少特征检测器（隐层节点）间的相互作用，检测器相互作用是指某些检测器依赖其他检测器才能发挥作用。</p>
+<p>Dropout说的简单一点就是：我们在前向传播的时候，让某个神经元的激活值以一定的概率p停止工作，这样可以使模型泛化性更强，因为它不会太依赖某些局部的特征，如图1所示。</p>
+<p><img src="https://pic2.zhimg.com/80/v2-5530bdc5d49f9e261975521f8afd35e9_1440w.jpg" srcset="/img/loading.gif" lazyload alt="img">图1：使用Dropout的神经网络模型</p>
+<h2 id="2-Dropout工作流程及使用"><a href="#2-Dropout工作流程及使用" class="headerlink" title="2. Dropout工作流程及使用"></a><strong>2. Dropout工作流程及使用</strong></h2><h2 id="2-1-Dropout具体工作流程"><a href="#2-1-Dropout具体工作流程" class="headerlink" title="2.1 Dropout具体工作流程"></a><strong>2.1 Dropout具体工作流程</strong></h2><p>假设我们要训练这样一个神经网络，如图2所示。</p>
+<p><img src="https://pic3.zhimg.com/80/v2-a7b5591feb14da95d29103913b61265a_1440w.jpg" srcset="/img/loading.gif" lazyload alt="img">图2：标准的神经网络</p>
+<p>输入是x输出是y，正常的流程是：我们首先把x通过网络前向传播，然后把误差反向传播以决定如何更新参数让网络进行学习。使用Dropout之后，过程变成如下：</p>
+<p>（1）首先随机（临时）删掉网络中一半的隐藏神经元，输入输出神经元保持不变（图3中虚线为部分临时被删除的神经元）</p>
+<p><img src="https://pic3.zhimg.com/80/v2-24f1ffc4ef118948501eb713685c068a_1440w.jpg" srcset="/img/loading.gif" lazyload alt="img">图3：部分临时被删除的神经元</p>
+<p>（2） 然后把输入x通过修改后的网络前向传播，然后把得到的损失结果通过修改的网络反向传播。一小批训练样本执行完这个过程后，在没有被删除的神经元上按照随机梯度下降法更新对应的参数（w，b）。</p>
+<p>（3）然后继续重复这一过程：</p>
+<ul>
+<li>恢复被删掉的神经元（此时被删除的神经元保持原样，而没有被删除的神经元已经有所更新）</li>
+<li>从隐藏层神经元中随机选择一个一半大小的子集临时删除掉（备份被删除神经元的参数）。</li>
+<li>对一小批训练样本，先前向传播然后反向传播损失并根据随机梯度下降法更新参数（w，b） （没有被删除的那一部分参数得到更新，删除的神经元参数保持被删除前的结果）。</li>
+</ul>
+<p>不断重复这一过程。</p>
+<h2 id="2-2-Dropout在神经网络中的使用"><a href="#2-2-Dropout在神经网络中的使用" class="headerlink" title="2.2 Dropout在神经网络中的使用"></a><strong>2.2 Dropout在神经网络中的使用</strong></h2><p>Dropout的具体工作流程上面已经详细的介绍过了，但是具体怎么让某些神经元以一定的概率停止工作（就是被删除掉）？代码层面如何实现呢？</p>
+<p>下面，我们具体讲解一下Dropout代码层面的一些公式推导及代码实现思路。</p>
+<p>（1）在训练模型阶段</p>
+<p>无可避免的，在训练网络的每个单元都要添加一道概率流程。</p>
+<p><img src="https://pic3.zhimg.com/80/v2-543a000fcfe9778cd64c898c01743aae_1440w.jpg" srcset="/img/loading.gif" lazyload alt="img">图4：标准网络和带有Dropout网络的比较</p>
+<p>对应的公式变化如下：</p>
+<ul>
+<li>没有Dropout的网络计算公式：</li>
+</ul>
+<p><img src="https://pic1.zhimg.com/80/v2-11fd2a086d59490cf8121d90c4ec4e68_1440w.jpg" srcset="/img/loading.gif" lazyload alt="img"></p>
+<ul>
+<li>采用Dropout的网络计算公式：</li>
+</ul>
+<p><img src="https://pic4.zhimg.com/80/v2-61933b0548270880aa5d5497ede5b383_1440w.jpg" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>上面公式中Bernoulli函数是为了生成概率r向量，也就是随机生成一个0、1的向量。</p>
+<p>代码层面实现让某个神经元以概率p停止工作，其实就是让它的激活函数值以概率p变为0。比如我们某一层网络神经元的个数为1000个，其激活函数输出值为y1、y2、y3、……、y1000，我们dropout比率选择0.4，那么这一层神经元经过dropout后，1000个神经元中会有大约400个的值被置为0。</p>
+<p><strong><em>注意：\</em></strong> 经过上面屏蔽掉某些神经元，使其激活值为0以后，我们还需要对向量y1……y1000进行缩放，也就是乘以1/(1-p)。如果你在训练的时候，经过置0后，没有对y1……y1000进行缩放（rescale），那么在测试的时候，就需要对权重进行缩放，操作如下。</p>
+<p>（2）在测试模型阶段</p>
+<p>预测模型的时候，每一个神经单元的权重参数要乘以概率p。</p>
+<p><img src="https://pic4.zhimg.com/80/v2-335782876686a248b51ff739c7e9b1ff_1440w.jpg" srcset="/img/loading.gif" lazyload alt="img">图5：预测模型时Dropout的操作</p>
+<p>测试阶段Dropout公式：</p>
+<p><img src="https://www.zhihu.com/equation?tex=w_%7Btest%7D%5E%7B%28l%29%7D%3DpW%5E%7B%28l%29%7D" srcset="/img/loading.gif" lazyload alt="[公式]"></p>
+<h2 id="3-为什么说Dropout可以解决过拟合？"><a href="#3-为什么说Dropout可以解决过拟合？" class="headerlink" title="3. 为什么说Dropout可以解决过拟合？"></a><strong>3. 为什么说Dropout可以解决过拟合？</strong></h2><p><strong>（1）取平均的作用：</strong> 先回到标准的模型即没有dropout，我们用相同的训练数据去训练5个不同的神经网络，一般会得到5个不同的结果，此时我们可以采用 “5个结果取均值”或者“多数取胜的投票策略”去决定最终结果。例如3个网络判断结果为数字9,那么很有可能真正的结果就是数字9，其它两个网络给出了错误结果。这种“综合起来取平均”的策略通常可以有效防止过拟合问题。因为不同的网络可能产生不同的过拟合，取平均则有可能让一些“相反的”拟合互相抵消。dropout掉不同的隐藏神经元就类似在训练不同的网络，随机删掉一半隐藏神经元导致网络结构已经不同，整个dropout过程就相当于对很多个不同的神经网络取平均。而不同的网络产生不同的过拟合，一些互为“反向”的拟合相互抵消就可以达到整体上减少过拟合。</p>
+<p><strong>（2）减少神经元之间复杂的共适应关系：</strong> 因为dropout程序导致两个神经元不一定每次都在一个dropout网络中出现。这样权值的更新不再依赖于有固定关系的隐含节点的共同作用，阻止了某些特征仅仅在其它特定特征下才有效果的情况 。迫使网络去学习更加鲁棒的特征 ，这些特征在其它的神经元的随机子集中也存在。换句话说假如我们的神经网络是在做出某种预测，它不应该对一些特定的线索片段太过敏感，即使丢失特定的线索，它也应该可以从众多其它线索中学习一些共同的特征。从这个角度看dropout就有点像L1，L2正则，减少权重使得网络对丢失特定神经元连接的鲁棒性提高。</p>
+<p>（3）<strong>Dropout类似于性别在生物进化中的角色：</strong>物种为了生存往往会倾向于适应这种环境，环境突变则会导致物种难以做出及时反应，性别的出现可以繁衍出适应新环境的变种，有效的阻止过拟合，即避免环境改变时物种可能面临的灭绝。</p>
+<h2 id="4-Dropout在Keras中的源码分析"><a href="#4-Dropout在Keras中的源码分析" class="headerlink" title="4. Dropout在Keras中的源码分析"></a><strong>4. Dropout在Keras中的源码分析</strong></h2><p>下面，我们来分析Keras中Dropout实现源码。</p>
+<p>Keras开源项目GitHub地址为：</p>
+<p><a href="https://link.zhihu.com/?target=https%3A//github.com/fchollet/keras/tree/master/keras">https://github.com/fchollet/keras/tree/master/keras</a></p>
+<p>其中Dropout函数代码实现所在的文件地址：</p>
+<p><a href="https://link.zhihu.com/?target=https%3A//github.com/fchollet/keras/blob/master/keras/backend/theano_backend.py">https://github.com/fchollet/keras/blob/master/keras/backend/theano_backend.py</a></p>
+<p>Dropout实现函数如下：</p>
+<p><img src="https://pic4.zhimg.com/80/v2-696f4b51d51ebc7fa1e50a03785ffc57_1440w.jpg" srcset="/img/loading.gif" lazyload alt="img">图6：Keras中实现Dropout功能</p>
+<p>我们对keras中Dropout实现函数做一些修改，让dropout函数可以单独运行。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs python3"># coding:utf-8<br>import numpy as np<br><br># dropout函数的实现<br>def dropout(x, level):<br>    if level &lt; 0. or level &gt;= 1: #level是概率值，必须在0~1之间<br>        raise ValueError(&#x27;Dropout level must be in interval [0, 1[.&#x27;)<br>    retain_prob = 1. - level<br><br>    # 我们通过binomial函数，生成与x一样的维数向量。binomial函数就像抛硬币一样，我们可以把每个神经元当做抛硬币一样<br>    # 硬币 正面的概率为p，n表示每个神经元试验的次数<br>    # 因为我们每个神经元只需要抛一次就可以了所以n=1，size参数是我们有多少个硬币。<br>    random_tensor = np.random.binomial(n=1, p=retain_prob, size=x.shape) #即将生成一个0、1分布的向量，0表示这个神经元被屏蔽，不工作了，也就是dropout了<br>    print(random_tensor)<br><br>    x *= random_tensor<br>    print(x)<br>    x /= retain_prob<br><br>    return x<br><br>#对dropout的测试，大家可以跑一下上面的函数，了解一个输入x向量，经过dropout的结果  <br>x=np.asarray([1,2,3,4,5,6,7,8,9,10],dtype=np.float32)<br>dropout(x,0.4)<br></code></pre></td></tr></table></figure>
+<p>函数中，x是本层网络的激活值。Level就是dropout就是每个神经元要被丢弃的概率。</p>
+<p><strong><em>注意：\</em></strong> Keras中Dropout的实现，是屏蔽掉某些神经元，使其激活值为0以后，对激活值向量x1……x1000进行放大，也就是乘以1/(1-p)。</p>
+<p><strong>思考：</strong>上面我们介绍了两种方法进行Dropout的缩放，那么Dropout为什么需要进行缩放呢？</p>
+<p>因为我们训练的时候会随机的丢弃一些神经元，但是预测的时候就没办法随机丢弃了。如果丢弃一些神经元，这会带来结果不稳定的问题，也就是给定一个测试数据，有时候输出a有时候输出b，结果不稳定，这是实际系统不能接受的，用户可能认为模型预测不准。那么一种”补偿“的方案就是每个神经元的权重都乘以一个p，这样在“总体上”使得测试数据和训练数据是大致一样的。比如一个神经元的输出是x，那么在训练的时候它有p的概率参与训练，(1-p)的概率丢弃，那么它输出的期望是px+(1-p)0=px。因此测试的时候把这个神经元的权重乘以p可以得到同样的期望。</p>
+<p><strong>总结：</strong></p>
+<p>当前Dropout被大量利用于全连接网络，而且一般认为设置为0.5或者0.3，而在卷积网络隐藏层中由于卷积自身的稀疏化以及稀疏化的ReLu函数的大量使用等原因，Dropout策略在卷积网络隐藏层中使用较少。总体而言，Dropout是一个超参，需要根据具体的网络、具体的应用领域进行尝试。</p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ol>
+<li>Hinton G E, Srivastava N, Krizhevsky A, et al. Improving neural networks by preventing co-adaptation of feature detectors[J]. arXiv preprint arXiv:1207.0580, 2012.</li>
+<li>Krizhevsky A, Sutskever I, Hinton G E. Imagenet classification with deep convolutional neural networks[C]//Advances in neural information processing systems. 2012: 1097-1105.</li>
+<li>Srivastava N, Hinton G, Krizhevsky A, et al. Dropout: A simple way to prevent neural networks from overfitting[J]. The Journal of Machine Learning Research, 2014, 15(1): 1929-1958.</li>
+<li>Srivastava N. Improving neural networks with dropout[J]. University of Toronto, 2013, 182.</li>
+<li><p>Bouthillier X, Konda K, Vincent P, et al. Dropout as data augmentation[J]. arXiv preprint arXiv:1506.08700, 2015.</p>
+</li>
+<li><p><a href="https://link.zhihu.com/?target=https%3A//blog.csdn.net/hjimce/article/details/50413257">深度学习（二十二）Dropout浅层理解与实现</a></p>
+</li>
+<li><p><a href="https://link.zhihu.com/?target=https%3A//blog.csdn.net/stdcoutzyx/article/details/49022443">理解dropout</a></p>
+</li>
+<li><p>Dropout解决过拟合问题 - 晓雷的文章 - 知乎</p>
+</li>
+</ol>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/23178423">https://zhuanlan.zhihu.com/p/23178423</a></p>
+<ol>
+<li><p><a href="https://link.zhihu.com/?target=https%3A//blog.csdn.net/qunnie_yi/article/details/80128463">李理：卷积神经网络之Dropout</a></p>
+</li>
+<li><p><a href="https://link.zhihu.com/?target=https%3A//blog.csdn.net/whiteinblue/article/details/37808623">Dropout原理，代码浅析</a></p>
+</li>
+<li><p><a href="https://link.zhihu.com/?target=https%3A//www.cnblogs.com/tornadomeet/p/3258122.html%3F_t_t_t%3D0.09445037946091872">Deep learning：四十一(Dropout简单理解)</a></p>
+</li>
+</ol>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/38200980">https://zhuanlan.zhihu.com/p/38200980</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Dropout/">#Dropout</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>【转载】深度学习中Dropout原理解析</div>
+      <div>http://example.com/2021/08/30/2021-08-30-Dropout原理解析/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>NSX</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年8月30日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/09/06/2021-09-06-%E9%99%8D%E7%BB%B4%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/" title="降维方法总结">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">降维方法总结</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/07/27/2021-07-27-%E4%BB%8E0%E5%BC%80%E5%A7%8B%E7%9F%A5%E8%AF%86%E8%92%B8%E9%A6%8F/" title="从0开始知识蒸馏">
+                        <span class="hidden-mobile">从0开始知识蒸馏</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

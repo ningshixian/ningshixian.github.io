@@ -1,0 +1,1119 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="NSX">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="1. 聚类介绍 聚类试图将数据集中的样本划分为若干个通常是不相交的子集，每个子集称为一个“簇”(cluster). 通过这样的划分，使得同一个簇内的数据对象的相似性尽可能大，同时不在同一个簇中的数据对象的差异性也尽可能地大。 聚类过程仅能自动形成簇结构，簇所对应的概念语义需由使用者自己来把握。 聚类既能作为一个单独的过程用于寻找数据内在的分布结构，也可以作为分类等其他学习任务的前驱过程。  1.1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="文本聚类算法总结">
+<meta property="og:url" content="http://example.com/2021/09/06/2021-09-06-%E6%96%87%E6%9C%AC%E8%81%9A%E7%B1%BB%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="1. 聚类介绍 聚类试图将数据集中的样本划分为若干个通常是不相交的子集，每个子集称为一个“簇”(cluster). 通过这样的划分，使得同一个簇内的数据对象的相似性尽可能大，同时不在同一个簇中的数据对象的差异性也尽可能地大。 聚类过程仅能自动形成簇结构，簇所对应的概念语义需由使用者自己来把握。 聚类既能作为一个单独的过程用于寻找数据内在的分布结构，也可以作为分类等其他学习任务的前驱过程。  1.1">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic3.zhimg.com/80/v2-921d5ff0b665e67d5df54047b9d6531a_1440w.jpg#id=PaP92&amp;originHeight=362&amp;originWidth=1440&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://i1.wp.com/analyticsarora.com/wp-content/uploads/2021/07/euclidean-distance-between-two-points-in-x-y-coordinates.png?resize=800%2C600&amp;ssl=1#id=AHTlA&amp;originHeight=600&amp;originWidth=800&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://i2.wp.com/analyticsarora.com/wp-content/uploads/2021/07/manhattan-distance-between-two-points-in-x-y-coordinates.png?resize=800%2C600&amp;ssl=1#id=uqjXz&amp;originHeight=600&amp;originWidth=800&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://pic2.zhimg.com/80/v2-04a2252ba991e07045613463e0414dc9_1440w.jpg#id=hv6EN&amp;originHeight=494&amp;originWidth=1440&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/843d8aa63286c6920455f9c3605c3e87.svg#id=x1vBU&amp;originHeight=68&amp;originWidth=236&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/3a840486dde29f61a0ec8bccfa2c09ff.svg#id=gu5qD&amp;originHeight=21&amp;originWidth=25&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/932d6a577db749a6bdd2fbe822009ead.svg#id=Urgvp&amp;originHeight=35&amp;originWidth=176&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1guivdot39xj60nl0hkgnt02.jpg#id=WkUiY&amp;originHeight=632&amp;originWidth=849&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/9fafdc95f33bed9348c04625220c11e5.svg#id=Z24x3&amp;originHeight=23&amp;originWidth=130&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/116c79e23707e25a1b0bbb5791245858.svg#id=JI1RR&amp;originHeight=16&amp;originWidth=10&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/b0f80a77b6404455ddb6f55b039e4105.svg#id=mITU7&amp;originHeight=17&amp;originWidth=19&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/116c79e23707e25a1b0bbb5791245858.svg#id=G9NMS&amp;originHeight=16&amp;originWidth=10&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/f80122dd44760c38ab0f530c50496433.svg#id=YDfdv&amp;originHeight=17&amp;originWidth=19&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/ce755bd2c810562b16b377d6d586e552.svg#id=obhgp&amp;originHeight=23&amp;originWidth=51&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/b0f80a77b6404455ddb6f55b039e4105.svg#id=dMN7L&amp;originHeight=17&amp;originWidth=19&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://i1.wp.com/analyticsarora.com/wp-content/uploads/2021/07/elbow-method-example-choosing-number-of-clusters-k-means.png?resize=464%2C299&amp;ssl=1#id=wbgsR&amp;originHeight=299&amp;originWidth=464&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/f81a08fd463c530d8b3e5b5790d35eb9.svg#id=lOfqo&amp;originHeight=18&amp;originWidth=15&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/3070ea35fe1159b870f6aa1cc01738bf.svg#id=XdzXW&amp;originHeight=24&amp;originWidth=52&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/b0f80a77b6404455ddb6f55b039e4105.svg#id=bMKqw&amp;originHeight=17&amp;originWidth=19&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/00ee1bc819cd700380a69cc21d1b9566.svg#id=b6XAW&amp;originHeight=24&amp;originWidth=117&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/374d548f18d9f8ceb9f6b6b779a425ee.svg#id=qRVeN&amp;originHeight=22&amp;originWidth=20&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/d64c74ddfe138ec1221781b174741959.svg#id=KlA3E&amp;originHeight=24&amp;originWidth=96&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/2082e1e10ad0ab302859cf3ad88440fe.svg#id=GCJck&amp;originHeight=28&amp;originWidth=191&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/374d548f18d9f8ceb9f6b6b779a425ee.svg#id=Kdvcu&amp;originHeight=22&amp;originWidth=20&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/488b641047a05746274968f01d03e311.svg#id=JWfWQ&amp;originHeight=21&amp;originWidth=18&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/0ce1d8fcf48d73cefc70b2e4ee02f9e0.svg#id=Ew7s7&amp;originHeight=23&amp;originWidth=187&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/f1d3aeb4edffdd3ab8d6117b3e73e8e9.svg#id=sEUWM&amp;originHeight=25&amp;originWidth=47&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/630550619a4d10bc1e247e086c763726.svg#id=SQDZc&amp;originHeight=24&amp;originWidth=117&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gubps12a4sj60m80f476g02.jpg#id=uDg4i&amp;originHeight=544&amp;originWidth=800&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/f81a08fd463c530d8b3e5b5790d35eb9.svg#id=LdPh4&amp;originHeight=18&amp;originWidth=15&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/54ef450213ab84e5905678533d3cf49b.svg#id=fao4P&amp;originHeight=23&amp;originWidth=63&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/54ef450213ab84e5905678533d3cf49b.svg#id=y6L8W&amp;originHeight=23&amp;originWidth=63&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/f04fcfee63d019e5f5307fb91f61fc50.svg#id=PJ0mY&amp;originHeight=26&amp;originWidth=29&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/3060a084edb504f78286ccd0f43f02b8.svg#id=cYaxY&amp;originHeight=26&amp;originWidth=215&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/f04fcfee63d019e5f5307fb91f61fc50.svg#id=kOmtN&amp;originHeight=26&amp;originWidth=29&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/8192faf97d009a1cd2dcc35d384beabf.svg#id=qCLiS&amp;originHeight=17&amp;originWidth=17&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/3f347a03a31666489c2323ab8ad40e48.svg#id=xOeei&amp;originHeight=26&amp;originWidth=218&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/374d548f18d9f8ceb9f6b6b779a425ee.svg#id=cvjcQ&amp;originHeight=22&amp;originWidth=20&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/f04fcfee63d019e5f5307fb91f61fc50.svg#id=vmDHw&amp;originHeight=26&amp;originWidth=29&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/8192faf97d009a1cd2dcc35d384beabf.svg#id=vOAZ5&amp;originHeight=17&amp;originWidth=17&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/e442a73182d43c1387f88da9af08352b.svg#id=B2jKQ&amp;originHeight=26&amp;originWidth=218&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/374d548f18d9f8ceb9f6b6b779a425ee.svg#id=EoyRy&amp;originHeight=22&amp;originWidth=20&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/f04fcfee63d019e5f5307fb91f61fc50.svg#id=G2QOi&amp;originHeight=26&amp;originWidth=29&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/8192faf97d009a1cd2dcc35d384beabf.svg#id=R8xHI&amp;originHeight=17&amp;originWidth=17&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/f04fcfee63d019e5f5307fb91f61fc50.svg#id=gbstd&amp;originHeight=26&amp;originWidth=29&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/374d548f18d9f8ceb9f6b6b779a425ee.svg#id=N7nbD&amp;originHeight=22&amp;originWidth=20&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/0e16fe56396a2f7dce687a85c073618a.svg#id=chvTC&amp;originHeight=26&amp;originWidth=573&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/f04fcfee63d019e5f5307fb91f61fc50.svg#id=dqwqV&amp;originHeight=26&amp;originWidth=29&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/374d548f18d9f8ceb9f6b6b779a425ee.svg#id=hELxB&amp;originHeight=22&amp;originWidth=20&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/f04fcfee63d019e5f5307fb91f61fc50.svg#id=qU7pU&amp;originHeight=26&amp;originWidth=29&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/8192faf97d009a1cd2dcc35d384beabf.svg#id=r2iqH&amp;originHeight=17&amp;originWidth=17&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/f04fcfee63d019e5f5307fb91f61fc50.svg#id=NbpFb&amp;originHeight=26&amp;originWidth=29&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/374d548f18d9f8ceb9f6b6b779a425ee.svg#id=iY0Y9&amp;originHeight=22&amp;originWidth=20&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/d55aaebfebeeca907473c51e3f925c23.svg#id=gYViR&amp;originHeight=26&amp;originWidth=573&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/f04fcfee63d019e5f5307fb91f61fc50.svg#id=RLaV3&amp;originHeight=26&amp;originWidth=29&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/374d548f18d9f8ceb9f6b6b779a425ee.svg#id=XQuxD&amp;originHeight=22&amp;originWidth=20&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/0ae1a85663b488d8750034f314fead96.svg#id=JDBGA&amp;originHeight=13&amp;originWidth=13&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/4699152c8b2f628460172ab27174e1a5.svg#id=CWuXn&amp;originHeight=17&amp;originWidth=17&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/615142e29a0abd8b3367a4c758a49449.svg#id=iaNSt&amp;originHeight=18&amp;originWidth=13&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/615142e29a0abd8b3367a4c758a49449.svg#id=GYe95&amp;originHeight=18&amp;originWidth=13&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/e6e6add27f1c70cea58a6996c58f9290.svg#id=WA0JY&amp;originHeight=59&amp;originWidth=525&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/7236b04c3ae9e2fe1f55ac3bc9238d52.svg#id=BjlSD&amp;originHeight=25&amp;originWidth=193&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/0ae1a85663b488d8750034f314fead96.svg#id=FPC17&amp;originHeight=13&amp;originWidth=13&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/27938747f32cbc4fe6955e67d8d45c38.svg#id=bgldE&amp;originHeight=17&amp;originWidth=15&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/3415f011eff324713afe399d1786fb13.svg#id=tkmVK&amp;originHeight=14&amp;originWidth=51&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/615142e29a0abd8b3367a4c758a49449.svg#id=Nyny1&amp;originHeight=18&amp;originWidth=13&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/2f60157b69677e2409d7b75a4e7e93b8.svg#id=ikeYQ&amp;originHeight=23&amp;originWidth=37&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/c8de5f756081e9ff0cd9cd9b760c978a.svg#id=eL6Te&amp;originHeight=30&amp;originWidth=250&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/b0f80a77b6404455ddb6f55b039e4105.svg#id=C7Zx8&amp;originHeight=17&amp;originWidth=19&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/1cc9ee66ad19a06d6af2be1a9c20ec5c.svg#id=S9gMP&amp;originHeight=24&amp;originWidth=57&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/92e437054d1e57ccf66e719e1ed2d224.svg#id=IoDZN&amp;originHeight=18&amp;originWidth=11&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/0a569ee146c1c8961d05b2ab03ecc569.svg#id=tLcy8&amp;originHeight=21&amp;originWidth=61&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/da80875b7807995a5f59706235f3e093.svg#id=XCuoK&amp;originHeight=30&amp;originWidth=116&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/8c33c886b45490870d3ebe3746363b97.svg#id=x0P9j&amp;originHeight=23&amp;originWidth=192&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/6226f31bf6ddd7c4d7cc120a488f2f75.svg#id=zC8ZU&amp;originHeight=23&amp;originWidth=157&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/615142e29a0abd8b3367a4c758a49449.svg#id=PrNRv&amp;originHeight=18&amp;originWidth=13&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/fe69bad71d951e0818034cfb04f7570c.svg#id=ChYUZ&amp;originHeight=17&amp;originWidth=15&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/e004a8f6dab99d296b91112533c9519f.svg#id=scUcD&amp;originHeight=23&amp;originWidth=137&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/25dae5efcc84fef1d42af4729d28ab0f.svg#id=kt0V1&amp;originHeight=16&amp;originWidth=130&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/fe69bad71d951e0818034cfb04f7570c.svg#id=gbSYH&amp;originHeight=17&amp;originWidth=15&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/fe69bad71d951e0818034cfb04f7570c.svg#id=c5kDH&amp;originHeight=17&amp;originWidth=15&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/6e3f9b310fc245216d1dd935ccec5553.svg#id=gkHqZ&amp;originHeight=18&amp;originWidth=54&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/f8e74c1578fb89763019f33b5ce97679.svg#id=vTTew&amp;originHeight=24&amp;originWidth=114&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/374d548f18d9f8ceb9f6b6b779a425ee.svg#id=IkMqU&amp;originHeight=22&amp;originWidth=20&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/fe69bad71d951e0818034cfb04f7570c.svg#id=Fiwwv&amp;originHeight=17&amp;originWidth=15&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/018a9976dedfc4fd92b71ea3ea81c577.svg#id=u1YAw&amp;originHeight=60&amp;originWidth=618&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/374d548f18d9f8ceb9f6b6b779a425ee.svg#id=NX9ak&amp;originHeight=22&amp;originWidth=20&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/6e3f9b310fc245216d1dd935ccec5553.svg#id=kl8so&amp;originHeight=18&amp;originWidth=54&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/f81a08fd463c530d8b3e5b5790d35eb9.svg#id=iaiPb&amp;originHeight=18&amp;originWidth=15&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/b0f80a77b6404455ddb6f55b039e4105.svg#id=f6GJJ&amp;originHeight=17&amp;originWidth=19&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/9e0add8aaa3d30f78ba0d9faedcee18e.svg#id=ljIeH&amp;originHeight=23&amp;originWidth=195&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/374d548f18d9f8ceb9f6b6b779a425ee.svg#id=TeJXS&amp;originHeight=22&amp;originWidth=20&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/4dc225dca196ee234da99867bd02f962.svg#id=UxDQN&amp;originHeight=21&amp;originWidth=19&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/dbf731e9b54a1ca6fc5990f2c15926b3.svg#id=qlz8U&amp;originHeight=35&amp;originWidth=260&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/374d548f18d9f8ceb9f6b6b779a425ee.svg#id=GXHtw&amp;originHeight=22&amp;originWidth=20&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/6e3f9b310fc245216d1dd935ccec5553.svg#id=w37my&amp;originHeight=18&amp;originWidth=54&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/3a840486dde29f61a0ec8bccfa2c09ff.svg#id=HzXFB&amp;originHeight=21&amp;originWidth=25&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://static.sitestack.cn/projects/huaxiaozhuan-ai/fe69bad71d951e0818034cfb04f7570c.svg#id=CC1Xo&amp;originHeight=17&amp;originWidth=15&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://pic4.zhimg.com/80/v2-014e1a2055df95e067341cba1809a9af_1440w.jpg#id=ZVgLT&amp;originHeight=576&amp;originWidth=1440&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=X%3D%5Cleft+%5C%7Bx%5E%7B%281%29%7D%2Cx%5E%7B%282%29%7D%2C...%2Cx%5E%7B%28n%29%7D%5Cright+%5C%7D#id=WvKOb&amp;originHeight=39&amp;originWidth=204&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=%5Cvarepsilon#id=cSBrZ&amp;originHeight=13&amp;originWidth=9&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=M#id=KESNV&amp;originHeight=17&amp;originWidth=20&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=%5Cvarepsilon#id=tQJVL&amp;originHeight=13&amp;originWidth=9&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=%5Cvarepsilon#id=kjQhZ&amp;originHeight=13&amp;originWidth=9&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=N_%7B%5Cvarepsilon+%7D%28x%29%3D%5Cleft+%5C%7By%5Cin++X%7Cd%28x%2C+y%29+%3C+%5Cvarepsilon+%5Cright+%5C%7D+%5C%5C#id=zSPxt&amp;originHeight=40&amp;originWidth=600&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=x#id=y738D&amp;originHeight=13&amp;originWidth=11&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=%5Crho+%28x%29%3D%5Cleft+%7C+N_%7B%5Cvarepsilon+%7D%28x%29%5Cright+%7C+%5C%5C#id=i6wfz&amp;originHeight=40&amp;originWidth=600&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=x%5Cin++X#id=qDZHW&amp;originHeight=17&amp;originWidth=49&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=%5Crho+%28x%29+%5Cgeq+M#id=kZEUo&amp;originHeight=23&amp;originWidth=79&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=x#id=q1PI2&amp;originHeight=13&amp;originWidth=11&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=X#id=yArJ9&amp;originHeight=17&amp;originWidth=16&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=X#id=EBfiT&amp;originHeight=17&amp;originWidth=16&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=X_c#id=RgIvj&amp;originHeight=20&amp;originWidth=23&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=X_%7Bnc%7D#id=xFShV&amp;originHeight=20&amp;originWidth=31&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=x%5Cin++X_%7Bnc%7D#id=qI4A7&amp;originHeight=20&amp;originWidth=64&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=%5Cexists+y%5Cin++X#id=Ljp87&amp;originHeight=20&amp;originWidth=58&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=y%5Cin++N_%7B%5Cvarepsilon+%7D%28x%29+%5Ccap+X_c+%5C%5C#id=FELj9&amp;originHeight=40&amp;originWidth=600&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=x#id=C3LHo&amp;originHeight=13&amp;originWidth=11&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=%5Cvarepsilon#id=tUAlp&amp;originHeight=13&amp;originWidth=9&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=x#id=JBGnC&amp;originHeight=13&amp;originWidth=11&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=X#id=oatxR&amp;originHeight=17&amp;originWidth=16&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=X#id=OGj7O&amp;originHeight=17&amp;originWidth=16&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=X_%7Bbd%7D#id=Psyte&amp;originHeight=20&amp;originWidth=30&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=x%5Cin++X_%7Bnc%7D#id=J5RaA&amp;originHeight=20&amp;originWidth=64&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=x#id=sLlm4&amp;originHeight=13&amp;originWidth=11&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=%5Cvarepsilon#id=YlxYk&amp;originHeight=13&amp;originWidth=9&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=x#id=tMsk4&amp;originHeight=13&amp;originWidth=11&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=X#id=Sp9mo&amp;originHeight=17&amp;originWidth=16&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=%5Cvarepsilon#id=B7oOd&amp;originHeight=13&amp;originWidth=9&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=x#id=ME8Pu&amp;originHeight=13&amp;originWidth=11&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=x%5Cin++X%2Cx+%5Cnotin+X_%7Bc%7D%E4%B8%94+x%5Cnotin+X_%7Bbd%7D+%5C%5C#id=M9jlO&amp;originHeight=41&amp;originWidth=600&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=x#id=g0C0n&amp;originHeight=13&amp;originWidth=11&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=M%3D3#id=U2niB&amp;originHeight=17&amp;originWidth=54&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://pic1.zhimg.com/80/v2-7efff68d8eada2472ed0a0372fa0b914_1440w.jpg#id=OX7JL&amp;originHeight=330&amp;originWidth=536&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1guivub1phij60jc0mm0v802.jpg#id=YetGL&amp;originHeight=814&amp;originWidth=696&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=%5Cvarepsilon+#id=oe60x&amp;originHeight=13&amp;originWidth=9&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=M#id=SzpN5&amp;originHeight=17&amp;originWidth=20&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://pic2.zhimg.com/80/v2-be2a7cf798fdc983e6521a68b1eb952d_1440w.jpg#id=eXMcp&amp;originHeight=1002&amp;originWidth=1440&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1guqkyapbvgj616a0bq0ua02.jpg#id=eZQ7M&amp;originHeight=422&amp;originWidth=1522&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/png/8420697/1676455519982-21daf41c-04a7-4b8f-be17-f2fcf0cab8dc.png#averageHue=%231f1f1e&amp;clientId=u6ad9c9ba-2483-4&amp;from=paste&amp;height=381&amp;id=u0dbb165a&amp;name=image.png&amp;originHeight=762&amp;originWidth=1441&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=181796&amp;status=done&amp;style=none&amp;taskId=u52091656-f518-4dac-8a90-0edc08ba51e&amp;title=&amp;width=720.5">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gw8woehiulj30qk0k077g.jpg#id=SZcTq&amp;originHeight=720&amp;originWidth=956&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gw8wp9hjpdj30q20dwdid.jpg#id=K9LDB&amp;originHeight=500&amp;originWidth=938&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gw8wq2hd05j30pu066jsa.jpg#id=lbsRf&amp;originHeight=222&amp;originWidth=930&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="article:published_time" content="2021-09-05T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-24T10:28:51.598Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="文本聚类">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://pic3.zhimg.com/80/v2-921d5ff0b665e67d5df54047b9d6531a_1440w.jpg#id=PaP92&amp;originHeight=362&amp;originWidth=1440&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+  
+  
+  
+  <title>文本聚类算法总结 - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="正确使用kmeans聚类的姿势"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-09-06 00:00" pubdate>
+          2021年9月6日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          16k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          137 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">正确使用kmeans聚类的姿势</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="1-聚类介绍"><a href="#1-聚类介绍" class="headerlink" title="1. 聚类介绍"></a>1. 聚类介绍</h2><ul>
+<li>聚类试图将数据集中的样本划分为若干个通常是不相交的子集，每个子集称为一个“簇”(cluster).</li>
+<li>通过这样的划分，使得<strong>同一个簇内的数据对象的相似性尽可能大，同时不在同一个簇中的数据对象的差异性也尽可能地大</strong>。</li>
+<li>聚类过程仅能自动形成簇结构，簇所对应的概念语义需由使用者自己来把握。</li>
+<li>聚类既能作为一个单独的过程用于寻找数据内在的分布结构，也可以作为分类等其他学习任务的前驱过程。</li>
+</ul>
+<h3 id="1-1-聚类算法："><a href="#1-1-聚类算法：" class="headerlink" title="1.1 聚类算法："></a>1.1 聚类算法：</h3><ul>
+<li>基于原型的聚类(Prototype-based Clustering) <ul>
+<li><strong>K均值聚类(K-means)</strong></li>
+<li><strong>学习向量量化聚类(Learning Vector Quantization)</strong></li>
+<li><strong>高斯混合模型聚类 (Gaussian Mixture Model)</strong></li>
+</ul>
+</li>
+<li>基于密度的聚类 (Density-based Clustering) <ul>
+<li><strong>DBSCAN (Density-Based Spatial Clustering of Application with Noise)</strong></li>
+<li><strong>OPTICS (Ordering Points To Identify the Clustering Structure)</strong></li>
+</ul>
+</li>
+<li><strong>层次聚类 (Hierarchical Clustering)</strong></li>
+<li>基于模型的聚类 (Model-based Clustering) <ul>
+<li><strong>混合回归模型 (Mixture Regression Model)</strong><h3 id="1-2-聚类的一般过程"><a href="#1-2-聚类的一般过程" class="headerlink" title="1.2 聚类的一般过程"></a>1.2 聚类的一般过程</h3></li>
+</ul>
+</li>
+</ul>
+<ol>
+<li>数据准备：特征标准化和降维</li>
+<li>特征选择：从最初的特征中选择最有效的特征，并将其存储在向量中</li>
+<li>特征提取：通过对选择的特征进行转换形成新的突出特征</li>
+<li>聚类：基于某种距离函数进行相似度度量，获取簇</li>
+<li>聚类结果评估：分析聚类结果，如<code>距离误差和(SSE)</code>等</li>
+</ol>
+<h3 id="1-3-聚类距离计算："><a href="#1-3-聚类距离计算：" class="headerlink" title="1.3 聚类距离计算："></a>1.3 聚类距离计算：</h3><p><strong>距离度量(distance measure)函数 </strong>$d()$<strong> 需满足的基本性质：</strong></p>
+<ul>
+<li><strong>非负性</strong>： $d(x,y)&gt;=0$</li>
+<li><strong>同一性</strong>：$d(x,y) = 0 \quad if \quad and \quad only \quad if \quad x=y$</li>
+<li><strong>对称性</strong>： $d(x,y) = d(y,x)$</li>
+<li><strong>直递性</strong>：$d(x,y) \leq d(x,z) + d(z,y)$ (可不满足)</li>
+</ul>
+<p>常用基于距离的相似度度量方法：</p>
+<p><img src="https://pic3.zhimg.com/80/v2-921d5ff0b665e67d5df54047b9d6531a_1440w.jpg#id=PaP92&amp;originHeight=362&amp;originWidth=1440&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""></p>
+<p><strong>欧几里得距离：</strong></p>
+<p><img src="https://i1.wp.com/analyticsarora.com/wp-content/uploads/2021/07/euclidean-distance-between-two-points-in-x-y-coordinates.png?resize=800%2C600&amp;ssl=1#id=AHTlA&amp;originHeight=600&amp;originWidth=800&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""></p>
+<p><strong>曼哈顿距离：</strong></p>
+<p><img src="https://i2.wp.com/analyticsarora.com/wp-content/uploads/2021/07/manhattan-distance-between-two-points-in-x-y-coordinates.png?resize=800%2C600&amp;ssl=1#id=uqjXz&amp;originHeight=600&amp;originWidth=800&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""></p>
+<h3 id="1-4-聚类性能度量："><a href="#1-4-聚类性能度量：" class="headerlink" title="1.4 聚类性能度量："></a>1.4 聚类性能度量：</h3><p><strong>聚类性能度量亦称聚类“有效性指标”(validity index).</strong></p>
+<p><strong>设置聚类性能度量的目的:</strong></p>
+<ul>
+<li>对聚类结果，通过某种性能度量来评估其好坏；</li>
+<li>若明确了最终将要使用的性能度量，则可直接将其作为聚类过程的优化目标，从而更好地得到符合要求的聚类结果。</li>
+</ul>
+<p><strong>什么样的聚类结果比较好？</strong></p>
+<ul>
+<li>“簇内相似度”(intra-cluster similarity)高</li>
+<li>“蔟间相似度”(inter-cluster similarity)低</li>
+</ul>
+<p><strong>聚类性能度量分类：</strong></p>
+<ul>
+<li>“外部指标”(external index) ：将聚类结果与某个“参考模型”(reference model)进行比较</li>
+<li>“内部指标”(internal index): 直接考察聚类结果而不利用任何参考模型</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="http://rstudio-pubs-static.s3.amazonaws.com/202367_03e1ddfcbca74cba97c4a4be7bbabd48.html"><strong>性能度量指标：</strong></a></p>
+<p><strong>(1) 外部指标</strong></p>
+<p><strong>(2) 内部指标</strong></p>
+<h2 id="2-聚类算法介绍及实现"><a href="#2-聚类算法介绍及实现" class="headerlink" title="2 聚类算法介绍及实现"></a><strong>2 聚类算法介绍及实现</strong></h2><p><strong>聚类算法类型：</strong></p>
+<ul>
+<li>基于原型的聚类(Prototype-based Clustering) <ul>
+<li><strong>K均值聚类(K-means )</strong></li>
+<li><strong>学习向量量化聚类(Learning vector Quantization)</strong></li>
+<li><strong>高斯混合聚类(Mixture-of-Gaussian)</strong></li>
+</ul>
+</li>
+<li><strong>基于密度的聚类(Density-based Clustering)</strong></li>
+<li><strong>层次聚类(Hierarchical Clustering)</strong></li>
+</ul>
+<p><img src="https://pic2.zhimg.com/80/v2-04a2252ba991e07045613463e0414dc9_1440w.jpg#id=hv6EN&amp;originHeight=494&amp;originWidth=1440&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""></p>
+<h3 id="2-1-基于原型的聚类"><a href="#2-1-基于原型的聚类" class="headerlink" title="2.1 基于原型的聚类"></a><a target="_blank" rel="noopener" href="https://www.bookstack.cn/read/huaxiaozhuan-ai/spilt.2.c4339a9da7c9ec88.md">2.1 基于原型的聚类</a></h3><p>原型聚类<code>prototype-based clustering</code>，假设聚类结构能通过一组原型刻画（原型，即簇类的数目或者聚类中心）. <strong>通常情况下, 算法先对原型进行初始化, 然后对原型进行迭代更新求解, 采用不同的原型表示, 不同的求解方式,将产生不同的算法.</strong></p>
+<h4 id="2-1-1-K-means"><a href="#2-1-1-K-means" class="headerlink" title="2.1.1 K-means"></a>2.1.1 K-means</h4><h5 id="1-算法介绍"><a href="#1-算法介绍" class="headerlink" title="(1) 算法介绍"></a><strong>(1) 算法介绍</strong></h5><p>给定样本集 $D={x_1,x_2,…,x_n}$, K-means 算法针对聚类所得簇划分 $C={C_1,C_2,…,C_k}$, 最小化平方误差:</p>
+<p><img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/843d8aa63286c6920455f9c3605c3e87.svg#id=x1vBU&amp;originHeight=68&amp;originWidth=236&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""></p>
+<p>其中 $u_k$ 是簇 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/3a840486dde29f61a0ec8bccfa2c09ff.svg#id=gu5qD&amp;originHeight=21&amp;originWidth=25&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 的均值向量：</p>
+<p><img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/932d6a577db749a6bdd2fbe822009ead.svg#id=Urgvp&amp;originHeight=35&amp;originWidth=176&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""></p>
+<p>直观上看, 平方误差在一定程度上刻画了簇内样本围绕均值向量的紧密程度, $err$ 值越小簇内样本相似度越高。但最小化 $err$  不容易，是一个NP难问题, K-means 算法采用了贪心策略，通过迭代优化来近似求解 EE 的最小值。具体算法如下：</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1guivdot39xj60nl0hkgnt02.jpg#id=WkUiY&amp;originHeight=632&amp;originWidth=849&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""></p>
+<h5 id="2-算法实现"><a href="#2-算法实现" class="headerlink" title="(2) 算法实现"></a><strong>(2) 算法实现</strong></h5><p>我们的 k-means 实现将分为五个辅助方法和一个运行算法的主循环：</p>
+<p><strong>1.计算成对距离</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">pairwise_dist</span>(<span class="hljs-params">self, x, y</span>):<br>        <span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">        Args:</span><br><span class="hljs-string">            x: N x D numpy array</span><br><span class="hljs-string">            y: M x D numpy array</span><br><span class="hljs-string">        Return:</span><br><span class="hljs-string">            dist: N x M array, where dist2[i, j] is the euclidean distance between </span><br><span class="hljs-string">            x[i, :] and y[j, :]</span><br><span class="hljs-string">        &quot;&quot;&quot;</span><br>        xSumSquare = np.<span class="hljs-built_in">sum</span>(np.square(x),axis=<span class="hljs-number">1</span>);<br>        ySumSquare = np.<span class="hljs-built_in">sum</span>(np.square(y),axis=<span class="hljs-number">1</span>);<br>        mul = np.dot(x, y.T);<br>        dists = np.sqrt(<span class="hljs-built_in">abs</span>(xSumSquare[:, np.newaxis] + ySumSquare-<span class="hljs-number">2</span>*mul))<br>        <span class="hljs-keyword">return</span> dists<br></code></pre></td></tr></table></figure>
+<p>pairwise_dist 函数与前面描述的相似性函数等效。这是我们比较两点相似性的指标。在这里，我使用的是<strong>欧几里得距离</strong>。我使用的公式可能看起来与欧几里德距离函数的常规公式不同。这是因为我们正在执行矩阵操作，而不是使用两个单个向量。在<a target="_blank" rel="noopener" href="https://www.dabblingbadger.com/blog/2020/2/27/implementing-euclidean-distance-matrix-calculations-from-scratch-in-python">这里</a>深入阅读。</p>
+<p><strong>2.初始化中心</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">_init_centers</span>(<span class="hljs-params">self, points, K, **kwargs</span>):<br>        <span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">        Args:</span><br><span class="hljs-string">            points: NxD numpy array, where N is # points and D is the dimensionality</span><br><span class="hljs-string">            K: number of clusters</span><br><span class="hljs-string">            kwargs: any additional arguments you want</span><br><span class="hljs-string">        Return:</span><br><span class="hljs-string">            centers: K x D numpy array, the centers. </span><br><span class="hljs-string">        &quot;&quot;&quot;</span><br>        row, col = points.shape<br>        retArr = np.empty([K, col])<br>        <span class="hljs-keyword">for</span> number <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(K):<br>            randIndex = np.random.randint(row)<br>            retArr[number] = points[randIndex]<br>        <br>        <span class="hljs-keyword">return</span> retArr<br></code></pre></td></tr></table></figure>
+<p>该函数接收点数组并随机选择其中的 K 个作为初始质心。该函数仅返回 K 个选定点。</p>
+<p><strong>3.更新分配</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">_update_assignment</span>(<span class="hljs-params">self, centers, points</span>):<br>        <span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">        Args:</span><br><span class="hljs-string">            centers: KxD numpy array, where K is the number of clusters, and D is the dimension</span><br><span class="hljs-string">            points: NxD numpy array, the observations</span><br><span class="hljs-string">        Return:</span><br><span class="hljs-string">            cluster_idx: numpy array of length N, the cluster assignment for each point</span><br><span class="hljs-string"></span><br><span class="hljs-string">        Hint: You could call pairwise_dist() function.</span><br><span class="hljs-string">        &quot;&quot;&quot;</span><br>        row, col = points.shape<br>        cluster_idx = np.empty([row])<br>        distances = self.pairwise_dist(points, centers)<br>        cluster_idx = np.argmin(distances, axis=<span class="hljs-number">1</span>)<br><br>        <span class="hljs-keyword">return</span> cluster_idx<br></code></pre></td></tr></table></figure>
+<p>更新分配函数负责选择每个点应该属于哪个集群。首先，我使用 pairwise_dist 函数计算每个点和每个质心之间的距离。然后，我得到每一行的最小距离的索引。最小距离的索引也是给定数据点的聚类分配索引，因为我们希望将每个点分配给最近的质心。</p>
+<p><strong>4.更新中心</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">_update_centers</span>(<span class="hljs-params">self, old_centers, cluster_idx, points</span>):<br>        <span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">        Args:</span><br><span class="hljs-string">            old_centers: old centers KxD numpy array, where K is the number of clusters, and D is the dimension</span><br><span class="hljs-string">            cluster_idx: numpy array of length N, the cluster assignment for each point</span><br><span class="hljs-string">            points: NxD numpy array, the observations</span><br><span class="hljs-string">        Return:</span><br><span class="hljs-string">            centers: new centers, K x D numpy array, where K is the number of clusters, and D is the dimension.</span><br><span class="hljs-string">        &quot;&quot;&quot;</span><br>        K, D = old_centers.shape<br>        new_centers = np.empty(old_centers.shape)<br>        <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(K):<br>            new_centers[i] = np.mean(points[cluster_idx == i], axis = <span class="hljs-number">0</span>)<br>        <span class="hljs-keyword">return</span> new_centers<br></code></pre></td></tr></table></figure>
+<p>更新中心功能负责对属于给定集群的所有点进行平均。该平均值是相应聚类的新质心。该函数返回新中心的数组。</p>
+<p><strong>5.计算损失</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">_get_loss</span>(<span class="hljs-params">self, centers, cluster_idx, points</span>):<br>        <span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">        Args:</span><br><span class="hljs-string">            centers: KxD numpy array, where K is the number of clusters, and D is the dimension</span><br><span class="hljs-string">            cluster_idx: numpy array of length N, the cluster assignment for each point</span><br><span class="hljs-string">            points: NxD numpy array, the observations</span><br><span class="hljs-string">        Return:</span><br><span class="hljs-string">            loss: a single float number, which is the objective function of KMeans. </span><br><span class="hljs-string">        &quot;&quot;&quot;</span><br>        dists = self.pairwise_dist(points, centers)<br>        loss = <span class="hljs-number">0.0</span><br>        N, D = points.shape<br>        <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(N):<br>            loss = loss + np.square(dists[i][cluster_idx[i]])<br>        <br>        <span class="hljs-keyword">return</span> loss<br></code></pre></td></tr></table></figure>
+<p>损失函数是我们评估聚类算法性能的指标。我们的损失只是每个点与其聚类质心之间的平方距离之和。在我们的实现中，我们首先调用成对距离来获得每个点和每个中心之间的距离矩阵。我们使用 cluster_idx 为每个点选择与集群对应的适当距离2。</p>
+<p><strong>主循环</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">__call__</span>(<span class="hljs-params">self, points, K, max_iters=<span class="hljs-number">100</span>, abs_tol=<span class="hljs-number">1e-16</span>, rel_tol=<span class="hljs-number">1e-16</span>, verbose=<span class="hljs-literal">False</span>, **kwargs</span>):<br>        <span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">        Args:</span><br><span class="hljs-string">            points: NxD numpy array, where N is # points and D is the dimensionality</span><br><span class="hljs-string">            K: number of clusters</span><br><span class="hljs-string">            max_iters: maximum number of iterations (Hint: You could change it when debugging)</span><br><span class="hljs-string">            abs_tol: convergence criteria w.r.t absolute change of loss</span><br><span class="hljs-string">            rel_tol: convergence criteria w.r.t relative change of loss</span><br><span class="hljs-string">            verbose: boolean to set whether method should print loss (Hint: helpful for debugging)</span><br><span class="hljs-string">            kwargs: any additional arguments you want</span><br><span class="hljs-string">        Return:</span><br><span class="hljs-string">            cluster assignments: Nx1 int numpy array</span><br><span class="hljs-string">            cluster centers: K x D numpy array, the centers</span><br><span class="hljs-string">            loss: final loss value of the objective function of KMeans</span><br><span class="hljs-string">        &quot;&quot;&quot;</span><br>        centers = self._init_centers(points, K, **kwargs)<br>        <span class="hljs-keyword">for</span> it <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(max_iters):<br>            cluster_idx = self._update_assignment(centers, points)<br>            centers = self._update_centers(centers, cluster_idx, points)<br>            loss = self._get_loss(centers, cluster_idx, points)<br>            K = centers.shape[<span class="hljs-number">0</span>]<br>            <span class="hljs-keyword">if</span> it:<br>                diff = np.<span class="hljs-built_in">abs</span>(prev_loss - loss)<br>                <span class="hljs-keyword">if</span> diff &lt; abs_tol <span class="hljs-keyword">and</span> diff / prev_loss &lt; rel_tol:<br>                    <span class="hljs-keyword">break</span><br>            prev_loss = loss<br>            <span class="hljs-keyword">if</span> verbose:<br>                <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;iter %d, loss: %.4f&#x27;</span> % (it, loss))<br>        <span class="hljs-keyword">return</span> cluster_idx, centers, loss<br></code></pre></td></tr></table></figure>
+<p>现在，在主循环中，我们可以组合所有实用函数并实现伪代码。首先，中心用<strong>_init_centers</strong>随机初始化。然后，对于指定的迭代次数，我们重复<strong>update_assignment</strong>和<strong>update_centers</strong>步骤。每次迭代后，我们计算总损失并将其与之前的损失进行比较。如果差异小于我们的阈值，则算法执行完成。</p>
+<blockquote>
+<p>补充：</p>
+<p><code>k-means</code> 优点：</p>
+<ul>
+<li>计算复杂度低，为 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/9fafdc95f33bed9348c04625220c11e5.svg#id=Z24x3&amp;originHeight=23&amp;originWidth=130&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> ，其中 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/116c79e23707e25a1b0bbb5791245858.svg#id=JI1RR&amp;originHeight=16&amp;originWidth=10&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 为迭代次数。<br>通常 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/b0f80a77b6404455ddb6f55b039e4105.svg#id=mITU7&amp;originHeight=17&amp;originWidth=19&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 和 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/116c79e23707e25a1b0bbb5791245858.svg#id=G9NMS&amp;originHeight=16&amp;originWidth=10&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 要远远小于 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/f80122dd44760c38ab0f530c50496433.svg#id=YDfdv&amp;originHeight=17&amp;originWidth=19&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt="">，此时复杂度相当于 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/ce755bd2c810562b16b377d6d586e552.svg#id=obhgp&amp;originHeight=23&amp;originWidth=51&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt="">。 </li>
+<li>思想简单，容易实现。 </li>
+</ul>
+<p><code>k-means</code> 缺点：</p>
+<ul>
+<li>需要首先确定聚类的数量 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/b0f80a77b6404455ddb6f55b039e4105.svg#id=dMN7L&amp;originHeight=17&amp;originWidth=19&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> </li>
+<li>分类结果严重依赖于分类中心的初始化。<br>通常进行多次<code>k-means</code>，然后选择最优的那次作为最终聚类结果。 </li>
+<li>结果不一定是全局最优的，只能保证局部最优。 </li>
+<li>对噪声敏感。因为簇的中心是取平均，因此聚类簇很远地方的噪音会导致簇的中心点偏移。 </li>
+<li>无法解决不规则形状的聚类。 </li>
+<li>无法处理离散特征，如：<code>国籍、性别</code> 等。 </li>
+</ul>
+<p><strong>正确使用「K均值聚类」的Tips</strong></p>
+<ol>
+<li><strong>输入数据一般需要做缩放</strong>，如标准化。原因很简单，K均值是建立在距离度量上的，因此不同变量间如果维度差别过大，可能会造成少数变量“施加了过高的影响而造成垄断”。</li>
+<li><strong>输出结果非固定，多次运行结果可能不同。</strong>首先要意识到K-means中是有随机性的，从初始化到收敛结果往往不同。一种看法是强行固定随机性，比如设定sklearn中的random state为固定值。另一种看法是，如果你的K均值结果总在大幅度变化，比如不同簇中的数据量在多次运行中变化很大，那么K均值不适合你的数据，不要试图稳定结果 [2]。</li>
+<li><strong>运行时间往往可以得到优化，选择最优的工具库。</strong>基本上现在的K均值实现都是K-means++，速度都不错。但当数据量过大时，依然可以使用其他方法，如MiniBatchKMeans [3]。上百万个数据点往往可以在数秒钟内完成聚类，推荐Sklearn的实现。</li>
+<li><strong>高维数据上的有效性有限。</strong>建立在距离度量上的算法一般都有类似的问题，那就是在高维空间中距离的意义有了变化，且并非所有维度都有意义。这种情况下，K均值的结果往往不好，而通过划分子空间的算法（sub-spacing method）效果可能更好。</li>
+<li><strong>运行效率与性能之间的取舍。</strong></li>
+</ol>
+<p><strong>K值怎么确定</strong></p>
+<ul>
+<li>使用 K 均值算法，性能可能会因您使用的集群数量而有很大差异。要知道，<strong>K设置得越大，样本划分得就越细，每个簇的聚合程度就越高，误差平方和SSE自然就越小</strong>。所以不能单纯像选择初始点那样，用不同的K来做尝试，选择SSE最小的聚类结果对应的K值，因为这样选出来的肯定是你尝试的那些K值中最大的那个。 </li>
+<li>“手肘法”（Elbow Method）<br>为了使用肘部方法，您只需多次运行 K-means 算法，每次迭代将聚类数增加一个。记录每次迭代的损失，然后<strong>制作 num cluster vs loss 的折线图</strong>。 </li>
+</ul>
+<p>下面是肘部方法的简单实现：</p>
+<p>运行此方法将输出一个类似于您在下面看到的图：</p>
+<p><img src="https://i1.wp.com/analyticsarora.com/wp-content/uploads/2021/07/elbow-method-example-choosing-number-of-clusters-k-means.png?resize=464%2C299&amp;ssl=1#id=wbgsR&amp;originHeight=299&amp;originWidth=464&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""></p>
+<p>现在，为了选择正确数量的簇，我们进行目视检查。损耗曲线开始弯曲的<strong>点</strong>称为 <strong>肘点</strong>。肘点代表误差和聚类数量之间的合理权衡。在此示例中，肘点位于<strong>x = 3 处</strong>。这意味着最佳聚类数为 3。</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">find_optimal_num_clusters</span>(<span class="hljs-params">self, data, max_K=<span class="hljs-number">15</span></span>):<br>        <span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">        Plots loss values for different number of clusters in K-Means</span><br><span class="hljs-string"></span><br><span class="hljs-string">        Args:</span><br><span class="hljs-string">            image: input image of shape(H, W, 3)</span><br><span class="hljs-string">            max_K: number of clusters</span><br><span class="hljs-string">        Return:</span><br><span class="hljs-string">            None (plot loss values against number of clusters)</span><br><span class="hljs-string">        &quot;&quot;&quot;</span><br>        y_val = np.empty(max_K)<br><br>        <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(max_K):<br>            cluster_idx, centers, y_val[i] = KMeans()(data, i + <span class="hljs-number">1</span>)<br>            <br>        plt.plot(np.arange(max_K) + <span class="hljs-number">1</span>, y_val)<br>        plt.show()<br>        <span class="hljs-keyword">return</span> y_val<br></code></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> sklearn.cluster <br><span class="hljs-keyword">import</span> KMeans<br><br>loss = []<br><span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">1</span>, <span class="hljs-number">10</span>):    <br>  kmeans = KMeans(n_clusters=i, max_iter=<span class="hljs-number">100</span>).fit(p_list)    <br>  loss.append(kmeans.inertia_ / point_number / K)    <br>plt.plot(<span class="hljs-built_in">range</span>(<span class="hljs-number">1</span>, <span class="hljs-number">10</span>), loss)plt.show()<br></code></pre></td></tr></table></figure>
+<h4 id="2-1-2-k-means"><a href="#2-1-2-k-means" class="headerlink" title="2.1.2 k-means++"></a>2.1.2 k-means++</h4><p><code>k-means++</code>是针对<code>k-means</code>中初始质心点选取的优化算法。该算法的流程和<code>k-means</code>类似，改变的地方只有初始质心的选取，该部分的算法流程如下</p>
+<p>算法步骤：</p>
+<ul>
+<li>从 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/f81a08fd463c530d8b3e5b5790d35eb9.svg#id=lOfqo&amp;originHeight=18&amp;originWidth=15&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 中随机选择1个样本作为初始均值向量组 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/3070ea35fe1159b870f6aa1cc01738bf.svg#id=XdzXW&amp;originHeight=24&amp;originWidth=52&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 。 </li>
+<li>迭代，直到初始均值向量组有 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/b0f80a77b6404455ddb6f55b039e4105.svg#id=bMKqw&amp;originHeight=17&amp;originWidth=19&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 个向量。<br>假设初始均值向量组为 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/00ee1bc819cd700380a69cc21d1b9566.svg#id=b6XAW&amp;originHeight=24&amp;originWidth=117&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt="">。迭代过程如下： <ul>
+<li>对每个样本 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/374d548f18d9f8ceb9f6b6b779a425ee.svg#id=qRVeN&amp;originHeight=22&amp;originWidth=20&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> ，分别计算其距 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/d64c74ddfe138ec1221781b174741959.svg#id=KlA3E&amp;originHeight=24&amp;originWidth=96&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 的距离。这些距离的最小值记做 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/2082e1e10ad0ab302859cf3ad88440fe.svg#id=GCJck&amp;originHeight=28&amp;originWidth=191&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 。</li>
+<li>对样本 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/374d548f18d9f8ceb9f6b6b779a425ee.svg#id=Kdvcu&amp;originHeight=22&amp;originWidth=20&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt="">，其设置为初始均值向量的概率正比于 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/488b641047a05746274968f01d03e311.svg#id=JWfWQ&amp;originHeight=21&amp;originWidth=18&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 。即：离所有的初始均值向量越远，则越可能被选中为下一个初始均值向量。</li>
+<li>以概率分布 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/0ce1d8fcf48d73cefc70b2e4ee02f9e0.svg#id=Ew7s7&amp;originHeight=23&amp;originWidth=187&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> （未归一化的）随机挑选一个样本作为下一个初始均值向量 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/f1d3aeb4edffdd3ab8d6117b3e73e8e9.svg#id=sEUWM&amp;originHeight=25&amp;originWidth=47&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 。</li>
+</ul>
+</li>
+<li>一旦挑选出初始均值向量组 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/630550619a4d10bc1e247e086c763726.svg#id=SQDZc&amp;originHeight=24&amp;originWidth=117&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt="">，剩下的迭代步骤与<code>k-means</code> 相同。 </li>
+</ul>
+<h4 id="2-1-3-LVQ"><a href="#2-1-3-LVQ" class="headerlink" title="2.1.3 LVQ"></a>2.1.3 LVQ</h4><h5 id="1-算法介绍-1"><a href="#1-算法介绍-1" class="headerlink" title="(1) 算法介绍"></a>(1) 算法介绍</h5><p>Learning vector Quantization (LVQ) 假设数据样本带有<strong>类别标记</strong>，学习过程利用样本的这些监督信息来辅助<strong>聚类</strong>。使用通过LVQ得到的原型向量来代表整个簇的过程，称为“向量量化”（Vector Quantization），这种数据压缩方法属于“有损压缩”（Lossy Compression）。</p>
+<p>LVQ的目标是学得一组原型向量 ${p_1,p_2,…,p_q}$，每个原型向量代表一个聚类簇。LVQ在训练过程中通过对神经元权向量（原型向量）的不断更新，对其学习率的不断调整，能够使不同类别权向量之间的边界逐步收敛至贝叶斯分类边界。算法中，对获胜神经元（最近邻权向量）的选取是通过计算输入样本和权向量之间的距离的大小来判断的。</p>
+<p>具体算法流程图如下所示：</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gubps12a4sj60m80f476g02.jpg#id=uDg4i&amp;originHeight=544&amp;originWidth=800&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""></p>
+<p><strong>算法解释</strong></p>
+<ul>
+<li>算法第1行：对原型向量进行初始化。例如：对第$i, i=(1,2,…,q)$ 个簇,从类别标记为 $t_i$ 的样本中随机选取一个作为原型向量。如果类别数小于聚类数，即 k&gt;m ，则重新从第一个类别中继续选取； </li>
+<li>算法第2-12行：对原型向量进行迭代优化，直到算法收敛。在每一轮迭代中，算法随机选取一个有标记训练样本，找出与其距离最近的原型向量，并根据两者的类别标记是否一致来对原型向量进行相应的更新。 </li>
+<li>算法第2-5行：从样本集中随机选取一个样本 $x_j$，计算该样本与每个原型向量 $p_i$ 之间的欧式距离，并找到与该样本距离最近的原型向量 $p_{i^<em>}$ 的类别标记  $t_{i^</em>}$ </li>
+<li>第6-10行：如何更新原型向量。迭代过程如下： <ul>
+<li>从样本集 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/f81a08fd463c530d8b3e5b5790d35eb9.svg#id=LdPh4&amp;originHeight=18&amp;originWidth=15&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 中随机选取样本 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/54ef450213ab84e5905678533d3cf49b.svg#id=fao4P&amp;originHeight=23&amp;originWidth=63&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> ，挑选出距离 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/54ef450213ab84e5905678533d3cf49b.svg#id=y6L8W&amp;originHeight=23&amp;originWidth=63&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 最近的原型向量 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/f04fcfee63d019e5f5307fb91f61fc50.svg#id=PJ0mY&amp;originHeight=26&amp;originWidth=29&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt="">：<img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/3060a084edb504f78286ccd0f43f02b8.svg#id=cYaxY&amp;originHeight=26&amp;originWidth=215&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 。</li>
+<li>如果 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/f04fcfee63d019e5f5307fb91f61fc50.svg#id=kOmtN&amp;originHeight=26&amp;originWidth=29&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 的类别等于 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/8192faf97d009a1cd2dcc35d384beabf.svg#id=qCLiS&amp;originHeight=17&amp;originWidth=17&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt="">，则：<img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/3f347a03a31666489c2323ab8ad40e48.svg#id=xOeei&amp;originHeight=26&amp;originWidth=218&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> ，将该原型向量更靠近 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/374d548f18d9f8ceb9f6b6b779a425ee.svg#id=cvjcQ&amp;originHeight=22&amp;originWidth=20&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""></li>
+<li>如果 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/f04fcfee63d019e5f5307fb91f61fc50.svg#id=vmDHw&amp;originHeight=26&amp;originWidth=29&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 的类别不等于 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/8192faf97d009a1cd2dcc35d384beabf.svg#id=vOAZ5&amp;originHeight=17&amp;originWidth=17&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt="">，则：<img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/e442a73182d43c1387f88da9af08352b.svg#id=B2jKQ&amp;originHeight=26&amp;originWidth=218&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> ，将该原型向量更远离 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/374d548f18d9f8ceb9f6b6b779a425ee.svg#id=EoyRy&amp;originHeight=22&amp;originWidth=20&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""></li>
+</ul>
+</li>
+</ul>
+<p>在原型向量的更新过程中： </p>
+<ul>
+<li><p>如果 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/f04fcfee63d019e5f5307fb91f61fc50.svg#id=G2QOi&amp;originHeight=26&amp;originWidth=29&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 的类别等于 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/8192faf97d009a1cd2dcc35d384beabf.svg#id=R8xHI&amp;originHeight=17&amp;originWidth=17&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt="">，则更新后， <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/f04fcfee63d019e5f5307fb91f61fc50.svg#id=gbstd&amp;originHeight=26&amp;originWidth=29&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 与 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/374d548f18d9f8ceb9f6b6b779a425ee.svg#id=N7nbD&amp;originHeight=22&amp;originWidth=20&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 距离为：<br><img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/0e16fe56396a2f7dce687a85c073618a.svg#id=chvTC&amp;originHeight=26&amp;originWidth=573&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> </p>
+<p>即，更新后的原型向量 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/f04fcfee63d019e5f5307fb91f61fc50.svg#id=dqwqV&amp;originHeight=26&amp;originWidth=29&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 距离 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/374d548f18d9f8ceb9f6b6b779a425ee.svg#id=hELxB&amp;originHeight=22&amp;originWidth=20&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 更近。 </p>
+</li>
+<li><p>如果 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/f04fcfee63d019e5f5307fb91f61fc50.svg#id=qU7pU&amp;originHeight=26&amp;originWidth=29&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 的类别不等于 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/8192faf97d009a1cd2dcc35d384beabf.svg#id=r2iqH&amp;originHeight=17&amp;originWidth=17&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt="">，则更新后， <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/f04fcfee63d019e5f5307fb91f61fc50.svg#id=NbpFb&amp;originHeight=26&amp;originWidth=29&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 与 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/374d548f18d9f8ceb9f6b6b779a425ee.svg#id=iY0Y9&amp;originHeight=22&amp;originWidth=20&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 距离为：<br><img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/d55aaebfebeeca907473c51e3f925c23.svg#id=gYViR&amp;originHeight=26&amp;originWidth=573&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""><br>即，更新后的原型向量 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/f04fcfee63d019e5f5307fb91f61fc50.svg#id=RLaV3&amp;originHeight=26&amp;originWidth=29&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 距离 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/374d548f18d9f8ceb9f6b6b779a425ee.svg#id=XQuxD&amp;originHeight=22&amp;originWidth=20&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 更远。 </p>
+<ul>
+<li>算法第12行：若算法的<strong>停止条件</strong>已满足(例如已达到最大迭代轮数，或原型向量更新很小甚至不再更新)，则将当前原型向量作为最终结果返回。 </li>
+<li>在学得一组原型向量 ${p_1,p_2,…,p_q}$ 后即可实现对样本空间 $X$ 的簇划分. 对任意样本 $x$, 他将被划入与其距离最近的原型向量所代表的簇中 </li>
+</ul>
+</li>
+</ul>
+<p><strong>可能涉及到的问题：</strong></p>
+<blockquote>
+<p>首先，既然已经有标签数据，那么为什么还要进行聚类呢？</p>
+</blockquote>
+<p>我们输入的先验标签数据不一定是绝对真实的取值，可能是其他分类器输出的结果，可能是片面的、残缺的，需要靠聚类进行矫正和修补。（可以将先验知识当做一个约束值，该算法相当于在已知的约束条件下求解最最优值的过程）</p>
+<p>对于矫正作用，由于输入的只有标签值，需要靠聚类进行类别边界的拟合；对于修补作用，由于LVQ聚类算法允许聚类的簇比输入的标签的类别多，这意味着一个类别可以被重新分割成多个类别。 </p>
+<blockquote>
+<p>其次，标签值是必须的吗？</p>
+</blockquote>
+<p>一种说法是标签值是非必须的，如果没有先验的标签值，可以输入随机的标签值。我不太认同这种做法。因为标签值是一种约束，随机的约束即相当于没有约束，那么LVQ算法其实就退化为一般的聚类的算法，甚至更加严重，随机会使得系统更加混沌，算法会因为错误的指导给出效果更差的答案。所以我更偏向于将其归为<strong>半监督</strong>的聚类算法。 </p>
+<blockquote>
+<p>其他注意事项</p>
+</blockquote>
+<ul>
+<li>样本异常点对聚类有影响，一般我们需要提前剔除掉 </li>
+<li>难以应用在高维特征空间 </li>
+<li>可以多选择几个簇心，来降低压缩率，提高保持较高的精度？ </li>
+<li>为了得到更精确的代表点需要调整迭代次数和学习率，时间复杂度比较 </li>
+</ul>
+<h5 id="2-LVQ算法实现"><a href="#2-LVQ算法实现" class="headerlink" title="(2) LVQ算法实现"></a>(2) LVQ算法实现</h5><blockquote>
+<p><strong>《</strong><a target="_blank" rel="noopener" href="https://www.cnblogs.com/lunge-blog/p/11666563.html"><strong>手写LVQ（学习向量量化）聚类算法</strong></a><strong>》</strong><br>《<a target="_blank" rel="noopener" href="https://github.com/zhoupengfeigjqh/ml/blob/master/lvq/lvq_test/lvq_test.py">ml/lvq/lvq_test/lvq_test.py</a>》√<br>《<a target="_blank" rel="noopener" href="https://github.com/itdxer/neupy/blob/master/neupy/algorithms/competitive/lvq.py">neupy/neupy/algorithms/competitive/lvq.py</a> 》√<br>《<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_40793975/article/details/82177189">Learning Vector Quantization详解</a>》</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">lvq</span>(<span class="hljs-params">data: np, k_num: <span class="hljs-built_in">int</span>, labels: <span class="hljs-built_in">list</span>, lr=<span class="hljs-number">0.01</span>, max_iter=<span class="hljs-number">15000</span>, delta=<span class="hljs-number">1e-3</span></span>):<br>    <span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">    :param data: 样本集, 最后一列feature表示原始数据的label</span><br><span class="hljs-string">    :param k_num: 簇数，原型向量个数</span><br><span class="hljs-string">    :param labels: 1-dimension list or array,label of the data（去重）</span><br><span class="hljs-string">    :param max_iter: 最大迭代数</span><br><span class="hljs-string">    :param lr: 学习效率</span><br><span class="hljs-string">    :param delta: max distance for two vectors to be &#x27;equal&#x27;.</span><br><span class="hljs-string">    :return: 返回向量中心点、簇标记</span><br><span class="hljs-string">    &quot;&quot;&quot;</span><br>    <span class="hljs-comment"># 随机初始化K个原型向量</span><br>    v = rand_initial_center(data, k_num, labels)<br><br>    <span class="hljs-comment"># 确认是否所有中心向量均已更新</span><br>    all_vectors_updated = np.zeros(shape=(k_num,), dtype=np.<span class="hljs-built_in">bool</span>)<br>    <span class="hljs-comment"># 记录各个中心向量的更新次数</span><br>    v_update_cnt = np.zeros(k_num, dtype=np.float32)<br><br>    j = <span class="hljs-number">0</span><br>    <span class="hljs-keyword">while</span> <span class="hljs-literal">True</span>:<br>        j = j + <span class="hljs-number">1</span><br>        <span class="hljs-keyword">if</span> j%<span class="hljs-number">100</span>==<span class="hljs-number">0</span>:<br>            <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;iter:&quot;</span>, j)<br><br>        <span class="hljs-comment"># 迭代停止条件：已到达最大迭代次数，或者原型向量全都更新过</span><br>        <span class="hljs-keyword">if</span> j &gt;= max_iter <span class="hljs-keyword">or</span> all_vectors_updated.<span class="hljs-built_in">all</span>():<br>            <span class="hljs-keyword">break</span><br>        <span class="hljs-comment"># # 迭代停止条件：超过阈值且每个中心向量都更新超过5次则退出</span><br>        <span class="hljs-comment"># if j &gt;= max_iter and sum(v_update_cnt &gt; 5) == k_num:</span><br>        <span class="hljs-comment">#     break</span><br><br>        <span class="hljs-comment"># 随机选择一个样本, 并计算与当前各个簇中心点的距离, 取距离最小的</span><br>        sel_sample = random.choice(data)<br>        min_dist = distance(sel_sample, v[<span class="hljs-number">0</span>])<br>        sel_k = <span class="hljs-number">0</span><br>        <span class="hljs-keyword">for</span> ii <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">1</span>, k_num):<br>            dist = distance(sel_sample, v[ii])<br>            <span class="hljs-keyword">if</span> min_dist &gt; dist:<br>                min_dist = dist<br>                sel_k = ii<br><br>        <span class="hljs-comment"># 保存更新前向量</span><br>        temp_v = v[sel_k].copy()<br><br>        <span class="hljs-comment"># 更新v：如果标签相同，则q更新后接近样本x，否则远离</span><br>        <span class="hljs-keyword">if</span> sel_sample[-<span class="hljs-number">1</span>] == v[sel_k][-<span class="hljs-number">1</span>]:<br>            v[sel_k][<span class="hljs-number">0</span>:-<span class="hljs-number">1</span>] = v[sel_k][<span class="hljs-number">0</span>:-<span class="hljs-number">1</span>] + lr * (sel_sample[<span class="hljs-number">0</span>:-<span class="hljs-number">1</span>] - v[sel_k][<span class="hljs-number">0</span>:-<span class="hljs-number">1</span>])<br>        <span class="hljs-keyword">else</span>:<br>            v[sel_k][<span class="hljs-number">0</span>:-<span class="hljs-number">1</span>] = v[sel_k][<span class="hljs-number">0</span>:-<span class="hljs-number">1</span>] - lr * (sel_sample[<span class="hljs-number">0</span>:-<span class="hljs-number">1</span>] - v[sel_k][<span class="hljs-number">0</span>:-<span class="hljs-number">1</span>])<br><br>        <span class="hljs-comment"># 更新记录数组（更新后簇心基本不变，就认为更新好了）</span><br>        <span class="hljs-keyword">if</span> distance(temp_v, v[sel_k]) &lt; delta:<br>            all_vectors_updated[sel_k] = <span class="hljs-literal">True</span><br>        <span class="hljs-comment"># v的更新次数+1</span><br>        v_update_cnt[sel_k] = v_update_cnt[sel_k] + <span class="hljs-number">1</span><br><br>    <span class="hljs-comment"># 更新完毕后, 把各个样本点进行标记, 记录放在categories变量里</span><br>    m, n = np.shape(data)<br>    cluster_assment = np.mat(np.zeros((m, <span class="hljs-number">2</span>)), dtype=np.float32)<br>    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(m):<br>        min_distji = np.inf<br>        min_distji_index = -<span class="hljs-number">1</span><br><br>        <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(k_num):<br>            distji = distance(data[i, :], v[j, :])<br>            <span class="hljs-comment"># print(distji)</span><br>            <span class="hljs-keyword">if</span> min_distji &gt; distji:<br>                min_distji = distji<br>                min_distji_index = j<br>        cluster_assment[i, <span class="hljs-number">0</span>] = min_distji_index<br>        cluster_assment[i, <span class="hljs-number">1</span>] = min_distji<br><br>    <span class="hljs-keyword">return</span> v, cluster_assment<br></code></pre></td></tr></table></figure>
+<h5 id="3-LVQ2算法改进"><a href="#3-LVQ2算法改进" class="headerlink" title="(3) LVQ2算法改进"></a>(3) LVQ2算法改进</h5><p>LVQ算法中，对于某个输入向量X，算法只对与其具有最小Euclidean距离的权向量$w_k$ 进行调整。</p>
+<p>在LVQ2[2]中，算法还要考虑与X具有次近Euclidean距离的权向量$w_r$，X与$w_k$及$w_r$间的距离分别记为 $d_k$ 与 $d_r$。如果下述3个条件都满足的话，算法就对$w_k$及$w_r$同时进行调整，否则就按照原先的LVQ算法调整权向量$w_k$：</p>
+<ol>
+<li>$w_k$及$w_r$代表不同的分类。</li>
+<li>次近权向量$w_r$与X代表同一个分类。</li>
+<li>$d_k$ 与 $d_r$大致相等。一般来说．如果 $d_k$ 与 $d_r$能够满足$d_k/d_r&gt;(1一￡)$且 $d_r/d_k&lt;(1+￡)$，我们就认为 $d_k$ 与 $d_r$是大致相等的，其中￡的取值依赖于训练例的多少。</li>
+</ol>
+<p>在上述3个条件都满足的情况下，按下述公式调整$w_k$及$w_r$，使得$w_k$远离输入向量X，而$w_r$向输入向量的方向靠近：</p>
+<ol>
+<li>$W_k(new)=W_k(old)一\alpha(X—W_k(old))$</li>
+<li>$W_r(new)=W_r(old)+\alpha(X—W_r(old))$</li>
+</ol>
+<p>LVQ2算法通过同时考察两个权值向量$w_k$及$w_r$，可以加快算法的收敛速度，使得各个权向量快速的向目标位置移动。</p>
+<h5 id="4-LVQ2-1算法改进"><a href="#4-LVQ2-1算法改进" class="headerlink" title="(4) LVQ2.1算法改进"></a>(4) LVQ2.1算法改进</h5><p>LVQ2.1在LVQ2的基础上做了一些改进．LVQ2.1也是同时考察与某个输入向量X最近的两个权向量 $w_{c1},w_{c_2}$，但并不关心$w_{c1},w_{c_2}$哪一个离X更近(对应的距离分别为$d_{c1},d_{c_2}$)。当下面两个条件同时满足时将对$w_{c1},w_{c_2}$进行调整：</p>
+<ol>
+<li>$w_{c1},w_{c_2}$中，有一个权向量代表的分类和X所表示的一致，而另一个不一致。</li>
+<li>$max[d_{c_1}／d_{c_2},d_{c_2}／d_{c_1}]&lt;(1+￡)$且$min[d_{c_1}／d_{c_2},d_{c_2}／d_{c_1}]&gt;(1-￡)$</li>
+</ol>
+<p>如果上述条件满足，不妨设 $w_{c1}$与X代表的类别相同，算法将调整权向量$w_{c1},w_{c_2}$，使得 $w_{c1}$输入向量X的方向靠近，而 $w_{c_2}$远离输入向量．调整公式为：</p>
+<ol>
+<li>$W_{c_1}(new)=W_{c_1}(old)+\alpha(X—W_{c_1}(old))$</li>
+<li>$W_{c_2}(new)=W_{c_2}(old)-\alpha(X—W_{c_2}(old))$</li>
+</ol>
+<h5 id="5-LVQ3算法改进"><a href="#5-LVQ3算法改进" class="headerlink" title="(5) LVQ3算法改进"></a>(5) LVQ3算法改进</h5><p>LVQ3也是同时考虑与输入向量X距离最近的两个权向量 $w_{c1},w_{c_2}$。当条件 $min[d_{c_1}／d_{c_2},d_{c_2}／d_{c_1}]&gt;(1-￡)(1+￡)$ 满足时 (￡的一个典型取值为0.2). 权向量将按照下述规则进行调整：</p>
+<ul>
+<li>如果 $w_{c1},w_{c_2}$两个权向量中有一个对应的分类与输入向量X一致，另一个不一致，则权向量的调整规则同 LVQ2.1</li>
+<li>如果 $w_{c1},w_{c_2}$代表相同的分类，则权向量 $w_{c1},w_{c_2}$均采用公式 $W_{c}(new)=W_{c}(old)+\beta(X—W_{c}(old))$ 进行调整，其中$\beta=m\alpha, 0.1&lt;m&lt;0.5$</li>
+</ul>
+<p>LVQ3算法通过对标准LVQ算法学习过程的修改，可以使得在网络学习过程不断进行的同时，网络的权向量能够很好地反映输入空间的概率密度分布，并且防止权向量偏离最优的位置。</p>
+<h5 id="6-G-LVQ"><a href="#6-G-LVQ" class="headerlink" title="(6) G-LVQ"></a>(6) G-LVQ</h5><p>G-LVQ将遗传算法应用于LVQ算法中，以克服LVQ算法本身的一些缺陷。</p>
+<h4 id="2-1-4-高斯混合聚类-Mixture-of-Gaussian"><a href="#2-1-4-高斯混合聚类-Mixture-of-Gaussian" class="headerlink" title="2.1.4 高斯混合聚类(Mixture-of-Gaussian)"></a><a target="_blank" rel="noopener" href="https://chengfeng96.com/blog/2019/05/17/%E8%81%9A%E7%B1%BB%E7%AC%94%E8%AE%B0/">2.1.4 高斯混合聚类(Mixture-of-Gaussian)</a></h4><p>高斯混合聚类(Mixture-of-Gaussian)采用概率模型来表达聚类原型.</p>
+<ol>
+<li>对于 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/0ae1a85663b488d8750034f314fead96.svg#id=JDBGA&amp;originHeight=13&amp;originWidth=13&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 维样本空间 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/4699152c8b2f628460172ab27174e1a5.svg#id=CWuXn&amp;originHeight=17&amp;originWidth=17&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 中的随机向量 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/615142e29a0abd8b3367a4c758a49449.svg#id=iaNSt&amp;originHeight=18&amp;originWidth=13&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> ，若 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/615142e29a0abd8b3367a4c758a49449.svg#id=GYe95&amp;originHeight=18&amp;originWidth=13&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 服从高斯分布，则其概率密度函数为 ：<br><img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/e6e6add27f1c70cea58a6996c58f9290.svg#id=WA0JY&amp;originHeight=59&amp;originWidth=525&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""><br>其中 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/7236b04c3ae9e2fe1f55ac3bc9238d52.svg#id=BjlSD&amp;originHeight=25&amp;originWidth=193&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 为 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/0ae1a85663b488d8750034f314fead96.svg#id=FPC17&amp;originHeight=13&amp;originWidth=13&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 维均值向量， <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/27938747f32cbc4fe6955e67d8d45c38.svg#id=bgldE&amp;originHeight=17&amp;originWidth=15&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 是 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/3415f011eff324713afe399d1786fb13.svg#id=tkmVK&amp;originHeight=14&amp;originWidth=51&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 的协方差矩阵。 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/615142e29a0abd8b3367a4c758a49449.svg#id=Nyny1&amp;originHeight=18&amp;originWidth=13&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 的概率密度函数由参数 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/2f60157b69677e2409d7b75a4e7e93b8.svg#id=ikeYQ&amp;originHeight=23&amp;originWidth=37&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 决定。 </li>
+<li>定义高斯混合分布： <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/c8de5f756081e9ff0cd9cd9b760c978a.svg#id=eL6Te&amp;originHeight=30&amp;originWidth=250&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 。该分布由 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/b0f80a77b6404455ddb6f55b039e4105.svg#id=C7Zx8&amp;originHeight=17&amp;originWidth=19&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 个混合成分组成，每个混合成分对应一个高斯分布。其中: <ul>
+<li><img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/1cc9ee66ad19a06d6af2be1a9c20ec5c.svg#id=S9gMP&amp;originHeight=24&amp;originWidth=57&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 是第 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/92e437054d1e57ccf66e719e1ed2d224.svg#id=IoDZN&amp;originHeight=18&amp;originWidth=11&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 个高斯混合成分的参数。</li>
+<li><img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/0a569ee146c1c8961d05b2ab03ecc569.svg#id=tLcy8&amp;originHeight=21&amp;originWidth=61&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 是相应的混合系数，满足 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/da80875b7807995a5f59706235f3e093.svg#id=XCuoK&amp;originHeight=30&amp;originWidth=116&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 。</li>
+</ul>
+</li>
+<li>假设训练集 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/8c33c886b45490870d3ebe3746363b97.svg#id=x0P9j&amp;originHeight=23&amp;originWidth=192&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 的生成过程是由高斯混合分布给出。<br>令随机变量 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/6226f31bf6ddd7c4d7cc120a488f2f75.svg#id=zC8ZU&amp;originHeight=23&amp;originWidth=157&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 表示生成样本 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/615142e29a0abd8b3367a4c758a49449.svg#id=PrNRv&amp;originHeight=18&amp;originWidth=13&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 的高斯混合成分序号， <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/fe69bad71d951e0818034cfb04f7570c.svg#id=ChYUZ&amp;originHeight=17&amp;originWidth=15&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 的先验概率 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/e004a8f6dab99d296b91112533c9519f.svg#id=scUcD&amp;originHeight=23&amp;originWidth=137&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt="">。<br>生成样本的过程分为两步： <ul>
+<li>首先根据概率分布 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/25dae5efcc84fef1d42af4729d28ab0f.svg#id=kt0V1&amp;originHeight=16&amp;originWidth=130&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 生成随机变量 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/fe69bad71d951e0818034cfb04f7570c.svg#id=gbSYH&amp;originHeight=17&amp;originWidth=15&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 。</li>
+<li>再根据 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/fe69bad71d951e0818034cfb04f7570c.svg#id=c5kDH&amp;originHeight=17&amp;originWidth=15&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 的结果，比如 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/6e3f9b310fc245216d1dd935ccec5553.svg#id=gkHqZ&amp;originHeight=18&amp;originWidth=54&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt="">， 根据概率 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/f8e74c1578fb89763019f33b5ce97679.svg#id=vTTew&amp;originHeight=24&amp;originWidth=114&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 生成样本。</li>
+</ul>
+</li>
+<li>根据贝叶斯定理， 若已知输出为 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/374d548f18d9f8ceb9f6b6b779a425ee.svg#id=IkMqU&amp;originHeight=22&amp;originWidth=20&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt="">，则 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/fe69bad71d951e0818034cfb04f7570c.svg#id=Fiwwv&amp;originHeight=17&amp;originWidth=15&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 的后验分布为：<br><img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/018a9976dedfc4fd92b71ea3ea81c577.svg#id=u1YAw&amp;originHeight=60&amp;originWidth=618&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""><br>其物理意义为：所有导致输出为 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/374d548f18d9f8ceb9f6b6b779a425ee.svg#id=NX9ak&amp;originHeight=22&amp;originWidth=20&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 的情况中， <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/6e3f9b310fc245216d1dd935ccec5553.svg#id=kl8so&amp;originHeight=18&amp;originWidth=54&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 发生的概率。 </li>
+<li>当高斯混合分布已知时，高斯混合聚类将样本集 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/f81a08fd463c530d8b3e5b5790d35eb9.svg#id=iaiPb&amp;originHeight=18&amp;originWidth=15&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 划分成 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/b0f80a77b6404455ddb6f55b039e4105.svg#id=f6GJJ&amp;originHeight=17&amp;originWidth=19&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 个簇 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/9e0add8aaa3d30f78ba0d9faedcee18e.svg#id=ljIeH&amp;originHeight=23&amp;originWidth=195&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 。<br>对于每个样本 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/374d548f18d9f8ceb9f6b6b779a425ee.svg#id=TeJXS&amp;originHeight=22&amp;originWidth=20&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> ，给出它的簇标记 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/4dc225dca196ee234da99867bd02f962.svg#id=UxDQN&amp;originHeight=21&amp;originWidth=19&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 为：<br><img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/dbf731e9b54a1ca6fc5990f2c15926b3.svg#id=qlz8U&amp;originHeight=35&amp;originWidth=260&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""><br>即：如果 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/374d548f18d9f8ceb9f6b6b779a425ee.svg#id=GXHtw&amp;originHeight=22&amp;originWidth=20&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 最有可能是 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/6e3f9b310fc245216d1dd935ccec5553.svg#id=w37my&amp;originHeight=18&amp;originWidth=54&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> 产生的，则将该样本划归到簇 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/3a840486dde29f61a0ec8bccfa2c09ff.svg#id=HzXFB&amp;originHeight=21&amp;originWidth=25&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt="">。<br>这就是通过最大后验概率确定样本所属的聚类。 </li>
+<li>现在的问题是，如何学习高斯混合分布的参数。由于涉及到隐变量 <img src="https://static.sitestack.cn/projects/huaxiaozhuan-ai/fe69bad71d951e0818034cfb04f7570c.svg#id=CC1Xo&amp;originHeight=17&amp;originWidth=15&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> ，可以采用<code>EM</code>算法求解。<br>具体求解参考<code>EM</code> 算法的章节部分。 </li>
+</ol>
+<h3 id="2-2-基于密度的聚类"><a href="#2-2-基于密度的聚类" class="headerlink" title="2.2 基于密度的聚类"></a>2.2 基于密度的聚类</h3><p><code>k-means</code>算法对于凸性数据具有良好的效果，能够根据距离来讲数据分为球状类的簇，但对于非凸形状的数据点，就无能为力了，当<code>k-means</code>算法在环形数据的聚类时，我们看看会发生什么情况。</p>
+<p><img src="https://pic4.zhimg.com/80/v2-014e1a2055df95e067341cba1809a9af_1440w.jpg#id=ZVgLT&amp;originHeight=576&amp;originWidth=1440&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""></p>
+<p>从上图可以看到，<code>kmeans</code>聚类产生了错误的结果，这个时候就需要用到基于密度的聚类方法了。基于密度的聚类(Density-based Clustering)假设聚类结构能通过样本分布的紧密程度确定.密度聚类算法从样本密度的角度来考察样本之间的可连续性，并基于可连续样本不断扩展聚类簇以获得最终的聚类结果.</p>
+<p>基于密度的聚类(Density-based Clustering)</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/DBSCAN"><strong>DBSCAN</strong></a> (Density-Based Spatial Clustering of Application with Noise)</li>
+<li><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/OPTICS_algorithm"><strong>OPTICS</strong></a> (Ordering Points To Identify the Clustering Structure)</li>
+</ul>
+<h4 id="2-2-1-DBSCAN"><a href="#2-2-1-DBSCAN" class="headerlink" title="2.2.1 DBSCAN"></a>2.2.1 DBSCAN</h4><p>DBSCAN（Density-Based Spatial Clustering of Applications with Noise）是一种基于密度的空间聚类算法,它不需要定义簇的个数,而是将具有足够高密度的区域划分为簇,并在有噪声的数据中发现任意形状的簇,在此算法中将簇定义为密度相连的点的最大集合。</p>
+<p>首先介绍几个概念，考虑集合<img src="https://www.zhihu.com/equation?tex=X%3D%5Cleft+%5C%7Bx%5E%7B%281%29%7D%2Cx%5E%7B%282%29%7D%2C...%2Cx%5E%7B%28n%29%7D%5Cright+%5C%7D#id=WvKOb&amp;originHeight=39&amp;originWidth=204&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt="">，<img src="https://www.zhihu.com/equation?tex=%5Cvarepsilon#id=cSBrZ&amp;originHeight=13&amp;originWidth=9&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt="">表示定义密度的邻域半径，设聚类的邻域密度阈值为<img src="https://www.zhihu.com/equation?tex=M#id=KESNV&amp;originHeight=17&amp;originWidth=20&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt="">，有以下定义：</p>
+<ul>
+<li><img src="https://www.zhihu.com/equation?tex=%5Cvarepsilon#id=tQJVL&amp;originHeight=13&amp;originWidth=9&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""><strong>邻域(</strong><img src="https://www.zhihu.com/equation?tex=%5Cvarepsilon#id=kjQhZ&amp;originHeight=13&amp;originWidth=9&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""><strong>-neighborhood）</strong></li>
+</ul>
+<p><img src="https://www.zhihu.com/equation?tex=N_%7B%5Cvarepsilon+%7D%28x%29%3D%5Cleft+%5C%7By%5Cin++X%7Cd%28x%2C+y%29+%3C+%5Cvarepsilon+%5Cright+%5C%7D+%5C%5C#id=zSPxt&amp;originHeight=40&amp;originWidth=600&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""></p>
+<ul>
+<li><strong>密度(desity)</strong><img src="https://www.zhihu.com/equation?tex=x#id=y738D&amp;originHeight=13&amp;originWidth=11&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt="">的密度为</li>
+</ul>
+<p><img src="https://www.zhihu.com/equation?tex=%5Crho+%28x%29%3D%5Cleft+%7C+N_%7B%5Cvarepsilon+%7D%28x%29%5Cright+%7C+%5C%5C#id=i6wfz&amp;originHeight=40&amp;originWidth=600&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""></p>
+<ul>
+<li><strong>核心点(core-point)</strong><br>设<img src="https://www.zhihu.com/equation?tex=x%5Cin++X#id=qDZHW&amp;originHeight=17&amp;originWidth=49&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt="">，若<img src="https://www.zhihu.com/equation?tex=%5Crho+%28x%29+%5Cgeq+M#id=kZEUo&amp;originHeight=23&amp;originWidth=79&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt="">，则称<img src="https://www.zhihu.com/equation?tex=x#id=q1PI2&amp;originHeight=13&amp;originWidth=11&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt="">为<img src="https://www.zhihu.com/equation?tex=X#id=yArJ9&amp;originHeight=17&amp;originWidth=16&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt="">的核心点，记<img src="https://www.zhihu.com/equation?tex=X#id=EBfiT&amp;originHeight=17&amp;originWidth=16&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt="">中所有核心点构成的集合为<img src="https://www.zhihu.com/equation?tex=X_c#id=RgIvj&amp;originHeight=20&amp;originWidth=23&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt="">，记所有非核心点构成的集合为<img src="https://www.zhihu.com/equation?tex=X_%7Bnc%7D#id=xFShV&amp;originHeight=20&amp;originWidth=31&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt="">。 </li>
+<li><strong>边界点(border-point)</strong><br>若<img src="https://www.zhihu.com/equation?tex=x%5Cin++X_%7Bnc%7D#id=qI4A7&amp;originHeight=20&amp;originWidth=64&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt="">，且<img src="https://www.zhihu.com/equation?tex=%5Cexists+y%5Cin++X#id=Ljp87&amp;originHeight=20&amp;originWidth=58&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt="">，满足<br><img src="https://www.zhihu.com/equation?tex=y%5Cin++N_%7B%5Cvarepsilon+%7D%28x%29+%5Ccap+X_c+%5C%5C#id=FELj9&amp;originHeight=40&amp;originWidth=600&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""><br>即<img src="https://www.zhihu.com/equation?tex=x#id=C3LHo&amp;originHeight=13&amp;originWidth=11&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt="">的<img src="https://www.zhihu.com/equation?tex=%5Cvarepsilon#id=tUAlp&amp;originHeight=13&amp;originWidth=9&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt="">邻域中存在核心点，则称<img src="https://www.zhihu.com/equation?tex=x#id=JBGnC&amp;originHeight=13&amp;originWidth=11&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt="">为<img src="https://www.zhihu.com/equation?tex=X#id=oatxR&amp;originHeight=17&amp;originWidth=16&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt="">的边界点，记<img src="https://www.zhihu.com/equation?tex=X#id=OGj7O&amp;originHeight=17&amp;originWidth=16&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt="">中所有的边界点构成的集合为<img src="https://www.zhihu.com/equation?tex=X_%7Bbd%7D#id=Psyte&amp;originHeight=20&amp;originWidth=30&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt="">。<br>此外，边界点也可以这么定义：若<img src="https://www.zhihu.com/equation?tex=x%5Cin++X_%7Bnc%7D#id=J5RaA&amp;originHeight=20&amp;originWidth=64&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt="">，且<img src="https://www.zhihu.com/equation?tex=x#id=sLlm4&amp;originHeight=13&amp;originWidth=11&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt="">落在某个核心点的<img src="https://www.zhihu.com/equation?tex=%5Cvarepsilon#id=YlxYk&amp;originHeight=13&amp;originWidth=9&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt="">邻域内，则称<img src="https://www.zhihu.com/equation?tex=x#id=tMsk4&amp;originHeight=13&amp;originWidth=11&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt="">为<img src="https://www.zhihu.com/equation?tex=X#id=Sp9mo&amp;originHeight=17&amp;originWidth=16&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt="">的一个边界点，一个边界点可能同时落入一个或多个核心点的<img src="https://www.zhihu.com/equation?tex=%5Cvarepsilon#id=B7oOd&amp;originHeight=13&amp;originWidth=9&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt="">邻域。 </li>
+<li><strong>噪声点(noise-point)</strong><br>若<img src="https://www.zhihu.com/equation?tex=x#id=ME8Pu&amp;originHeight=13&amp;originWidth=11&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt="">满足<br><img src="https://www.zhihu.com/equation?tex=x%5Cin++X%2Cx+%5Cnotin+X_%7Bc%7D%E4%B8%94+x%5Cnotin+X_%7Bbd%7D+%5C%5C#id=M9jlO&amp;originHeight=41&amp;originWidth=600&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""><br>则称<img src="https://www.zhihu.com/equation?tex=x#id=g0C0n&amp;originHeight=13&amp;originWidth=11&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt="">为噪声点。<br>如下图所示，设<img src="https://www.zhihu.com/equation?tex=M%3D3#id=U2niB&amp;originHeight=17&amp;originWidth=54&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt="">，则A为核心点，B、C是边界点，而N是噪声点。 </li>
+</ul>
+<p><img src="https://pic1.zhimg.com/80/v2-7efff68d8eada2472ed0a0372fa0b914_1440w.jpg#id=OX7JL&amp;originHeight=330&amp;originWidth=536&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""></p>
+<p>该算法的流程如下：</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1guivub1phij60jc0mm0v802.jpg#id=YetGL&amp;originHeight=814&amp;originWidth=696&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""></p>
+<p><strong>算法说明:</strong></p>
+<ul>
+<li>DBSCAN算法先任选数据集中的一个核心对象为 “种子 (seed)”,再由此出发确定相应的聚类簇；</li>
+<li>第1-7行：先根据给定的邻域簇 $(c,MinPts)$ 找出所有核心对象；</li>
+<li>第10-24行：以任一核心对象为出发点，找出由其密度可达的样本生成聚类簇，直到所有核心对象均被访问过为止.</li>
+</ul>
+<blockquote>
+<p>一般来说，<code>DBSCAN</code>算法有以下几个特点：</p>
+<ol>
+<li>需要提前确定<img src="https://www.zhihu.com/equation?tex=%5Cvarepsilon+#id=oe60x&amp;originHeight=13&amp;originWidth=9&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt="">和<img src="https://www.zhihu.com/equation?tex=M#id=SzpN5&amp;originHeight=17&amp;originWidth=20&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt="">值</li>
+<li><strong>不需要提前设置聚类的个数</strong></li>
+<li>对初值选取敏感，对噪声不敏感</li>
+<li>对密度不均的数据聚合效果不好</li>
+</ol>
+</blockquote>
+<h4 id="2-2-2-OPTICS"><a href="#2-2-2-OPTICS" class="headerlink" title="2.2.2 OPTICS"></a>2.2.2 OPTICS</h4><p>OPTICS (Ordering Points To Identify the Clustering Structure). OPTICS和DBSCAN聚类相同,都是基于密度的聚类,但是,OPTICS的好处在于可以处理不同密度的类,结果有点像基于连通性的聚类,不过还是有些区别的.</p>
+<h3 id="2-3-层次聚类方法"><a href="#2-3-层次聚类方法" class="headerlink" title="2.3 层次聚类方法"></a>2.3 <strong>层次聚类方法</strong></h3><blockquote>
+<p>前面介绍的几种算法确实可以在较小的复杂度内获取较好的结果，但是这几种算法却存在一个<code>链式效应</code>的现象，比如：A与B相似，B与C相似，那么在聚类的时候便会将A、B、C聚合到一起，但是如果A与C不相似，就会造成聚类误差，严重的时候这个误差可以一直传递下去。为了降低<code>链式效应</code>，这时候层次聚类就该发挥作用了。</p>
+</blockquote>
+<p>层次聚类(Hierarchical Clustering) 也称为基于连通性的聚类。这种算法试图在不同层次对数据进行划分，从而形成树形的聚类结构。</p>
+<p>数据集的划分采用不同的策略会生成不同的层次聚类算法：</p>
+<ul>
+<li>“自底向上”的聚合策略<br>（<strong>Agglomerative</strong>）。每一个对象最开始都是一个 <code>cluster</code>，每次按一定的准则将最相近的两个 <code>cluster</code> 合并生成一个新的 <code>cluster</code>，如此往复，直至最终所有的对象都属于一个 <code>cluster</code>。这里主要关注此类算法。 <ul>
+<li>AGNES(Agglomerative Nesting)</li>
+</ul>
+</li>
+<li>“自顶向下”的分拆策略<br>（<strong>Divisive</strong>）。最开始所有的对象均属于一个 <code>cluster</code>，每次按一定的准则将某个 <code>cluster</code> 划分为多个 <code>cluster</code>，如此往复，直至每个对象均是一个 <code>cluster</code>。 </li>
+</ul>
+<p><img src="https://pic2.zhimg.com/80/v2-be2a7cf798fdc983e6521a68b1eb952d_1440w.jpg#id=eXMcp&amp;originHeight=1002&amp;originWidth=1440&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""></p>
+<h4 id="2-3-1-AGNES"><a href="#2-3-1-AGNES" class="headerlink" title="2.3.1 AGNES"></a>2.3.1 AGNES</h4><p><strong>(1) 算法介绍</strong></p>
+<p>AGNES(Agglomerative Nesting)是一种采用自底向上聚合策略的层次聚类算法，算法的步骤为：</p>
+<ol>
+<li>先将数据集中的每个样本当做是一个初始聚类簇;</li>
+<li>然后在算法运行的每一步中找出距离最近的两个点(聚类簇)进行合并为一个聚类簇;</li>
+<li>上述过程不断重复，直至所有的样本点合并为一个聚类簇或达到预设的聚类簇个数。 最终算法会产生一棵树，称为树状图(dendrogram), 树状图展示了数据点是如何合并的.</li>
+</ol>
+<p>这个算法的关键是如何计算两点之间以及两个聚类簇之间的距离</p>
+<ol>
+<li>如何计算两点之间的距离<strong>[距离矩阵(Metric)]</strong>：<br><img src="https://tva1.sinaimg.cn/large/008i3skNly1guqkyapbvgj616a0bq0ua02.jpg#id=eZQ7M&amp;originHeight=422&amp;originWidth=1522&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""> </li>
+<li>如何计算两个聚类簇(集合)之间的距离<strong>[链接准则(Linkage criteria)]</strong>： </li>
+</ol>
+<ul>
+<li>Complete-linkage clustering(全链接)</li>
+<li>Single-linkage clustering(单链接)</li>
+<li>Mean-linkage clustering(平均链接 UPGMA)</li>
+<li>Centroid-linkage clustering(中心链接 UPGMC)</li>
+<li><strong>Minimum energy clustering</strong></li>
+</ul>
+<p><img src="https://cdn.nlark.com/yuque/0/2023/png/8420697/1676455519982-21daf41c-04a7-4b8f-be17-f2fcf0cab8dc.png#averageHue=%231f1f1e&amp;clientId=u6ad9c9ba-2483-4&amp;from=paste&amp;height=381&amp;id=u0dbb165a&amp;name=image.png&amp;originHeight=762&amp;originWidth=1441&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=181796&amp;status=done&amp;style=none&amp;taskId=u52091656-f518-4dac-8a90-0edc08ba51e&amp;title=&amp;width=720.5" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<h2 id="3-聚类效果评价指标"><a href="#3-聚类效果评价指标" class="headerlink" title="3 聚类效果评价指标"></a>3 聚类效果评价指标</h2><blockquote>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_42122496/article/details/106193859">这里给出三个聚类效果评价指标：互信息，标准化互信息，调整互信息(MI, NMI, AMI)</a></p>
+</blockquote>
+<h3 id="互信息-Mutual-information"><a href="#互信息-Mutual-information" class="headerlink" title="互信息(Mutual information)"></a>互信息(Mutual information)</h3><p>互信息的计算公式如下：</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gw8woehiulj30qk0k077g.jpg#id=SZcTq&amp;originHeight=720&amp;originWidth=956&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""></p>
+<h3 id="标准化互信息-NMI-Normalized-Mutual-Information"><a href="#标准化互信息-NMI-Normalized-Mutual-Information" class="headerlink" title="标准化互信息(NMI, Normalized Mutual Information)"></a>标准化互信息(NMI, Normalized Mutual Information)</h3><p>通常采用NMI和AMI来作为衡量聚类效果的指标。</p>
+<p>标准化互信息的计算方法如下：</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gw8wp9hjpdj30q20dwdid.jpg#id=K9LDB&amp;originHeight=500&amp;originWidth=938&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""></p>
+<h3 id="调整互信息-AMI-Adjusted-Mutual-Information"><a href="#调整互信息-AMI-Adjusted-Mutual-Information" class="headerlink" title="调整互信息(AMI, Adjusted Mutual Information)"></a>调整互信息(AMI, Adjusted Mutual Information)</h3><p>调整互信息的计算要复杂一些，其计算方法如下：</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gw8wq2hd05j30pu066jsa.jpg#id=lbsRf&amp;originHeight=222&amp;originWidth=930&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt=""></p>
+<h3 id="Python实现"><a href="#Python实现" class="headerlink" title="Python实现"></a>Python实现</h3><p>Python中的 sklearn 库里有这三个指标的类，可以直接调用；</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs stylus">from sklearn<span class="hljs-selector-class">.metrics</span><span class="hljs-selector-class">.cluster</span> import entropy, mutual_info_score, normalized_mutual_info_score, adjusted_mutual_info_score<br><br>MI = lambda x, y: <span class="hljs-built_in">mutual_info_score</span>(x, y)<br>NMI = lambda x, y: <span class="hljs-built_in">normalized_mutual_info_score</span>(x, y, average_method=<span class="hljs-string">&#x27;arithmetic&#x27;</span>)<br>AMI = lambda x, y: <span class="hljs-built_in">adjusted_mutual_info_score</span>(x, y, average_method=<span class="hljs-string">&#x27;arithmetic&#x27;</span>)<br><br>A = <span class="hljs-selector-attr">[1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3]</span><br>B = <span class="hljs-selector-attr">[1, 2, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 1, 1, 3, 3, 3]</span><br><span class="hljs-selector-id">#print</span>(<span class="hljs-built_in">entropy</span>(A))<br><span class="hljs-selector-id">#print</span>(<span class="hljs-built_in">MI</span>(A, B))<br><span class="hljs-function"><span class="hljs-title">print</span><span class="hljs-params">(NMI(A, B)</span></span>)<br><span class="hljs-function"><span class="hljs-title">print</span><span class="hljs-params">(AMI(A, B)</span></span>)<br><br>C = <span class="hljs-selector-attr">[1, 1, 2, 2, 3, 3, 3]</span><br>D = <span class="hljs-selector-attr">[1, 1, 1, 2, 1, 1, 1]</span><br><span class="hljs-function"><span class="hljs-title">print</span><span class="hljs-params">(NMI(C, D)</span></span>)<br><span class="hljs-function"><span class="hljs-title">print</span><span class="hljs-params">(AMI(C, D)</span></span>)<br></code></pre></td></tr></table></figure>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/75477709">用人话讲明白快速聚类kmeans</a> </li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/35959301">从零开始教你 KMeans 算法</a> </li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/34330242">如何正确使用「K均值聚类」？</a> </li>
+<li><a target="_blank" rel="noopener" href="https://www.biaodianfu.com/k-means-choose-k.html">K-Means算法之K值的选择</a> </li>
+<li><a target="_blank" rel="noopener" href="http://zhouchen.tech/2017/12/22/sklearn%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B%EF%BC%9A%E5%88%86%E7%B1%BB%E3%80%81%E8%81%9A%E7%B1%BB%E3%80%81%E5%9B%9E%E5%BD%92%E5%92%8C%E9%99%8D%E7%BB%B4/">sklearn入门教程：分类、聚类、回归和降维</a> </li>
+<li><a target="_blank" rel="noopener" href="https://analyticsarora.com/k-means-for-beginners-how-to-build-from-scratch-in-python">K-means for Beginners: How to Build from Scratch in Python</a> </li>
+<li><a target="_blank" rel="noopener" href="https://github.com/NLP-LOVE/Introduction-NLP/blob/master/chapter/10.%E6%96%87%E6%9C%AC%E8%81%9A%E7%B1%BB.md">Introduction-NLP/chapter/10.文本聚类.md</a> </li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/104355127">常用聚类算法-知乎</a> </li>
+<li><a target="_blank" rel="noopener" href="http://rstudio-pubs-static.s3.amazonaws.com/202367_03e1ddfcbca74cba97c4a4be7bbabd48.html">Clustering.pdf</a> </li>
+<li><a target="_blank" rel="noopener" href="http://www.citisy.site/posts/57282.html">citisy的炼丹房</a> </li>
+<li><a target="_blank" rel="noopener" href="https://xueqiu.com/8566534281/139665190">LVQ学习向量量化算法原理以及代码实现-雪球</a> </li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/changyuanchn/article/details/80427922">LVQ聚类算法</a> </li>
+<li><a target="_blank" rel="noopener" href="https://chengfeng96.com/blog/2019/05/17/%E8%81%9A%E7%B1%BB%E7%AC%94%E8%AE%B0/">机器学习基础（八）- 聚类笔记</a> </li>
+<li><a target="_blank" rel="noopener" href="http://www.jsjkx.com/CN/article/openArticlePDF.jsp?id=14652">SOM算法、LVQ算法及其变体综述</a> </li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E6%96%87%E6%9C%AC%E8%81%9A%E7%B1%BB/">#文本聚类</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>文本聚类算法总结</div>
+      <div>http://example.com/2021/09/06/2021-09-06-文本聚类算法总结/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>NSX</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年9月6日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/09/06/2021-09-06-K-means%E8%81%9A%E7%B1%BB%E8%AF%A6%E8%A7%A3/" title="K-means聚类详解">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">K-means聚类详解</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/09/06/2021-09-06-%E9%98%BF%E9%87%8C%E4%BA%91%E6%90%9C%E7%B4%A2%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/" title="阿里云es内部技术分享摘要">
+                        <span class="hidden-mobile">阿里云es内部技术分享摘要</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
