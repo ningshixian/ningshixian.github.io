@@ -18,57 +18,56 @@
   
     <meta name="description" content="metric learning希望使同源的向量相似度尽可能的高，而非同源的向量相似度尽可能的低，即类内相近，类间分离。通过distance metric引导分类器可以学习到能区分不同类的特征组合，所以多被用于 CV 的人脸识别，NLP 的语义匹配等。 在语义模型的训练框架里，Deep Metric Learning 大致可以分为两类：分类和排序。  采用分类的方法，一般最后一层接的是多类别的sof">
 <meta property="og:type" content="article">
-<meta property="og:title" content="度量学习之损失函数⭐️">
+<meta property="og:title" content="2021-11-26-度量学习之损失函数⭐️">
 <meta property="og:url" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/index.html">
 <meta property="og:site_name" content="神的个人博客">
 <meta property="og:description" content="metric learning希望使同源的向量相似度尽可能的高，而非同源的向量相似度尽可能的低，即类内相近，类间分离。通过distance metric引导分类器可以学习到能区分不同类的特征组合，所以多被用于 CV 的人脸识别，NLP 的语义匹配等。 在语义模型的训练框架里，Deep Metric Learning 大致可以分为两类：分类和排序。  采用分类的方法，一般最后一层接的是多类别的sof">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%9F%BA%E4%BA%8E%E5%88%86%E7%B1%BB%E7%9A%84%E6%A8%A1%E5%9E%8B%E7%BB%93%E6%9E%84.png">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%9F%BA%E4%BA%8Epoint-wise%E7%9A%84%E6%A8%A1%E5%9E%8B%E7%BB%93%E6%9E%84.png">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%9F%BA%E4%BA%8Epair-wise%E7%9A%84%E6%A8%A1%E5%9E%8B%E7%BB%93%E6%9E%84.png">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1673405195163.png">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1673405218698.png">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/v2-7c277d3e03c9813d6332fb9024a782bc_1440w.jpg">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639413138897.png">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/tri.gif">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1659942647929.png">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639475408589.png">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1673406211010.png">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1663316290728-e31c0de8-bb8b-44e7-9b52-f580706ebdc3.png">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/image-20230424125145643.png">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1664185635777-cd0979ec-38ba-42f9-80e7-f6f44f2d763a.png">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1664185654433-67c1dd15-3a63-4448-bb4f-3feb17dab9de.png">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1664185671969-c0e37e09-2705-44c5-9f03-48fd5d81344e.png">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1664185677581.png">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1673427906232.png">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1673427918475.png">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1673427954652.png">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1673428432184.jpeg">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1673428524765.png">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1673428567722.png">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1673428577748.png">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1673428594681.png">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1654703845131.png">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1654704667033-2a22f4c5-ac55-4e2c-82a6-a326aa9e14f7.svg">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1654704667128-c331f528-468d-44f2-8ecc-c9144ec2024b.svg">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1654704667038-25ea9038-4faf-477e-b88b-7b6104ff520e.svg">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1654704667637-a3cf5d01-7812-4c21-b823-183bb03e458c-20230424151358274.svg">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1654704669092.png">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/9ab16fdee73b871d2789ff87cbe7dcfd.jpeg">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/cee0aa68e0234cf7984ef3693ec48598.png">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/ecccb2781dc9b2553d5d893ca607c88c.png">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639464948149-56dfe4e1-8489-479d-9610-9d18bfc1d1f7.svg">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639464948204-3a037890-59f9-408a-ab43-0c1791ca56de.svg">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639464948717.png">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639392604352.png">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/image-20230424153842581.png">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/image-20230424153854792.png">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/image-20230424153911064.png">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/image-20230424153925342.png">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/image-20230424153935636.png">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1673406919436.png">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639394295007.png">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639387025330.png">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%9F%BA%E4%BA%8E%E5%88%86%E7%B1%BB%E7%9A%84%E6%A8%A1%E5%9E%8B%E7%BB%93%E6%9E%84.png">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%9F%BA%E4%BA%8Epoint-wise%E7%9A%84%E6%A8%A1%E5%9E%8B%E7%BB%93%E6%9E%84.png">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%9F%BA%E4%BA%8Epair-wise%E7%9A%84%E6%A8%A1%E5%9E%8B%E7%BB%93%E6%9E%84.png">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1673405195163.png">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1673405218698.png">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/v2-7c277d3e03c9813d6332fb9024a782bc_1440w.jpg">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639413138897.png">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/tri.gif">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1659942647929.png">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639475408589.png">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1673406211010.png">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1663316290728-e31c0de8-bb8b-44e7-9b52-f580706ebdc3.png">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/image-20230424125145643.png">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1664185635777-cd0979ec-38ba-42f9-80e7-f6f44f2d763a.png">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1664185654433-67c1dd15-3a63-4448-bb4f-3feb17dab9de.png">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1664185671969-c0e37e09-2705-44c5-9f03-48fd5d81344e.png">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1664185677581.png">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1673427906232.png">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1673427918475.png">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1673427954652.png">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1673428432184.jpeg">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1673428524765.png">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1673428567722.png">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1673428577748.png">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1673428594681.png">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1654703845131.png">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1654704667033-2a22f4c5-ac55-4e2c-82a6-a326aa9e14f7.svg">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1654704667128-c331f528-468d-44f2-8ecc-c9144ec2024b.svg">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1654704667038-25ea9038-4faf-477e-b88b-7b6104ff520e.svg">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1654704669092.png">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/9ab16fdee73b871d2789ff87cbe7dcfd.jpeg">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/cee0aa68e0234cf7984ef3693ec48598.png">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/ecccb2781dc9b2553d5d893ca607c88c.png">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639464948149-56dfe4e1-8489-479d-9610-9d18bfc1d1f7.svg">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639464948204-3a037890-59f9-408a-ab43-0c1791ca56de.svg">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639464948717.png">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639392604352.png">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/image-20230424153842581.png">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/image-20230424153854792.png">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/image-20230424153911064.png">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/image-20230424153925342.png">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/image-20230424153935636.png">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1673406919436.png">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639394295007.png">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639387025330.png">
 <meta property="og:image" content="https://cdn.nlark.com/yuque/0/2021/svg/8420697/1639387024312-d49336b5-c87e-4510-915b-4d8d41aff6ed.svg#clientId=ua89f5579-b5c3-4&amp;id=DSaes&amp;originHeight=24&amp;originWidth=70&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;taskId=u1d4fea74-61bd-4a85-9fb1-bf8cdcfa840&amp;title=">
 <meta property="og:image" content="https://cdn.nlark.com/yuque/0/2021/svg/8420697/1639387024512-85a526b5-e628-4b0b-8242-2c384baa8805.svg#clientId=ua89f5579-b5c3-4&amp;id=veMCx&amp;originHeight=23&amp;originWidth=30&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;taskId=u3bd99e47-1906-410a-ba54-20cb7484e37&amp;title=">
 <meta property="og:image" content="https://cdn.nlark.com/yuque/0/2021/svg/8420697/1639387024382-726b501d-b92c-45a4-877d-0991ea94d124.svg#clientId=ua89f5579-b5c3-4&amp;id=qqhkA&amp;originHeight=23&amp;originWidth=30&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;taskId=u1de36c29-4522-4c22-9c8c-2f0bd2b7cf6&amp;title=">
@@ -80,32 +79,32 @@
 <meta property="og:image" content="https://cdn.nlark.com/yuque/0/2021/svg/8420697/1639387025571-dc483b7b-2a3b-46a6-975b-685f305a6427.svg#clientId=ua89f5579-b5c3-4&amp;id=vSStV&amp;originHeight=43&amp;originWidth=82&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;taskId=u429b6597-f459-4e60-b650-829c970d21d&amp;title=">
 <meta property="og:image" content="https://cdn.nlark.com/yuque/0/2021/svg/8420697/1639387025806-8652436d-84a8-43a2-8dce-51b80a043ee0.svg#clientId=ua89f5579-b5c3-4&amp;id=x7s4Y&amp;originHeight=23&amp;originWidth=27&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;taskId=u15df1e60-3ead-4604-a014-b828d63d63c&amp;title=">
 <meta property="og:image" content="https://cdn.nlark.com/yuque/0/2021/svg/8420697/1639387025804-192787ee-93cb-4478-a98a-0125aa84e6be.svg#clientId=ua89f5579-b5c3-4&amp;id=WYhn6&amp;originHeight=23&amp;originWidth=27&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;taskId=u478e544d-17f6-4e0f-a5e7-cb8695e3021&amp;title=">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1645600791211-a9b31d3c-6ec3-4cf5-858f-796c638efed1.png">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1645600193929-46099e79-a355-4809-88c6-afe642732166.png">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639387026193-df53b33b-3739-4163-bf85-a18f93d6f145.jpeg">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639453666077.jpeg">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639387027393.png">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639387028039.png">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1677568475138.png">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639411191116-c2ad8c62-c94b-4673-969f-9b5bf824d8f6.svg">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639411191111-eca05b7d-e0af-43de-8524-77db52039021.svg">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639411191715-c21268f3-7924-4a89-98ea-46db68b55d43.svg">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639411191796-75a681c2-5c5c-4aa1-9bef-2889b50bfda0.svg">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639411191807-d06e689e-dc90-4005-a643-7e87bf1bfbca.svg">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639411192007-9c4ad1eb-14e3-4ee0-b356-028246ccf6b8.svg">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639411192567-c5547d68-6df3-445a-b332-a4dd54472475.svg">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639411192735-c6c2aa50-db84-490c-a612-b831da97ccd1.svg">
-<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639411193081-9fadfcc1-b05e-49ea-abe1-9f0ab99d920d.svg">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1645600791211-a9b31d3c-6ec3-4cf5-858f-796c638efed1.png">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1645600193929-46099e79-a355-4809-88c6-afe642732166.png">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639387026193-df53b33b-3739-4163-bf85-a18f93d6f145.jpeg">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639453666077.jpeg">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639387027393.png">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639387028039.png">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1677568475138.png">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639411191116-c2ad8c62-c94b-4673-969f-9b5bf824d8f6.svg">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639411191111-eca05b7d-e0af-43de-8524-77db52039021.svg">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639411191715-c21268f3-7924-4a89-98ea-46db68b55d43.svg">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639411191796-75a681c2-5c5c-4aa1-9bef-2889b50bfda0.svg">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639411191807-d06e689e-dc90-4005-a643-7e87bf1bfbca.svg">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639411192007-9c4ad1eb-14e3-4ee0-b356-028246ccf6b8.svg">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639411192567-c5547d68-6df3-445a-b332-a4dd54472475.svg">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639411192735-c6c2aa50-db84-490c-a612-b831da97ccd1.svg">
+<meta property="og:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639411193081-9fadfcc1-b05e-49ea-abe1-9f0ab99d920d.svg">
 <meta property="article:published_time" content="2021-11-26T08:35:00.000Z">
-<meta property="article:modified_time" content="2023-04-24T07:48:07.389Z">
+<meta property="article:modified_time" content="2023-04-24T16:06:01.061Z">
 <meta property="article:author" content="Ning Shixian">
 <meta property="article:tag" content="原创">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%9F%BA%E4%BA%8E%E5%88%86%E7%B1%BB%E7%9A%84%E6%A8%A1%E5%9E%8B%E7%BB%93%E6%9E%84.png">
+<meta name="twitter:image" content="http://example.com/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%9F%BA%E4%BA%8E%E5%88%86%E7%B1%BB%E7%9A%84%E6%A8%A1%E5%9E%8B%E7%BB%93%E6%9E%84.png">
   
   
   
-  <title>度量学习之损失函数⭐️ - 神的个人博客</title>
+  <title>2021-11-26-度量学习之损失函数⭐️ - 神的个人博客</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -271,7 +270,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="度量学习之损失函数⭐️"></span>
+            <span id="subtitle" data-typed-text="2021-11-26-度量学习之损失函数⭐️"></span>
           
         </div>
 
@@ -343,7 +342,7 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">度量学习之损失函数⭐️</h1>
+            <h1 style="display: none">2021-11-26-度量学习之损失函数⭐️</h1>
             
             
               <div class="markdown-body">
@@ -365,9 +364,9 @@
 </thead>
 <tbody>
 <tr>
-<td><img src="度量学习之损失函数⭐️/基于分类的模型结构.png" srcset="/img/loading.gif" lazyload alt="基于分类的模型结构"></td>
-<td><img src="度量学习之损失函数⭐️/基于point-wise的模型结构.png" srcset="/img/loading.gif" lazyload alt="基于point-wise的模型结构"></td>
-<td><img src="度量学习之损失函数⭐️/基于pair-wise的模型结构.png" srcset="/img/loading.gif" lazyload alt="基于pair-wise的模型结构"></td>
+<td><img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%9F%BA%E4%BA%8E%E5%88%86%E7%B1%BB%E7%9A%84%E6%A8%A1%E5%9E%8B%E7%BB%93%E6%9E%84.png" srcset="/img/loading.gif" lazyload class="" title="基于分类的模型结构"></td>
+<td><img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%9F%BA%E4%BA%8Epoint-wise%E7%9A%84%E6%A8%A1%E5%9E%8B%E7%BB%93%E6%9E%84.png" srcset="/img/loading.gif" lazyload class="" title="基于point-wise的模型结构"></td>
+<td><img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/%E5%9F%BA%E4%BA%8Epair-wise%E7%9A%84%E6%A8%A1%E5%9E%8B%E7%BB%93%E6%9E%84.png" srcset="/img/loading.gif" lazyload class="" title="基于pair-wise的模型结构"></td>
 </tr>
 </tbody>
 </table>
@@ -377,8 +376,8 @@
 <table>
 <thead>
 <tr>
-<th><img src="度量学习之损失函数⭐️/1673405195163.png" srcset="/img/loading.gif" lazyload alt="image.png"></th>
-<th><img src="度量学习之损失函数⭐️/1673405218698.png" srcset="/img/loading.gif" lazyload alt="image.png"></th>
+<th><img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1673405195163.png" srcset="/img/loading.gif" lazyload class="" title="image.png"></th>
+<th><img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1673405218698.png" srcset="/img/loading.gif" lazyload class="" title="image.png"></th>
 </tr>
 </thead>
 <tbody>
@@ -398,7 +397,7 @@
 <p>$L=\frac{1}{2N} \sum_{n=1}^{N}Y\left(D_{W}\right)^{2}+(1-Y)\left\{\max \left(0, margin-D_{W}\right)\right\}^{2}$</p>
 <p>$D_{W}\left(\vec{X}_{1}, \vec{X}_{2}\right)=\left|G_{W}\left(\vec{X}_{1}\right)-G_{W}\left(\vec{X}_{2}\right)\right|_{2}=\sqrt{\sum_{i=1}^{n}\left(x_{1i}-x_{2i}\right)^{2}}$</p>
 <p>从拓扑的观点来看，Contrastive Loss使得网络学习到一种映射关系(神经网络或转换矩阵)，把<strong>向量从原始空间映射到新的空间从而使得向量在新的空间有更好的拓扑性质</strong>，即<strong>类内尽可能紧凑类间尽可能分离</strong>。</p>
-<p><img src="度量学习之损失函数⭐️/v2-7c277d3e03c9813d6332fb9024a782bc_1440w.jpg" srcset="/img/loading.gif" lazyload alt="Network"></p>
+<img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/v2-7c277d3e03c9813d6332fb9024a782bc_1440w.jpg" srcset="/img/loading.gif" lazyload class="" title="Network">
 <p><strong>Contrastive loss的缺点</strong>：尽管它很受欢迎，但在大多数检索任务(通常用作基线)中，这种对比性损失的表现很不起眼。大多数高级损失需要一个三元组$(x_i,x_j,x_k)$，其中$(x_i,x_j)$属于同一类，$(x_i,x_k)$属于不同类。这种三元组样本在无监督学习中很难获得。因此，尽管对比损失在检索方面的表现不佳，但在无监督学习和自监督学习中仍普遍使用。</p>
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/nima1994/article/details/83862502">代码参考1：</a></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">contrastive_loss</span>(<span class="hljs-params">y_true, y_pred</span>):<br>    <span class="hljs-string">&#x27;&#x27;&#x27;Contrastive loss from Hadsell-et-al.&#x27;06</span><br><span class="hljs-string">    http://yann.lecun.com/exdb/publis/pdf/hadsell-chopra-lecun-06.pdf</span><br><span class="hljs-string">    &#x27;&#x27;&#x27;</span><br>    margin = <span class="hljs-number">1</span><br>    sqaure_pred = K.square(y_pred)<br>    margin_square = K.square(K.maximum(margin - y_pred, <span class="hljs-number">0</span>))<br>    <span class="hljs-keyword">return</span> K.mean(y_true * sqaure_pred + (<span class="hljs-number">1</span> - y_true) * margin_square)<br><br>model.<span class="hljs-built_in">compile</span>(loss=contrastive_loss, ...)<br></code></pre></td></tr></table></figure>
@@ -408,12 +407,12 @@
 <p>参考资料：<br><a target="_blank" rel="noopener" href="http://daniel-at-world.blogspot.com/2019/07/implementing-triplet-loss-function-in.html">Implementing Triplet Loss Function in Tensorflow 2.0</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_36387683/article/details/83583099">Tensorflow实现Triplet Loss</a><br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/295512971">深度学习从入门到放飞自我：完全解析triplet loss</a><br><a target="_blank" rel="noopener" href="https://omoindrot.github.io/triplet-loss">Triplet Loss and Online Triplet Mining in TensorFlow</a><br><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/365370142">triplet loss稳定在margin附近?—hardTri &amp; l2_normalize</a><br><a target="_blank" rel="noopener" href="https://bindog.github.io/blog/2019/10/23/why-triplet-loss-works/">为什么triplet loss有效？从直观上说明为什么triplet loss不稳定?</a></p>
 </blockquote>
 <p>contrastive loss是一个严格的loss，它要求正例距离趋近于0，负例距离大于margin。然而，有一些距离较近的负例，它们的正例也较近；有一些距离较远的负例，它们的正例也较远，统<strong>一对待这两种情况，模型可能无法很好的训练</strong>。考虑一个正脸的数据集里有一张稍微偏一些的侧脸，如果这张侧脸图片作为contrastive loss中的a0，它的pair的正例/负例距离明显大于其它pair的正例/负例距离。如果它的优化目标和其它pair一样，正例趋近于0，负例大于margin，是不合理的。那么是否有一种没有这么严格的loss呢？有，triplet loss。</p>
-<p><img src="度量学习之损失函数⭐️/1639413138897.png" srcset="/img/loading.gif" lazyload alt="tri.png"></p>
+<img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639413138897.png" srcset="/img/loading.gif" lazyload class="" title="tri.png">
 <p>Triplet loss 出自2014 年的 <a href="https://link.zhihu.com/?target=https%3A//arxiv.org/pdf/1503.03832.pdf">FaceNet</a> 论文，经常用在人脸识别任务中，目的是学习度量嵌入（to learn a metric embedding）。它的输入是一个三元组（anchor，positive，negative），具体的loss function为：</p>
 <p>$\mathcal{L}_{\mathrm{tri}}^{m}\left(x, x^{+}, x^{-} ; f\right)=\max \left(0,\left|f-f^{+}\right|_{2}^{2}-\left|f-f^{-}\right|_{2}^{2}+m\right)$</p>
 <p>triplet loss的优化目标就是让Anchor与负例的欧式比Anchor与正例的距离大至少一个margin。还是以上述的侧脸图片为例，侧脸图片作为anchor时，triplet loss不要求正例趋近于0，负例大于margin，而是负例&gt;正例+margin，这就解决了刚才的问题。<strong>当dis(A, N) – dis(A, P) &lt; margin时，loss会大于0。</strong></p>
 <p>Triplet Loss 训练过程动图：</p>
-<p><img src="度量学习之损失函数⭐️/tri.gif" srcset="/img/loading.gif" lazyload alt=""></p>
+<img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/tri.gif" srcset="/img/loading.gif" lazyload class="">
 <p><strong>Triplet loss 的不足之处：</strong></p>
 <ul>
 <li>Triplet loss 对噪声数据很敏感，因此随机负采样会影响其性能； </li>
@@ -431,7 +430,7 @@
 <li><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/322954623/answer/1135390437">为什么triplet loss选择hard negative会导致collapsed models? - 八月的回答 - 知乎</a></li>
 <li>当模型有了坍塌的倾向时，最终loss趋近于margin，近乎于停止更新</li>
 </ul>
-<p><img src="度量学习之损失函数⭐️/1659942647929.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1659942647929.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
 <p>使用 offline 离线挖掘策略的Triplet loss实现：</p>
 <p><strong>代码参考</strong>1：<a target="_blank" rel="noopener" href="https://zhangruochi.com/Create-a-Siamese-Network-with-Triplet-Loss-in-Keras/2020/08/11/">Create a Siamese Network with Triplet Loss in Keras</a></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python">alpha = <span class="hljs-number">0.2</span><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">triplet_loss</span>(<span class="hljs-params">y_true, y_pred</span>):<br>    anchor, positive, negative = y_pred[:,:emb_size], y_pred[:,emb_size:<span class="hljs-number">2</span>*emb_size], y_pred[:,<span class="hljs-number">2</span>*emb_size:]<br>    positive_dist = tf.reduce_mean(tf.square(anchor - positive), axis=<span class="hljs-number">1</span>)<br>    negative_dist = tf.reduce_mean(tf.square(anchor - negative), axis=<span class="hljs-number">1</span>)<br>    <span class="hljs-keyword">return</span> tf.maximum(positive_dist - negative_dist + alpha, <span class="hljs-number">0.</span>)<br></code></pre></td></tr></table></figure>
@@ -448,17 +447,17 @@
 <li>PyTorch已经集成进去了<a target="_blank" rel="noopener" href="https://pytorch.org/docs/stable/nn.html#torch.nn.TripletMarginLoss">TripletMarginLoss</a></li>
 </ul>
 <h2 id="Lifted-Structured-Loss"><a href="#Lifted-Structured-Loss" class="headerlink" title="Lifted Structured Loss"></a>Lifted Structured Loss</h2><p><strong>Lifted Structured Loss</strong> (<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1511.06452">Song et al. 2015</a>) 利用一个训练批次中的所有成对边来提高计算效率。</p>
-<p><img src="度量学习之损失函数⭐️/1639475408589.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
-<p><img src="度量学习之损失函数⭐️/1673406211010.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639475408589.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1673406211010.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
 <h2 id="N-Pairs-Loss"><a href="#N-Pairs-Loss" class="headerlink" title="N-Pairs Loss"></a>N-Pairs Loss</h2><blockquote>
 <p><a href="https://link.zhihu.com/?target=https%3A//papers.nips.cc/paper/6200-improved-deep-metric-learning-with-multi-class-n-pair-loss-objective.pdf">Improved Deep Metric Learning with Multi-class N-pair Loss Objective</a></p>
 </blockquote>
 <p>contrastive loss和triplet loss存在着比如收敛慢，陷入局部最小值等问题，相当部分原因就是因为loss function仅仅只使用了一个negative样本，在每次更新时，与其他的negative的类没有交互。因此，<strong>Multi-Class N-pair loss</strong> (<a target="_blank" rel="noopener" href="https://papers.nips.cc/paper/2016/hash/6b180037abbebea991d8b1232f8a8ca9-Abstract.html">Sohn 2016</a>) 提出了一个考虑多个negative样本的方法：即从（N-1）个negative样本中区分一个positive样本，当N=2时，即是triplet loss。训练样本为 $\left\{x, x^{+}, x_{1}, \cdots, x_{N-1}\right\}$： $x^{+}$ 是一个positive样本， $\left\{x_{i}\right\}_{i=1}^{N-1}$ 是（N-1）个negative 样本。</p>
-<p><img src="度量学习之损失函数⭐️/1663316290728-e31c0de8-bb8b-44e7-9b52-f580706ebdc3.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1663316290728-e31c0de8-bb8b-44e7-9b52-f580706ebdc3.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
 <p>Triplet loss在将positive样本拉近的同时一次只能推离一个negative样本；而(N+1)-tuplet loss基于样本之间的相似性，一次可以将（N-1）个negative样本推离。另外，对比损失和三元组损失都利用<strong>欧氏距离</strong>来量化点之间的相似性。而 N-Pairs损失利用<strong>余弦相似度</strong>来量化点之间的相似度，由于余弦相似度度量（以及概率）是尺度不变的（如下图所示），N-pair loss 往往对训练过程中的特征变化具有鲁棒性。<strong>Multi-Class N-pair loss</strong> 公式如下：</p>
 <p>$\begin{aligned}<br>\mathcal{L}_{\mathrm{tri}}^{m}\left(x, x^{+}, x^{-} ; f\right)&amp;=\max \left(0,\left|f-f^{+}\right|_{2}^{2}-\left|f-f^{-}\right|_{2}^{2}+m\right) \\<br>&amp;→Euclidean Distance→Cosine Similar,m=0 \\<br>&amp;=\max (0,f^T f_i-f^T f^{+}) \\<br>&amp;→softplus(x)=log(1+e^x)≈max(0,x) \\<br>&amp;=log (1+exp(f^T f_i-f^T f^{+})) \\<br>\end{aligned}$</p>
 <p>扩展到(N-1)个negative样本：</p>
-<p><img src="度量学习之损失函数⭐️/image-20230424125145643.png" srcset="/img/loading.gif" lazyload alt="image-20230424125145643"></p>
+<img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/image-20230424125145643.png" srcset="/img/loading.gif" lazyload class="" title="image-20230424125145643">
 <p>N-pairs的直觉是利用batch中的所有负样本来指导梯度更新，从而加速收敛。N-pairs损失通常优于三元组损失，而且没什么要注意的东西。训练batch的大小的上限是由训练类的数量决定的，因为每个类只允许有一个正样本对。相比之下，三元组损失和对比损失batch的大小仅受GPU内存的限制。此外，N-pairs损失学习了一个没有归一化的嵌入。这有两个结果：(1)不同类之间的边界是用角度来定义的，(2)可以避免退化的嵌入增长到无限大，一个正则化器，来约束嵌入空间，是必需的。</p>
 <p><a target="_blank" rel="noopener" href="https://www.tensorflow.org/versions/r1.15/api_docs/python/tf/contrib/losses/metric_learning/npairs_loss">代码参考：</a></p>
 <figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs routeros">import tensorflow_addons as tfa<br><br>tf.contrib.losses.metric_learning.npairs_loss(<br>    labels, embeddings_anchor, embeddings_positive, <span class="hljs-attribute">reg_lambda</span>=0.002,<br>    <span class="hljs-attribute">print_losses</span>=<span class="hljs-literal">False</span><br>)<br></code></pre></td></tr></table></figure>
@@ -470,13 +469,13 @@
 <table>
 <thead>
 <tr>
-<th><img src="度量学习之损失函数⭐️/1664185635777-cd0979ec-38ba-42f9-80e7-f6f44f2d763a.png" srcset="/img/loading.gif" lazyload alt="image.png"></th>
-<th><img src="度量学习之损失函数⭐️/1664185654433-67c1dd15-3a63-4448-bb4f-3feb17dab9de.png" srcset="/img/loading.gif" lazyload alt="image.png"></th>
+<th><img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1664185635777-cd0979ec-38ba-42f9-80e7-f6f44f2d763a.png" srcset="/img/loading.gif" lazyload class="" title="image.png"></th>
+<th><img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1664185654433-67c1dd15-3a63-4448-bb4f-3feb17dab9de.png" srcset="/img/loading.gif" lazyload class="" title="image.png"></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><img src="度量学习之损失函数⭐️/1664185671969-c0e37e09-2705-44c5-9f03-48fd5d81344e.png" srcset="/img/loading.gif" lazyload alt="image.png"></td>
+<td><img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1664185671969-c0e37e09-2705-44c5-9f03-48fd5d81344e.png" srcset="/img/loading.gif" lazyload class="" title="image.png"></td>
 </tr>
 </tbody>
 </table>
@@ -485,7 +484,7 @@
 <p>Multiclass-N-pair loss损失函数：$\mathcal{L}_{m-c}=\frac{1}{N} \sum_{i=1}^{N} \log \left(1+\sum_{j \neq i} \exp \left(f_{i}^{\top} f_{j}^{+}-f_{i}^{\top} f_{i}^{+}\right)\right)$</p>
 <p>Constellation Loss损失函数为：$\mathcal{L}_{\text {constellation}}=\frac{1}{N} \sum_{i=1}^{N} \log \left(1+\sum_{j}^{K} \exp \left(f_{i}^{a \top} f_{j}^{n}-f_{i}^{a \top} f_{i}^{p}\right)\right)$</p>
 <p>可以看到论文提出的损失函数可以获得更好的聚类效果：</p>
-<p><img src="度量学习之损失函数⭐️/1664185677581.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1664185677581.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
 <h2 id="NCE"><a href="#NCE" class="headerlink" title="NCE"></a>NCE</h2><blockquote>
 <p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/334772391">Noise Contrastive Estimation 前世今生——从 NCE 到 InfoNCE</a>（一堆公式推导….）<br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/133137765">Noise Constractive Estimation 噪声对比估计—知乎</a><br><a href="https://link.zhihu.com/?target=https%3A//ruder.io/word-embeddings-softmax/index.html%23fn16">On word embeddings - Part 2: Approximating the Softmax - Ruder</a><br><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/50043438/answer/833138812">知乎麋路的回答 - 求通俗易懂解释下nce loss？</a><br><a target="_blank" rel="noopener" href="https://spaces.ac.cn/archives/5617">“噪声对比估计”杂谈：曲径通幽之妙</a>—苏剑林</p>
 </blockquote>
@@ -496,34 +495,35 @@
 </blockquote>
 <p>以语言模型举例。现在假设一个特定上下文$c$的数据分布为$\hat{p}(w|c)$—未知，我们称从它里面取出的样本为正样本，令类别$D=1$; 而另一个与$c$无关的噪声分布为$q(w)$, 我们称从里面取出的样本为负样本,令类别为$D=0$。遵循 Gutmann and Hyvrinen (2012) 中的设置, 假设现在取出了$k_d$个正样本和$k_n$个负样本, 将这些正负样本混合形成一个混合分布$p(w|c)$。</p>
 <p>我们得到下面这些概率:</p>
-<p><img src="度量学习之损失函数⭐️/1673427906232.png" srcset="/img/loading.gif" lazyload alt="image.png"><br>所以可以计算后验概率:</p>
-<p><img src="度量学习之损失函数⭐️/1673427918475.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1673427906232.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>所以可以计算后验概率:</p>
+<img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1673427918475.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
 <p>我们<strong>令负样本和正样本的比例为</strong>$k=\frac{k_n}{k_d}$，则有：</p>
-<p><img src="度量学习之损失函数⭐️/1673427954652.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1673427954652.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
 <p>现在我们观察 (12) 式, NCE 所做的事情就是将式中的经验分布$\hat{p}(w|c)$替换成概率模型$p_\theta(w|c)$, 使后验概率成为参数为$\theta$的函数。……我们直接令$p_\theta(w|c)=u_\theta(w|c)$，那么 (12) 式可以写成如下形式：</p>
-<p><img src="度量学习之损失函数⭐️/1673428432184.jpeg" srcset="/img/loading.gif" lazyload alt="640.jpeg"></p>
+<img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1673428432184.jpeg" srcset="/img/loading.gif" lazyload class="" title="640.jpeg">
 <p>现在我们有了参数为$\theta$的二元分类问题, 假设标签$D_t$为伯努利分布, 那么很容易写出他的条件对数似然$L_{NCE}^c$如下, 实际上在它前面加上负号后,  $-L_{NCE}^c$也就等价于 logistics 分类里的 log loss，或者说交叉嫡损失函数：</p>
-<p><img src="度量学习之损失函数⭐️/1673428524765.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1673428524765.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
 <p>而 <strong>NCE 的目标函数</strong>还需要在 (14) 式的基础上除以正样本的数量$k_d$，即</p>
-<p><img src="度量学习之损失函数⭐️/1673428567722.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1673428567722.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
 <p>当数据数量很大时，根据大数定律，上式也可以写成：</p>
-<p><img src="度量学习之损失函数⭐️/1673428577748.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1673428577748.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
 <p>要最大化上述对数似然函数，也就是最大化如下目标函数：</p>
-<p><img src="度量学习之损失函数⭐️/1673428594681.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1673428594681.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
 <p>通过 NCE 转换后的优化目标，本质上就是对极大似然估计方法的一种近似，并且随着负样本和正样本数量比$k$的增大，这种近似越精确，这也解释了为什么作者建议我们将$k$设置的越大越好。</p>
 <h2 id="InfoNCE"><a href="#InfoNCE" class="headerlink" title="InfoNCE"></a><strong>InfoNCE</strong></h2><blockquote>
 <p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/506544456?utm_source=wechat_session&amp;utm_medium=social&amp;utm_oi=30098367447040">对比学习损失（InfoNCE loss）与交叉熵损失的联系，以及温度系数的作用</a></p>
 </blockquote>
 <p><strong>InfoNCE</strong> 也被称为 <strong>NTXentLoss</strong>，是 NPairs Loss 的一般形式，被广泛用于自监督学习中。IInfoNCE 继承了 NCE 的基本思想，升级为使用分类交叉熵损失来识别一组不相关的噪声样本中的正样本，并且证明了减小这个损失函数相当于增大互信息 (mutual information) 的下界，这也是名字infoNCE的由来。具体细节这里不再赘述，感兴趣的读者可以参考这篇文章：<a target="_blank" rel="noopener" href="http://karlstratos.com/notes/nce.pdf">http://karlstratos.com/notes/nce.pdf</a>，里面有比较清晰的介绍与推导。</p>
-<p><img src="度量学习之损失函数⭐️/1654703845131.png" srcset="/img/loading.gif" lazyload alt="InfoNCE loss"></p>
+<img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1654703845131.png" srcset="/img/loading.gif" lazyload class="" title="InfoNCE loss">
 <p>其中 $u$、$v^+$、$u^-$ 分别为原样例、正样例、负样例归一化后的表示，$t$ 为温度超参。</p>
 <p>显而易见，infoNCE最后的形式就是多元分类任务常见的交叉熵损失（Cross Entropy Loss for N-way softmax classifier)，使用分类交叉熵损失在一组负样本中识别正样本。因为表示已经归一化，据前所述，向量内积等价于向量间的距离度量。故由softmax的性质，上述损失就可以理解为，我们希望在拉近原样例与正样例距离的同时，拉远其与负样例间的距离，这正是对比学习的思想。</p>
 <h3 id="1、InfoNCE和交叉熵损失的关系？"><a href="#1、InfoNCE和交叉熵损失的关系？" class="headerlink" title="1、InfoNCE和交叉熵损失的关系？"></a><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/506544456?utm_source=wechat_session&amp;utm_medium=social&amp;utm_oi=30098367447040"><strong>1、InfoNCE和交叉熵损失的关系？</strong></a></h3><p>我们先从softmax说起，下面是softmax公式：</p>
-<p><img src="度量学习之损失函数⭐️/1654704667033-2a22f4c5-ac55-4e2c-82a6-a326aa9e14f7.svg" srcset="/img/loading.gif" lazyload alt=""></p>
+<img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1654704667033-2a22f4c5-ac55-4e2c-82a6-a326aa9e14f7.svg" srcset="/img/loading.gif" lazyload class="">
 <p>交叉熵损失函数如下：</p>
-<p><img src="度量学习之损失函数⭐️/1654704667128-c331f528-468d-44f2-8ecc-c9144ec2024b.svg" srcset="/img/loading.gif" lazyload alt=""></p>
+<img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1654704667128-c331f528-468d-44f2-8ecc-c9144ec2024b.svg" srcset="/img/loading.gif" lazyload class="">
 <p>在有监督学习下，ground truth是一个one-hot向量，softmax的结果$\hat{y}_+$取$-log$，再与ground truth相乘之后，即得到如下交叉熵损失：</p>
-<p><img src="度量学习之损失函数⭐️/1654704667038-25ea9038-4faf-477e-b88b-7b6104ff520e.svg" srcset="/img/loading.gif" lazyload alt=""></p>
+<img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1654704667038-25ea9038-4faf-477e-b88b-7b6104ff520e.svg" srcset="/img/loading.gif" lazyload class="">
 <p>上式中的 k 在有监督学习里指的是这个数据集一共有多少类别，比如CV的ImageNet数据集有1000类，k就是1000。</p>
 <p><strong>对于对比学习来说，理论上也是可以用上式去计算loss，但是实际上是行不通的。为什么呢？</strong></p>
 <p>还是拿ImageNet数据集来举例，该数据集一共有128万张图片，我们使用数据增强手段（例如，随机裁剪、随机颜色失真、随机高斯模糊）来产生对比学习正样本对，每张图片就是单独一类，那k就是128万类，而不是1000类了，有多少张图就有多少类。但是softmax操作在如此多类别上进行计算是非常耗时的，再加上有指数运算的操作，当向量的维度是几百万的时候，计算复杂度是相当高的。所以对比学习用上式去计算loss是行不通的。</p>
@@ -531,10 +531,10 @@
 <p>NCE（noise contrastive estimation）核心思想是将多分类问题转化成二分类问题，一个类是数据类别 data sample，另一个类是噪声类别 noisy sample，通过学习数据样本和噪声样本之间的区别，将数据样本去和噪声样本做对比，也就是“噪声对比（noise contrastive）”，从而发现数据中的一些特性。但是，如果把整个数据集剩下的数据都当作负样本（即噪声样本），虽然解决了类别多的问题，计算复杂度还是没有降下来，解决办法就是做负样本采样来计算loss，这就是estimation的含义，也就是说它只是估计和近似。一般来说，负样本选取的越多，就越接近整个数据集，效果自然会更好。</p>
 <p><strong>有了NCE loss，为什么还要用Info NCE loss呢？</strong></p>
 <p>Info NCE loss是NCE的一个简单变体，它认为如果你只把问题看作是一个二分类，只有数据样本和噪声样本的话，可能对模型学习不友好，因为很多噪声样本可能本就不是一个类，因此还是把它看成一个多分类问题比较合理（但这里的多分类 k 指代的是负采样之后负样本的数量，下面会解释）。于是就有了InfoNCE loss，公式如下：</p>
-<p><img src="度量学习之损失函数⭐️/1654704667637-a3cf5d01-7812-4c21-b823-183bb03e458c-20230424151358274.svg" srcset="/img/loading.gif" lazyload alt=""></p>
+
 <p>上式中，$q·k$是模型出来的logits，相当于上文softmax公式中的$z$，$τ$是一个温度超参数，是个标量，假设我们忽略$τ$，那么infoNCE loss其实就是cross entropy loss。唯一的区别是，在cross entropy loss里，k指代的是数据集里类别的数量，而在对比学习InfoNCE loss里，这个k指的是负样本的数量。上式分母中的sum是在1个正样本和k个负样本上做的，从0到k，所以共k+1个样本，也就是字典里所有的key。恺明大佬在MoCo里提到，InfoNCE loss其实就是一个cross entropy loss，做的是一个k+1类的分类任务，目的就是想把 q 这个图片分到$k_+$这个类。</p>
 <p>另外，我们看下图中MoCo的伪代码，MoCo这个loss的实现就是基于cross entropy loss。</p>
-<p><img src="度量学习之损失函数⭐️/1654704669092.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1654704669092.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
 <h3 id="2、温度系数的作用"><a href="#2、温度系数的作用" class="headerlink" title="2、温度系数的作用"></a><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/506544456?utm_source=wechat_session&amp;utm_medium=social&amp;utm_oi=30098367447040"><strong>2、温度系数的作用</strong></a></h3><p>温度系数$τ$虽然只是一个超参数，但它的设置是非常讲究的，直接影响了模型的效果。 上式Info NCE loss中的$q·k$相当于是logits，温度系数可以用来控制logits的分布形状。对于既定的logits分布的形状，当$τ$值变大，则$1 / τ$就变小，$q·k / τ$则会使得原来logits分布里的数值都变小，且经过指数运算之后，就变得更小了，导致原来的logits分布变得更平滑。相反，如果$τ$取得值小，$1 / τ$就变大，原来的logits分布里的数值就相应的变大，经过指数运算之后，就变得更大，使得这个分布变得更集中，更peak。</p>
 <p>如果温度系数设的越大，logits分布变得越平滑，那么对比损失会对所有的负样本一视同仁，导致模型学习没有轻重。如果温度系数设的过小，则模型会越关注特别困难的负样本，但其实那些负样本很可能是潜在的正样本，这样会导致模型很难收敛或者泛化能力差。</p>
 <p>总之，温度系数的作用就是它控制了模型对负样本的区分度。</p>
@@ -542,11 +542,11 @@
 <p>由此修改了InfoNCE的公式消除qB的影响，去除分母中的正例对，得到解耦对比学习损失：</p>
 <p>$\begin{aligned}<br>\mathcal{L}_{\text {DC }}&amp;=\mathbb{E}[\mathcal{L}_{DC,i}] \\<br>\mathcal{L}_{DC,i}&amp;=-\log \frac{ f(\mathbf{x}, \mathbf{c})}{\cancel{ {f(\mathbf{x}, \mathbf{c})}} + \sum_{\mathbf{x}^{\prime} \in X,x≠x^{\prime}} f\left(\mathbf{x}^{\prime}, \mathbf{c}\right)} \\<br>&amp;=-\log f(\mathbf{x}, \mathbf{c})+\log \sum_{\mathbf{x}^{\prime} \in X,x≠x^{\prime}} f\left(\mathbf{x}^{\prime}, \mathbf{c}\right) \\<br>\mathcal{L}_{DC,i}^{(k)}&amp;=-\log \frac{\exp \left(\left\langle\mathbf{z}_{i}^{(1)}, \mathbf{z}_{i}^{(2)}\right\rangle / \tau\right)}{\cancel{\exp \left(\left\langle\mathbf{z}_{i}^{(1)}, \mathbf{z}_{i}^{(2)}\right\rangle / \tau\right)}+\sum_{l \in\{1,2\}, j \in[1, N], j \neq i} \exp \left(\left\langle\mathbf{z}_{i}^{(k)}, \mathbf{z}_{j}^{(l)}\right\rangle / \tau\right)} \\<br>&amp;=-\left\langle\mathbf{z}_{i}^{(1)}, \mathbf{z}_{i}^{(2)}\right\rangle / \tau+\log \sum_{l \in\{1,2\}, j \in[1, N], j \neq i} \exp \left(\left\langle\mathbf{z}_{i}^{(k)}, \mathbf{z}_{j}^{(l)}\right\rangle / \tau\right)<br>\end{aligned}$</p>
 <h2 id="Angular-Loss-√"><a href="#Angular-Loss-√" class="headerlink" title="Angular Loss √"></a><strong>Angular Loss √</strong></h2><p><strong>Angular loss解决了三元组损失的两个限制</strong>。首先，三元组损失假设在不同类别之间有固定的margin _m_。固定的margin是不可取的，因为不同的类有不同的类内变化，如下图所示：</p>
-<p><img src="度量学习之损失函数⭐️/9ab16fdee73b871d2789ff87cbe7dcfd.jpeg" srcset="/img/loading.gif" lazyload alt=""></p>
+<img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/9ab16fdee73b871d2789ff87cbe7dcfd.jpeg" srcset="/img/loading.gif" lazyload class="">
 <p>第二个限制是三元组损失是如何产生负样本的梯度的。下图显示了为什么<strong>负梯度的方向可能不是最佳的</strong>，也就是说，不能保证远离正样本的类中心。</p>
-<p><img src="度量学习之损失函数⭐️/cee0aa68e0234cf7984ef3693ec48598.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/cee0aa68e0234cf7984ef3693ec48598.png" srcset="/img/loading.gif" lazyload class="">
 <p>为了解决这两个限制，作者建议使用n的角度代替margin m，并在负样本点$x_n$处纠正梯度。<strong>不是基于距离把点往远处推，目标是最小化角度n</strong>，即，使三角形a-n-b在n点处的角度更小。下一个图说明angular loss的公式将负样本点$x_n$推离$x_c$，$x_c$为由$x_a$和$x_p$定义的局部簇的中心。另外，锚点$x_a$和正样本点$x_p$被彼此拖向对方。</p>
-<p><img src="度量学习之损失函数⭐️/ecccb2781dc9b2553d5d893ca607c88c.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/ecccb2781dc9b2553d5d893ca607c88c.png" srcset="/img/loading.gif" lazyload class="">
 <p>与原来的三元组损耗只依赖于两点(例如 $grad = x_a - x_n$)相比，angular loss的梯度要稳健得多，因为它们同时考虑了所有三点。另外，请注意，与基于距离的度量相比，操纵角度$n ‘$不仅是旋转不变的，而且本质上也是尺度不变的。<strong>我的一些建议: N-pairs和Angular loss通常优于原始的三元组损失。然而，在比较这些方法时，需要考虑一些重要的参数。</strong></p>
 <ol>
 <li>用于训练三元组损失的采样策略会导致显著的性能差异。如果避免了模型崩溃，困难样本挖掘是有效的，并且收敛速度更快。</li>
@@ -562,12 +562,13 @@
 <li><p>文章主要的创新点在于利用已有的label信息来将自监督的损失函数（如公式1所示）改造成支持<a target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=multiple+positives&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22article%22%2C%22sourceId%22%3A143443691%7D">multiple positives</a> 和 multiple negatives（如公式2所示）。</p>
 </li>
 </ul>
-<p><img src="度量学习之损失函数⭐️/1639464948149-56dfe4e1-8489-479d-9610-9d18bfc1d1f7.svg" srcset="/img/loading.gif" lazyload alt=""> </p>
-<p><img src="度量学习之损失函数⭐️/1639464948204-3a037890-59f9-408a-ab43-0c1791ca56de.svg" srcset="/img/loading.gif" lazyload alt=""> </p>
+<img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639464948149-56dfe4e1-8489-479d-9610-9d18bfc1d1f7.svg" srcset="/img/loading.gif" lazyload class=""> 
+<img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639464948204-3a037890-59f9-408a-ab43-0c1791ca56de.svg" srcset="/img/loading.gif" lazyload class=""> 
 <ul>
 <li>作者通过梯度计算的角度说明了文中提出的loss可以更好地关注于 hard positives and negatives，从而获得更好的效果。</li>
 </ul>
-<p><img src="度量学习之损失函数⭐️/1639464948717.png" srcset="/img/loading.gif" lazyload alt="image.png"><br>Figure 1: Cross entropy, self-supervised contrastive loss and supervised contrastive loss.</p>
+<img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639464948717.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>Figure 1: Cross entropy, self-supervised contrastive loss and supervised contrastive loss.</p>
 <ul>
 <li>如图1所示，对每一幅图像使用两种随机的不同的augmentations，这样就有了2N幅图像作为一个batch。Supervised Contrastive的训练过程包括以下两步：<ul>
 <li>首先，<a target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=%E9%9A%8F%E6%9C%BAsample&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22article%22%2C%22sourceId%22%3A143443691%7D">随机sample</a>训练样本，使用文中提出的Supervised Contrastive Learning训练；</li>
@@ -584,7 +585,8 @@
 <li>第一点是softmax函数在训练过程中无法同时做到类内相近，类间分离这一目标；</li>
 <li>第二点是数据不平衡问题。</li>
 </ul>
-<p><img src="度量学习之损失函数⭐️/1639392604352.png" srcset="/img/loading.gif" lazyload alt="image.png"><br>softmax函数没有类内相近，类间分离的约束条件</p>
+<img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639392604352.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>softmax函数没有类内相近，类间分离的约束条件</p>
 <p>近年来，面部识别领域的主要技术进展集中在<strong>如何改进softmax的损失</strong>，使得既能充分利用其易于优化，收敛快的优良性质，又使得其能优化出一个具有优良泛化性的度空间。而这些技术改进主要又能被归为两大类别：</p>
 <ul>
 <li>引入 margin，达到了类间分离的目的，使得 Softmax Loss 能学习到更具有区分性的 metric 空间。</li>
@@ -597,29 +599,29 @@
 <tr>
 <th>L-Softmax</th>
 <th>首次提出angular margin的概念，重新思考$w*x$，引入cos角，认为各类之间的夹角需要有个margin</th>
-<th><img src="度量学习之损失函数⭐️/image-20230424153842581.png" srcset="/img/loading.gif" lazyload alt="image-20230424153842581"></th>
+<th><img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/image-20230424153842581.png" srcset="/img/loading.gif" lazyload class="" title="image-20230424153842581"></th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>A-Softmax</td>
 <td>将weight归一化，使得特征上的点映射到单位超球面上</td>
-<td><img src="度量学习之损失函数⭐️/image-20230424153854792.png" srcset="/img/loading.gif" lazyload alt="image-20230424153854792"></td>
+<td><img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/image-20230424153854792.png" srcset="/img/loading.gif" lazyload class="" title="image-20230424153854792"></td>
 </tr>
 <tr>
 <td>AM-Softmax</td>
 <td>将角度上的乘性关系改为cos值的加性关系+特征/权重归一化</td>
-<td><img src="度量学习之损失函数⭐️/image-20230424153911064.png" srcset="/img/loading.gif" lazyload alt="image-20230424153911064"></td>
+<td><img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/image-20230424153911064.png" srcset="/img/loading.gif" lazyload class="" title="image-20230424153911064"></td>
 </tr>
 <tr>
 <td>CosFace</td>
 <td>同AM-Softmax</td>
-<td><img src="度量学习之损失函数⭐️/image-20230424153925342.png" srcset="/img/loading.gif" lazyload alt="image-20230424153925342"></td>
+<td><img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/image-20230424153925342.png" srcset="/img/loading.gif" lazyload class="" title="image-20230424153925342"></td>
 </tr>
 <tr>
 <td>Arcface</td>
 <td>将margin由cos外移到内</td>
-<td><img src="度量学习之损失函数⭐️/image-20230424153935636.png" srcset="/img/loading.gif" lazyload alt="image-20230424153935636"></td>
+<td><img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/image-20230424153935636.png" srcset="/img/loading.gif" lazyload class="" title="image-20230424153935636"></td>
 </tr>
 </tbody>
 </table>
@@ -628,7 +630,7 @@
 <p><a target="_blank" rel="noopener" href="https://arxiv.org/pdf/1811.12649.pdf">Classification is a Strong Baseline for Deep Metric Learning</a></p>
 </blockquote>
 <p>softmax可以起到放大 $x$ 的作用，使模型训练和收敛更容易。例如 x = [4,6]，如果直接算概率，p = [0.4,0.6]；如果用<a target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=softmax%E5%85%AC%E5%BC%8F&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22article%22%2C%22sourceId%22%3A157561982%7D">softmax公式</a>计算，p = [0.12, 0.88]。通过softmax的放大，模型不需要把类别概率分的很开就可以得到比较小的loss，这样有利于模型收敛。Normalized Softmax Loss 公式如下：</p>
-<p><img src="度量学习之损失函数⭐️/1673406919436.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1673406919436.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
 <ul>
 <li>Regularize embedding space to hyphersphere (通过正则化，嵌入超平面/球面)</li>
 <li>Temperature scaling to enforce compact intra-class clusters (加入温度超参缩放，使得类内紧凑)</li>
@@ -642,7 +644,7 @@
 <p>$\begin{array}{c}<br>\psi(\theta)=\left\{\begin{array}{cc}<br>\cos (m \theta), &amp; 0 \leq \theta \leq \frac{\pi}{m} \\<br>D(\theta), &amp; \frac{\pi}{m}&lt;\theta \leq \pi<br>\end{array}\right.<br>\end{array}$</p>
 <p>其中 m 是整数，它决定类内的聚拢程度，能够使对应类别的夹角扩大m倍。m 值越大则分类边缘越大，同时学习目标就越难。那么为什么会有这种效果呢？个人理解，以前分类的类内角度搜索范围是 $θ∈[0,π]$，在加了 m以后，它的范围缩小到 $\frac{\theta}{m} \in\left[0, \frac{\pi}{m}\right]$。因此类内间距就变小了。</p>
 <p>对于增加 margin 的形象解释，文章给出了一个很好的示意图（类内距离尽可能小，类间距离尽可能大）。</p>
-<p><img src="度量学习之损失函数⭐️/1639394295007.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639394295007.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
 <p>$\theta_{1(2)}$ 表示特征 x 和类权重 $W_{1(2)}$ 的夹角。</p>
 <p>先简化问题成一个二元分类的例子，假设类权重被归一化了，此时夹角就决定了样本x被分到哪一类。左边是原始的softmax loss，分界面是在两类别的中间$\theta_{1}=\theta_{2}$ ，此时（训练）样本紧贴着分界面。测试的时候，就容易混淆了。右边是L-Softmax，为了在两类中间留下空白（margin），要求分界面是 $m\theta_{1}=\theta_{2}, m&gt;1$ 。此时为了分类正确，样本特征会被压缩到一个更小的空间，两个类别的分类面也会被拉开。容易看出，此时两个类之间的 angular decision margin 是 $\frac{m-1}{m+1} \theta_{1,2}$，其中 $\theta_{1,2}$ 是类权重$W_1$和$W_2$的夹角。</p>
 <h2 id="A-softmax-Loss"><a href="#A-softmax-Loss" class="headerlink" title="A-softmax Loss"></a><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1704.08063">A-softmax Loss</a></h2><blockquote>
@@ -655,7 +657,7 @@
 <p>这样便得到了angular softmax loss，简称A-softmax loss。_[SphereFace]_ 提出的 loss 的具体形式是：</p>
 <p>$L=\frac{1}{N} \sum_{i}-\log \left(\frac{e^{\left|\mathbf{x}_{i}\right| \cdot \cos \left(m \cdot \theta_{y_{i}, i}\right)}}{e^{\left|\mathbf{x}_{i}\right| \cdot \cos \left(m \cdot \theta_{y_{i}, i}\right)}+\sum_{j \neq y_{i}} e^{\left|\mathbf{x}_{i}\right| \cdot \cos \theta_{j, i}}}\right)$</p>
 <p>_[SphereFace]_ 作者通过一个很形象的特征分布图，展示了引入 margin 的效果，可见，随着 margin 的增加，类内被压缩的更紧凑，类间的界限也变得更加清晰了。</p>
-<p><img src="度量学习之损失函数⭐️/1639387025330.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639387025330.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
 <p>此外，在归一化方向，王峰大佬发表的 NormFace 论文提出 <a href="https://link.zhihu.com/?target=https%3A//arxiv.org/pdf/1703.09507.pdf">L2-softmax</a>，进一步对特征向量做 L2 归一化，即feature normalization，数学上的工作非常漂亮。而且发现了feature normalization后网络难以收敛的问题，提出需要在 _L_2 超球面嵌入后引入尺度因子的办法来解决这一问题。此外，作者还解释了 _L_2 归一化在难例挖掘和处理类不均衡问题上的作用。_L_2 超球面嵌入目前已经成为业内的标准做法。 </p>
 <p><strong>代码实现：苏剑林 </strong><a target="_blank" rel="noopener" href="https://github.com/bojone/margin-softmax/blob/master/margin_softmax.py">bojone/margin-softmax</a></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">sparse_simpler_asoftmax_loss</span>(<span class="hljs-params">y_true, y_pred, scale=<span class="hljs-number">30</span></span>):<br>    y_true = K.expand_dims(y_true[:, <span class="hljs-number">0</span>], <span class="hljs-number">1</span>) <span class="hljs-comment"># 保证y_true的shape=(None, 1)</span><br>    y_true = K.cast(y_true, <span class="hljs-string">&#x27;int32&#x27;</span>) <span class="hljs-comment"># 保证y_true的dtype=int32</span><br>    batch_idxs = K.arange(<span class="hljs-number">0</span>, K.shape(y_true)[<span class="hljs-number">0</span>])<br>    batch_idxs = K.expand_dims(batch_idxs, <span class="hljs-number">1</span>)<br>    idxs = K.concatenate([batch_idxs, y_true], <span class="hljs-number">1</span>)<br>    y_true_pred = K.tf.gather_nd(y_pred, idxs) <span class="hljs-comment"># 目标特征，用tf.gather_nd提取出来</span><br>    y_true_pred = K.expand_dims(y_true_pred, <span class="hljs-number">1</span>)<br>    <span class="hljs-comment"># 用到了四倍角公式进行展开</span><br>    y_true_pred_margin = <span class="hljs-number">1</span> - <span class="hljs-number">8</span> * K.square(y_true_pred) + <span class="hljs-number">8</span> * K.square(K.square(y_true_pred))<br>    <span class="hljs-comment"># 下面等效于min(y_true_pred, y_true_pred_margin)</span><br>    y_true_pred_margin = y_true_pred_margin - K.relu(y_true_pred_margin - y_true_pred)<br>    _Z = K.concatenate([y_pred, y_true_pred_margin], <span class="hljs-number">1</span>) <span class="hljs-comment"># 为计算配分函数</span><br>    _Z = _Z * scale <span class="hljs-comment"># 缩放结果，主要因为pred是cos值，范围[-1, 1]</span><br>    logZ = K.logsumexp(_Z, <span class="hljs-number">1</span>, keepdims=<span class="hljs-literal">True</span>) <span class="hljs-comment"># 用logsumexp，保证梯度不消失</span><br>    logZ = logZ + K.log(<span class="hljs-number">1</span> - K.exp(scale * y_true_pred - logZ)) <span class="hljs-comment"># 从Z中减去exp(scale * y_true_pred)</span><br>    <span class="hljs-keyword">return</span> - y_true_pred_margin * scale + logZ<br></code></pre></td></tr></table></figure>
@@ -676,16 +678,16 @@
 <p>$L_i=-\log \left(\frac{e^{s \cdot\left(\cos \theta_{t}-m\right)}}{e^{s \cdot\left(\cos \theta_{t}-m\right)}+\sum_{i \neq t} e^{s \cdot \cos \theta_{i}}}\right)$</p>
 <p>其中，$θ_i$代表$z,ci$的夹角。</p>
 <p>在 AM-Softmax 原论文中，所使用的是 $s=30,m=0.35$。s的存在是必要的，因为cos函数本身是有界的，范围是[−1,1]，如果进行softmax，那么概率其实会很均衡，比如[1, 0, 0, -1]的softmax是[0.53444665, 0.19661193, 0.19661193, 0.07232949]，也就是说目标概率很难达到1，loss就降不下去，所以需要做好比例缩放，才允许pt能足够接近于1（有必要的话）。当然，s并不改变相对大小，因此这不是核心改变，核心是原来应该是$cos⁡θ_t$的地方，换成了$cosθ_t−m$加强了条件，迫使类内差距更小，类间差距更大。决策边界为：</p>
-<p><img src="度量学习之损失函数⭐️/1645600791211-a9b31d3c-6ec3-4cf5-858f-796c638efed1.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
-<p>几何解释：<br><img src="度量学习之损失函数⭐️/1645600193929-46099e79-a355-4809-88c6-afe642732166.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
-<p>为了更好地可视化 AM-Softmax 损失的效果，使用 7 层 CNN 模型和 Fashion MNIST 数据集将其与其他损失进行了比较。CNN 模型的 3 维特征输出被归一化并绘制在一个超球体（球）中，如下所示。从可视化中，您可以看到 AM-Softmax 在对输出进行聚类时的表现与 SphereFace (A-Softmax) 相似，并且随着边距的增加，m 越大越好。<br><img src="度量学习之损失函数⭐️/1639387026193-df53b33b-3739-4163-bf85-a18f93d6f145.jpeg" srcset="/img/loading.gif" lazyload alt="超球面几何解释[来源]"></p>
+<img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1645600791211-a9b31d3c-6ec3-4cf5-858f-796c638efed1.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>几何解释：<br><img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1645600193929-46099e79-a355-4809-88c6-afe642732166.png" srcset="/img/loading.gif" lazyload class="" title="image.png"></p>
+<p>为了更好地可视化 AM-Softmax 损失的效果，使用 7 层 CNN 模型和 Fashion MNIST 数据集将其与其他损失进行了比较。CNN 模型的 3 维特征输出被归一化并绘制在一个超球体（球）中，如下所示。从可视化中，您可以看到 AM-Softmax 在对输出进行聚类时的表现与 SphereFace (A-Softmax) 相似，并且随着边距的增加，m 越大越好。<br><img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639387026193-df53b33b-3739-4163-bf85-a18f93d6f145.jpeg" srcset="/img/loading.gif" lazyload class="" title="超球面几何解释[来源]"></p>
 <p>总之，L-Softmax、A-Softmax 和 AM-Softmax 损失都试图通过在 Softmax 损失中引入一个边距来结合分类和度量学习，旨在最大化类之间的距离并增加相同类之间的紧凑性。在这三者中，AM-Softmax 被证明可以最大程度地提高模型性能，特别是在用于人脸验证的 LFW 和 MegaFace 数据集中。</p>
 <p><strong>代码实现：苏剑林 </strong><a target="_blank" rel="noopener" href="https://github.com/bojone/margin-softmax/blob/master/margin_softmax.py">bojone/margin-softmax</a></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">amsoftmax_loss</span>(<span class="hljs-params">y_true, y_pred, scale=<span class="hljs-number">30</span>, margin=<span class="hljs-number">0.35</span></span>):<br>    y_pred = y_true * (y_pred - margin) + (<span class="hljs-number">1</span> - y_true) * y_pred<br>    y_pred *= scale<br>    <span class="hljs-keyword">return</span> K.categorical_crossentropy(y_true, y_pred, from_logits=<span class="hljs-literal">True</span>)<br></code></pre></td></tr></table></figure>
 <p><strong>Sparse版代码实现：苏剑林 </strong><a target="_blank" rel="noopener" href="https://github.com/bojone/margin-softmax/blob/master/margin_softmax.py">bojone/margin-softmax</a></p>
 <figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs reasonml">def sparse<span class="hljs-constructor">_amsoftmax_loss(<span class="hljs-params">y_true</span>, <span class="hljs-params">y_pred</span>, <span class="hljs-params">scale</span>=30, <span class="hljs-params">margin</span>=0.35)</span>:<br>    y_true = <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">K</span>.</span></span>expand<span class="hljs-constructor">_dims(<span class="hljs-params">y_true</span>[:, 0], 1)</span> # 保证y_true的shape=(None, <span class="hljs-number">1</span>)<br>    y_true = <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">K</span>.</span></span>cast(y_true, &#x27;<span class="hljs-built_in">int32</span>&#x27;) # 保证y_true的dtype=<span class="hljs-built_in">int32</span><br>    batch_idxs = <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">K</span>.</span></span>arange(<span class="hljs-number">0</span>, <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">K</span>.</span></span>shape(y_true)<span class="hljs-literal">[<span class="hljs-number">0</span>]</span>)<br>    batch_idxs = <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">K</span>.</span></span>expand<span class="hljs-constructor">_dims(<span class="hljs-params">batch_idxs</span>, 1)</span><br>    idxs = <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">K</span>.</span></span>concatenate(<span class="hljs-literal">[<span class="hljs-identifier">batch_idxs</span>, <span class="hljs-identifier">y_true</span>]</span>, <span class="hljs-number">1</span>)<br>    y_true_pred = <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">K</span>.</span></span>tf.gather<span class="hljs-constructor">_nd(<span class="hljs-params">y_pred</span>, <span class="hljs-params">idxs</span>)</span> # 目标特征，用tf.gather_nd提取出来<br>    y_true_pred = <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">K</span>.</span></span>expand<span class="hljs-constructor">_dims(<span class="hljs-params">y_true_pred</span>, 1)</span><br>    y_true_pred_margin = y_true_pred - margin # 减去margin<br>    _Z = <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">K</span>.</span></span>concatenate(<span class="hljs-literal">[<span class="hljs-identifier">y_pred</span>, <span class="hljs-identifier">y_true_pred_margin</span>]</span>, <span class="hljs-number">1</span>) # 为计算配分函数<br>    _Z = _Z<span class="hljs-operator"> * </span>scale # 缩放结果，主要因为pred是cos值，范围<span class="hljs-literal">[-<span class="hljs-number">1</span>, <span class="hljs-number">1</span>]</span><br>    logZ = <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">K</span>.</span></span>logsumexp(_Z, <span class="hljs-number">1</span>, keepdims=True) # 用logsumexp，保证梯度不消失<br>    logZ = logZ + <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">K</span>.</span></span>log(<span class="hljs-number">1</span> - <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">K</span>.</span></span>exp(scale<span class="hljs-operator"> * </span>y_true_pred - logZ)) # 从Z中减去exp(scale<span class="hljs-operator"> * </span>y_true_pred)<br>    return - y_true_pred_margin<span class="hljs-operator"> * </span>scale + logZ<br></code></pre></td></tr></table></figure>
 <p>PS：为什么改为加性 margin 依然有效果？（来自我的推导）</p>
-<p><img src="度量学习之损失函数⭐️/1639453666077.jpeg" srcset="/img/loading.gif" lazyload alt="WechatIMG57.jpeg"></p>
+<img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639453666077.jpeg" srcset="/img/loading.gif" lazyload class="" title="WechatIMG57.jpeg">
 <h2 id="AAM-softmax-Loss"><a href="#AAM-softmax-Loss" class="headerlink" title="AAM-softmax Loss"></a>AAM-softmax Loss</h2><blockquote>
 <p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1801.07698">Additive Angular Margin Loss for Deep Face Recognition</a></p>
 </blockquote>
@@ -693,8 +695,8 @@
 <p>$L_{3}=-\frac{1}{N} \sum_{i=1}^{N} \log \frac{e^{s\left(\cos \left(\theta_{y_{i}}+m\right)\right)}}{e^{s\left(\cos \left(\theta_{y_{i}}+m\right)\right)}+\sum_{j=1, j \neq y_{i}}^{n} e^{s \cos \theta_{j}}}$</p>
 <p>式中，s代表比例缩放scale超参数，m代表间隔 margin。</p>
 <p>在 _[ArcFace]_ 中，作者对集中加 margin 的方式做了很形象的对比，如下图所示。可以看出，_[ArcFace]_ 提出的 margin 更符合“角度”margin 的概念，而 _[CosFace]_ 或是 _[AM-Softmax]_ 更符合 Cosine margin 的概念。</p>
-<p><img src="度量学习之损失函数⭐️/1639387027393.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
-<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>最后，我们总结一下加 margin 的几种 Softmax 的几种形式：<br><img src="度量学习之损失函数⭐️/1639387028039.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639387027393.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>最后，我们总结一下加 margin 的几种 Softmax 的几种形式：<br><img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639387028039.png" srcset="/img/loading.gif" lazyload class="" title="image.png"></p>
 <p>到这里问题还远远没有结束，现存的问题有：</p>
 <ol>
 <li>在归一化技巧下，noisy sample 对网络的负面干扰也被放大，如何削弱其影响值得进一步思索；</li>
@@ -709,30 +711,30 @@
 <li><strong>以往</strong><a target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=metric+learning+loss&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22article%22%2C%22sourceId%22%3A157737051%7D">metric learning loss</a><strong>的问题</strong></li>
 </ul>
 <p>无论是contrast loss和classification loss，它们的核心都是一个目标：<strong>类内相近，类间分离</strong>。体现到<a target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=loss+function&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22article%22%2C%22sourceId%22%3A157737051%7D">loss function</a>上，就是最大化类内相似度sp，同时最小化类间相似度sn，优化的目标是最小化二者的差值（sn-sp）。<strong>然而，这样的优化方式是不够灵活的，每个相似度应当根据其当前优化状态给予不同的优化权重。</strong>如果相似性得分偏离最佳值，则应受到严重惩罚。否则，如果<a target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=%E7%9B%B8%E4%BC%BC%E6%80%A7%E5%88%86%E6%95%B0&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22article%22%2C%22sourceId%22%3A157737051%7D">相似性分数</a>已接近最佳值，则应进行适度优化。因此，可以把优化目标改进为 $a_ns_n-a_ps_p$ ，其中αn和αp是独立的加权因子，从而允许sn和sp以不同的速度学习。对应到图b，决策边界变成了一个圆形，点A和点B的优化方向都趋近于T，这一改进解决了上述两个问题。</p>
-<p><img src="度量学习之损失函数⭐️/1677568475138.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1677568475138.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
 <ul>
 <li><strong>pairwise loss和classification loss的统一形式</strong></li>
 </ul>
 <p>对于样本x，假设有K个类内相似度 $s_p^i(i=1,2,…K)$  以及L个类间相似度 $s_n^j(i=1,2,…L)$，则统一的优化目标为：</p>
-<p><img src="度量学习之损失函数⭐️/1639411191116-c2ad8c62-c94b-4673-969f-9b5bf824d8f6.svg" srcset="/img/loading.gif" lazyload alt=""></p>
+<img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639411191116-c2ad8c62-c94b-4673-969f-9b5bf824d8f6.svg" srcset="/img/loading.gif" lazyload class="">
 <p>其中 $\gamma$ 是伸缩系数，m是margin。这个公式的本质是什么呢？我们需要知晓两个数学上的近似函数，即LogSumExp和Softplus（参考<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/45014864">王峰：从最优化的角度看待Softmax损失函数</a>）：</p>
-<p><img src="度量学习之损失函数⭐️/1639411191111-eca05b7d-e0af-43de-8524-77db52039021.svg" srcset="/img/loading.gif" lazyload alt=""></p>
-<p><img src="度量学习之损失函数⭐️/1639411191715-c21268f3-7924-4a89-98ea-46db68b55d43.svg" srcset="/img/loading.gif" lazyload alt=""></p>
-<p><img src="度量学习之损失函数⭐️/1639411191796-75a681c2-5c5c-4aa1-9bef-2889b50bfda0.svg" srcset="/img/loading.gif" lazyload alt=""></p>
+<img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639411191111-eca05b7d-e0af-43de-8524-77db52039021.svg" srcset="/img/loading.gif" lazyload class="">
+<img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639411191715-c21268f3-7924-4a89-98ea-46db68b55d43.svg" srcset="/img/loading.gif" lazyload class="">
+<img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639411191796-75a681c2-5c5c-4aa1-9bef-2889b50bfda0.svg" srcset="/img/loading.gif" lazyload class="">
 <p>把这三个近似变换公式替换到 L_uni：</p>
-<p><img src="度量学习之损失函数⭐️/1639411191807-d06e689e-dc90-4005-a643-7e87bf1bfbca.svg" srcset="/img/loading.gif" lazyload alt=""></p>
+<img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639411191807-d06e689e-dc90-4005-a643-7e87bf1bfbca.svg" srcset="/img/loading.gif" lazyload class="">
 <p>经过近似以后，可以看出优化目标是使最小的sp比最大的sn还大margin，和我们期待的优化目标是相符的。而且，L_uni是一个通用loss，可以通过简单变换得到常见的pairwise loss和classification loss，例如AM-softmax loss和<a target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=triplet+loss&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22article%22%2C%22sourceId%22%3A157737051%7D">triplet loss</a>：</p>
 <p>$\begin{aligned}\mathcal{L}_{a m} &amp;=\log \left[1+\sum_{j=1}^{N-1} \exp \left(\gamma\left(s_{n}^{j}+m\right)\right) \exp \left(-\gamma s_{p}\right)\right] \\&amp;=-\log \frac{\exp \left(\gamma\left(s_{p}-m\right)\right)}{\exp \left(\gamma\left(s_{p}-m\right)\right)+\sum_{j=1}^{N-1} \exp \left(\gamma s_{n}^{j}\right)}<br/>\end{aligned}$</p>
-<p><img src="度量学习之损失函数⭐️/1639411192007-9c4ad1eb-14e3-4ee0-b356-028246ccf6b8.svg" srcset="/img/loading.gif" lazyload alt=""></p>
+<img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639411192007-9c4ad1eb-14e3-4ee0-b356-028246ccf6b8.svg" srcset="/img/loading.gif" lazyload class="">
 <ul>
 <li><strong>circle loss</strong></li>
 </ul>
 <p>准备工作已经做完了，我们已经获得了pairwise loss和classification loss的统一形式，也知道了这些loss存在的问题，接下来就在L_uni的基础上进一步改进吧。首先，暂时不考虑margin，并加入自适应的 $a_n$ 和  $a_p$：</p>
-<p><img src="度量学习之损失函数⭐️/1639411192567-c5547d68-6df3-445a-b332-a4dd54472475.svg" srcset="/img/loading.gif" lazyload alt=""></p>
+<img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639411192567-c5547d68-6df3-445a-b332-a4dd54472475.svg" srcset="/img/loading.gif" lazyload class="">
 <p>假设sp的最优值是Op，sn的最优值为On，并定义：</p>
-<p><img src="度量学习之损失函数⭐️/1639411192735-c6c2aa50-db84-490c-a612-b831da97ccd1.svg" srcset="/img/loading.gif" lazyload alt=""></p>
+<img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639411192735-c6c2aa50-db84-490c-a612-b831da97ccd1.svg" srcset="/img/loading.gif" lazyload class="">
 <p>这个 $a_n$ 和  $a_p$的取值也容易理解：越接近最优值，它的优化力度越小；反之，优化力度越大。接下来，想办法加入刚才忽略的margin。如果模仿之前sn与sp对称时的loss，则只需要把margin加到sn这一项就可以了，但是circle loss中sn和sp不对称，因此需要对sn和sp设置不同的margin： </p>
-<p><img src="度量学习之损失函数⭐️/1639411193081-9fadfcc1-b05e-49ea-abe1-9f0ab99d920d.svg" srcset="/img/loading.gif" lazyload alt=""></p>
+<img src="/2021/11/26/2021-11-26-%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E2%AD%90%EF%B8%8F/1639411193081-9fadfcc1-b05e-49ea-abe1-9f0ab99d920d.svg" srcset="/img/loading.gif" lazyload class="">
 <p>最后，关于Circle Loss 可以总结为三点：</p>
 <ol>
 <li>提出了一个统一的优化视角，来理解主流的损失函数；</li>
@@ -819,7 +821,7 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>度量学习之损失函数⭐️</div>
+      <div>2021-11-26-度量学习之损失函数⭐️</div>
       <div>http://example.com/2021/11/26/2021-11-26-度量学习之损失函数⭐️/</div>
     </div>
     <div class="license-meta">
