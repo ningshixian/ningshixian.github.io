@@ -1,0 +1,935 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Ning Shixian">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="开源ChatGPT替代模型项目整理寻找那些ChatGPT&#x2F;GPT4开源“平替”们  原版用的是GPT-3.5+OpenAI自己的数据集，目前开源社区搞得最多的还是LLaMA+Alpaca这套方案，但是其他不一样的方案也是百花齐放，这里简单列一下     名称 点赞数 支持语言 简介+基础 LLM 训练方法&#x2F;数据集 备注     gpt4all 33.7k  基于GPT-J和LLaMa训练开源的大">
+<meta property="og:type" content="article">
+<meta property="og:title" content="开源ChatGPT平替项目汇总">
+<meta property="og:url" content="http://example.com/2023/04/23/%E5%BC%80%E6%BA%90ChatGPT%E5%B9%B3%E6%9B%BF%E9%A1%B9%E7%9B%AE%E6%B1%87%E6%80%BB/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="开源ChatGPT替代模型项目整理寻找那些ChatGPT&#x2F;GPT4开源“平替”们  原版用的是GPT-3.5+OpenAI自己的数据集，目前开源社区搞得最多的还是LLaMA+Alpaca这套方案，但是其他不一样的方案也是百花齐放，这里简单列一下     名称 点赞数 支持语言 简介+基础 LLM 训练方法&#x2F;数据集 备注     gpt4all 33.7k  基于GPT-J和LLaMa训练开源的大">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2023/04/23/%E5%BC%80%E6%BA%90ChatGPT%E5%B9%B3%E6%9B%BF%E9%A1%B9%E7%9B%AE%E6%B1%87%E6%80%BB/1679033043830-e20dd995-9021-45cf-8d84-d566fac24790.png">
+<meta property="og:image" content="http://example.com/2023/04/23/%E5%BC%80%E6%BA%90ChatGPT%E5%B9%B3%E6%9B%BF%E9%A1%B9%E7%9B%AE%E6%B1%87%E6%80%BB/1679040372018-ab34c5d6-634d-4cc4-8a3d-26c536651955-20230425001129677.png">
+<meta property="og:image" content="http://example.com/2023/04/23/%E5%BC%80%E6%BA%90ChatGPT%E5%B9%B3%E6%9B%BF%E9%A1%B9%E7%9B%AE%E6%B1%87%E6%80%BB/1682075055085-b4e2c9be-2b08-4976-85fb-d49b6372075e.png">
+<meta property="og:image" content="http://example.com/2023/04/23/%E5%BC%80%E6%BA%90ChatGPT%E5%B9%B3%E6%9B%BF%E9%A1%B9%E7%9B%AE%E6%B1%87%E6%80%BB/1681373310839-58d20fa0-2cdb-4cd5-b136-bfa9568a9ac3.png">
+<meta property="article:published_time" content="2023-04-23T07:24:20.000Z">
+<meta property="article:modified_time" content="2023-04-24T16:16:35.279Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="LoRa">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2023/04/23/%E5%BC%80%E6%BA%90ChatGPT%E5%B9%B3%E6%9B%BF%E9%A1%B9%E7%9B%AE%E6%B1%87%E6%80%BB/1679033043830-e20dd995-9021-45cf-8d84-d566fac24790.png">
+  
+  
+  
+  <title>开源ChatGPT平替项目汇总 - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="开源ChatGPT平替项目汇总"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-04-23 15:24" pubdate>
+          2023年4月23日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          9.3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          78 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">开源ChatGPT平替项目汇总</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <blockquote>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/618790279?utm_medium=social&amp;utm_oi=834496487537926144&amp;utm_psn=1626225456889135104&amp;utm_source=wechat_session">开源ChatGPT替代模型项目整理</a><br><a target="_blank" rel="noopener" href="https://github.com/chenking2020/FindTheChatGPTer">寻找那些ChatGPT/GPT4开源“平替”们</a></p>
+</blockquote>
+<p>原版用的是GPT-3.5+OpenAI自己的数据集，目前开源社区搞得最多的还是LLaMA+Alpaca这套方案，但是其他不一样的方案也是百花齐放，这里简单列一下</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th><strong>名称</strong></th>
+<th><strong>点赞数</strong></th>
+<th><strong>支持语言</strong></th>
+<th><strong>简介+基础 LLM</strong></th>
+<th><strong>训练方法/数据集</strong></th>
+<th><strong>备注</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/nomic-ai/gpt4all">gpt4all</a></td>
+<td>33.7k</td>
+<td></td>
+<td>基于GPT-J和LLaMa训练开源的大语言模型的Demo, data, and code，类似llama.cpp、WebLLM 等作为 LLM 离线部署加速方案</td>
+<td>自定义数据集(800k)</td>
+<td>数据集由GPT-3.5生成</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/tatsu-lab/stanford_alpaca">Alpaca(羊驼)</a></td>
+<td>20.8k</td>
+<td>en</td>
+<td>斯坦福的羊驼模型（羊驼），基于 LLaMA 7B 微调，使用 Self-Instruct 自举生成 52K 条指令数据</td>
+<td>Alpaca</td>
+<td>finetune 参考 <a target="_blank" rel="noopener" href="https://github.com/tloen/alpaca-lora">alpaca-lora</a></td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/tloen/alpaca-lora">alpaca-lora</a></td>
+<td>10.2k</td>
+<td>en</td>
+<td>Instruct-tune LLaMA on consumer hardware 利用 LoRA 复现 Alpaca 结果</td>
+<td>Alpaca</td>
+<td></td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/ymcui/Chinese-LLaMA-Alpaca">Chinese-LLaMA-Alpaca</a></td>
+<td>6.1k</td>
+<td>en, zh</td>
+<td>提供中文LLaMA模型和指令精调的Alpaca大模型，在原版LLaMA的基础上扩充了中文词表并使用了中文数据进行二次预训练</td>
+<td>Alpaca</td>
+<td></td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/hpcaitech/ColossalAI">ColossalChat</a></td>
+<td>28.2k</td>
+<td></td>
+<td>完整RLHF流程0门槛克隆 LLaMA、OPT、BLOOM</td>
+<td></td>
+<td><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/C9b_oZu9jpw0oObEuDmd9w">中文解读</a></td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/LAION-AI/Open-Assistant">Open-Assistant</a></td>
+<td>24.1k</td>
+<td></td>
+<td>OpenAssistant是一个基于聊天的助手，可以理解任务，可以与第三方系统交互，并动态检索信息。</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/microsoft/DeepSpeed/blob/master/blogs/deepspeed-chat/chinese/README.md">DeepSpeed Chat</a></td>
+<td>20.5k</td>
+<td></td>
+<td>微软开源的一键式RLHF训练，训练速度提升15倍以上，130亿参数的类ChatGPT模型，只需1.25小时就能完成训练。</td>
+<td></td>
+<td><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/psX32gVrpUMxKXA7cUwcEg">中文解读</a></td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/THUDM/ChatGLM-6B">ChatGLM</a></td>
+<td>18.1k</td>
+<td>en, zh</td>
+<td>清华大学出品，支持中英双语的对话语言模型</td>
+<td>自定义数据集(1T)</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/mymusise/ChatGLM-Tuning">ChatGLM-Tuning</a></td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/lm-sys/FastChat">Vicuna(小羊驼)</a></td>
+<td>14.2k</td>
+<td>en</td>
+<td>利用‘用户共享对话’微调 LLaMA，Vicuna-13B 达到了 ChatGPT 90%以上的质量，同时在超过 90% 的情况下优于 LLaMA 和 Stanford Alpaca 等其他模型。 sharegpt.com 最近已经禁止抓取，这意味着该数据源不再可用，Vicuna 难以复现。</td>
+<td>shareGPT(70k)</td>
+<td>finetune 参考  <a target="_blank" rel="noopener" href="https://github.com/Facico/Chinese-Vicuna">Chinese-Vicuna </a></td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/Vision-CAIR/MiniGPT-4">MiniGPT-4🔥</a></td>
+<td>13k</td>
+<td></td>
+<td>增强视觉语言理解（识图）与先进的大型语言模型</td>
+<td></td>
+<td>1.识别图片，并且进行对话</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/stability-AI/stableLM">stableLM🔥</a></td>
+<td>10.9k</td>
+<td>en</td>
+<td>Stable Diffusion的初创公司Stability AI发布并开源该团队训练的大语言模型StableLM</td>
+<td>Pile 数据集</td>
+<td></td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/OpenLMLab/MOSS">MOSS🔥</a></td>
+<td>4k</td>
+<td>en, zh</td>
+<td>国内首个类 ChatGPT 模型：复旦大学 MOSS，RTX 3090 显卡可运行</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/nebuly-ai/nebullvm/tree/main/apps/accelerate/chatllama">ChatLLaMA</a></td>
+<td>7.8k</td>
+<td>en</td>
+<td>初创公司 Nebuly AI 开源的 RLHF 版 LLaMA (ChatLLaMA)，构建 ChatGPT 形式的服务</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/databrickslabs/dolly">Dolly 2.0</a></td>
+<td>7.8k</td>
+<td>en</td>
+<td>Dolly是Databricks发布的开源、遵循指令的 LLM，可用于商业目的</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/databrickslabs/dolly/tree/master/data">databricks-dolly-15k</a></td>
+<td><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzA3MzI4MjgzMw==&amp;mid=2650873911&amp;idx=2&amp;sn=3d7e4f53f5f0c29c85b81435dc984f85&amp;scene=21#wechat_redirect">中文解读</a></td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/togethercomputer/OpenChatKit">OpenChatKit</a></td>
+<td>7.6k</td>
+<td>en</td>
+<td>前OpenAI团队打造，OpenChatKit提供了一个强大的开源基础，可以为各种应用程序创建专门的和通用的聊天机器人。</td>
+<td>OIG-43M</td>
+<td></td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/LianjiaTech/BELLE">BELLE</a></td>
+<td>4k</td>
+<td>zh</td>
+<td>基于BLOOM和LLAMA，针对ChatGPT生成的中文数据微调的对话大模型</td>
+<td>150万中文指令微调数据集</td>
+<td><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/HI2VvokqYNdRZgcZwfSDqw">中文解读</a></td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/OptimalScale/LMFlow">LMFLOW</a></td>
+<td>4.3k</td>
+<td>en, zh</td>
+<td>LMFlow 不是一个单一模型，而是支持很多模型的微调框架</td>
+<td>自定义</td>
+<td><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/G2T3uLILlJaQtkOBeoZuKg">中文解读</a></td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/Lightning-AI/lit-llama">lit-llama</a></td>
+<td>2.6k</td>
+<td>en</td>
+<td>Lightning-AI 基于nanoGPT的LLaMA语言模型的实现。支持量化，LoRA微调，预训练。</td>
+<td>Alpaca</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>可用的开源基础 LLM，可以参考博客</strong> <a target="_blank" rel="noopener" href="https://matt-rickard.com/a-list-of-1-billion-parameter-llms">A List of 1 Billion+ Parameter LLMs</a></p>
+<img src="/2023/04/23/%E5%BC%80%E6%BA%90ChatGPT%E5%B9%B3%E6%9B%BF%E9%A1%B9%E7%9B%AE%E6%B1%87%E6%80%BB/1679033043830-e20dd995-9021-45cf-8d84-d566fac24790.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>首先，我们先简单过一下 Meta 开源的 <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2302.13971">LLAMA</a> (Large Language Model Meta AI)。Meta 表示，LLaMA 13B 的性能超过了 GPT-3，而 LLaMA 65B 和其他领先的模型相当；LLaMA 更小、更高性能的模型，可能是目前公开模型权重中效果最好的语言模型。但是中文支持效果比较差。我们尝试了社区精简版 LLaMA：<a target="_blank" rel="noopener" href="https://github.com/juncongmoo/pyllama">https://github.com/juncongmoo/pyllama</a>，他在8GB显存就能够跑起来，具体效果如下：</p>
+<p><strong>社区精简版 pyLLaMA 使用效果一览</strong></p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs awk">pip install pyllama -U<br>pip install gradio<br><br><span class="hljs-comment"># 模型下载</span><br><span class="hljs-comment"># 1、通过pyllama下载</span><br>python -m llama.download --model_size <span class="hljs-number">7</span>B --folder <span class="hljs-regexp">/tmp/</span>pyllama_data<br>python -m llama.download --model_size <span class="hljs-number">7</span>B,<span class="hljs-number">30</span>B --folder <span class="hljs-regexp">/tmp/</span>pyllama_data<br><span class="hljs-comment"># 2、直接wget下载</span><br>https:<span class="hljs-regexp">//i</span>pfs.io<span class="hljs-regexp">/ipfs/</span>Qmb9y5GCkTG7ZzbBWMu2BXwMkzyCKcUjtEKPpgdZ7GEFKm/<br><br><span class="hljs-comment"># 配置环境变量</span><br>export CKPT_DIR=<span class="hljs-regexp">/data/</span>voiceprint2<span class="hljs-regexp">/llama/</span>llama-dl-main/<span class="hljs-number">7</span>B<br>export TOKENIZER_PATH=<span class="hljs-regexp">/data/</span>voiceprint2<span class="hljs-regexp">/llama/</span>llama-dl-main/tokenizer.model <br><br><span class="hljs-comment"># 运行测试</span><br>git clone https:<span class="hljs-regexp">//gi</span>thub.com<span class="hljs-regexp">/juncongmoo/</span>pyllama.git<br>cd pyllama<br>python inference.py --ckpt_dir <span class="hljs-variable">$CKPT_DIR</span> --tokenizer_path <span class="hljs-variable">$TOKENIZER_PATH</span><br><br><span class="hljs-comment"># To load KV cache in CPU, run export KV_CAHCHE_IN_GPU=0 in the shell.</span><br><span class="hljs-comment"># 调整max_seq_len并max_batch_size减少内存消耗以便能够在 GPU 中运行</span><br><span class="hljs-comment"># Quantize 7B model to 8-bit</span><br>python -m llama.llama_quant decapoda-research/llama-<span class="hljs-number">7</span>b-hf c4 --wbits <span class="hljs-number">8</span> --save pyllama-<span class="hljs-number">7</span>B8b.pt<br><br><span class="hljs-comment"># 启动 gradio webui</span><br>cd apps/gradio<br>python webapp_single.py  --ckpt_dir <span class="hljs-variable">$CKPT_DIR</span> --tokenizer_path <span class="hljs-variable">$TOKENIZER_PATH</span><br><br><span class="hljs-comment"># 启动网络服务器</span><br>cd apps/flask<br>python web_server_single.py  --ckpt_dir <span class="hljs-variable">$CKPT_DIR</span> --tokenizer_path <span class="hljs-variable">$TOKENIZER_PATH</span><br></code></pre></td></tr></table></figure>
+<p>Llama-7B 效果展示（显存占用约14GB）：</p>
+<img src="/2023/04/23/%E5%BC%80%E6%BA%90ChatGPT%E5%B9%B3%E6%9B%BF%E9%A1%B9%E7%9B%AE%E6%B1%87%E6%80%BB/1679040372018-ab34c5d6-634d-4cc4-8a3d-26c536651955-20230425001129677.png" srcset="/img/loading.gif" lazyload class="" title="img">
+<p>使用评价：</p>
+<ul>
+<li>毕竟是小的模型，感觉回复的速度和质量都不尽如人意，比ChatGPT差很多</li>
+<li>回答中可能出现一些不相关的评论，明明是要求解题，却去做扩展续写的工作等等</li>
+<li>目前的7B模型～可能只能做一些最简单的对话工作….</li>
+</ul>
+<p>其他平替方案里，我们挑几个简单介绍一下：</p>
+<h3 id="Alpaca-和-Chinese-LLaMA-Alpaca"><a href="#Alpaca-和-Chinese-LLaMA-Alpaca" class="headerlink" title="Alpaca 和 Chinese-LLaMA-Alpaca"></a>Alpaca 和 Chinese-LLaMA-Alpaca</h3><p><a target="_blank" rel="noopener" href="https://github.com/tatsu-lab/stanford_alpaca"><strong>Alpaca（羊驼）</strong></a>应该是目前最主流的做法，它基于 Meta 的 LLaMA 7B  模型进行指令微调。其基本原理是让 OpenAI 的 text-davinci-003 模型以 self-instruct 方式生成 52K 指令样本，以此来微调LLaMA，这个数据集本身还不是很干净导致Alpaca-lora的老哥们后来还给它清洗了一遍。</p>
+<p>Alpaca精悍于：</p>
+<ul>
+<li>①直接嫖了Meta开源模型Llama-7B，在8个80GB A100上继续训练了3个小时；</li>
+<li>②直接嫖了ChatGPT生成可靠训练数据，无需人工标注；借鉴self-instruct的方式，利用chatgpt来批量的生成alignment的数据集，约52000个指令问答训练数据；如何让模型自举生成数据参考<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/615180155">链接</a></li>
+<li>③实验效果与GPT-3.5相当。</li>
+<li>Web Demo： <a target="_blank" rel="noopener" href="https://crfm.stanford.edu/alpaca/">https://crfm.stanford.edu/alpaca/</a></li>
+</ul>
+<p>如果想自己尝试的话是推荐先用这个，比较稳妥。但是就以我自己测试下来的情况看，7B和13B的Alpaca在复杂问题的情况下效果距离gpt-3.5的api效果都还差很远，当然这并不意味着Alpaca上限就到这了，它用的数据集目前还是偏小，如果继续优化，还是有追上gpt-3.5的机会的，毕竟LlaMA论文里的测试结果是13B能单防gpt-3。</p>
+<p>Chinese-LLaMA-Alpaca 开源了中文LLaMA模型和经过指令精调的Alpaca大模型。这些模型在原版LLaMA的基础上扩充了中文词表并使用了中文数据进行二次预训练，进一步提升了中文基础语义理解能力。同时，在中文LLaMA的基础上，本项目使用了中文指令数据进行指令精调，显著提升了模型对指令的理解和执行能力。但是效果一般…</p>
+<h3 id="alpaca-lora"><a href="#alpaca-lora" class="headerlink" title="alpaca-lora"></a>alpaca-lora</h3><p>alpaca-lora是斯坦福大学的另一个巨作，其使用LoRA（low-rank adaptation）技术复现了Alpaca的结果，用了一个更加低成本的方法，只在一块RTX 4090显卡上训练5个小时得到了一个Alpaca水平相当的模型。而且，该模型可以在树莓派上运行。在该项目中，其使用了Hugging Face的PEFT来实现廉价高效的微调。PEFT 是一个库（LoRA 是其支持的技术之一），可以让你使用各种基于 Transformer的语言模型并使用LoRA对其进行微调，从而使得在一般的硬件上廉价而有效地微调模型。该项目github地址是：</p>
+<p> <a target="_blank" rel="noopener" href="https://github.com/tloen/alpaca-lora">https://github.com/tloen/alpaca-lora</a></p>
+<p>尽管 Alpaca和alpaca-lora取得了较大的提升，但其种子任务都是英语，缺乏对中文的支持。一方面除了以上提到Belle收集到了大量的中文语料，另一方面基于alpaca-lora等前人工作，来自华中师范大学等机构的三位个人开发者开源的中文语言模型骆驼 (Luotuo)，单卡就能完成训练部署。目前该项目释放了两个模型 luotuo-lora-7b-0.1、luotuo-lora-7b-0.3，还有一个模型在计划中。其github地址是：</p>
+<p> <a target="_blank" rel="noopener" href="https://github.com/LC1332/Chinese-alpaca-lora">https://github.com/LC1332/Chinese-alpaca-lora</a></p>
+<h3 id="ChatLLaMA"><a href="#ChatLLaMA" class="headerlink" title="ChatLLaMA"></a>ChatLLaMA</h3><p>ChatLLaMA 是一个完整的开源实现，能够基于预训练的 LLaMA（7B、13B、33B、65B）构建 ChatGPT 样式的服务。它内置了对 DeepSpeed ZERO 的支持，训练、微调和单 GPU 推理更快、成本更低。</p>
+<details class="lake-collapse"><summary id="u87654202"><span class="ne-text" style="color: rgb(51, 51, 51)"></span></summary></details>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># ChatLLaMA 使用指南</span><br><span class="hljs-comment"># the algorithmic implementation for RLHF training process of LLaMA</span><br><br><span class="hljs-keyword">from</span> chatllama.rlhf.trainer <span class="hljs-keyword">import</span> RLTrainer<br><span class="hljs-keyword">from</span> chatllama.rlhf.config <span class="hljs-keyword">import</span> Config<br><br>path = <span class="hljs-string">&quot;path_to_config_file.yaml&quot;</span><br>config = Config(path=path)<br>trainer = RLTrainer(config.trainer)<br>trainer.distillate()<br>trainer.train()<br>trainer.training_stats.plot()<br></code></pre></td></tr></table></figure>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-comment"># pip install chatllama-py</span><br><span class="hljs-comment"># download the llama model weights and tokenizer.</span><br><br><span class="hljs-comment"># 1 - YAML download</span><br><span class="hljs-attribute">wget</span> -O artifacts.zip https://nbllabartifacts.blob.core.windows.net/chatllama/artifacts.zip\?sp\=r\&amp;st\=<span class="hljs-number">2023</span>-<span class="hljs-number">03</span>-<span class="hljs-number">08</span>T14:<span class="hljs-number">53</span>:<span class="hljs-number">24</span>Z\&amp;se\=<span class="hljs-number">2100</span>-<span class="hljs-number">03</span>-<span class="hljs-number">08</span>T22:<span class="hljs-number">53</span>:<span class="hljs-number">24</span>Z\&amp;spr\=https\&amp;sv\=<span class="hljs-number">2021</span>-<span class="hljs-number">06</span>-<span class="hljs-number">08</span>\&amp;sr\=b\&amp;sig\=jqr%<span class="hljs-number">2</span>B2ZkR0SW9RjV0pDOdQ%<span class="hljs-number">2</span>BDulLXLjbZ36vmNd4XxxyQ%<span class="hljs-number">3</span>D<br><span class="hljs-attribute">unzip</span> artifacts.zip<br><br><span class="hljs-comment"># 2 - Dataset preparation</span><br><span class="hljs-comment"># download the actor_training_data and the rlhf_training_data:</span><br><span class="hljs-attribute">python</span> artifacts/download_dataset.py SHP --path ./datasets --number_of_samples <span class="hljs-number">200</span><br><span class="hljs-comment"># create the reward_training_data using davinci-003 for synthetic data generation.</span><br><span class="hljs-attribute">export</span> OPENAI_API_KEY=YOUR_API_KEY<br><span class="hljs-attribute">python</span> artifacts/generate_rewards.py ./datasets/reward_training_data.json --model gpt-<span class="hljs-number">3</span>.<span class="hljs-number">5</span>-turbo//text-davinci-<span class="hljs-number">003</span><br><br><span class="hljs-comment"># 3 - Training</span><br><br><span class="hljs-comment"># Train the Reward Model</span><br><span class="hljs-attribute">python</span> artifacts/main.py artifacts/config/config.yaml --type REWARD<br><span class="hljs-comment"># Pre-Train the Actor Model</span><br><span class="hljs-attribute">python</span> artifacts/main.py artifacts/config/config.yaml --type ACTOR<br><span class="hljs-comment"># Training the Actor with reinforcement learning.</span><br><span class="hljs-attribute">python</span> artifacts/main.py artifacts/config/config.yaml --type RL<br><br><span class="hljs-comment"># Note that the path to the datasets and the training hyper-parameters of the training process are specified in the config.yaml file.</span><br></code></pre></td></tr></table></figure>
+<h3 id="ChatGLM"><a href="#ChatGLM" class="headerlink" title="ChatGLM"></a>ChatGLM</h3><p>ChatGLM是清华智谱AI开源的GLM系列的对话模型，支持中英两个语种，目前开源了其62亿参数量的模型 <a target="_blank" rel="noopener" href="https://github.com/THUDM/ChatGLM-6B">ChatGLM-6B</a>。其继承了GLM之前的优势，在模型架构上进行了优化，从而使得部署和应用门槛变低，实现大模型在消费级显卡上的推理应用。目前训练代码未放出，还在内测阶段，内测申请网址：<a target="_blank" rel="noopener" href="https://chatglm.cn">chatglm.cn</a></p>
+<ul>
+<li>6G 显卡使用 int4 量化、8G 显卡使用 int8 量化、12G及以上显卡使用 fp16 完整版；</li>
+<li>子涵在11机器上配了一套服务，可以<code>screen -r yzh</code>后<code>python cli_demo.py</code>体验；<h3 id="Dolly-2-0"><a href="#Dolly-2-0" class="headerlink" title="Dolly 2.0"></a>Dolly 2.0</h3>Dolly 1.0 在Alpaca的启发下，使用的是斯坦福大学 Alpaca 团队用 OpenAI API 创建的数据集，在GPT-J-6B上实现微调。但是，在 ChatGPT 的输出上训练的模型一直处于合法的灰色地带，知名指令遵循模型（Alpaca、Koala、GPT4All、Vicuna）都受到这种限制：禁止商业使用。</li>
+</ul>
+<p><strong>Dolly 2.0 是怎么诞生的？</strong>Dolly 2.0 是一个 120 亿参数的语言模型，它基于开源 EleutherAI pythia 模型系列，专门针对小型开源指令记录语料库进行了微调（databricks-dolly-15k），许可条款允许出于任何目的使用、修改和扩展，包括学术或商业应用。</p>
+<p>「databricks-dolly-15k」数据集包含 15000 个高质量的人类生成的 prompt / 回复对，<strong>由 5000 多名 Databricks 员工在 2023 年 3 月和 4 月期间撰写</strong>，专门设计用于指令调优大型语言模型。这些训练记录自然、富有表现力，旨在代表广泛的行为，从头脑风暴、内容生成到信息提取和总结。</p>
+<h3 id="BELLE"><a href="#BELLE" class="headerlink" title="BELLE"></a>BELLE</h3><p><a target="_blank" rel="noopener" href="https://github.com/LianjiaTech/BELLE">belle</a>是基于BLOOMZ、LLama优化后的模型，针对中文做了优化，模型调优仅使用由ChatGPT生产的数据（不包含任何其他数据）。项目包括：</p>
+<ol>
+<li>数据开放：参考Stanford Alpaca 生成的中文数据集1M + 0.5M</li>
+<li>基于BLOOMZ-7B1-mt优化后的模型：BELLE-7B-0.2M，BELLE-7B-0.6M，BELLE-7B-1M，BELLE-7B-2M</li>
+<li>基于LLAMA优化后的模型：BELLE-LLAMA-7B-0.6M，BELLE-LLAMA-7B-2M</li>
+<li>对以上模型进行量化后的轻量化模型，便于部署、推理。</li>
+</ol>
+<p>该项目要求开发者仅将开源的代码、数据、模型及后续用此项目生成的衍生物用于研究目的，不得用于商业！</p>
+<p>理论上BLOOM的多语言能力是要比LLaMA好一些的，不过我测BELLE的时候发现了一个比较搞笑的情况，我在测完一些其他case之后感觉还不错，但是我突发奇想把我测英文模型的一些case机翻过来喂给BELLE，结果BELLE就开始吐中英文混杂的句子了。当然这个问题可能也不是BELLE独有的，我还没在其他中文模型上测过。如果直接拿去应用的时候出这个问题还是挺要命的，后续可以跟进看看。</p>
+<h3 id="OpenChatKit"><a href="#OpenChatKit" class="headerlink" title="OpenChatKit"></a>OpenChatKit</h3><p>OpenChatKit由前OpenAI研究员所在的Together团队，以及LAION、Ontocord.ai团队共同打造。它的设计我觉得是很有希望的，用GPT-3的开源版本GPT-NoX-20B加上自己的数据集进行微调。同时，不同ChatGPT的强化学习，OpenChatKit采用一个60亿参数的审核模型，对不合适或者是有害的信息进行过滤，确保生成内容的安全和质量。证书是APACHE LICENSE 2.0， 真的成了直接就可以用，不受任何限制。</p>
+<h3 id="Vicuna和Chinese-Vicuna"><a href="#Vicuna和Chinese-Vicuna" class="headerlink" title="Vicuna和Chinese-Vicuna"></a>Vicuna和Chinese-Vicuna</h3><p>斯坦福学者继推出alpaca后，联手CMU、UC伯克利等，推出一个全新模型 Vicuna-13B（俗称小羊驼、骆马），通过使用从 ShareGPT.com 收集的大约 70K 用户共享对话微调 LLaMA 基础模型创建的。</p>
+<p>测试过程使用GPT-4作为评判标准，与 Alpaca 相比，<a target="_blank" rel="noopener" href="https://vicuna.lmsys.org/">Vicuna</a> 能够生成更详细、结构更合理的答案（参见下面的示例），并且在超过90%的情况下实现了与ChatGPT相匹敌的能力。</p>
+<img src="/2023/04/23/%E5%BC%80%E6%BA%90ChatGPT%E5%B9%B3%E6%9B%BF%E9%A1%B9%E7%9B%AE%E6%B1%87%E6%80%BB/1682075055085-b4e2c9be-2b08-4976-85fb-d49b6372075e.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>UC伯克利LMSys org近期又发布了70亿参数的 Vicuna-7B，不仅体积小、效率高、能力强，而且只需两行命令就能在M1/M2芯片的Mac上运行，还能开启GPU加速！<br>github开源地址为：<a target="_blank" rel="noopener" href="https://github.com/lm-sys/FastChat/">https://github.com/lm-sys/FastChat/</a></p>
+<p>另一个中文版的进行了开源Chinese-Vicuna ，github地址为：<br> <a target="_blank" rel="noopener" href="https://github.com/Facico/Chinese-Vicuna">https://github.com/Facico/Chinese-Vicuna</a></p>
+<h3 id="gpt4all"><a href="#gpt4all" class="headerlink" title="gpt4all"></a>gpt4all</h3><p>基于 LLaMa 的 LLM 助手，提供训练代码、数据和演示，训练一个自己的 AI 助手。</p>
+<img src="/2023/04/23/%E5%BC%80%E6%BA%90ChatGPT%E5%B9%B3%E6%9B%BF%E9%A1%B9%E7%9B%AE%E6%B1%87%E6%80%BB/1681373310839-58d20fa0-2cdb-4cd5-b136-bfa9568a9ac3.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<h3 id="LMFLOW"><a href="#LMFLOW" class="headerlink" title="LMFLOW"></a>LMFLOW</h3><p>低成本效仿ChatGPT，LMFlow 项目由香港科技大学统计和机器学习实验室团队发起，致力于让使用者针对专有领域支持个性化训练。例如LLaMA-7B，一张3090耗时 5 个小时即可完成训练，成本大幅降低。<br>该项目还开放了网页端即刻体验问答服务 (lmflow.com)。LMFlow的出现和开源使得普通资源可以训练问答、陪伴、写作、翻译、专家领域咨询等各种任务。目前很多研究者们正在尝试用该项目训练650亿甚至更高参数量的大模型。</p>
+<h3 id="Lit-LLaMA"><a href="#Lit-LLaMA" class="headerlink" title="Lit-LLaMA"></a>Lit-LLaMA</h3><p>Lightning-AI 基于nanoGPT的LLaMA语言模型的实现。支持量化，LoRA微调，预训练。<br>目前还处于概念阶段，该项目的想法是把LLaMA的设计用自己的代码重写一边，这样绕过它的代码证书，再训练出一个完全开源版本的LLaMA。我觉得这个思路不错，但是是骡子是马还是得真的结果搞出来以后测了才知道</p>
+<h3 id="StackLLaMA"><a href="#StackLLaMA" class="headerlink" title="StackLLaMA"></a>StackLLaMA</h3><p>随着斯坦福Alpaca的出现，一大堆基于LLama的羊驼家族和扩展动物家族开始出现，终于Hugging Face研究人员近期发布了一篇博客StackLLaMA：用RLHF训练LLaMA的实践指南。同时也发布了一个70亿参数的模型——StackLLaMA。这是一个通过人类反馈强化学习在LLaMA-7B微调而来的模型。详细见其博客地址：<br> <a target="_blank" rel="noopener" href="https://huggingface.co/blog/stackllama">https://huggingface.co/blog/stackllama</a></p>
+<h3 id="关于证书"><a href="#关于证书" class="headerlink" title="关于证书"></a>关于证书</h3><p>这里不得不提一下Llama的证书，分代码和模型权重两部分，它的代码是GPL 3.0的，但是权重另是一个特殊的证书，任何人不得随意发布，只允许学术用途。这意味着什么呢？直接拿Llama权重来商用肯定是不行，而且拿出来给别人下载都是不行的，已经有git上的仓库吃了DMCA被删掉了。如果使用它的代码复现，根据GPL 3.0，所有后续的项目也必须使用GPL 3.0。这一点对于很多公司乃至个人来说都是不太好接受的。这也是我为什么比较期待基于其他基干模型的方案，因为不设法绕开LLaMA(或者重新训一个开源出来），很容易后续做一些事情的时候被卡住。</p>
+<p>说一点闲话，有的朋友可能说，那META也是秉承了CloseAI，不是，OpenAI的思想，怕别人用这个模型来干坏事才加了限制。但是仔细想一想，真的拿这玩意来干坏事的人，根本就不在乎你用啥证书，他搞到你的权重直接用就完事了。卡的还是想正经做点项目的人，说到这个我前两天看到一个好玩的，point-alpaca这个项目：</p>
+<p><a href="https://link.zhihu.com/?target=https%3A//github.com/pointnetwork/point-alpaca">https://github.com/pointnetwork/point-alpaca</a></p>
+<p>它是干什么的呢，它把整个LLaMA用alpaca的数据集训练了3个epoch（对此是否真的比lora更有效我持保留态度，我也没试）。比较好玩的是它说LLaMA的权重是META的，我们不能随便发布，那我怎么发布我的模型呢？于是它说，那我不发布整个模型，我发布我训出来的模型权重，和原版LLaMA的差，不就得了吗？</p>
+<p>用户拿到原版LLaMA,加上我们这个差，就可以获得我们训过的版本啦（瞧这费劲的）</p>
+<h3 id="一些想法"><a href="#一些想法" class="headerlink" title="一些想法"></a>一些想法</h3><p>其实就算是目前我觉得还是有很多事情需要社区加大力度，比方说</p>
+<ul>
+<li>规范针对类InstructGPT的评估标准，打出GPT-3.5和GPT-4的分数，量化开源模型的效果（实在没有人力可以干脆让GPT-4出分），目前很多开源模型只是给出模型对一些答案的示例，这样很难分辨实际效果</li>
+<li>整理目前开源的数据集，不同项目间互通有无，目前看改善数据集还是能有一些提升</li>
+<li>重炼/超越LLaMA，整出开源版。我相信这个其实已经有人在做了，我希望大佬能够加大力度。</li>
+</ul>
+<p>其实需要人做的有价值的事情还有很多。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/ChatGPT/" class="category-chain-item">ChatGPT</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/LoRa/">#LoRa</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>开源ChatGPT平替项目汇总</div>
+      <div>http://example.com/2023/04/23/开源ChatGPT平替项目汇总/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Ning Shixian</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年4月23日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/04/23/LoRa%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" title="LoRa 学习笔记">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">LoRa 学习笔记</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/04/23/2023-04-23-GitHub%20Pages%20+%20Hexo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E7%BD%91%E7%AB%99/" title="GitHub Pages + Hexo搭建个人博客网站">
+                        <span class="hidden-mobile">GitHub Pages + Hexo搭建个人博客网站</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
