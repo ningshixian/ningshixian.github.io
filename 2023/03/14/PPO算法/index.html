@@ -1,0 +1,754 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Ning Shixian">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="要点 根据 OpenAI 的官方博客, PPO 已经成为他们在强化学习上的默认算法. 如果一句话概括 PPO: OpenAI 提出的一种解决 Policy Gradient 不好确定 Learning rate (或者 Step size) 的问题. 因为如果 step size 过大, 学出来的 Policy 会一直乱动, 不会收敛, 但如果 Step Size 太小, 对于完成训练, 我们会等">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PPO算法">
+<meta property="og:url" content="http://example.com/2023/03/14/PPO%E7%AE%97%E6%B3%95/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="要点 根据 OpenAI 的官方博客, PPO 已经成为他们在强化学习上的默认算法. 如果一句话概括 PPO: OpenAI 提出的一种解决 Policy Gradient 不好确定 Learning rate (或者 Step size) 的问题. 因为如果 step size 过大, 学出来的 Policy 会一直乱动, 不会收敛, 但如果 Step Size 太小, 对于完成训练, 我们会等">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2023/03/14/PPO%E7%AE%97%E6%B3%95/PPO%E7%AE%97%E6%B3%95/1677118748202.png">
+<meta property="og:image" content="http://example.com/2023/03/14/PPO%E7%AE%97%E6%B3%95/PPO%E7%AE%97%E6%B3%95/1677049573025.jpeg">
+<meta property="og:image" content="http://example.com/2023/03/14/PPO%E7%AE%97%E6%B3%95/PPO%E7%AE%97%E6%B3%95/1677049702486-4c83f34e-d965-4fd1-8337-135872b51c60.png">
+<meta property="og:image" content="http://example.com/2023/03/14/PPO%E7%AE%97%E6%B3%95/PPO%E7%AE%97%E6%B3%95/1679394322067.png">
+<meta property="og:image" content="http://example.com/2023/03/14/PPO%E7%AE%97%E6%B3%95/PPO%E7%AE%97%E6%B3%95/1679394584080.png">
+<meta property="og:image" content="http://example.com/2023/03/14/PPO%E7%AE%97%E6%B3%95/PPO%E7%AE%97%E6%B3%95/image.png">
+<meta property="og:image" content="http://example.com/2023/03/14/PPO%E7%AE%97%E6%B3%95/PPO%E7%AE%97%E6%B3%95/image2.png">
+<meta property="article:published_time" content="2023-03-14T06:59:20.000Z">
+<meta property="article:modified_time" content="2023-04-24T06:50:28.064Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="PPO">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2023/03/14/PPO%E7%AE%97%E6%B3%95/PPO%E7%AE%97%E6%B3%95/1677118748202.png">
+  
+  
+  
+  <title>PPO算法 - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="PPO算法"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-03-14 14:59" pubdate>
+          2023年3月14日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          6.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          51 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">PPO算法</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="要点"><a href="#要点" class="headerlink" title="要点"></a>要点</h2><ul>
+<li>根据 OpenAI 的<a target="_blank" rel="noopener" href="https://blog.openai.com/openai-baselines-ppo/">官方博客</a>, PPO 已经成为他们在强化学习上的默认算法. <strong>如果一句话概括 PPO: OpenAI 提出的一种解决 Policy Gradient 不好确定 Learning rate (或者 Step size) 的问题. 因为如果 step size 过大, 学出来的 Policy 会一直乱动, 不会收敛, 但如果 Step Size 太小, 对于完成训练, 我们会等到绝望. PPO 利用 New Policy 和 Old Policy 的比例, 限制了 New Policy 的更新幅度, 让 Policy Gradient 对稍微大点的 Step size 不那么敏感.</strong></li>
+<li>总的来说 PPO 是一套 Actor-Critic 结构, Actor 想<strong>最大化</strong> J_PPO, Critic 想<strong>最小化</strong> L_BL.</li>
+</ul>
+<h2 id="PG-Add-Constraint-→-PPO"><a href="#PG-Add-Constraint-→-PPO" class="headerlink" title="PG Add Constraint → PPO"></a>PG Add Constraint → PPO</h2><p>简单来说，PPO就是Policy Gradient的”off-policy”版本。为了满足<strong>Importance Sampling</strong>的使用条件，即防止$p_{\theta}$和$p_{\theta_{old}}$两个概率分布相差太多，PPO提供了两个解决方案：</p>
+<ol>
+<li>TRPO（Trust Region Policy Optimization）在目标函数外使用KL Penalty (惩罚项）来限制策略更新，希望在训练的过程中，new Policy 和 old Policy 的输出不要相差太大（因为输出的 action 是概率分布，也即计算两个概率分布之间的差别）。但是这种方法实现起来很复杂，需要更多的计算时间。</li>
+</ol>
+<p>$L^{PPO}(\theta)=E_{t}\left[r_t(\theta) * A_{t}\right]-\beta·KL[\pi_{\theta_{init}}|\pi_{\theta}]$</p>
+<ol>
+<li>PPO-Clip 在目标函数中使用 <strong>Clipped surrogate objective function </strong>来直接裁剪概率比率。所要做的事情本质上和TRPO是一样的，都是为了让两个分布（$θ$和$θ’$）之间的差距不致过大</li>
+</ol>
+<p>$L^{C L I P}(\theta)=\hat{\mathbb{E}}_{t}\left[\min \left(r_{t}(\theta) \hat{A}_{t}, \operatorname{clip}\left(r_{t}(\theta), 1-\epsilon, 1+\epsilon\right) \hat{A}_{t}\right)\right]$</p>
+<p>其中，$\beta$是可以动态调整的，称之为自适应KL惩罚（adaptive KL penalty）；$r_t(\theta)$表示Ratio Function，指产生同样的 token，在 Policy Model 和 Alignment Model 下的概率比值（It’s the probability of taking action a_t at state s_t in the current policy divided by the previous one. ）</p>
+<p>$r_t(\theta)=\frac{\pi_{\theta}(a_t|s_t)}{\pi_{\theta_{old}}(a_t|s_t)}$</p>
+<p>正如我们所看到的，$r_t(\theta)$表示当前策略和旧策略之间的概率比率，<strong>是估计旧策略和当前策略之间差异的一种简单方法</strong>。</p>
+<ul>
+<li>如果$r_t(\theta)&gt;1$，则在状态$s_t$下，动作$a_t$在当前策略中比旧策略更有可能执行。</li>
+<li>如果$0&lt;r_t(\theta)&lt;1$，则在当前策略下执行该动作的可能性比旧策略下低。</li>
+</ul>
+<p><img src="PPO算法/1677118748202.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<h3 id="PPO-Clip-算法直观理解"><a href="#PPO-Clip-算法直观理解" class="headerlink" title="PPO-Clip 算法直观理解"></a>PPO-Clip 算法直观理解</h3><p>$L^{C L I P}(\theta)=\hat{\mathbb{E}}_{t}\left[\min \left(r_{t}(\theta) \hat{A}_{t}, \operatorname{clip}\left(r_{t}(\theta), 1-\epsilon, 1+\epsilon\right) \hat{A}_{t}\right)\right]$<br>$r_t(\theta)=\frac{\pi_{\theta}(a_t|s_t)}{\pi_{\theta_{old}}(a_t|s_t)}$</p>
+<p>整个目标函数在$min$这个大括号里有两部分，最终对比两部分哪部分更小，就取哪部分的值。<br>在括号的第二部分中，</p>
+<ul>
+<li>首先是裁剪函数$clip$：如果$p_{\theta}(a_t|s_t)$和$p_{\theta^k}(a_t|s_t)$之间的概率比落在范围$(1-ε)$和$(1+ε)$之外，$\frac{p_{\theta}(a_t|s_t)}{p_{\theta^k}(a_t|s_t)}$将被剪裁，使得其值最小不小于$(1-ε)$，最大不大于$(1+ε)$</li>
+</ul>
+<p><img src="PPO算法/1677049573025.jpeg" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<ul>
+<li>然后是$clip$括号外乘以$A^{\theta’}(s_t,a_t)$：当$A&gt;0$，则说明这是好动作，那么希望增大这个action的几率$p_{\theta}(a_t|s_t)$，但是又不希望两者差异，即比值$\frac{p_{\theta}(a_t|s_t)}{p_{\theta^k}(a_t|s_t)}$太悬殊，所以增大到比值为$1+ε$就不要再增加了；当$A&lt;0$，则说明该动作不是好动作，那么希望这个action出现的几率$p_{\theta}(a_t|s_t)$越小越好，但$\frac{p_{\theta}(a_t|s_t)}{p_{\theta^k}(a_t|s_t)}$最小不能小过$(1-ε)$</li>
+</ul>
+<p><img src="PPO算法/1677049702486-4c83f34e-d965-4fd1-8337-135872b51c60.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<p>换言之，这个裁剪算法和KL散度约束所要做的事情本质上是一样的，都是为了让两个分布之间的差距不致过大，但裁剪算法相对好实现，别看看起来复杂，其实代码很好写，示例如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs python">// ratios即为重要性权重<br>// 括号里的environment_log_probs代表用于与环境交互的策略<br>ratios = torch.exp(log_probs - environment_log_probs)<br> <br>// 分别用sur_1、sur_2来计算公式的两部分<br><br>// 第一部分是重要性权重乘以优势函数<br>sur_1 = ratios * advs<br> <br>// 第二部分是具体的裁剪过程<br>sur_2 = torch.clamp(ratios, <span class="hljs-number">1</span> - clip_eps, <span class="hljs-number">1</span> + clip_eps) * advs<br> <br>// 最终看谁更小则取谁<br>clip_loss = -torch.<span class="hljs-built_in">min</span>(sur_1,sur_2).mean()<br></code></pre></td></tr></table></figure>
+<h2 id="简单-PPO-的代码解读"><a href="#简单-PPO-的代码解读" class="headerlink" title="简单 PPO 的代码解读"></a>简单 PPO 的代码解读</h2><blockquote>
+<p><a target="_blank" rel="noopener" href="https://mofanpy.com/tutorials/machine-learning/reinforcement-learning/DPPO">https://mofanpy.com/tutorials/machine-learning/reinforcement-learning/DPPO</a></p>
+</blockquote>
+<p>我们用 Tensorflow 搭建神经网络, tensorboard 中可以看清晰的看到我们是如果搭建的:</p>
+<p><img src="PPO算法/1679394322067.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<p>图中的 pi 就是我们的 Actor 了. 每次要进行 PPO 更新 Actor 和 Critic 的时候, 我们有需要将 pi 的参数复制给 oldpi. 这就是 update_oldpi 这个 operation 在做的事. Critic 和 Actor 的内部结构, 我们不会打开细说了. 因为就是一堆的神经网络而已. 这里的 Actor 使用了 normal distribution 正态分布输出动作.</p>
+<p>这个 PPO 我们可以用一个 Python 的 class 代替:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">PPO</span>(<span class="hljs-title class_ inherited__">object</span>):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self</span>):<br>        <span class="hljs-comment"># 建 Actor Critic 网络</span><br>        <span class="hljs-comment"># 搭计算图纸 graph</span><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">update</span>(<span class="hljs-params">self, s, a, r</span>):<br>        <span class="hljs-comment"># 更新 PPO</span><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">choose_action</span>(<span class="hljs-params">self, s</span>):<br>        <span class="hljs-comment"># 选动作</span><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">get_v</span>(<span class="hljs-params">self, s</span>):<br>        <span class="hljs-comment"># 算 state value</span><br></code></pre></td></tr></table></figure>
+<p>而这个 PPO 和 env 环境的互动可以简化成这样.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs python">ppo = PPO()<br><span class="hljs-keyword">for</span> ep <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(EP_MAX):<br>    s = env.reset()<br>    buffer_s, buffer_a, buffer_r = [], [], []<br>    <span class="hljs-keyword">for</span> t <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(EP_LEN):<br>        env.render()<br>        a = ppo.choose_action(s)<br>        s_, r, done, _ = env.step(a)<br>        buffer_s.append(s)<br>        buffer_a.append(a)<br>        buffer_r.append((r+<span class="hljs-number">8</span>)/<span class="hljs-number">8</span>)    <span class="hljs-comment"># normalize reward, 发现有帮助</span><br>        s = s_<br><br>        <span class="hljs-comment"># 如果 buffer 收集一个 batch 了或者 episode 完了</span><br>        <span class="hljs-keyword">if</span> (t+<span class="hljs-number">1</span>) % BATCH == <span class="hljs-number">0</span> <span class="hljs-keyword">or</span> t == EP_LEN-<span class="hljs-number">1</span>:<br>            <span class="hljs-comment"># 计算 discounted reward</span><br>            v_s_ = ppo.get_v(s_)<br>            discounted_r = []<br>            <span class="hljs-keyword">for</span> r <span class="hljs-keyword">in</span> buffer_r[::-<span class="hljs-number">1</span>]:<br>                v_s_ = r + GAMMA * v_s_<br>                discounted_r.append(v_s_)<br>            discounted_r.reverse()<br><br>            bs, ba, br = batch(buffer_s, buffer_a, discounted_r)<br>            <span class="hljs-comment"># 清空 buffer</span><br>            buffer_s, buffer_a, buffer_r = [], [], []<br>            ppo.update(bs, ba, br)  <span class="hljs-comment"># 更新 PPO</span><br></code></pre></td></tr></table></figure>
+<p>了解了这些更新步骤, 我们就来看看如何更新我们的 PPO. 我们更新 Critic 的时候是根据 刚刚计算的 discounted_r 和自己分析出来的 state value 这两者的差 (advantage). 然后最小化这个差值:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">PPO</span>:<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self</span>):<br>        self.advantage = self.tfdc_r - self.v   <span class="hljs-comment"># discounted reward - Critic 出来的 state value</span><br>        self.closs = tf.reduce_mean(tf.square(self.advantage))<br>        self.ctrain_op = tf.train.AdamOptimizer(C_LR).minimize(self.closs)<br><br></code></pre></td></tr></table></figure>
+<p>两种更新 Actor 的方式 KL penalty 和 clipped surrogate objective</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">PPO</span>:<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self</span>):<br>        self.tfa = tf.placeholder(tf.float32, [<span class="hljs-literal">None</span>, A_DIM], <span class="hljs-string">&#x27;action&#x27;</span>)<br>        self.tfadv = tf.placeholder(tf.float32, [<span class="hljs-literal">None</span>, <span class="hljs-number">1</span>], <span class="hljs-string">&#x27;advantage&#x27;</span>)<br>        <span class="hljs-keyword">with</span> tf.variable_scope(<span class="hljs-string">&#x27;loss&#x27;</span>):<br>            <span class="hljs-keyword">with</span> tf.variable_scope(<span class="hljs-string">&#x27;surrogate&#x27;</span>):<br>                ratio = pi.prob(self.tfa) / oldpi.prob(self.tfa)<br>                surr = ratio * self.tfadv   <span class="hljs-comment"># surrogate objective</span><br>            <span class="hljs-keyword">if</span> METHOD[<span class="hljs-string">&#x27;name&#x27;</span>] == <span class="hljs-string">&#x27;kl_pen&#x27;</span>:      <span class="hljs-comment"># 如果用 KL penatily</span><br>                self.tflam = tf.placeholder(tf.float32, <span class="hljs-literal">None</span>, <span class="hljs-string">&#x27;lambda&#x27;</span>)<br>                kl = kl_divergence(oldpi, pi)<br>                self.kl_mean = tf.reduce_mean(kl)<br>                self.aloss = -(tf.reduce_mean(surr - self.tflam * kl))<br>            <span class="hljs-keyword">else</span>:                               <span class="hljs-comment"># 如果用 clipping 的方式</span><br>                self.aloss = -tf.reduce_mean(tf.minimum(<br>                    surr,<br>                    tf.clip_by_value(ratio, <span class="hljs-number">1.</span>-METHOD[<span class="hljs-string">&#x27;epsilon&#x27;</span>], <span class="hljs-number">1.</span>+METHOD[<span class="hljs-string">&#x27;epsilon&#x27;</span>])*self.tfadv))<br><br>        <span class="hljs-keyword">with</span> tf.variable_scope(<span class="hljs-string">&#x27;atrain&#x27;</span>):<br>            self.atrain_op = tf.train.AdamOptimizer(A_LR).minimize(self.aloss)<br><br></code></pre></td></tr></table></figure>
+<p>好了, 接下来就是最重要的更新 PPO 时间了, 同样, 如果觉得我这些代码省略的很严重, 请直接前往我的 <a target="_blank" rel="noopener" href="https://github.com/MorvanZhou/Reinforcement-learning-with-tensorflow/blob/master/contents/12_Proximal_Policy_Optimization/simply_PPO.py">Github 看全套代码</a>. 注意的是, 这个 update 的步骤里, 我们用 for loop 更新了很多遍 Actor 和 Critic, 在 loop 之前, pi 和 old pi 是一样的, 每次 loop 的之后, pi 会变动, 而 old pi 不变, 这样这个 surrogate 就会开始变动了. 这就是 PPO 的精辟.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">PPO</span>:<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">update</span>(<span class="hljs-params">self, s, a, r</span>):<br>        <span class="hljs-comment"># 先要将 oldpi 里的参数更新 pi 中的</span><br>        self.sess.run(self.update_oldpi_op)<br><br>        <span class="hljs-comment"># 更新 Actor 时, kl penalty 和 clipping 方式是不同的</span><br>        <span class="hljs-keyword">if</span> METHOD[<span class="hljs-string">&#x27;name&#x27;</span>] == <span class="hljs-string">&#x27;kl_pen&#x27;</span>:  <span class="hljs-comment"># 如果用 KL penalty</span><br>            <span class="hljs-keyword">for</span> _ <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(A_UPDATE_STEPS):<br>                _, kl = self.sess.run(<br>                        [self.atrain_op, self.kl_mean],<br>                        &#123;self.tfs: s, self.tfa: a, self.tfadv: adv, self.tflam: METHOD[<span class="hljs-string">&#x27;lam&#x27;</span>]&#125;)<br>                <span class="hljs-comment"># 之后根据 kl 的值, 调整 METHOD[&#x27;lam&#x27;] 这个参数</span><br>        <span class="hljs-keyword">else</span>:   <span class="hljs-comment"># 如果用 clipping 的方法</span><br>            [self.sess.run(self.atrain_op, &#123;self.tfs: s, self.tfa: a, self.tfadv: adv&#125;) <span class="hljs-keyword">for</span> _ <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(A_UPDATE_STEPS)]<br><br>        <span class="hljs-comment"># 更新 Critic 的时候, 他们是一样的</span><br>        [self.sess.run(self.ctrain_op, &#123;self.tfs: s, self.tfdc_r: r&#125;) <span class="hljs-keyword">for</span> _ <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(C_UPDATE_STEPS)]<br><br></code></pre></td></tr></table></figure>
+<p>最后我们看一张学习的效果图:</p>
+<p><img src="PPO算法/1679394584080.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<p>好了这就是整个 PPO 的主要流程了, 其他的步骤都没那么重要了, 可以直接在我的 <a target="_blank" rel="noopener" href="https://github.com/MorvanZhou/Reinforcement-learning-with-tensorflow/blob/master/contents/12_Proximal_Policy_Optimization/simply_PPO.py">Github 看全套代码</a> 中轻松弄懂. </p>
+<h2 id="PPO-Actor-Critic-Loss"><a href="#PPO-Actor-Critic-Loss" class="headerlink" title="PPO Actor-Critic Loss"></a>PPO Actor-Critic Loss</h2><p>PPO Actor-Critic 风格的最终 Clipped Surrogate Objective Loss 看起来像这样，它是 Clipped Surrogate Objective 函数、Value Loss Function 和 Entropy bonus 的组合：</p>
+<p><img src="PPO算法/image.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<p>DeepMind 总结 OpenAI conference 上的 PPO 的伪代码</p>
+<p><img src="PPO算法/image2.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://blog.51cto.com/u_15721703/5575736">李宏毅老师的深度强化学习课程</a><br><a target="_blank" rel="noopener" href="https://huggingface.co/deep-rl-course/unit8/introduction-sf?fw=pt">Unit 8. Introduction to PPO - Hugging Face</a><br><a target="_blank" rel="noopener" href="https://huggingface.co/blog">图解人工反馈强化学习(RLHF) - Hugging Face</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/" class="category-chain-item">强化学习</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/PPO/">#PPO</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>PPO算法</div>
+      <div>http://example.com/2023/03/14/PPO算法/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Ning Shixian</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年3月14日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/04/24/hello-world/" title="Hello World">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Hello World</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
