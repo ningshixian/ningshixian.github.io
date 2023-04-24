@@ -23,19 +23,19 @@
 <meta property="og:site_name" content="神的个人博客">
 <meta property="og:description" content="要点 根据 OpenAI 的官方博客, PPO 已经成为他们在强化学习上的默认算法. 如果一句话概括 PPO: OpenAI 提出的一种解决 Policy Gradient 不好确定 Learning rate (或者 Step size) 的问题. 因为如果 step size 过大, 学出来的 Policy 会一直乱动, 不会收敛, 但如果 Step Size 太小, 对于完成训练, 我们会等">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/2023/03/14/PPO%E7%AE%97%E6%B3%95/PPO%E7%AE%97%E6%B3%95/1677118748202.png">
-<meta property="og:image" content="http://example.com/2023/03/14/PPO%E7%AE%97%E6%B3%95/PPO%E7%AE%97%E6%B3%95/1677049573025.jpeg">
-<meta property="og:image" content="http://example.com/2023/03/14/PPO%E7%AE%97%E6%B3%95/PPO%E7%AE%97%E6%B3%95/1677049702486-4c83f34e-d965-4fd1-8337-135872b51c60.png">
-<meta property="og:image" content="http://example.com/2023/03/14/PPO%E7%AE%97%E6%B3%95/PPO%E7%AE%97%E6%B3%95/1679394322067.png">
-<meta property="og:image" content="http://example.com/2023/03/14/PPO%E7%AE%97%E6%B3%95/PPO%E7%AE%97%E6%B3%95/1679394584080.png">
-<meta property="og:image" content="http://example.com/2023/03/14/PPO%E7%AE%97%E6%B3%95/PPO%E7%AE%97%E6%B3%95/image.png">
-<meta property="og:image" content="http://example.com/2023/03/14/PPO%E7%AE%97%E6%B3%95/PPO%E7%AE%97%E6%B3%95/image2.png">
+<meta property="og:image" content="http://example.com/2023/03/14/PPO%E7%AE%97%E6%B3%95/1677118748202.png">
+<meta property="og:image" content="http://example.com/2023/03/14/PPO%E7%AE%97%E6%B3%95/1677049573025.jpeg">
+<meta property="og:image" content="http://example.com/2023/03/14/PPO%E7%AE%97%E6%B3%95/1677049702486-4c83f34e-d965-4fd1-8337-135872b51c60.png">
+<meta property="og:image" content="http://example.com/2023/03/14/PPO%E7%AE%97%E6%B3%95/1679394322067.png">
+<meta property="og:image" content="http://example.com/2023/03/14/PPO%E7%AE%97%E6%B3%95/1679394584080.png">
+<meta property="og:image" content="http://example.com/2023/03/14/PPO%E7%AE%97%E6%B3%95/image.png">
+<meta property="og:image" content="http://example.com/2023/03/14/PPO%E7%AE%97%E6%B3%95/image2.png">
 <meta property="article:published_time" content="2023-03-14T06:59:20.000Z">
 <meta property="article:modified_time" content="2023-04-24T06:50:28.064Z">
 <meta property="article:author" content="Ning Shixian">
 <meta property="article:tag" content="PPO">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="http://example.com/2023/03/14/PPO%E7%AE%97%E6%B3%95/PPO%E7%AE%97%E6%B3%95/1677118748202.png">
+<meta name="twitter:image" content="http://example.com/2023/03/14/PPO%E7%AE%97%E6%B3%95/1677118748202.png">
   
   
   
@@ -302,24 +302,24 @@
 <li>如果$r_t(\theta)&gt;1$，则在状态$s_t$下，动作$a_t$在当前策略中比旧策略更有可能执行。</li>
 <li>如果$0&lt;r_t(\theta)&lt;1$，则在当前策略下执行该动作的可能性比旧策略下低。</li>
 </ul>
-<p><img src="PPO算法/1677118748202.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<img src="/2023/03/14/PPO%E7%AE%97%E6%B3%95/1677118748202.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
 <h3 id="PPO-Clip-算法直观理解"><a href="#PPO-Clip-算法直观理解" class="headerlink" title="PPO-Clip 算法直观理解"></a>PPO-Clip 算法直观理解</h3><p>$L^{C L I P}(\theta)=\hat{\mathbb{E}}_{t}\left[\min \left(r_{t}(\theta) \hat{A}_{t}, \operatorname{clip}\left(r_{t}(\theta), 1-\epsilon, 1+\epsilon\right) \hat{A}_{t}\right)\right]$<br>$r_t(\theta)=\frac{\pi_{\theta}(a_t|s_t)}{\pi_{\theta_{old}}(a_t|s_t)}$</p>
 <p>整个目标函数在$min$这个大括号里有两部分，最终对比两部分哪部分更小，就取哪部分的值。<br>在括号的第二部分中，</p>
 <ul>
 <li>首先是裁剪函数$clip$：如果$p_{\theta}(a_t|s_t)$和$p_{\theta^k}(a_t|s_t)$之间的概率比落在范围$(1-ε)$和$(1+ε)$之外，$\frac{p_{\theta}(a_t|s_t)}{p_{\theta^k}(a_t|s_t)}$将被剪裁，使得其值最小不小于$(1-ε)$，最大不大于$(1+ε)$</li>
 </ul>
-<p><img src="PPO算法/1677049573025.jpeg" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<img src="/2023/03/14/PPO%E7%AE%97%E6%B3%95/1677049573025.jpeg" srcset="/img/loading.gif" lazyload class="" title="image.png">
 <ul>
 <li>然后是$clip$括号外乘以$A^{\theta’}(s_t,a_t)$：当$A&gt;0$，则说明这是好动作，那么希望增大这个action的几率$p_{\theta}(a_t|s_t)$，但是又不希望两者差异，即比值$\frac{p_{\theta}(a_t|s_t)}{p_{\theta^k}(a_t|s_t)}$太悬殊，所以增大到比值为$1+ε$就不要再增加了；当$A&lt;0$，则说明该动作不是好动作，那么希望这个action出现的几率$p_{\theta}(a_t|s_t)$越小越好，但$\frac{p_{\theta}(a_t|s_t)}{p_{\theta^k}(a_t|s_t)}$最小不能小过$(1-ε)$</li>
 </ul>
-<p><img src="PPO算法/1677049702486-4c83f34e-d965-4fd1-8337-135872b51c60.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<img src="/2023/03/14/PPO%E7%AE%97%E6%B3%95/1677049702486-4c83f34e-d965-4fd1-8337-135872b51c60.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
 <p>换言之，这个裁剪算法和KL散度约束所要做的事情本质上是一样的，都是为了让两个分布之间的差距不致过大，但裁剪算法相对好实现，别看看起来复杂，其实代码很好写，示例如下：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs python">// ratios即为重要性权重<br>// 括号里的environment_log_probs代表用于与环境交互的策略<br>ratios = torch.exp(log_probs - environment_log_probs)<br> <br>// 分别用sur_1、sur_2来计算公式的两部分<br><br>// 第一部分是重要性权重乘以优势函数<br>sur_1 = ratios * advs<br> <br>// 第二部分是具体的裁剪过程<br>sur_2 = torch.clamp(ratios, <span class="hljs-number">1</span> - clip_eps, <span class="hljs-number">1</span> + clip_eps) * advs<br> <br>// 最终看谁更小则取谁<br>clip_loss = -torch.<span class="hljs-built_in">min</span>(sur_1,sur_2).mean()<br></code></pre></td></tr></table></figure>
 <h2 id="简单-PPO-的代码解读"><a href="#简单-PPO-的代码解读" class="headerlink" title="简单 PPO 的代码解读"></a>简单 PPO 的代码解读</h2><blockquote>
 <p><a target="_blank" rel="noopener" href="https://mofanpy.com/tutorials/machine-learning/reinforcement-learning/DPPO">https://mofanpy.com/tutorials/machine-learning/reinforcement-learning/DPPO</a></p>
 </blockquote>
 <p>我们用 Tensorflow 搭建神经网络, tensorboard 中可以看清晰的看到我们是如果搭建的:</p>
-<p><img src="PPO算法/1679394322067.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<img src="/2023/03/14/PPO%E7%AE%97%E6%B3%95/1679394322067.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
 <p>图中的 pi 就是我们的 Actor 了. 每次要进行 PPO 更新 Actor 和 Critic 的时候, 我们有需要将 pi 的参数复制给 oldpi. 这就是 update_oldpi 这个 operation 在做的事. Critic 和 Actor 的内部结构, 我们不会打开细说了. 因为就是一堆的神经网络而已. 这里的 Actor 使用了 normal distribution 正态分布输出动作.</p>
 <p>这个 PPO 我们可以用一个 Python 的 class 代替:</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">PPO</span>(<span class="hljs-title class_ inherited__">object</span>):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self</span>):<br>        <span class="hljs-comment"># 建 Actor Critic 网络</span><br>        <span class="hljs-comment"># 搭计算图纸 graph</span><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">update</span>(<span class="hljs-params">self, s, a, r</span>):<br>        <span class="hljs-comment"># 更新 PPO</span><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">choose_action</span>(<span class="hljs-params">self, s</span>):<br>        <span class="hljs-comment"># 选动作</span><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">get_v</span>(<span class="hljs-params">self, s</span>):<br>        <span class="hljs-comment"># 算 state value</span><br></code></pre></td></tr></table></figure>
@@ -332,12 +332,12 @@
 <p>好了, 接下来就是最重要的更新 PPO 时间了, 同样, 如果觉得我这些代码省略的很严重, 请直接前往我的 <a target="_blank" rel="noopener" href="https://github.com/MorvanZhou/Reinforcement-learning-with-tensorflow/blob/master/contents/12_Proximal_Policy_Optimization/simply_PPO.py">Github 看全套代码</a>. 注意的是, 这个 update 的步骤里, 我们用 for loop 更新了很多遍 Actor 和 Critic, 在 loop 之前, pi 和 old pi 是一样的, 每次 loop 的之后, pi 会变动, 而 old pi 不变, 这样这个 surrogate 就会开始变动了. 这就是 PPO 的精辟.</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">PPO</span>:<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">update</span>(<span class="hljs-params">self, s, a, r</span>):<br>        <span class="hljs-comment"># 先要将 oldpi 里的参数更新 pi 中的</span><br>        self.sess.run(self.update_oldpi_op)<br><br>        <span class="hljs-comment"># 更新 Actor 时, kl penalty 和 clipping 方式是不同的</span><br>        <span class="hljs-keyword">if</span> METHOD[<span class="hljs-string">&#x27;name&#x27;</span>] == <span class="hljs-string">&#x27;kl_pen&#x27;</span>:  <span class="hljs-comment"># 如果用 KL penalty</span><br>            <span class="hljs-keyword">for</span> _ <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(A_UPDATE_STEPS):<br>                _, kl = self.sess.run(<br>                        [self.atrain_op, self.kl_mean],<br>                        &#123;self.tfs: s, self.tfa: a, self.tfadv: adv, self.tflam: METHOD[<span class="hljs-string">&#x27;lam&#x27;</span>]&#125;)<br>                <span class="hljs-comment"># 之后根据 kl 的值, 调整 METHOD[&#x27;lam&#x27;] 这个参数</span><br>        <span class="hljs-keyword">else</span>:   <span class="hljs-comment"># 如果用 clipping 的方法</span><br>            [self.sess.run(self.atrain_op, &#123;self.tfs: s, self.tfa: a, self.tfadv: adv&#125;) <span class="hljs-keyword">for</span> _ <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(A_UPDATE_STEPS)]<br><br>        <span class="hljs-comment"># 更新 Critic 的时候, 他们是一样的</span><br>        [self.sess.run(self.ctrain_op, &#123;self.tfs: s, self.tfdc_r: r&#125;) <span class="hljs-keyword">for</span> _ <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(C_UPDATE_STEPS)]<br><br></code></pre></td></tr></table></figure>
 <p>最后我们看一张学习的效果图:</p>
-<p><img src="PPO算法/1679394584080.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<img src="/2023/03/14/PPO%E7%AE%97%E6%B3%95/1679394584080.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
 <p>好了这就是整个 PPO 的主要流程了, 其他的步骤都没那么重要了, 可以直接在我的 <a target="_blank" rel="noopener" href="https://github.com/MorvanZhou/Reinforcement-learning-with-tensorflow/blob/master/contents/12_Proximal_Policy_Optimization/simply_PPO.py">Github 看全套代码</a> 中轻松弄懂. </p>
 <h2 id="PPO-Actor-Critic-Loss"><a href="#PPO-Actor-Critic-Loss" class="headerlink" title="PPO Actor-Critic Loss"></a>PPO Actor-Critic Loss</h2><p>PPO Actor-Critic 风格的最终 Clipped Surrogate Objective Loss 看起来像这样，它是 Clipped Surrogate Objective 函数、Value Loss Function 和 Entropy bonus 的组合：</p>
-<p><img src="PPO算法/image.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<img src="/2023/03/14/PPO%E7%AE%97%E6%B3%95/image.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
 <p>DeepMind 总结 OpenAI conference 上的 PPO 的伪代码</p>
-<p><img src="PPO算法/image2.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<img src="/2023/03/14/PPO%E7%AE%97%E6%B3%95/image2.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://blog.51cto.com/u_15721703/5575736">李宏毅老师的深度强化学习课程</a><br><a target="_blank" rel="noopener" href="https://huggingface.co/deep-rl-course/unit8/introduction-sf?fw=pt">Unit 8. Introduction to PPO - Hugging Face</a><br><a target="_blank" rel="noopener" href="https://huggingface.co/blog">图解人工反馈强化学习(RLHF) - Hugging Face</a></p>
 
                 
