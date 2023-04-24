@@ -16,21 +16,36 @@
   <meta name="author" content="Ning Shixian">
   <meta name="keywords" content="">
   
-    <meta name="description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+    <meta name="description" content="PPO（Proximal Policy Optimization）算法中，状态、动作、价值函数、奖励和策略模型的含义如下：  状态（state）：状态是指环境当前的状态，如：对话历史与之前生成的序列。在强化学习中，智能体需要根据当前状态来做出决策。 动作（action）：动作是指智能体在当前状态下选择的行动，如：生成每一个token，从词表中采样即是一个动作。在强化学习中，智能体需要根据当前状态选">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hello World">
-<meta property="og:url" content="http://example.com/2023/04/24/hello-world/index.html">
+<meta property="og:title" content="PPO要点摘录">
+<meta property="og:url" content="http://example.com/2023/03/14/PPO%20%E8%A6%81%E7%82%B9%E6%91%98%E5%BD%95/index.html">
 <meta property="og:site_name" content="神的个人博客">
-<meta property="og:description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+<meta property="og:description" content="PPO（Proximal Policy Optimization）算法中，状态、动作、价值函数、奖励和策略模型的含义如下：  状态（state）：状态是指环境当前的状态，如：对话历史与之前生成的序列。在强化学习中，智能体需要根据当前状态来做出决策。 动作（action）：动作是指智能体在当前状态下选择的行动，如：生成每一个token，从词表中采样即是一个动作。在强化学习中，智能体需要根据当前状态选">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2023-04-24T15:17:29.165Z">
-<meta property="article:modified_time" content="2023-04-24T15:17:29.166Z">
+<meta property="og:image" content="http://example.com/2023/03/14/PPO%20%E8%A6%81%E7%82%B9%E6%91%98%E5%BD%95/46d23d87a5c5abf0ca1c48a7d816d46e.svg">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/__latex/ec1cc44b87fcbbced12dabd7375d36d3.svg#from=url&amp;id=SwJ8M&amp;originHeight=18&amp;originWidth=16&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=">
+<meta property="og:image" content="http://example.com/2023/03/14/PPO%20%E8%A6%81%E7%82%B9%E6%91%98%E5%BD%95/299758ac4817013ed2822cdfc136f77a.svg">
+<meta property="og:image" content="http://example.com/2023/03/14/PPO%20%E8%A6%81%E7%82%B9%E6%91%98%E5%BD%95/56897ebb6501e4a47704b198d7bcf5b9.svg">
+<meta property="og:image" content="http://example.com/2023/03/14/PPO%20%E8%A6%81%E7%82%B9%E6%91%98%E5%BD%95/1678462247057-e3c72c54-7cbc-4ab6-a0da-f50a57ffe335.png">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/svg/8420697/1678463145871-d64a91f7-2168-4694-8f90-ad3b099a879a.svg#clientId=u6f13600c-cac6-4&amp;from=paste&amp;id=u2bca4fe6&amp;originHeight=13&amp;originWidth=26&amp;originalType=url&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;taskId=u3fe21edd-a2d2-441f-9acc-87d0a71c77c&amp;title=">
+<meta property="og:image" content="http://example.com/2023/03/14/PPO%20%E8%A6%81%E7%82%B9%E6%91%98%E5%BD%95/1678463814708-26dacbd5-6edf-4056-bdec-5cb2cea3e278.png">
+<meta property="og:image" content="http://example.com/2023/03/14/PPO%20%E8%A6%81%E7%82%B9%E6%91%98%E5%BD%95/1678285382558-74f3aa01-8cff-4c62-9528-a4b64c099e7c.png">
+<meta property="og:image" content="http://example.com/2023/03/14/PPO%20%E8%A6%81%E7%82%B9%E6%91%98%E5%BD%95/1678285679173-c8804740-750d-4df1-8344-982403686226.png">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/png/8420697/1678285693021-0331d447-0af9-4991-8da0-54016205c657.png#averageHue=%23f2f5f4&amp;clientId=uef89bebf-095c-4&amp;from=paste&amp;height=55&amp;id=u1633ed96&amp;name=image.png&amp;originHeight=110&amp;originWidth=804&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=61955&amp;status=done&amp;style=none&amp;taskId=u234f4b37-ec52-4e28-a067-40e220a7611&amp;title=&amp;width=402">
+<meta property="og:image" content="http://example.com/2023/03/14/PPO%20%E8%A6%81%E7%82%B9%E6%91%98%E5%BD%95/1678443935731-6516a589-895f-43e6-bcb3-59c661d81ad8.png">
+<meta property="og:image" content="http://example.com/2023/03/14/PPO%20%E8%A6%81%E7%82%B9%E6%91%98%E5%BD%95/1678464277268-b4d8e192-dcc1-4e7f-9544-add909d41690.png">
+<meta property="og:image" content="http://example.com/2023/03/14/PPO%20%E8%A6%81%E7%82%B9%E6%91%98%E5%BD%95/1678464873211-15bbc7ba-8930-4e13-abaf-a106d6df8151.png">
+<meta property="article:published_time" content="2023-03-14T06:59:20.000Z">
+<meta property="article:modified_time" content="2023-04-24T13:39:01.519Z">
 <meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="PPO">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2023/03/14/PPO%20%E8%A6%81%E7%82%B9%E6%91%98%E5%BD%95/46d23d87a5c5abf0ca1c48a7d816d46e.svg">
   
   
   
-  <title>Hello World - 神的个人博客</title>
+  <title>PPO要点摘录 - 神的个人博客</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -196,7 +211,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Hello World"></span>
+            <span id="subtitle" data-typed-text="PPO要点摘录"></span>
           
         </div>
 
@@ -207,8 +222,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-04-24 23:17" pubdate>
-          2023年4月24日 晚上
+        <time datetime="2023-03-14 14:59" pubdate>
+          2023年3月14日 下午
         </time>
       </span>
     
@@ -219,7 +234,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          367 字
+          2.2k 字
         
       </span>
     
@@ -230,7 +245,7 @@
         
         
         
-          4 分钟
+          19 分钟
         
       </span>
     
@@ -268,20 +283,76 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">Hello World</h1>
+            <h1 style="display: none">PPO要点摘录</h1>
             
             
               <div class="markdown-body">
                 
-                <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ hexo new <span class="hljs-string">&quot;My New Post&quot;</span><br></code></pre></td></tr></table></figure>
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ hexo server<br></code></pre></td></tr></table></figure>
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ hexo generate<br></code></pre></td></tr></table></figure>
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ hexo deploy<br></code></pre></td></tr></table></figure>
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+                <p>PPO（Proximal Policy Optimization）算法中，状态、动作、价值函数、奖励和策略模型的含义如下：</p>
+<ol>
+<li>状态（state）：状态是指环境当前的状态，如：对话历史与之前生成的序列。在强化学习中，智能体需要根据当前状态来做出决策。</li>
+<li>动作（action）：动作是指智能体在当前状态下选择的行动，如：生成每一个token，从词表中采样即是一个动作。在强化学习中，智能体需要根据当前状态选择一个最优的动作。</li>
+<li>价值函数（Value Function）：价值函数则是智能体对自己行为好坏的评估，它可以帮助智能体更好地指导自己的决策。价值函数可以根据当前状态或状态-动作对，预测智能体能够获得的期望回报。比如，在一个赛车游戏中，如果智能体在某个状态下选择了某个动作，那么价值函数可以预测出这个动作会获得多少奖励分数。通过不断地优化价值函数，智能体可以学习到在环境中做出最优的决策。</li>
+<li>奖励（Reward）：奖励函数就像是老师对学生的评分一样，通过环境的反馈，对智能体的行为进行评价，给出一个分数用来衡量智能体做出的动作是否正确。比如，在一个赛车游戏中，如果智能体成功完成一次绕过障碍的动作，那么就可以获得一定的奖励分数。通过不断地累积奖励分数，智能体可以学习到在环境中做出最优的动作。</li>
+<li>策略模型（Policy Model）：策略模型是指智能体根据当前状态选择动作的概率分布。在PPO算法中，策略模型通常使用神经网络来进行建模，输出每个动作的概率。</li>
+</ol>
+<p>综上所述，PPO算法需要使用神经网络来表示价值函数和策略模型，根据当前状态选择动作，并通过环境的反馈来获得奖励。通过不断优化策略和价值函数，PPO算法可以使智能体在环境中获得更高的奖励，从而实现智能体的学习和决策能力的提高。</p>
+<blockquote>
+<p>参考：<a target="_blank" rel="noopener" href="https://spinningup.openai.com/en/latest/algorithms/vpg.html">https://spinningup.openai.com/en/latest/algorithms/vpg.html</a></p>
+</blockquote>
+<p>actor在进行训练之前，会先与环境进行交互，然后得到一组训练数据（由多条状态序列构成）。</p>
+<img src="/2023/03/14/PPO%20%E8%A6%81%E7%82%B9%E6%91%98%E5%BD%95/46d23d87a5c5abf0ca1c48a7d816d46e.svg" srcset="/img/loading.gif" lazyload class="">
+<p>每回合Trajectory<img src="https://cdn.nlark.com/yuque/__latex/ec1cc44b87fcbbced12dabd7375d36d3.svg#from=url&amp;id=SwJ8M&amp;originHeight=18&amp;originWidth=16&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;title=" srcset="/img/loading.gif" lazyload alt="">的奖励</p>
+<img src="/2023/03/14/PPO%20%E8%A6%81%E7%82%B9%E6%91%98%E5%BD%95/299758ac4817013ed2822cdfc136f77a.svg" srcset="/img/loading.gif" lazyload class="">
+<p>最终目标就是要使<strong>期望奖励最大</strong>！</p>
+<img src="/2023/03/14/PPO%20%E8%A6%81%E7%82%B9%E6%91%98%E5%BD%95/56897ebb6501e4a47704b198d7bcf5b9.svg" srcset="/img/loading.gif" lazyload class="">
+<p>根据链式法则公式$\nabla \log f(x) = \frac{1}{f(x)} \nabla f(x)$，计算式(2)的梯度</p>
+<img src="/2023/03/14/PPO%20%E8%A6%81%E7%82%B9%E6%91%98%E5%BD%95/1678462247057-e3c72c54-7cbc-4ab6-a0da-f50a57ffe335.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<blockquote>
+<p> <img src="https://cdn.nlark.com/yuque/0/2023/svg/8420697/1678463145871-d64a91f7-2168-4694-8f90-ad3b099a879a.svg#clientId=u6f13600c-cac6-4&amp;from=paste&amp;id=u2bca4fe6&amp;originHeight=13&amp;originWidth=26&amp;originalType=url&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;taskId=u3fe21edd-a2d2-441f-9acc-87d0a71c77c&amp;title=" srcset="/img/loading.gif" lazyload alt="">是当前策略的优势函数<br>$\pi_{\theta}$表示带有参数$θ$的策略，$J(\pi_{\theta})$表示该策略的 期望回报</p>
+</blockquote>
+<p>策略梯度算法的工作原理是通过策略性能的随机梯度上升来更新策略参数：</p>
+<p>$\theta ← \theta+\alpha\nabla{R}$</p>
+<p>策略梯度（Policy Gradient）方法伪代码</p>
+<img src="/2023/03/14/PPO%20%E8%A6%81%E7%82%B9%E6%91%98%E5%BD%95/1678463814708-26dacbd5-6edf-4056-bdec-5cb2cea3e278.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<hr>
+<p>为了使得训练资料可以反复使用，使用两个actor</p>
+<p>其中，一个固定参数，另一个可训练，通过<strong>Importance Sampling</strong>来联系两个分布：</p>
+<img src="/2023/03/14/PPO%20%E8%A6%81%E7%82%B9%E6%91%98%E5%BD%95/1678285382558-74f3aa01-8cff-4c62-9528-a4b64c099e7c.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<blockquote>
+<p>代入式4，梯度计算为：</p>
+<img src="/2023/03/14/PPO%20%E8%A6%81%E7%82%B9%E6%91%98%E5%BD%95/1678285679173-c8804740-750d-4df1-8344-982403686226.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p><img src="https://cdn.nlark.com/yuque/0/2023/png/8420697/1678285693021-0331d447-0af9-4991-8da0-54016205c657.png#averageHue=%23f2f5f4&amp;clientId=uef89bebf-095c-4&amp;from=paste&amp;height=55&amp;id=u1633ed96&amp;name=image.png&amp;originHeight=110&amp;originWidth=804&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=61955&amp;status=done&amp;style=none&amp;taskId=u234f4b37-ec52-4e28-a067-40e220a7611&amp;title=&amp;width=402" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+</blockquote>
+<p>代入式2，新的目标函数为：</p>
+<p>$L=E_{\tau\in p_{\theta}(\tau)} [A(\tau)]=E_{\left(s_{t}, a_{t}\right) \sim \pi_{\theta^{\prime}}}\left[r_{\theta}(t)A^{\theta^{\prime}}\left(s_{t}, a_{t}\right)\right]$</p>
+<p>$r_{\theta}(t)=\frac{p_{\theta}\left(a_{t} \mid s_{t}\right)}{p_{\theta^{\prime}}\left(a_{t} \mid s_{t}\right)}$</p>
+<p>Advantages are computed using Generalized Advantage Estimation (GAE): $A_t$叫做策略优势估计，是PPO算法的核心!</p>
+<img src="/2023/03/14/PPO%20%E8%A6%81%E7%82%B9%E6%91%98%E5%BD%95/1678443935731-6516a589-895f-43e6-bcb3-59c661d81ad8.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>PPO 进一步给目标函数添加约束项，防止$p_{\theta}$和$p_{\theta’}$两个概率分布相差太多！PPO 是一种 on-policy 算法，有两种主要变体：PPO-Penalty 和 PPO-Clip。</p>
+<ul>
+<li>PPO-Penalty：</li>
+</ul>
+<p>$L(s,a,θ_k,θ) = r_{\theta}(t)·A^{\pi_{\theta k}}(s,a)-\beta·KL(θ,θ_k)$</p>
+<p>$r_{\theta}(t)=\frac{\pi_{\theta}\left(a \mid s\right)}{\pi_{\theta^{\prime}}\left(a \mid s\right)}$</p>
+<ul>
+<li>PPO-Clip：</li>
+</ul>
+<img src="/2023/03/14/PPO%20%E8%A6%81%E7%82%B9%E6%91%98%E5%BD%95/1678464277268-b4d8e192-dcc1-4e7f-9544-add909d41690.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>PPO方法伪代码</p>
+<img src="/2023/03/14/PPO%20%E8%A6%81%E7%82%B9%E6%91%98%E5%BD%95/1678464873211-15bbc7ba-8930-4e13-abaf-a106d6df8151.png" srcset="/img/loading.gif" lazyload class="" title="image.png">
+<p>符号解释：</p>
+<ul>
+<li>$p_{\theta}$表示可训练策略模型</li>
+<li>$p_{\theta’}$表示参数固定的策略模型</li>
+<li>$\frac{p_{\theta}(·)}{p_{\theta{‘}}(·)}$表示 Importance Sampling 系数，指产生同样的 token，在 Policy Model 和 Alignment Model 下的概率比值</li>
+<li>$A$ 或$R$表示奖励，其给出一种利用长期奖励$r_t$与短期奖励$V({s_t})$计算当前步的好坏，在第t步的$A_t$分数越高，则代表该位置生成的质量越高。<ul>
+<li>Reward Model，是一个固定参数的模型，其输出值$r_t$</li>
+<li>Value Function Model，是一个可训练的价值函数，其输出值$V({s_t})$代表生成的每一个token的质量，是一个短期的奖励</li>
+</ul>
+</li>
+<li>$KL()$表示KL散度，用作一个惩罚项，约束着每一次梯度更新以后不要产生与原模型相距甚远的回复。保证了模型训练的稳定性。</li>
+</ul>
 
                 
               </div>
@@ -290,6 +361,34 @@
             <div>
               <div class="post-metas my-3">
   
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/" class="category-chain-item">强化学习</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/PPO/">#PPO</a>
+      
+    </div>
   
 </div>
 
@@ -299,8 +398,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Hello World</div>
-      <div>http://example.com/2023/04/24/hello-world/</div>
+      <div>PPO要点摘录</div>
+      <div>http://example.com/2023/03/14/PPO 要点摘录/</div>
     </div>
     <div class="license-meta">
       
@@ -312,7 +411,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年4月24日</div>
+          <div>2023年3月14日</div>
         </div>
       
       
@@ -344,21 +443,15 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/04/24/My-New-Post/" title="My New Post">
+                      <a href="/2023/03/14/PPO%E7%AE%97%E6%B3%95/" title="PPO算法">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">My New Post</span>
+                        <span class="hidden-mobile">PPO算法</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
                   </article>
                   <article class="post-next col-6">
                     
-                    
-                      <a href="/2023/04/23/LoRa%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" title="LoRa 学习笔记">
-                        <span class="hidden-mobile">LoRa 学习笔记</span>
-                        <span class="visible-mobile">下一篇</span>
-                        <i class="iconfont icon-arrowright"></i>
-                      </a>
                     
                   </article>
                 </div>
@@ -412,6 +505,12 @@
 
 
   
+
+
+  
+  
+
+
 
 
 
@@ -605,6 +704,49 @@
 
 
   <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
 
   <script  src="/js/local-search.js" ></script>
 
