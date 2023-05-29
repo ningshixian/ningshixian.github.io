@@ -16,26 +16,26 @@
   <meta name="author" content="Ning Shixian">
   <meta name="keywords" content="">
   
-    <meta name="description" content="LLaMA 概要与实践LLaMA(Large Language Model Meta AI) 是由 Meta AI 发布了一款全新的大型语言模型，共有7B、13B、33B、65B 四种版本，其模型参数如下表所示： LLaMA模型参数表 与原始的 transformer Decoder 相比，LLaMA主要有以下改进：  层归一化(Pre-normalization)[GPT3]  为了提高训练的">
+    <meta name="description" content="LLaMA 概要与实践LLaMA(Large Language Model Meta AI) 是由 Meta AI 发布了一款全新的大型语言模型，共有7B、13B、33B、65B 四种版本，其模型参数如下表所示：  LLaMA模型参数表 与原始的 transformer Decoder 相比，LLaMA主要有以下改进：  层归一化(Pre-normalization)[GPT3]  为了提高训练">
 <meta property="og:type" content="article">
 <meta property="og:title" content="LLAMA Fine-tune">
 <meta property="og:url" content="http://example.com/2023/05/24/2023-05-24-LLAMA%20Fine-tune/index.html">
 <meta property="og:site_name" content="神的个人博客">
-<meta property="og:description" content="LLaMA 概要与实践LLaMA(Large Language Model Meta AI) 是由 Meta AI 发布了一款全新的大型语言模型，共有7B、13B、33B、65B 四种版本，其模型参数如下表所示： LLaMA模型参数表 与原始的 transformer Decoder 相比，LLaMA主要有以下改进：  层归一化(Pre-normalization)[GPT3]  为了提高训练的">
+<meta property="og:description" content="LLaMA 概要与实践LLaMA(Large Language Model Meta AI) 是由 Meta AI 发布了一款全新的大型语言模型，共有7B、13B、33B、65B 四种版本，其模型参数如下表所示：  LLaMA模型参数表 与原始的 transformer Decoder 相比，LLaMA主要有以下改进：  层归一化(Pre-normalization)[GPT3]  为了提高训练">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/png/8420697/1684220220446-a7e6cabc-c5e8-4480-9bfb-7927404b00fc.png#averageHue=%23e2e4e2&amp;clientId=u14cfc243-2587-4&amp;from=paste&amp;height=444&amp;id=u6fa4cec8&amp;originHeight=888&amp;originWidth=1618&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=1386239&amp;status=done&amp;style=none&amp;taskId=u0a62181e-761f-4213-9993-684d3e56e35&amp;title=&amp;width=809">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/webp/8420697/1684207070641-3ce1d18c-1216-4502-956f-ebf9fe04187d.webp#averageHue=%23f8f8f7&amp;clientId=u078d6dd6-358a-4&amp;from=paste&amp;id=uc92d0954&amp;originHeight=333&amp;originWidth=1146&amp;originalType=url&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;taskId=u5cb7b04a-5288-49f4-b4fe-9c180726018&amp;title=">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/png/8420697/1684211664875-dc290b6f-a46e-4cbf-87dd-0ae7990e8f44.png#averageHue=%23f2f0f0&amp;clientId=u96913c65-11e4-4&amp;from=paste&amp;height=166&amp;id=u0627d089&amp;originHeight=331&amp;originWidth=642&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=33520&amp;status=done&amp;style=shadow&amp;taskId=u56dfa02d-4b85-4587-b4e1-04b2c4baff7&amp;title=&amp;width=321">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/png/8420697/1684207329875-488932b0-e38e-4dab-ab22-bc791b5f7f0b.png#averageHue=%23efefef&amp;clientId=u078d6dd6-358a-4&amp;from=paste&amp;height=65&amp;id=u9bca5a8d&amp;originHeight=166&amp;originWidth=1054&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=76977&amp;status=done&amp;style=none&amp;taskId=u295e9ce4-229e-4741-99fe-0ddf352f0f9&amp;title=&amp;width=413">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/png/8420697/1684222735151-128e0494-5b26-4b88-b067-2b8f9df6b52f.png#averageHue=%23f6f6f6&amp;clientId=u0c3a6c1b-6fad-4&amp;from=paste&amp;height=355&amp;id=u9e1078e2&amp;originHeight=710&amp;originWidth=2872&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=485672&amp;status=done&amp;style=none&amp;taskId=u31e19500-a354-45ba-8fa7-a28c48a069a&amp;title=&amp;width=1436">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/png/8420697/1683613072458-56ef8d72-663d-4ece-8782-eca26b2a42f8.png#averageHue=%23c0daa9&amp;clientId=u9f88756d-728d-4&amp;from=paste&amp;height=191&amp;id=FG5HD&amp;originHeight=382&amp;originWidth=1080&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=224585&amp;status=done&amp;style=none&amp;taskId=u77004fd6-7e41-4213-abe9-ffe3765fe22&amp;title=&amp;width=540">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/png/8420697/1684213508213-958e82f7-2b59-4fad-8e9d-3cd2d0dec29f.png#averageHue=%23eaeaea&amp;clientId=u7aaa47d5-f260-4&amp;from=paste&amp;height=315&amp;id=ufbca2b04&amp;originHeight=629&amp;originWidth=1440&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=499134&amp;status=done&amp;style=none&amp;taskId=u3555f722-1476-4a4c-b4b8-1fb7da68453&amp;title=&amp;width=720">
+<meta property="og:image" content="http://example.com/2023/05/24/2023-05-24-LLAMA%20Fine-tune/llama1.png">
+<meta property="og:image" content="http://example.com/2023/05/24/2023-05-24-LLAMA%20Fine-tune/llama2.webp">
+<meta property="og:image" content="http://example.com/2023/05/24/2023-05-24-LLAMA%20Fine-tune/llama7.png">
+<meta property="og:image" content="http://example.com/2023/05/24/2023-05-24-LLAMA%20Fine-tune/llama3.png">
+<meta property="og:image" content="http://example.com/2023/05/24/2023-05-24-LLAMA%20Fine-tune/llama4.png">
+<meta property="og:image" content="http://example.com/2023/05/24/2023-05-24-LLAMA%20Fine-tune/llama5.png">
+<meta property="og:image" content="http://example.com/2023/05/24/2023-05-24-LLAMA%20Fine-tune/llama6.png">
 <meta property="article:published_time" content="2023-05-24T07:24:20.000Z">
-<meta property="article:modified_time" content="2023-05-29T06:06:28.711Z">
+<meta property="article:modified_time" content="2023-05-29T07:11:09.883Z">
 <meta property="article:author" content="Ning Shixian">
 <meta property="article:tag" content="原创">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://cdn.nlark.com/yuque/0/2023/png/8420697/1684220220446-a7e6cabc-c5e8-4480-9bfb-7927404b00fc.png#averageHue=%23e2e4e2&amp;clientId=u14cfc243-2587-4&amp;from=paste&amp;height=444&amp;id=u6fa4cec8&amp;originHeight=888&amp;originWidth=1618&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=1386239&amp;status=done&amp;style=none&amp;taskId=u0a62181e-761f-4213-9993-684d3e56e35&amp;title=&amp;width=809">
+<meta name="twitter:image" content="http://example.com/2023/05/24/2023-05-24-LLAMA%20Fine-tune/llama1.png">
   
   
   
@@ -282,18 +282,19 @@
             
               <div class="markdown-body">
                 
-                <p><img src="https://cdn.nlark.com/yuque/0/2023/png/8420697/1684220220446-a7e6cabc-c5e8-4480-9bfb-7927404b00fc.png#averageHue=%23e2e4e2&amp;clientId=u14cfc243-2587-4&amp;from=paste&amp;height=444&amp;id=u6fa4cec8&amp;originHeight=888&amp;originWidth=1618&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=1386239&amp;status=done&amp;style=none&amp;taskId=u0a62181e-761f-4213-9993-684d3e56e35&amp;title=&amp;width=809" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+                <img src="/2023/05/24/2023-05-24-LLAMA%20Fine-tune/llama1.png" srcset="/img/loading.gif" lazyload class="">
 <h2 id="LLaMA-概要与实践"><a href="#LLaMA-概要与实践" class="headerlink" title="LLaMA 概要与实践"></a>LLaMA 概要与实践</h2><p>LLaMA(Large Language Model Meta AI) 是由 Meta AI 发布了一款全新的大型语言模型，共有7B、13B、33B、65B 四种版本，其模型参数如下表所示：</p>
-<p><img src="https://cdn.nlark.com/yuque/0/2023/webp/8420697/1684207070641-3ce1d18c-1216-4502-956f-ebf9fe04187d.webp#averageHue=%23f8f8f7&amp;clientId=u078d6dd6-358a-4&amp;from=paste&amp;id=uc92d0954&amp;originHeight=333&amp;originWidth=1146&amp;originalType=url&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;taskId=u5cb7b04a-5288-49f4-b4fe-9c180726018&amp;title=" srcset="/img/loading.gif" lazyload alt=""><br>LLaMA模型参数表</p>
+<img src="/2023/05/24/2023-05-24-LLAMA%20Fine-tune/llama2.webp" srcset="/img/loading.gif" lazyload class="">
+<p>LLaMA模型参数表</p>
 <p>与原始的 transformer Decoder 相比，LLaMA主要有以下改进：</p>
 <ul>
 <li><strong>层归一化(Pre-normalization)[GPT3]</strong></li>
 </ul>
-<p>为了提高训练的稳定性，LLaMA 使用了Pre-norm，即对每个transformer子层的输入进行归一化，而不是对输出进行归一化。同时使用<a href="https://link.zhihu.com/?target=https%3A//github.com/huggingface/transformers/blob/main/src/transformers/models/llama/modeling_llama.py%23L74">RMSNorm</a>归一化函数。<br><img src="https://cdn.nlark.com/yuque/0/2023/png/8420697/1684211664875-dc290b6f-a46e-4cbf-87dd-0ae7990e8f44.png#averageHue=%23f2f0f0&amp;clientId=u96913c65-11e4-4&amp;from=paste&amp;height=166&amp;id=u0627d089&amp;originHeight=331&amp;originWidth=642&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=33520&amp;status=done&amp;style=shadow&amp;taskId=u56dfa02d-4b85-4587-b4e1-04b2c4baff7&amp;title=&amp;width=321" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<p>为了提高训练的稳定性，LLaMA 使用了Pre-norm，即对每个transformer子层的输入进行归一化，而不是对输出进行归一化。同时使用<a href="https://link.zhihu.com/?target=https%3A//github.com/huggingface/transformers/blob/main/src/transformers/models/llama/modeling_llama.py%23L74">RMSNorm</a>归一化函数。<br><img src="/2023/05/24/2023-05-24-LLAMA%20Fine-tune/llama7.png" srcset="/img/loading.gif" lazyload class=""></p>
 <ul>
 <li><strong>SwiGLU激活函数[PaLM]</strong></li>
 </ul>
-<p>LLaMA用SwiGLU激活函数取代ReLU非线性，以提高性能。SwiGLU激活函数的实现如下：<br><img src="https://cdn.nlark.com/yuque/0/2023/png/8420697/1684207329875-488932b0-e38e-4dab-ab22-bc791b5f7f0b.png#averageHue=%23efefef&amp;clientId=u078d6dd6-358a-4&amp;from=paste&amp;height=65&amp;id=u9bca5a8d&amp;originHeight=166&amp;originWidth=1054&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=76977&amp;status=done&amp;style=none&amp;taskId=u295e9ce4-229e-4741-99fe-0ddf352f0f9&amp;title=&amp;width=413" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<p>LLaMA用SwiGLU激活函数取代ReLU非线性，以提高性能。SwiGLU激活函数的实现如下：<br><img src="/2023/05/24/2023-05-24-LLAMA%20Fine-tune/llama3.png" srcset="/img/loading.gif" lazyload class=""></p>
 <ul>
 <li><strong>Rotary Positional Embedding (RoPE) [RoFormer]</strong></li>
 </ul>
@@ -301,7 +302,7 @@
 <h2 id="Alpaca-使用小成本训练大模型"><a href="#Alpaca-使用小成本训练大模型" class="headerlink" title="Alpaca 使用小成本训练大模型"></a>Alpaca 使用小成本训练大模型</h2><blockquote>
 <p>Standford Alpaca 地址：<a href="https://link.zhihu.com/?target=https%3A//github.com/tatsu-lab/stanford_alpaca">https://github.com/tatsu-lab/stanford_alpaca</a></p>
 </blockquote>
-<p>如下图所示，Stanford的研究者将 175 个人工设计的指令任务作为种子，使用 text-davinci-003，以 <a href="https://link.zhihu.com/?target=https%3A//github.com/yizhongw/self-instruct">self-instruct</a> 方式随机生成 52K 指令，以此来微调 LLaMA 7B，这个数据集本身还不是很干净导致Alpaca-lora的老哥们后来还给它清洗了一遍。<br><img src="https://cdn.nlark.com/yuque/0/2023/png/8420697/1684222735151-128e0494-5b26-4b88-b067-2b8f9df6b52f.png#averageHue=%23f6f6f6&amp;clientId=u0c3a6c1b-6fad-4&amp;from=paste&amp;height=355&amp;id=u9e1078e2&amp;originHeight=710&amp;originWidth=2872&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=485672&amp;status=done&amp;style=none&amp;taskId=u31e19500-a354-45ba-8fa7-a28c48a069a&amp;title=&amp;width=1436" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<p>如下图所示，Stanford的研究者将 175 个人工设计的指令任务作为种子，使用 text-davinci-003，以 <a href="https://link.zhihu.com/?target=https%3A//github.com/yizhongw/self-instruct">self-instruct</a> 方式随机生成 52K 指令，以此来微调 LLaMA 7B，这个数据集本身还不是很干净导致Alpaca-lora的老哥们后来还给它清洗了一遍。<br><img src="/2023/05/24/2023-05-24-LLAMA%20Fine-tune/llama4.png" srcset="/img/loading.gif" lazyload class=""></p>
 <p>Alpaca精悍于：</p>
 <ol>
 <li>直接嫖了Meta开源模型Llama-7B，在 8 块 80GB A100 显卡，训练 3 小时；</li>
@@ -327,7 +328,7 @@
 <li>中文指令精调阶段：利用中文指令数据（如 <a target="_blank" rel="noopener" href="https://github.com/Instruction-Tuning-with-GPT-4/GPT-4-LLM">Alpaca GPT4</a>、<a target="_blank" rel="noopener" href="https://huggingface.co/datasets/BAAI/COIG">COIG</a>、<a target="_blank" rel="noopener" href="https://huggingface.co/datasets/BelleGroup/train_2M_CN">BELLE</a>、<a target="_blank" rel="noopener" href="https://huggingface.co/datasets/JosephusCheung/GuanacoDataset">GuanacoDataset</a>、<a target="_blank" rel="noopener" href="https://github.com/CLUEbenchmark/pCLUE">pCLUE</a> 等，尽可能保证任务的多样性），然后通过语言建模任务，来微调 LLAMA 7B，提升模型对任务求解逻辑的理解</li>
 <li>对话微调 (Conversation Tuning)：像 Alpaca 一样，收集 input/output 生成 prompt 用于训练，或者将上述数据转化为对话格式后训练，让模型完成特定任务。</li>
 </ol>
-<p><img src="https://cdn.nlark.com/yuque/0/2023/png/8420697/1683613072458-56ef8d72-663d-4ece-8782-eca26b2a42f8.png#averageHue=%23c0daa9&amp;clientId=u9f88756d-728d-4&amp;from=paste&amp;height=191&amp;id=FG5HD&amp;originHeight=382&amp;originWidth=1080&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=224585&amp;status=done&amp;style=none&amp;taskId=u77004fd6-7e41-4213-abe9-ffe3765fe22&amp;title=&amp;width=540" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<img src="/2023/05/24/2023-05-24-LLAMA%20Fine-tune/llama5.png" srcset="/img/loading.gif" lazyload class="">
 <h3 id="第一步：准备数据集"><a href="#第一步：准备数据集" class="headerlink" title="第一步：准备数据集"></a>第一步：准备数据集</h3><blockquote>
 <p>找数据集哪里找？<br>推荐<a target="_blank" rel="noopener" href="https://github.com/PhoebusSi/Alpaca-CoT">Alpaca-COT</a>，整理了一个<a target="_blank" rel="noopener" href="https://huggingface.co/datasets/QingyiSi/Alpaca-CoT">intruction-finetuning的数据集集合</a>，包含了中文、英文和CoT的instruction数据</p>
 </blockquote>
@@ -428,7 +429,7 @@
 <h3 id="实验过程记录"><a href="#实验过程记录" class="headerlink" title="实验过程记录"></a>实验过程记录</h3><p>超参设置和实验过程可以参考wandb的链接:<br><a target="_blank" rel="noopener" href="https://wandb.ai/thinksoso/llama_med/runs/a5wgcnzt/overview?workspace=user-thinksoso">https://wandb.ai/thinksoso/llama_med/runs/a5wgcnzt/overview?workspace=user-thinksoso</a></p>
 <h3 id="模型效果"><a href="#模型效果" class="headerlink" title="模型效果"></a>模型效果</h3><p><a target="_blank" rel="noopener" href="https://github.com/Facico/Chinese-Vicuna/blob/master/docs/readme-zh.md#%E6%A8%A1%E5%9E%8B%E6%95%88%E6%9E%9C">https://github.com/Facico/Chinese-Vicuna/blob/master/docs/readme-zh.md#%E6%A8%A1%E5%9E%8B%E6%95%88%E6%9E%9C</a></p>
 <h2 id="LLAMA-对齐"><a href="#LLAMA-对齐" class="headerlink" title="LLAMA 对齐"></a>LLAMA 对齐</h2><p><a href="https://link.zhihu.com/?target=https%3A//github.com/hpcaitech/ColossalAI/tree/main/applications/Chat">ColossalChat</a> 是第一个基于LLaMA预训练模型开源完整RLHF pipline实现，包括有监督数据收集、有监督微调、奖励模型训练和强化学习微调。只需要不到100亿个参数，就可以在大型语言模型的基础上通过RLHF微调达到中英文双语水平，达到与ChatGPT和GPT-3.5相当的效果，并可以进行<a href="https://link.zhihu.com/?target=https%3A//chat.colossalai.org/">Demo</a>测试。</p>
-<p><img src="https://cdn.nlark.com/yuque/0/2023/png/8420697/1684213508213-958e82f7-2b59-4fad-8e9d-3cd2d0dec29f.png#averageHue=%23eaeaea&amp;clientId=u7aaa47d5-f260-4&amp;from=paste&amp;height=315&amp;id=ufbca2b04&amp;originHeight=629&amp;originWidth=1440&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=499134&amp;status=done&amp;style=none&amp;taskId=u3555f722-1476-4a4c-b4b8-1fb7da68453&amp;title=&amp;width=720" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<img src="/2023/05/24/2023-05-24-LLAMA%20Fine-tune/llama6.png" srcset="/img/loading.gif" lazyload class="">
 <p>具体实操可参考 <a target="_blank" rel="noopener" href="https://www.yuque.com/ningshixian/pz10h0/vikg2a9mx2sxso7v?singleDoc#">https://www.yuque.com/ningshixian/pz10h0/vikg2a9mx2sxso7v?singleDoc#</a> 《基于ColossalAI的ChatGPT最小复现》、以及<a target="_blank" rel="noopener" href="https://www.yuque.com/ningshixian/pz10h0/dw0fehfpzpv3eweu?singleDoc#">https://www.yuque.com/ningshixian/pz10h0/dw0fehfpzpv3eweu?singleDoc#</a> 《StackLLaMA：用 RLHF 训练 LLaMA 的手把手教程》</p>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/618695885">NLP（九）：LLaMA, Alpaca, ColossalChat 系列模型研究</a><br><a target="_blank" rel="noopener" href="https://github.com/ninehills/ninehills.github.io/issues/92">大语言模型（LLM）微调技术笔记</a><br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/628688680">BiLLa：更擅长推理的LLaMA大模型，支持中文！</a></p>
 <ul>
