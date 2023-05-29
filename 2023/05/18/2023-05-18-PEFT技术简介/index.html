@@ -1,0 +1,832 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Ning Shixian">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="转载自 https:&#x2F;&#x2F;mp.weixin.qq.com&#x2F;s&#x2F;E_0-skD3__w5jLGEJlDpoA  本文介绍了参数高效微调 Parameter-Efficient Fine-Tuning（PEFT）技术，可以仅微调少量或者额外的模型参数，并固定住大部分预训练参数，从而大大降低 LLM 的训练成本。 下图总结了一些最广泛使用的 PEFT 技术。PEFT 技术的主要做法包括 Adapter">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PEFT 技术简介">
+<meta property="og:url" content="http://example.com/2023/05/18/2023-05-18-PEFT%E6%8A%80%E6%9C%AF%E7%AE%80%E4%BB%8B/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="转载自 https:&#x2F;&#x2F;mp.weixin.qq.com&#x2F;s&#x2F;E_0-skD3__w5jLGEJlDpoA  本文介绍了参数高效微调 Parameter-Efficient Fine-Tuning（PEFT）技术，可以仅微调少量或者额外的模型参数，并固定住大部分预训练参数，从而大大降低 LLM 的训练成本。 下图总结了一些最广泛使用的 PEFT 技术。PEFT 技术的主要做法包括 Adapter">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/png/8420697/1682587198356-688f9b68-7f3e-4bbe-9913-4af0b035a8a6.png#averageHue=%23ede8f3&amp;clientId=ub3d61b65-267f-4&amp;from=paste&amp;id=Hq7yA&amp;originHeight=622&amp;originWidth=2262&amp;originalType=url&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=132052&amp;status=done&amp;style=shadow&amp;taskId=u6aa266ec-53b2-4197-8041-8895680c8de&amp;title=">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/png/8420697/1683614230500-8270017f-4780-4150-b239-6606861bf2e9.png#averageHue=%23f2f1ed&amp;clientId=ub3d58b55-39ac-4&amp;from=paste&amp;height=447&amp;id=u8ca566cb&amp;originHeight=754&amp;originWidth=1050&amp;originalType=url&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=shadow&amp;taskId=ub0f41530-c5fe-4e75-a215-4cf9fa0bcbc&amp;title=&amp;width=623">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/png/8420697/1682590567270-9fbe6a1b-492b-4140-9034-7834747d12bd.png#averageHue=%233f3e3e&amp;clientId=u2166bd78-7c16-4&amp;from=paste&amp;height=261&amp;id=RDBT2&amp;originHeight=722&amp;originWidth=1024&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=137711&amp;status=done&amp;style=shadow&amp;taskId=u2ca54a21-6be7-4df1-8e68-91cc187d2ea&amp;title=&amp;width=370">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/png/8420697/1683614230449-b71708bd-1961-4552-b50e-d1d6924125df.png#averageHue=%23f9f7f6&amp;clientId=ub3d58b55-39ac-4&amp;from=paste&amp;height=320&amp;id=u99379f83&amp;originHeight=758&amp;originWidth=1046&amp;originalType=url&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=shadow&amp;taskId=udca1fab3-98ae-4207-aa11-856789bb1e9&amp;title=&amp;width=442">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/png/8420697/1683614669720-357f5cf6-5b4b-4335-81a6-dfda1e7b7749.png#averageHue=%23f4e5e5&amp;clientId=ub3d58b55-39ac-4&amp;from=paste&amp;id=ue335afff&amp;originHeight=784&amp;originWidth=1080&amp;originalType=url&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=shadow&amp;taskId=ue14c7035-5361-4e86-b99f-81d4db3219b&amp;title=">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/png/8420697/1683614669642-e27f3c52-4277-42a3-907c-55399c0fc58d.png#averageHue=%23f3f2f0&amp;clientId=ub3d58b55-39ac-4&amp;from=paste&amp;id=u53eeefed&amp;originHeight=445&amp;originWidth=1080&amp;originalType=url&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=shadow&amp;taskId=u23e67fba-ec0f-4057-8495-1b5326a0f39&amp;title=">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/png/8420697/1683614862167-87046d71-4600-463c-b25b-38404db84a62.png#averageHue=%23f1ece5&amp;clientId=ub3d58b55-39ac-4&amp;from=paste&amp;id=ue74702d6&amp;originHeight=528&amp;originWidth=986&amp;originalType=url&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=shadow&amp;taskId=uee111e83-ad6d-407b-a489-8603d99297d&amp;title=">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/png/8420697/1683614862135-e9116292-06c3-4cb1-a967-f900966ec171.png#averageHue=%23eeeded&amp;clientId=ub3d58b55-39ac-4&amp;from=paste&amp;height=434&amp;id=u83002b39&amp;originHeight=758&amp;originWidth=900&amp;originalType=url&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=shadow&amp;taskId=u3d69cbba-5e1d-4de5-a7c3-f7fc558381d&amp;title=&amp;width=515">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/gif/8420697/1683366867888-c59fadc6-abd9-4ef7-beae-bd9a30d5a2ee.gif#averageHue=%230e6eaf&amp;clientId=u6e130813-170d-4&amp;from=paste&amp;height=220&amp;id=p454y&amp;originHeight=439&amp;originWidth=600&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=322447&amp;status=done&amp;style=shadow&amp;taskId=u96ea8d14-6841-4f19-b4f6-88fcf3625db&amp;title=&amp;width=300">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/png/8420697/1682591504651-6f1f8a8d-ad29-45f5-a082-76ad2e6f3c57.png#averageHue=%23e6e6e6&amp;clientId=u2166bd78-7c16-4&amp;from=paste&amp;height=314&amp;id=miAcg&amp;originHeight=628&amp;originWidth=828&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=76769&amp;status=done&amp;style=shadow&amp;taskId=ua5406b2b-16c7-4e72-b0f7-596e02ed7a0&amp;title=&amp;width=414">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/png/8420697/1682591516652-27d769f9-4ea1-4090-a7f9-acc486c41a5f.png#averageHue=%23e5e5e5&amp;clientId=u2166bd78-7c16-4&amp;from=paste&amp;height=288&amp;id=x8az7&amp;originHeight=576&amp;originWidth=746&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=72039&amp;status=done&amp;style=shadow&amp;taskId=u011601c3-cab6-4c09-b507-bfc507a6495&amp;title=&amp;width=373">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/png/8420697/1681785742840-bc8da080-0ea7-41d1-a25e-d027f71fad56.png#averageHue=%23ffffff&amp;clientId=u1688f812-0c9d-4&amp;from=paste&amp;height=35&amp;id=eGquf&amp;originHeight=70&amp;originWidth=640&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=13254&amp;status=done&amp;style=shadow&amp;taskId=u4601c44a-0367-4c8b-9fd7-41973a23e98&amp;title=&amp;width=320">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/png/8420697/1683619049940-89ecf78d-0596-4c83-8900-0d4dcb5c494a.png#averageHue=%23f98d1c&amp;clientId=uc73c29c9-e133-4&amp;from=paste&amp;height=330&amp;id=SDlZN&amp;originHeight=855&amp;originWidth=960&amp;originalType=url&amp;ratio=2&amp;rotation=0&amp;showTitle=true&amp;status=done&amp;style=shadow&amp;taskId=ua6e73106-d0c5-4477-b5f4-559f13b963d&amp;title=%E5%B0%86%E6%9D%83%E9%87%8D%E5%8F%98%E5%8C%96%20%CE%94W%20%E5%88%86%E8%A7%A3%E4%B8%BA%E4%BD%8E%E7%A7%A9%E8%A1%A8%E7%A4%BA%EF%BC%8C%E4%B8%8D%E7%9B%B4%E6%8E%A5%E5%88%86%E8%A7%A3%E7%9F%A9%E9%98%B5%20W%EF%BC%8C%E8%80%8C%E6%98%AF%E9%80%9A%E8%BF%87%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E5%AD%A6%E4%B9%A0%E5%88%86%E8%A7%A3%E5%90%8E%E7%9A%84%E7%9F%A9%E9%98%B5&amp;width=371">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/png/8420697/1683619049987-7248953d-02cf-4256-8d2d-ba63b3d91eec.png#averageHue=%23faf9f8&amp;clientId=uc73c29c9-e133-4&amp;from=paste&amp;height=54&amp;id=qySqd&amp;originHeight=98&amp;originWidth=900&amp;originalType=url&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=shadow&amp;taskId=u3956c274-e178-4db8-8333-6900f731556&amp;title=&amp;width=496">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/png/8420697/1682592127492-d0d9f2f8-1e66-46ab-9e7c-fade660f00c1.png#averageHue=%23ececec&amp;clientId=ub4f8ab11-a59a-4&amp;from=paste&amp;height=383&amp;id=YEpFB&amp;originHeight=766&amp;originWidth=1536&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=368534&amp;status=done&amp;style=shadow&amp;taskId=uda1ef204-38af-4448-9b00-0fa59157a9d&amp;title=&amp;width=768">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/png/8420697/1683619050198-2193a7d9-bb20-4b19-9205-b3ae830f8b07.png#averageHue=%232aba9c&amp;clientId=uc73c29c9-e133-4&amp;from=paste&amp;id=uc0f63073&amp;originHeight=354&amp;originWidth=1080&amp;originalType=url&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=shadow&amp;taskId=u016801e2-8d35-4839-8ea5-8e0e61647bf&amp;title=">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/png/8420697/1683619049917-a89fbf20-eb7d-4508-a10a-9e897bd58a17.png#averageHue=%23f8f7f4&amp;clientId=uc73c29c9-e133-4&amp;from=paste&amp;id=u23764049&amp;originHeight=1925&amp;originWidth=1080&amp;originalType=url&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=shadow&amp;taskId=uc3a8faad-5bd4-4ae9-8c84-ad83223c9f3&amp;title=">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/png/8420697/1683619050919-3b409b90-f784-438f-a670-965ad994b22c.png#averageHue=%23f3f2f0&amp;clientId=uc73c29c9-e133-4&amp;from=paste&amp;id=u82bb61bc&amp;originHeight=289&amp;originWidth=1080&amp;originalType=url&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=shadow&amp;taskId=ud5261d58-b935-4650-9a35-710f06dd7ec&amp;title=">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/webp/8420697/1676959646417-7cb45ab1-1efc-44a2-a3f3-520eaa7d5ac2.webp#averageHue=%23b4d0b3&amp;clientId=u249318b4-ce2d-4&amp;from=paste&amp;id=uceb8bff5&amp;originHeight=372&amp;originWidth=1098&amp;originalType=url&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=shadow&amp;taskId=u96214774-df8f-43ce-92de-a0b50354d07&amp;title=">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/webp/8420697/1676959646393-4688b64b-5901-4c6e-bea8-507d859e59de.webp#averageHue=%23e7e7e7&amp;clientId=u249318b4-ce2d-4&amp;from=paste&amp;height=76&amp;id=u87afa709&amp;originHeight=116&amp;originWidth=403&amp;originalType=url&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=shadow&amp;taskId=u2b52215a-0a09-4c80-af08-a752c1a144d&amp;title=&amp;width=263">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/webp/8420697/1676959646493-07a6c2ac-711d-41e7-a761-40a3e3f8bb12.webp#averageHue=%23e3e3e3&amp;clientId=u249318b4-ce2d-4&amp;from=paste&amp;id=u09a22f9f&amp;originHeight=359&amp;originWidth=893&amp;originalType=url&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=shadow&amp;taskId=ub678202e-85f8-4ec6-b965-961b6d63d2a&amp;title=">
+<meta property="article:published_time" content="2023-05-18T06:59:20.000Z">
+<meta property="article:modified_time" content="2023-05-29T06:01:30.573Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="转载">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://cdn.nlark.com/yuque/0/2023/png/8420697/1682587198356-688f9b68-7f3e-4bbe-9913-4af0b035a8a6.png#averageHue=%23ede8f3&amp;clientId=ub3d61b65-267f-4&amp;from=paste&amp;id=Hq7yA&amp;originHeight=622&amp;originWidth=2262&amp;originalType=url&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=132052&amp;status=done&amp;style=shadow&amp;taskId=u6aa266ec-53b2-4197-8041-8895680c8de&amp;title=">
+  
+  
+  
+  <title>PEFT 技术简介 - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="PEFT 技术简介"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-05-18 14:59" pubdate>
+          2023年5月18日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          6.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          54 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">PEFT 技术简介</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <blockquote>
+<p>转载自 <a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/E_0-skD3__w5jLGEJlDpoA">https://mp.weixin.qq.com/s/E_0-skD3__w5jLGEJlDpoA</a></p>
+</blockquote>
+<p>本文介绍了参数高效微调 Parameter-Efficient Fine-Tuning（PEFT）技术，可以仅微调少量或者额外的模型参数，并固定住大部分预训练参数，从而大大降低 LLM 的训练成本。</p>
+<p><strong>下图总结了一些最广泛使用的 PEFT 技术。</strong>PEFT 技术的主要做法包括 Adapter Tuning、Prefix Tuning 和 Prompt Tuning。Adapter Tuning 通过设计 Adapter 结构，只对新增的 Adapter 结构进行微调，保证训练的高效性。Prefix Tuning 是在输入 token 之前构造一段任务相关的 virtual tokens Prefix，训练的只更新 Prefix 部分的参数，而 Transformer 中的部分参数固定。Prompt Tuning 则是在输入层加入 prompt tokens 进行微调，主要在 T5 预训练模型上做实验。实验结果表明，PEFT 技术能够在提高模型效果的同时，缩短模型训练时间和计算成本，让更多人能够参与到深度学习研究中来。</p>
+<p><img src="https://cdn.nlark.com/yuque/0/2023/png/8420697/1682587198356-688f9b68-7f3e-4bbe-9913-4af0b035a8a6.png#averageHue=%23ede8f3&amp;clientId=ub3d61b65-267f-4&amp;from=paste&amp;id=Hq7yA&amp;originHeight=622&amp;originWidth=2262&amp;originalType=url&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=132052&amp;status=done&amp;style=shadow&amp;taskId=u6aa266ec-53b2-4197-8041-8895680c8de&amp;title=" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<p>大型预训练模型的训练成本估算，以 LLaMA 7B 训练为例：<br>估算一下: 以 bf16 半精度，每个参数用 2 个字节 (以 fp32 精度四字节的标准)，训练时需要 8 个字节 (例如 Adam 优化器，参见 Tramsformers 的 <a target="_blank" rel="noopener" href="https://huggingface.co/docs/transformers/perf_train_gpu_one#optimizer">性能文档</a>)。可见 7B 参数量的模型将用 (2+8)* 7B = 70 GB 的内存，并且还可能需要更多用于计算诸如注意力分数的中间值。所以很难在一张 80GB 显存的 A100 上训练。或许你可以使用一些技巧，比如用更高效的半精度训练的优化器来压缩内存，但溢出是迟早的。</p>
+<h2 id="Adapter-Tuning"><a href="#Adapter-Tuning" class="headerlink" title="Adapter Tuning"></a><strong>Adapter Tuning</strong></h2><p>谷歌的研究人员首次在论文《Parameter-Efficient Transfer Learning for NLP》提出针对 BERT 的 PEFT 微调方式，拉开了 PEFT 研究的序幕。他们指出，在面对特定的下游任务时，如果进行 Full-fintuning（即预训练模型中的所有参数都进行微调），太过低效；而如果采用固定预训练模型的某些层，只微调接近下游任务的那几层参数，又难以达到较好的效果。</p>
+<p>于是他们设计了如下图所示的 Adapter 结构，将其嵌入 Transformer 的结构里面，在训练时，固定住原来预训练模型的参数不变，只对新增的 Adapter 结构进行微调。</p>
+<p>同时为了保证训练的高效性（也就是尽可能少的引入更多参数），他们将 Adapter 设计为这样的结构：首先是一个 down-project 层将高维度特征映射到低维特征，然后过一个非线形层之后，再用一个 up-project 结构将低维特征映射回原来的高维特征；同时也设计了 skip-connection 结构，确保了在最差的情况下能够退化为 identity。</p>
+<p><img src="https://cdn.nlark.com/yuque/0/2023/png/8420697/1683614230500-8270017f-4780-4150-b239-6606861bf2e9.png#averageHue=%23f2f1ed&amp;clientId=ub3d58b55-39ac-4&amp;from=paste&amp;height=447&amp;id=u8ca566cb&amp;originHeight=754&amp;originWidth=1050&amp;originalType=url&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=shadow&amp;taskId=ub0f41530-c5fe-4e75-a215-4cf9fa0bcbc&amp;title=&amp;width=623" srcset="/img/loading.gif" lazyload alt=""></p>
+<p>Python 伪代码如下：<br><img src="https://cdn.nlark.com/yuque/0/2023/png/8420697/1682590567270-9fbe6a1b-492b-4140-9034-7834747d12bd.png#averageHue=%233f3e3e&amp;clientId=u2166bd78-7c16-4&amp;from=paste&amp;height=261&amp;id=RDBT2&amp;originHeight=722&amp;originWidth=1024&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=137711&amp;status=done&amp;style=shadow&amp;taskId=u2ca54a21-6be7-4df1-8e68-91cc187d2ea&amp;title=&amp;width=370" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<p>从实验结果来看，该方法能够在只额外对增加的 3.6% 参数规模（相比原来预训练模型的参数量）的情况下取得和 Full-finetuning 接近的效果（GLUE 指标在 0.4% 以内）。</p>
+<p><img src="https://cdn.nlark.com/yuque/0/2023/png/8420697/1683614230449-b71708bd-1961-4552-b50e-d1d6924125df.png#averageHue=%23f9f7f6&amp;clientId=ub3d58b55-39ac-4&amp;from=paste&amp;height=320&amp;id=u99379f83&amp;originHeight=758&amp;originWidth=1046&amp;originalType=url&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=shadow&amp;taskId=udca1fab3-98ae-4207-aa11-856789bb1e9&amp;title=&amp;width=442" srcset="/img/loading.gif" lazyload alt=""></p>
+<h2 id="Prefix-Tuning"><a href="#Prefix-Tuning" class="headerlink" title="Prefix Tuning"></a><strong>Prefix Tuning</strong></h2><p><img src="https://cdn.nlark.com/yuque/0/2023/png/8420697/1683614669720-357f5cf6-5b4b-4335-81a6-dfda1e7b7749.png#averageHue=%23f4e5e5&amp;clientId=ub3d58b55-39ac-4&amp;from=paste&amp;id=ue335afff&amp;originHeight=784&amp;originWidth=1080&amp;originalType=url&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=shadow&amp;taskId=ue14c7035-5361-4e86-b99f-81d4db3219b&amp;title=" srcset="/img/loading.gif" lazyload alt=""></p>
+<p>Prefix Tuning 方法由斯坦福的研究人员提出，与 Full-finetuning 更新所有参数的方式不同，该方法是在输入 token 之前构造一段任务相关的 virtual tokens 作为 Prefix，然后训练的时候只更新 Prefix 部分的参数，而 Transformer 中的其他部分参数固定。该方法其实和构造 Prompt 类似，只是 Prompt 是人为构造的“显式”的提示，并且无法更新参数，而 Prefix 则是可以学习的“隐式”的提示。</p>
+<p>同时，为了防止直接更新 Prefix 的参数导致训练不稳定的情况，他们在 Prefix 层前面加了 MLP 结构（相当于将 Prefix 分解为更小维度的 Input 与 MLP 的组合后输出的结果），训练完成后，只保留 Prefix 的参数。</p>
+<p>实验结果也说明了 Prefix Tuning 的方式可以取得不错的效果。</p>
+<p><img src="https://cdn.nlark.com/yuque/0/2023/png/8420697/1683614669642-e27f3c52-4277-42a3-907c-55399c0fc58d.png#averageHue=%23f3f2f0&amp;clientId=ub3d58b55-39ac-4&amp;from=paste&amp;id=u53eeefed&amp;originHeight=445&amp;originWidth=1080&amp;originalType=url&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=shadow&amp;taskId=u23e67fba-ec0f-4057-8495-1b5326a0f39&amp;title=" srcset="/img/loading.gif" lazyload alt=""></p>
+<h2 id="Prompt-Tuning"><a href="#Prompt-Tuning" class="headerlink" title="Prompt Tuning"></a><strong>Prompt Tuning</strong></h2><blockquote>
+<p>论文《The Power of Scale for Parameter-Efficient Prompt Tuning》<br><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/Wgj1ATMAkL1Gx4dsAlkJZw">https://mp.weixin.qq.com/s/Wgj1ATMAkL1Gx4dsAlkJZw</a></p>
+</blockquote>
+<p>我给这篇文章取了个新名字：Scale is All You Need，总的来说就是，只要模型规模够大，简单加入 Prompt tokens 进行微调，就能取得很好的效果。Prompt Tuning主要在 T5 预训练模型上做实验。</p>
+<p>该方法可以看作是 Prefix Tuning 的简化版本，只对输入层加入的 prompt tokens embedding 进行微调，而Prefix是对虚拟Token对应的上游layer全部进行微调。因此Prompt-Tunning的微调参数量级要更小，且不需要修改原始模型结构，这是“简化”的来源。为什么上面 prefix-tuning 只微调embedding层效果就不好，放在prompt-tuning这里效果就好了呢？原因大概率跟模型 Scale 有关，似乎只要预训练模型足够强大，其他的一切都不是问题。作者也做实验说明随着预训练模型参数量的增加，Prompt Tuning 的方法会逼近 Fine-tune 的结果。</p>
+<p><img src="https://cdn.nlark.com/yuque/0/2023/png/8420697/1683614862167-87046d71-4600-463c-b25b-38404db84a62.png#averageHue=%23f1ece5&amp;clientId=ub3d58b55-39ac-4&amp;from=paste&amp;id=ue74702d6&amp;originHeight=528&amp;originWidth=986&amp;originalType=url&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=shadow&amp;taskId=uee111e83-ad6d-407b-a489-8603d99297d&amp;title=" srcset="/img/loading.gif" lazyload alt=""></p>
+<p>Fine-tune模型的每个副本都需要110亿个参数。而Prompt每个任务只需要20480个参数——减少超过5个数量级。</p>
+<p>实验效果：随着预训练模型参数的增加，一切的问题都不是问题，最简单的设置也能达到极好的效果。</p>
+<p><img src="https://cdn.nlark.com/yuque/0/2023/png/8420697/1683614862135-e9116292-06c3-4cb1-a967-f900966ec171.png#averageHue=%23eeeded&amp;clientId=ub3d58b55-39ac-4&amp;from=paste&amp;height=434&amp;id=u83002b39&amp;originHeight=758&amp;originWidth=900&amp;originalType=url&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=shadow&amp;taskId=u3d69cbba-5e1d-4de5-a7c3-f7fc558381d&amp;title=&amp;width=515" srcset="/img/loading.gif" lazyload alt=""></p>
+<h2 id="P-Tuning"><a href="#P-Tuning" class="headerlink" title="P-Tuning"></a><strong>P-Tuning</strong></h2><p>P-Tuning 方法的提出主要是为了解决这样一个问题：大模型的 Prompt 构造方式严重影响下游任务的效果。</p>
+<ul>
+<li>P-Tuning V1 提出将 Prompt 转换为可以学习的 Embedding 层</li>
+<li>P-tuning v2 方法在多层加入了 Prompts tokens 作为输入</li>
+</ul>
+<p><img src="https://cdn.nlark.com/yuque/0/2023/gif/8420697/1683366867888-c59fadc6-abd9-4ef7-beae-bd9a30d5a2ee.gif#averageHue=%230e6eaf&amp;clientId=u6e130813-170d-4&amp;from=paste&amp;height=220&amp;id=p454y&amp;originHeight=439&amp;originWidth=600&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=322447&amp;status=done&amp;style=shadow&amp;taskId=u96ea8d14-6841-4f19-b4f6-88fcf3625db&amp;title=&amp;width=300" srcset="/img/loading.gif" lazyload alt="640.gif"></p>
+<h2 id="LoRA"><a href="#LoRA" class="headerlink" title="LoRA"></a><strong>LoRA</strong></h2><blockquote>
+<p><a target="_blank" rel="noopener" href="https://kexue.fm/archives/9590">梯度视角下的LoRA：简介、分析、猜测及推广</a><br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/611557340">论文阅读：LORA-大型语言模型的低秩适应</a></p>
+</blockquote>
+<p>微软和 CMU 的研究者指出，现有的一些 PEFT 的方法还存在这样一些问题：</p>
+<ul>
+<li>由于增加了模型的深度从而额外增加了模型推理的延时，如 Adapter 方法</li>
+<li>Prompt 较难训练，同时减少了模型的可用序列长度，如 Prompt Tuning、Prefix Tuning、P-Tuning 方法</li>
+<li>往往效率和质量不可兼得，效果差于 full-finetuning</li>
+</ul>
+<p>有研究者对语言模型的参数进行研究发现：语言模型虽然参数众多，但是起到关键作用的还是其中低秩的本质维度（low instrisic dimension）。受此观点的启发，Microsoft 于 2021 年发表的论文<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2106.09685">《LoRA: Low-Rank Adaptation of Large Language Models》</a>提出了低秩适配 Low-Rank Adaption（LoRA）技术微调大型语言模型 (LLM)。设计了如下所示的结构，冻结预训练模型的权重参数，然后在每个 Transformer Block 引入 A、B 这样两个低秩矩阵模块，去模拟 Full-finetune 的过程。</p>
+<p>LoRA与Transformer的结合也很简单，仅在QKV attention的计算中增加一个旁路，而不动MLP模块。基于大模型的内在低秩特性，增加旁路矩阵来模拟全模型参数微调，LoRA通过简单有效的方案来达成轻量微调的目的，可以将现在的各种大模型通过轻量微调变成各个不同领域的专业模型。</p>
+<blockquote>
+<p>例如，假设 A=100 且 B=500 ，则$W$的大小为 100 × 500 = 50,000。现在，如果我们将其分解为两个较小的矩阵，一个 100×5 维矩阵$W_A$和一个 5×500 维矩阵 $W_B$。这两个矩阵总共只有 5×100+5×500=3000 个参数。需要优化的参数量大大减少！</p>
+</blockquote>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th><img src="https://cdn.nlark.com/yuque/0/2023/png/8420697/1682591504651-6f1f8a8d-ad29-45f5-a082-76ad2e6f3c57.png#averageHue=%23e6e6e6&amp;clientId=u2166bd78-7c16-4&amp;from=paste&amp;height=314&amp;id=miAcg&amp;originHeight=628&amp;originWidth=828&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=76769&amp;status=done&amp;style=shadow&amp;taskId=ua5406b2b-16c7-4e72-b0f7-596e02ed7a0&amp;title=&amp;width=414" srcset="/img/loading.gif" lazyload alt="image.png"></th>
+<th><img src="https://cdn.nlark.com/yuque/0/2023/png/8420697/1682591516652-27d769f9-4ea1-4090-a7f9-acc486c41a5f.png#averageHue=%23e5e5e5&amp;clientId=u2166bd78-7c16-4&amp;from=paste&amp;height=288&amp;id=x8az7&amp;originHeight=576&amp;originWidth=746&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=72039&amp;status=done&amp;style=shadow&amp;taskId=u011601c3-cab6-4c09-b507-bfc507a6495&amp;title=&amp;width=373" srcset="/img/loading.gif" lazyload alt="image.png"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>方法具体介绍</strong><br>对于预训练的参数矩阵$W_0∈ℝ^{m×n}$，我们不去直接微调$W_0$，而是对增量做低秩分解假设：<br><img src="https://cdn.nlark.com/yuque/0/2023/png/8420697/1681785742840-bc8da080-0ea7-41d1-a25e-d027f71fad56.png#averageHue=%23ffffff&amp;clientId=u1688f812-0c9d-4&amp;from=paste&amp;height=35&amp;id=eGquf&amp;originHeight=70&amp;originWidth=640&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=13254&amp;status=done&amp;style=shadow&amp;taskId=u4601c44a-0367-4c8b-9fd7-41973a23e98&amp;title=&amp;width=320" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<ul>
+<li>其中$U,V$之一用全零初始化，另一个由随机高斯初始化，使得$∆W=UV$的初始值在训练开始时为零；</li>
+<li>训练时，$W_0$固定不变，优化器只优化$U,V$</li>
+<li>推理时，可将$UV$加到原参数上，不引入额外的推理延迟；</li>
+<li>可插拔式的切换任务，当前任务$W_0+U_1V_1$，将lora部分减掉，换成$W_0+U_2V_2$，即可实现任务切换；</li>
+<li>秩的选取：对于一般的任务，rank=1,2,4,8 足矣，而对于一些领域差距比较大的任务可能需要更大的rank。</li>
+</ul>
+<p><img src="https://cdn.nlark.com/yuque/0/2023/png/8420697/1683619049940-89ecf78d-0596-4c83-8900-0d4dcb5c494a.png#averageHue=%23f98d1c&amp;clientId=uc73c29c9-e133-4&amp;from=paste&amp;height=330&amp;id=SDlZN&amp;originHeight=855&amp;originWidth=960&amp;originalType=url&amp;ratio=2&amp;rotation=0&amp;showTitle=true&amp;status=done&amp;style=shadow&amp;taskId=ua6e73106-d0c5-4477-b5f4-559f13b963d&amp;title=%E5%B0%86%E6%9D%83%E9%87%8D%E5%8F%98%E5%8C%96%20%CE%94W%20%E5%88%86%E8%A7%A3%E4%B8%BA%E4%BD%8E%E7%A7%A9%E8%A1%A8%E7%A4%BA%EF%BC%8C%E4%B8%8D%E7%9B%B4%E6%8E%A5%E5%88%86%E8%A7%A3%E7%9F%A9%E9%98%B5%20W%EF%BC%8C%E8%80%8C%E6%98%AF%E9%80%9A%E8%BF%87%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E5%AD%A6%E4%B9%A0%E5%88%86%E8%A7%A3%E5%90%8E%E7%9A%84%E7%9F%A9%E9%98%B5&amp;width=371" srcset="/img/loading.gif" lazyload alt="将权重变化 ΔW 分解为低秩表示，不直接分解矩阵 W，而是通过反向传播学习分解后的矩阵" title="将权重变化 ΔW 分解为低秩表示，不直接分解矩阵 W，而是通过反向传播学习分解后的矩阵"><br><img src="https://cdn.nlark.com/yuque/0/2023/png/8420697/1683619049987-7248953d-02cf-4256-8d2d-ba63b3d91eec.png#averageHue=%23faf9f8&amp;clientId=uc73c29c9-e133-4&amp;from=paste&amp;height=54&amp;id=qySqd&amp;originHeight=98&amp;originWidth=900&amp;originalType=url&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=shadow&amp;taskId=u3956c274-e178-4db8-8333-6900f731556&amp;title=&amp;width=496" srcset="/img/loading.gif" lazyload alt=""></p>
+<p>这么做就能完美解决以上存在的 3 个问题：</p>
+<ul>
+<li>相比于原始的 Adapter 方法“额外”增加网络深度，必然会带来推理过程额外的延迟，该方法可以在推理阶段直接用训练好的 A、B 矩阵参数与原预训练模型的参数相加去替换原有预训练模型的参数，这样的话推理过程就相当于和 Full-finetune 一样，没有额外的计算量，从而不会带来性能的损失。</li>
+<li>由于没有使用 Prompt 方式，自然不会存在 Prompt 方法带来的一系列问题。</li>
+<li>该方法由于实际上相当于是用 LoRA 去模拟 Full-finetune 的过程，几乎不会带来任何训练效果的损失，后续的实验结果也证明了这一点。</li>
+</ul>
+<blockquote>
+<p>注意：存储模型的所有权重$W’ = W_0 + W_A W_B$对于 LLM 来说可能非常大，因为 LLM 通常有数十亿到数万亿个权重参数。因此，我们可以保留原始模型$W$，只需要存储新的轻量级矩阵$W_A$和$W_B$。为了用具体数字说明这一点，一个完整的 7B LLaMA 检查点需要 23GB 的存储容量，而如果我们选择r=8的等级，LoRA 权重可以小到 8MB 。</p>
+</blockquote>
+<p>在实验中，研究人员将这一 LoRA 模块与 Transformer 的 attention 模块相结合，在 RoBERTa 、DeBERTa、GPT-2 和 GPT-3 175B 这几个大模型上都做了实验，实验结果也充分证明了该方法的有效性。</p>
+<p><img src="https://cdn.nlark.com/yuque/0/2023/png/8420697/1682592127492-d0d9f2f8-1e66-46ab-9e7c-fade660f00c1.png#averageHue=%23ececec&amp;clientId=ub4f8ab11-a59a-4&amp;from=paste&amp;height=383&amp;id=YEpFB&amp;originHeight=766&amp;originWidth=1536&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=368534&amp;status=done&amp;style=shadow&amp;taskId=uda1ef204-38af-4448-9b00-0fa59157a9d&amp;title=&amp;width=768" srcset="/img/loading.gif" lazyload alt="image.png"><br><img src="https://cdn.nlark.com/yuque/0/2023/png/8420697/1683619050198-2193a7d9-bb20-4b19-9205-b3ae830f8b07.png#averageHue=%232aba9c&amp;clientId=uc73c29c9-e133-4&amp;from=paste&amp;id=uc0f63073&amp;originHeight=354&amp;originWidth=1080&amp;originalType=url&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=shadow&amp;taskId=u016801e2-8d35-4839-8ea5-8e0e61647bf&amp;title=" srcset="/img/loading.gif" lazyload alt=""></p>
+<h3 id="PEFT对LORA的实现"><a href="#PEFT对LORA的实现" class="headerlink" title="PEFT对LORA的实现"></a>PEFT对LORA的实现</h3><blockquote>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/bWl9Ke9dHmHPQEad-XZsyQ">使用 LoRA 和 Hugging Face 高效训练大语言模型</a></p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 设置超参数及配置</span><br>LORA_R = <span class="hljs-number">8</span><br>LORA_ALPHA = <span class="hljs-number">16</span><br>LORA_DROPOUT = <span class="hljs-number">0.05</span><br>TARGET_MODULES = [<br>    <span class="hljs-string">&quot;q_proj&quot;</span>,<br>    <span class="hljs-string">&quot;v_proj&quot;</span>,<br>]<br><br>config = LoraConfig(<br>    r=LORA_R,<br>    lora_alpha=LORA_ALPHA,<br>    target_modules=TARGET_MODULES,<br>    lora_dropout=LORA_DROPOUT,<br>    bias=<span class="hljs-string">&quot;none&quot;</span>,<br>    task_type=<span class="hljs-string">&quot;CAUSAL_LM&quot;</span>,<br>)<br><br><span class="hljs-comment"># 创建基础transformer模型</span><br>model = AutoModelForSeq2SeqLM.from_pretrained(model_name_or_path)<br><span class="hljs-comment"># 加入PEFT策略</span><br>model = get_peft_model(model, config)<br>model.print_trainable_parameters()<br><br><span class="hljs-comment"># trainable params: 18874368 || all params: 11154206720 || trainable%: 0.16921300163961817</span><br></code></pre></td></tr></table></figure>
+<h3 id="LORA-伪代码"><a href="#LORA-伪代码" class="headerlink" title="LORA 伪代码"></a>LORA 伪代码</h3><blockquote>
+<p><a target="_blank" rel="noopener" href="https://sebastianraschka.com/blog/2023/llm-finetuning-lora.html?continueFlag=bd4fddecd5a8db3ad9503af53320e97c">Parameter-Efficient LLM Finetuning With Low-Rank Adaptation (LoRA)</a></p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs python"><br>input_dim = <span class="hljs-number">768</span>  <span class="hljs-comment"># e.g., the hidden size of the pre-trained model</span><br>output_dim = <span class="hljs-number">768</span>  <span class="hljs-comment"># e.g., the output size of the layer</span><br>rank = <span class="hljs-number">8</span>  <span class="hljs-comment"># The rank &#x27;r&#x27; for the low-rank adaptation</span><br><br>W = ... <span class="hljs-comment"># from pretrained network with shape input_dim x output_dim</span><br><br>W_A = nn.Parameter(torch.empty(input_dim, rank)) <span class="hljs-comment"># LoRA weight A</span><br>W_B = nn.Parameter(torch.empty(rank, output_dim)) <span class="hljs-comment"># LoRA weight B</span><br><br><span class="hljs-comment"># Initialization of LoRA weights</span><br>nn.init.kaiming_uniform_(W_A, a=math.sqrt(<span class="hljs-number">5</span>))<br>nn.init.zeros_(W_B)<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">regular_forward_matmul</span>(<span class="hljs-params">x, W</span>):<br>    h = x @ W<br><span class="hljs-keyword">return</span> h<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">lora_forward_matmul</span>(<span class="hljs-params">x, W, W_A, W_B</span>):<br>    h = x @ W  <span class="hljs-comment"># regular matrix multiplication</span><br>    h += x @ W_A @ W_B <span class="hljs-comment"># use LoRA weights</span><br><span class="hljs-keyword">return</span> alpha * h	<span class="hljs-comment"># alpha通常设置为 1</span><br><br></code></pre></td></tr></table></figure>
+<h2 id="6-Towards-a-Unified-View-of-PETL"><a href="#6-Towards-a-Unified-View-of-PETL" class="headerlink" title="6 Towards a Unified View of PETL"></a><strong>6 Towards a Unified View of PETL</strong></h2><p>这篇 ICLR2022 的文章研究了典型的 PEFT 方法，试图将 PEFT 统一到一个框架下，找出它们起作用的具体原因，并进行改进。主要研究了三个问题：</p>
+<ul>
+<li>典型的PEFT方法有什么联系？</li>
+<li>典型的PEFT方法中是哪些关键模块在起作用？</li>
+<li>能否对这些关键模块进行排列组合，找出更有用的 PEFT 方法？</li>
+</ul>
+<p><strong>通用形式</strong><br><img src="https://cdn.nlark.com/yuque/0/2023/png/8420697/1683619049917-a89fbf20-eb7d-4508-a10a-9e897bd58a17.png#averageHue=%23f8f7f4&amp;clientId=uc73c29c9-e133-4&amp;from=paste&amp;id=u23764049&amp;originHeight=1925&amp;originWidth=1080&amp;originalType=url&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=shadow&amp;taskId=uc3a8faad-5bd4-4ae9-8c84-ad83223c9f3&amp;title=" srcset="/img/loading.gif" lazyload alt=""><br>通过对 Prefix Tuning 的推导，得出了和 Adapter Tuning 以及 LoRA 形式一致的形式。</p>
+<p>更近一步地，可以将这些 Tuning 的方法统一在同一套框架下，<br><img src="https://cdn.nlark.com/yuque/0/2023/png/8420697/1683619050919-3b409b90-f784-438f-a670-965ad994b22c.png#averageHue=%23f3f2f0&amp;clientId=uc73c29c9-e133-4&amp;from=paste&amp;id=u82bb61bc&amp;originHeight=289&amp;originWidth=1080&amp;originalType=url&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=shadow&amp;taskId=ud5261d58-b935-4650-9a35-710f06dd7ec&amp;title=" srcset="/img/loading.gif" lazyload alt=""></p>
+<h2 id="PS-PEFT实现"><a href="#PS-PEFT实现" class="headerlink" title="PS: PEFT实现"></a>PS: PEFT实现</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://github.com/huggingface/peft">https://github.com/huggingface/peft</a> huggingface PEFT</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/jxhe/unify-parameter-efficient-tuning">https://github.com/jxhe/unify-parameter-efficient-tuning</a></li>
+</ol>
+<h2 id="PS-Fine-tuning、Instruction-tuning、Prompt-Tuning的区别？"><a href="#PS-Fine-tuning、Instruction-tuning、Prompt-Tuning的区别？" class="headerlink" title="PS: Fine-tuning、Instruction-tuning、Prompt-Tuning的区别？"></a>PS: Fine-tuning、Instruction-tuning、Prompt-Tuning的区别？</h2><ol>
+<li>之前 Fine-tuning 是在某个下游任务 + 少量的 labels → 去微调/适配 PTM，比如针对猫狗分类任务进行微调。Fine Tuning需要有大量的任务相关数据，且可能会导致预训练的通用性能力下降。</li>
+<li>Prompt-tuning 为具体的任务生成一个prompt模板以适应大模型进行微调，例如给定“请分类这张图片是否是猫”作为Prompt，让模型输出是或不是。这种方法可以让模型更好地遵循任务的要求，但是需要手动设计Prompt，且精调后的模型只能应用于特定的单一任务！</li>
+<li>Instruction-tuning 则是在多个已知任务上进行微调（通过自然语言的形式），通过大量的任务指令+大量的 labels → 去适配不同的任务，最后在某个新任务上进行 zero-shot 推理。Instruction Tuning可以减少手动设计Prompt的工作量，同时也能够保持预训练模型的通用性能力。</li>
+</ol>
+<p><img src="https://cdn.nlark.com/yuque/0/2023/webp/8420697/1676959646417-7cb45ab1-1efc-44a2-a3f3-520eaa7d5ac2.webp#averageHue=%23b4d0b3&amp;clientId=u249318b4-ce2d-4&amp;from=paste&amp;id=uceb8bff5&amp;originHeight=372&amp;originWidth=1098&amp;originalType=url&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=shadow&amp;taskId=u96214774-df8f-43ce-92de-a0b50354d07&amp;title=" srcset="/img/loading.gif" lazyload alt=""></p>
+<p>Instruction Tuning 和 Prompt-tuning 的核心一样，就是去发掘语言模型本身具备的知识。而他们的不同点就在于，Prompt是去激发语言模型的<strong>补全能力</strong>，比如给出上半句生成下半句、或者做完形填空，<strong>都还是像在做language model任务</strong>，它的模版是这样的：<br><img src="https://cdn.nlark.com/yuque/0/2023/webp/8420697/1676959646393-4688b64b-5901-4c6e-bea8-507d859e59de.webp#averageHue=%23e7e7e7&amp;clientId=u249318b4-ce2d-4&amp;from=paste&amp;height=76&amp;id=u87afa709&amp;originHeight=116&amp;originWidth=403&amp;originalType=url&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=shadow&amp;taskId=u2b52215a-0a09-4c80-af08-a752c1a144d&amp;title=&amp;width=263" srcset="/img/loading.gif" lazyload alt=""></p>
+<p>而Instruction Tuning则是激发语言模型的<strong>理解能力</strong>，通过给出更明显的指令/指示，让模型去理解并做出正确的action。比如NLI/分类任务：<br><img src="https://cdn.nlark.com/yuque/0/2023/webp/8420697/1676959646493-07a6c2ac-711d-41e7-a761-40a3e3f8bb12.webp#averageHue=%23e3e3e3&amp;clientId=u249318b4-ce2d-4&amp;from=paste&amp;id=u09a22f9f&amp;originHeight=359&amp;originWidth=893&amp;originalType=url&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=shadow&amp;taskId=ub678202e-85f8-4ec6-b965-961b6d63d2a&amp;title=" srcset="/img/loading.gif" lazyload alt=""></p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://lightning.ai/pages/community/article/understanding-llama-adapters/">Understanding Parameter-Efficient Finetuning of Large Language Models: From Prefix Tuning to LLaMA-Adapters</a></li>
+<li><a target="_blank" rel="noopener" href="https://lightning.ai/pages/community/tutorial/lora-llm/">Parameter-Efficient LLM Finetuning With Low-Rank Adaptation (LoRA)</a></li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/PEFT/" class="category-chain-item">PEFT</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E8%BD%AC%E8%BD%BD/">#转载</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>PEFT 技术简介</div>
+      <div>http://example.com/2023/05/18/2023-05-18-PEFT技术简介/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Ning Shixian</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年5月18日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/05/19/2023-05-19-%E6%98%BE%E5%AD%98%E4%BC%98%E5%8C%96%E6%8A%80%E6%9C%AF%E2%86%92LLM%20%E8%AE%AD%E7%BB%83/" title="显存优化技术→LLM 训练">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">显存优化技术→LLM 训练</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/05/09/2023-05-09-StackLLaMA%EF%BC%9A%E7%94%A8%20RLHF%20%E8%AE%AD%E7%BB%83%20LLaMA%20%E7%9A%84%E6%89%8B%E6%8A%8A%E6%89%8B%E6%95%99%E7%A8%8B/" title="StackLLaMA：用 RLHF 训练 LLaMA 的手把手教程">
+                        <span class="hidden-mobile">StackLLaMA：用 RLHF 训练 LLaMA 的手把手教程</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,835 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Ning Shixian">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="ChatGPT并非是凭空就突然有了这么强大的能力，而是OpenAI在语言智能上历经数年的探索和积累，一代代的演进之后，一方面语言模型在几乎大部分的NLP任务上都取得效果，另一方面基于人的反馈学习能够更好的理解需求生成对人更有帮助的内容，同时借助对话式交互的形态，变成一个人人都可以测试的产品（门槛相比API更低），产生巨大的影响力。深入地理解ChatGPT的技术，就需要追溯其背后一代代的技术演进上。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ChatGPT的技术演进">
+<meta property="og:url" content="http://example.com/2023/04/11/2023-04-11-ChatGPT%E7%9A%84%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="ChatGPT并非是凭空就突然有了这么强大的能力，而是OpenAI在语言智能上历经数年的探索和积累，一代代的演进之后，一方面语言模型在几乎大部分的NLP任务上都取得效果，另一方面基于人的反馈学习能够更好的理解需求生成对人更有帮助的内容，同时借助对话式交互的形态，变成一个人人都可以测试的产品（门槛相比API更低），产生巨大的影响力。深入地理解ChatGPT的技术，就需要追溯其背后一代代的技术演进上。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2022/png/8420697/1672281829731-e75f1a6d-41bc-483d-91fc-8f122548f235.png#averageHue=%23f5f3f2&amp;clientId=u9163317e-74b2-4&amp;from=paste&amp;height=331&amp;id=u97999cd9&amp;originHeight=970&amp;originWidth=1402&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=true&amp;size=202512&amp;status=done&amp;style=shadow&amp;taskId=ud2a14934-c9ab-4448-aba1-eaf0c982b17&amp;title=OpenAI%20GPT%20%E7%9A%84%20transformer%20%E8%A7%A3%E7%A0%81%E5%99%A8%E6%A8%A1%E5%9E%8B%E6%9E%B6%E6%9E%84&amp;width=479">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2022/png/8420697/1672281896877-abc09fca-7dec-43e3-a1bd-a4887d43620e.png#averageHue=%23f6f6f6&amp;clientId=u9163317e-74b2-4&amp;from=paste&amp;height=62&amp;id=u3e8b26dd&amp;originHeight=124&amp;originWidth=640&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;size=14996&amp;status=done&amp;style=shadow&amp;taskId=uc9e822a6-ceef-4ec7-96e5-b4cfe0e124d&amp;title=&amp;width=320">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2022/png/8420697/1672281954634-8f27dc12-3d69-4180-9bd6-a42abe94f826.png#averageHue=%23f7f7f7&amp;clientId=u9163317e-74b2-4&amp;from=paste&amp;height=144&amp;id=ue57f0e0e&amp;originHeight=316&amp;originWidth=1132&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;size=48559&amp;status=done&amp;style=shadow&amp;taskId=u975a0e27-0c62-45a6-bbb9-df4508743c3&amp;title=&amp;width=516">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/png/8420697/1676605233194-70f023ed-c1b8-4e17-9fca-cfc9181b1a89.png#averageHue=%23d0cfcd&amp;clientId=udee3c753-57fa-4&amp;from=paste&amp;height=121&amp;id=u453315dc&amp;originHeight=242&amp;originWidth=1262&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=40361&amp;status=done&amp;style=shadow&amp;taskId=u6ae89786-b8cb-47b8-9b28-441ba6b89c6&amp;title=&amp;width=631">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/png/8420697/1675760256361-e44b1848-cd5a-4495-a7c6-7e0776877262.png#averageHue=%23efecec&amp;clientId=u3925a0ab-107b-4&amp;from=paste&amp;height=126&amp;id=hjA7h&amp;originHeight=418&amp;originWidth=1080&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;size=153068&amp;status=done&amp;style=shadow&amp;taskId=ud02ef8a8-0f40-4893-8bdb-5258569838a&amp;title=&amp;width=325">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/png/8420697/1676432732374-e50ab0ef-2f15-44f1-a8cc-8845e4b9a349.png#averageHue=%23282421&amp;clientId=u79576e9a-fe17-4&amp;from=paste&amp;height=571&amp;id=u4f2bc43b&amp;originHeight=1142&amp;originWidth=2046&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=510490&amp;status=done&amp;style=shadow&amp;taskId=u6635dc6f-39fd-4332-afda-5793ca14a26&amp;title=&amp;width=1023">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/png/8420697/1676605265467-9976ca55-28ea-4222-9656-3df4b37aa117.png#averageHue=%23e2dfcb&amp;clientId=udee3c753-57fa-4&amp;from=paste&amp;height=118&amp;id=u85aaa659&amp;originHeight=236&amp;originWidth=1224&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=58124&amp;status=done&amp;style=shadow&amp;taskId=ub86d6480-a23c-4281-8dfb-2046df1f976&amp;title=&amp;width=612">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/png/8420697/1676432123838-cea46241-a6a8-4be3-ad71-d482088c7988.png#averageHue=%23858681&amp;clientId=uba71ec96-a76d-4&amp;from=paste&amp;height=567&amp;id=ue6a14582&amp;originHeight=1134&amp;originWidth=2034&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=464176&amp;status=done&amp;style=shadow&amp;taskId=u8840b078-e24d-46fe-9759-f4b00a310e9&amp;title=&amp;width=1017">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/png/8420697/1675750697226-79b78665-35df-4773-b4b8-f6194f93b474.png#averageHue=%23f6f3f3&amp;clientId=u29f074ce-88ab-4&amp;from=paste&amp;height=282&amp;id=UhCl6&amp;originHeight=805&amp;originWidth=1340&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=true&amp;size=213551&amp;status=done&amp;style=shadow&amp;taskId=u2b5b8786-dcdf-42b4-8b5a-5ac5098d5f7&amp;title=%E4%BB%8E%202020%20%E7%89%88%20GPT-3%20%E5%88%B0%202022%20%E7%89%88%20ChatGPT&amp;width=469">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/png/8420697/1676432568291-73b95a24-7479-47ae-bdce-6dcad1447025.png#averageHue=%23100f0d&amp;clientId=u79576e9a-fe17-4&amp;from=paste&amp;height=527&amp;id=u9ab89631&amp;originHeight=1054&amp;originWidth=2034&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=360707&amp;status=done&amp;style=shadow&amp;taskId=u8979d35d-f571-4e82-91ee-482fb3423e7&amp;title=&amp;width=1017">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/png/8420697/1676436954471-ad0a93a0-5356-4d39-9169-bcb47e2692ec.png#averageHue=%23ededec&amp;clientId=u8244e167-e9c6-4&amp;from=paste&amp;height=439&amp;id=u034e8162&amp;originHeight=878&amp;originWidth=1810&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=367835&amp;status=done&amp;style=shadow&amp;taskId=u528708ff-7a05-4f73-b1da-78d113093cd&amp;title=&amp;width=905">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/png/8420697/1676437034474-c04fb29c-aa07-450c-9fdf-5d42e09dad22.png#averageHue=%23e9e9e8&amp;clientId=u8244e167-e9c6-4&amp;from=paste&amp;height=327&amp;id=u08b924a4&amp;originHeight=654&amp;originWidth=1798&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=288299&amp;status=done&amp;style=shadow&amp;taskId=u7b1936a3-bb0d-4759-b7ee-97e5909ee13&amp;title=&amp;width=899">
+<meta property="article:published_time" content="2023-04-11T07:24:20.000Z">
+<meta property="article:modified_time" content="2023-05-29T06:10:16.697Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="原创">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://cdn.nlark.com/yuque/0/2022/png/8420697/1672281829731-e75f1a6d-41bc-483d-91fc-8f122548f235.png#averageHue=%23f5f3f2&amp;clientId=u9163317e-74b2-4&amp;from=paste&amp;height=331&amp;id=u97999cd9&amp;originHeight=970&amp;originWidth=1402&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=true&amp;size=202512&amp;status=done&amp;style=shadow&amp;taskId=ud2a14934-c9ab-4448-aba1-eaf0c982b17&amp;title=OpenAI%20GPT%20%E7%9A%84%20transformer%20%E8%A7%A3%E7%A0%81%E5%99%A8%E6%A8%A1%E5%9E%8B%E6%9E%B6%E6%9E%84&amp;width=479">
+  
+  
+  
+  <title>ChatGPT的技术演进 - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="ChatGPT的技术演进"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-04-11 15:24" pubdate>
+          2023年4月11日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          36 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">ChatGPT的技术演进</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>ChatGPT并非是凭空就突然有了这么强大的能力，而是OpenAI在语言智能上历经数年的探索和积累，一代代的演进之后，一方面语言模型在几乎大部分的NLP任务上都取得效果，另一方面基于人的反馈学习能够更好的理解需求生成对人更有帮助的内容，同时借助对话式交互的形态，变成一个人人都可以测试的产品（门槛相比API更低），产生巨大的影响力。深入地理解ChatGPT的技术，就需要追溯其背后一代代的技术演进上。</p>
+<p><strong>ChatGPT 的进化历程</strong></p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://yaofu.notion.site/GPT-3-5-360081d91ec245f29029d37b54573756">拆解追溯 GPT-3.5 各项能力的起源</a></p>
+</blockquote>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th>发布时间</th>
+<th>参数量</th>
+<th>预训练数据量</th>
+<th>能力</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GPT</td>
+<td>2018 年 6 月</td>
+<td>1.17 亿</td>
+<td>约 5GB（BooksCorpus）</td>
+<td>12 层、12 个头</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>预训练+监督微调 |<br>| GPT-2 | 2019 年 2 月 | 15 亿 | 40GB | 48 层、1600 维、<strong> </strong>zero-shot</p>
+<ul>
+<li>fine-tuning微调</li>
+</ul>
+<ul>
+<li>zero-shot(零次学习)</li>
+<li>multitask(prompt多任务) |<br>| GPT-3 | 2020 年 5 月 | 1750 亿 | 45TB | 96 层、96 个头、few-shot</li>
+<li>in-context learning (上下文学习) |<br>| CodeX | 2021 年 7 月 | 基于GPT3 | 159G | + 代码理解</li>
+<li>代码生成<br>++ 复杂推理 / 思维链</li>
+<li>长距离的依赖  (很可能) |<br>| InstructGPT | 2022 年 3 月 | 13 亿<br>(已优于175B 的GPT3) |  |  + 指令微调<br>++ 遵循人类指令<ul>
+<li>零样本生成</li>
+</ul>
+<ul>
+<li>上下文学习 |<br>| ChatGPT | 2022 年 11 月 | 15 亿 |  |  + 指令微调 (RLHF)</li>
+</ul>
+<ul>
+<li>增加了Chat对话聊天功能<br>++ 建模对话历史的能力<br>— 上下文学习 |</li>
+</ul>
+</li>
+</ul>
+<p><strong>*遵循指令和零样本泛化的能力都可能已经存在于基础模型</strong>中，后来才通过指令微调来<strong>解锁</strong> （<strong>而不是注入）</strong><br><strong>*模型的复杂推理能力可能是在预训练阶段通过代码数据注入</strong></p>
+<h2 id="GPT-1"><a href="#GPT-1" class="headerlink" title="GPT-1"></a>GPT-1</h2><blockquote>
+<p>Improving Language Understanding by Generative Pre-Training</p>
+</blockquote>
+<p>2018年6月,OpenAI 发布论文Improving Language Understanding by Generative Pre-Training》(通过生成式预训练提升语言理解能力)，首次提出GPT模型(Generative Pre-Training)。GPT系列模型的主要架构都是使用 Transformer中的decoder，通常我们把这种架构归类为自回归类AR(Autoregressive)，如下图所示：</p>
+<p><img src="https://cdn.nlark.com/yuque/0/2022/png/8420697/1672281829731-e75f1a6d-41bc-483d-91fc-8f122548f235.png#averageHue=%23f5f3f2&amp;clientId=u9163317e-74b2-4&amp;from=paste&amp;height=331&amp;id=u97999cd9&amp;originHeight=970&amp;originWidth=1402&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=true&amp;size=202512&amp;status=done&amp;style=shadow&amp;taskId=ud2a14934-c9ab-4448-aba1-eaf0c982b17&amp;title=OpenAI%20GPT%20%E7%9A%84%20transformer%20%E8%A7%A3%E7%A0%81%E5%99%A8%E6%A8%A1%E5%9E%8B%E6%9E%B6%E6%9E%84&amp;width=479" srcset="/img/loading.gif" lazyload alt="OpenAI GPT 的 transformer 解码器模型架构" title="OpenAI GPT 的 transformer 解码器模型架构"><br>GPT-1 <strong>训练了一个12层的decoder解码器，</strong>使用单词的<strong>上文</strong>预测next单词（单向），从而使模型<strong>更简单、计算更快</strong>，<strong>更适合于生成任务</strong>。GPT-1 是「预训练+微调」范式的奠基者，先通过<strong>大量</strong>的数据进行无监督预训练(Unsupervised pre-training)，再通过<strong>少量</strong>有监督微调（Supervised fine-tunning)，来修正其理解能力。</p>
+<ul>
+<li>预训练损失为负对数似然概率：</li>
+</ul>
+<p><img src="https://cdn.nlark.com/yuque/0/2022/png/8420697/1672281896877-abc09fca-7dec-43e3-a1bd-a4887d43620e.png#averageHue=%23f6f6f6&amp;clientId=u9163317e-74b2-4&amp;from=paste&amp;height=62&amp;id=u3e8b26dd&amp;originHeight=124&amp;originWidth=640&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;size=14996&amp;status=done&amp;style=shadow&amp;taskId=uc9e822a6-ceef-4ec7-96e5-b4cfe0e124d&amp;title=&amp;width=320" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<ul>
+<li>微调损失是求实际标签的负对数似然概率的最小化，此外作者发现加上 LM 损失作为辅助损失会有好处</li>
+</ul>
+<p><img src="https://cdn.nlark.com/yuque/0/2022/png/8420697/1672281954634-8f27dc12-3d69-4180-9bd6-a42abe94f826.png#averageHue=%23f7f7f7&amp;clientId=u9163317e-74b2-4&amp;from=paste&amp;height=144&amp;id=ue57f0e0e&amp;originHeight=316&amp;originWidth=1132&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;size=48559&amp;status=done&amp;style=shadow&amp;taskId=u975a0e27-0c62-45a6-bbb9-df4508743c3&amp;title=&amp;width=516" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<p><strong>总结</strong>：当时（2018.6）看到这样一个通用框架在大多数语言任务上取得 SOTA，让人感觉很巧妙且倍受鼓舞。但是 GPT1 参数规模(0.117B)还不够大，效果上虽然不少能够达到sota但是还不够好。</p>
+<h2 id="GPT-2"><a href="#GPT-2" class="headerlink" title="GPT-2"></a>GPT-2</h2><blockquote>
+<p>“Language Models are Unsupervised Multitask Learners”.</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://blog.openai.com/better-language-models/">OpenAI</a> <a target="_blank" rel="noopener" href="https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf">GPT-2</a> 直接继承自 GPT。GPT-2 扩大参数规模达到 15 亿参数，比原 GPT 大了 10 多倍。在受测的 8 个语言模型数据集上拿了 7 个 SOTA，采用 _zero-shot transfer setting _不需要任何任务微调。</p>
+<p>GPT-2 的预训练依旧是 LM，并在两个方面进行优化：</p>
+<ol>
+<li><strong>扩大参数规模</strong>：采用reddit上优质的数据 800万 Web 页面（40GB大小），把模型参数规模扩大到1.5B、Transfomer堆叠至48层；</li>
+<li><strong>更自然的任务模型的融合方式</strong>：不管是GPT-1还是BERT都需要 fine-tuning 才能在下游取得较好的效果，而 GPT-2 将<strong>有监督</strong>微调阶段给直接去掉了，它把下游的任务通过prompt的方式也加到预训练的模型中。进而让模型获得zero-shot的能力。比如，翻译任务可以表示成 “把中文翻译成英文，你好，hello”。同时增加多任务训练。<br>| <img src="https://cdn.nlark.com/yuque/0/2023/png/8420697/1676605233194-70f023ed-c1b8-4e17-9fca-cfc9181b1a89.png#averageHue=%23d0cfcd&amp;clientId=udee3c753-57fa-4&amp;from=paste&amp;height=121&amp;id=u453315dc&amp;originHeight=242&amp;originWidth=1262&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=40361&amp;status=done&amp;style=shadow&amp;taskId=u6ae89786-b8cb-47b8-9b28-441ba6b89c6&amp;title=&amp;width=631" srcset="/img/loading.gif" lazyload alt="image.png"> | <img src="https://cdn.nlark.com/yuque/0/2023/png/8420697/1675760256361-e44b1848-cd5a-4495-a7c6-7e0776877262.png#averageHue=%23efecec&amp;clientId=u3925a0ab-107b-4&amp;from=paste&amp;height=126&amp;id=hjA7h&amp;originHeight=418&amp;originWidth=1080&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=false&amp;size=153068&amp;status=done&amp;style=shadow&amp;taskId=ud02ef8a8-0f40-4893-8bdb-5258569838a&amp;title=&amp;width=325" srcset="/img/loading.gif" lazyload alt="image.png"> |<br>| —- | —- |</li>
+</ol>
+<p><strong>为什么这么调整？试图解决zero-shot问题</strong><br><strong>zero-shot(零次学习)</strong>是一个什么问题呢？简单可理解为推理能力。就是指面对未知事物时，<strong>AI也能自动认识它，即具备推理能力</strong>。</p>
+<p><strong>multitask多任务如何理解？</strong><br>主张不训练专用AI模型，而是喂取了海量数据后，任意任务都可完成。</p>
+<p>虽然从效果上来看GPT-2在不少下游的finetune任务上也没有比BERT优秀太多，但是更自然的任务融合方式却是后续ChatGPT对instruction的理解能力的基石之一。但是因为其主打的zero-shot亮点上效果并非达到非常可用状态，因此GPT-2在业内的影响并不够大。</p>
+<h2 id="GPT-3"><a href="#GPT-3" class="headerlink" title="GPT-3"></a>GPT-3</h2><blockquote>
+<p>Language Models are Few-Shot Learners</p>
+</blockquote>
+<p><img src="https://cdn.nlark.com/yuque/0/2023/png/8420697/1676432732374-e50ab0ef-2f15-44f1-a8cc-8845e4b9a349.png#averageHue=%23282421&amp;clientId=u79576e9a-fe17-4&amp;from=paste&amp;height=571&amp;id=u4f2bc43b&amp;originHeight=1142&amp;originWidth=2046&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=510490&amp;status=done&amp;style=shadow&amp;taskId=u6635dc6f-39fd-4332-afda-5793ca14a26&amp;title=&amp;width=1023" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<p>前面提到GPT-2在追求<strong>无监督、zero-shot</strong>（零次学习），但是其实在GPT-2论文中，OpenAI也提出结果不达预期。说白了，<strong>zero-shot（零次学习）不靠谱。</strong>于是GPT-3转变思路，使用 meta-learning 和 in-context learning 的思想，让模型在few-shot learning上先能够取得较好的效果。</p>
+<p>我们先看看 GPT-3 是如何准备和使用预训练数据的。GPT-3 在 300B 令牌上进行训练，其中 60% 来自过滤后的 Common Crawl，其他组件包括 webtext2（训练 GPT2 的语料库）、Books1、Books2 和 Wikipidia。GPT-3 的更高版本也在代码数据（例如 Github 代码）上进行训练。</p>
+<p>同时，GPT-3在GPT-2的实验中发现随着参数规模的增大其效果的增长曲线并没有看到变缓的趋势，因此选择继续扩大参数规模，用更多优质的数据。GPT-3采用了过滤前45TB的压缩文本，并且在<strong>过滤后也仍有570GB的海量数据</strong>。在模型参数上，<strong>从GPT-2的15亿，提升到1750亿，翻了110多倍</strong>；Transformer Layer也从48提升到96。</p>
+<p><img src="https://cdn.nlark.com/yuque/0/2023/png/8420697/1676605265467-9976ca55-28ea-4222-9656-3df4b37aa117.png#averageHue=%23e2dfcb&amp;clientId=udee3c753-57fa-4&amp;from=paste&amp;height=118&amp;id=u85aaa659&amp;originHeight=236&amp;originWidth=1224&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=58124&amp;status=done&amp;style=shadow&amp;taskId=ub86d6480-a23c-4281-8dfb-2046df1f976&amp;title=&amp;width=612" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<p><a target="_blank" rel="noopener" href="https://jingfengyang.github.io/gpt"><strong>为什么 GPT-3 的所有公开复制都失败了？</strong></a><br>OPT-175B 和 BLOOM-176B 失败的可能原因有多种。我将它们分为两部分：</p>
+<ol>
+<li>预训练数据：要求是①去重以避免记忆/过拟合，②数据过滤以获得更高质量的数据，以及③数据多样性以确保LLM的泛化性。但是，不幸的是，PaLM 和 GPT-3 如何预处理数据或原始预训练数据的细节尚未披露，这使得公共社区难以重现它们。</li>
+<li>训练策略：包括①训练框架的不同，需要 ZeRO-fashion 数据并行（分布式优化器）和模型并行（包括张量并行、流水线并行和有时序列并行）；②训练过程中的修改（训练中的调整并从最近的检查点重新开始训练）；③模型架构/训练设置（优化器的修改版、softmax 的优化版等）</li>
+</ol>
+<h2 id="CodeX（2021-07）"><a href="#CodeX（2021-07）" class="headerlink" title="CodeX（2021.07）"></a>CodeX（2021.07）</h2><blockquote>
+<p>Evaluating Large Language Models Trained on Code</p>
+</blockquote>
+<p>codex系列的演进主要是在GPT-3的基础上对写代码的任务进行融合训练，</p>
+<ul>
+<li>训练数据集：github上的语料（做了比较多的精心筛选）， 159G</li>
+<li>微调数据集：变成竞赛网站的问题和答案</li>
+<li>测试数据集： HumanEval</li>
+</ul>
+<p>这里面有一个比较意思的点是<strong>作者发现用GPT-3作为底座模型进行训练，并没有在code任务上取得增益的效果，但是收敛速度变快了，训练代价少了，我的推断是代码的这个任务，作者已经使用了比较多的数据。</strong>另外一个非常值得分享的实验结论是：如果用pass@k(指返回的生成K个结果中能通过正确代码测试的比例)，而其中pass@1 其实仅为30%左右，但是pass@100 能达到70%+，那么就非常可用了。因此作者使用了一些排序的方式对结果进行重排序能够提升Top1的效果，而另外一个方面也说明大模型已经有非常多的知识，怎么使其正确的输出十分关键。</p>
+<p>GPT-3这个参数规模量级的模型已经具备很强大的知识，但是拥有的知识并不能很好很准确的面向人们对其的诉求而输出高质量的结果（<strong>OpenAI他们称之为Alignment Failure</strong>），因此如何进行human alignment变成更有性价比的演进方向。</p>
+<h2 id="InstructGPT"><a href="#InstructGPT" class="headerlink" title="InstructGPT*"></a><a target="_blank" rel="noopener" href="https://www.yuque.com/ningshixian/pz10h0/sftr4yfk57fxday1">InstructGPT*</a></h2><p>InstructGPT为解决大模型生成回复不符合人们预期这一问题，分别从数据和模型两方面进行了设计，数据层面，聘请标注人员标注一部分训练数据（Prompt-Respnse）用于微调GPT3；而方法层面使用基于人工反馈的强化学习方法(RLHF)对模型进一步进行微调，使其生成结果更符合人类预期. InstructGPT 的具体介绍可到 <a target="_blank" rel="noopener" href="https://www.yuque.com/ningshixian/pz10h0/sftr4yfk57fxday1?view=doc_embed">InstructGPT</a></p>
+<h2 id="ChatGPT"><a href="#ChatGPT" class="headerlink" title="ChatGPT"></a>ChatGPT</h2><blockquote>
+<p>对话语料训练打造更自然更具影响力的知识型对话产品</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.yuque.com/ningshixian/pz10h0/lhxp747ixb2c61ns">ChatGPT 是如何工作的？</a><br><a target="_blank" rel="noopener" href="https://yaofu.notion.site/GPT-3-5-360081d91ec245f29029d37b54573756">拆解追溯 GPT-3.5 各项能力的起源</a></p>
+<p><img src="https://cdn.nlark.com/yuque/0/2023/png/8420697/1676432123838-cea46241-a6a8-4be3-ad71-d482088c7988.png#averageHue=%23858681&amp;clientId=uba71ec96-a76d-4&amp;from=paste&amp;height=567&amp;id=ue6a14582&amp;originHeight=1134&amp;originWidth=2034&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=464176&amp;status=done&amp;style=shadow&amp;taskId=u8840b078-e24d-46fe-9759-f4b00a310e9&amp;title=&amp;width=1017" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<p>ChatGPT 与 InstructGPT 非常相似。ChatGPT 和 InstructGPT 属于”孪生兄弟”，二者在模型结构、训练方式上都完全一致——-&gt;采用人工反馈的方式，利用强化学习的方法去进一步微调大模型，从而使大模型生成更加符合人类预期的回复。ChatGPT 与 InstructGPT 的差异在于采集数据的方式上</p>
+<p><img src="https://cdn.nlark.com/yuque/0/2023/png/8420697/1675750697226-79b78665-35df-4773-b4b8-f6194f93b474.png#averageHue=%23f6f3f3&amp;clientId=u29f074ce-88ab-4&amp;from=paste&amp;height=282&amp;id=UhCl6&amp;originHeight=805&amp;originWidth=1340&amp;originalType=binary&amp;ratio=1&amp;rotation=0&amp;showTitle=true&amp;size=213551&amp;status=done&amp;style=shadow&amp;taskId=u2b5b8786-dcdf-42b4-8b5a-5ac5098d5f7&amp;title=%E4%BB%8E%202020%20%E7%89%88%20GPT-3%20%E5%88%B0%202022%20%E7%89%88%20ChatGPT&amp;width=469" srcset="/img/loading.gif" lazyload alt="从 2020 版 GPT-3 到 2022 版 ChatGPT" title="从 2020 版 GPT-3 到 2022 版 ChatGPT"><br><img src="https://cdn.nlark.com/yuque/0/2023/png/8420697/1676432568291-73b95a24-7479-47ae-bdce-6dcad1447025.png#averageHue=%23100f0d&amp;clientId=u79576e9a-fe17-4&amp;from=paste&amp;height=527&amp;id=u9ab89631&amp;originHeight=1054&amp;originWidth=2034&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=360707&amp;status=done&amp;style=shadow&amp;taskId=u8979d35d-f571-4e82-91ee-482fb3423e7&amp;title=&amp;width=1017" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<p><img src="https://cdn.nlark.com/yuque/0/2023/png/8420697/1676436954471-ad0a93a0-5356-4d39-9169-bcb47e2692ec.png#averageHue=%23ededec&amp;clientId=u8244e167-e9c6-4&amp;from=paste&amp;height=439&amp;id=u034e8162&amp;originHeight=878&amp;originWidth=1810&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=367835&amp;status=done&amp;style=shadow&amp;taskId=u528708ff-7a05-4f73-b1da-78d113093cd&amp;title=&amp;width=905" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<p><img src="https://cdn.nlark.com/yuque/0/2023/png/8420697/1676437034474-c04fb29c-aa07-450c-9fdf-5d42e09dad22.png#averageHue=%23e9e9e8&amp;clientId=u8244e167-e9c6-4&amp;from=paste&amp;height=327&amp;id=u08b924a4&amp;originHeight=654&amp;originWidth=1798&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=288299&amp;status=done&amp;style=shadow&amp;taskId=u7b1936a3-bb0d-4759-b7ee-97e5909ee13&amp;title=&amp;width=899" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>我们可以得出结论：</p>
+<ul>
+<li>语言生成能力 + 基础世界知识 + 上下文学习都是来自于预训练（<code>davinci</code>）</li>
+<li>存储大量知识的能力来自 1750 亿的参数量。</li>
+<li>遵循指令和泛化到新任务的能力来自于扩大指令学习中指令的数量（<code>Davinci-instruct-beta</code>)</li>
+<li>执行复杂推理的能力很可能来自于代码训练（<code>code-davinci-002</code>）</li>
+<li>生成中立、客观的能力、安全和翔实的答案来自与人类的对齐。具体来说： <ul>
+<li>如果是监督学习版，得到的模型是<code>text-davinci-002</code></li>
+<li>如果是强化学习版 (RLHF) ，得到的模型是<code>text-davinci-003</code></li>
+<li>无论是有监督还是 RLHF ，模型在很多任务的性能都无法超过 code-davinci-002 ，这种因为对齐而造成性能衰退的现象叫做对齐税。</li>
+</ul>
+</li>
+<li>对话能力也来自于 RLHF（<code>ChatGPT</code>），具体来说它牺牲了上下文学习的能力，来换取： <ul>
+<li>建模对话历史</li>
+<li>增加对话信息量</li>
+<li>拒绝模型知识范围之外的问题</li>
+</ul>
+</li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/ChatGPT/" class="category-chain-item">ChatGPT</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%8E%9F%E5%88%9B/">#原创</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>ChatGPT的技术演进</div>
+      <div>http://example.com/2023/04/11/2023-04-11-ChatGPT的技术演进/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Ning Shixian</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年4月11日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/04/14/2023-04-14-LlamaIndex%20%E5%AE%9E%E6%88%98/" title="LlamaIndex 实战">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">LlamaIndex 实战</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/04/11/2023-04-11-InstructGPT/" title="InstructGPT">
+                        <span class="hidden-mobile">InstructGPT</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

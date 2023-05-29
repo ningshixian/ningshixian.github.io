@@ -1,0 +1,857 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Ning Shixian">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="LLaMA 概要与实践LLaMA(Large Language Model Meta AI) 是由 Meta AI 发布了一款全新的大型语言模型，共有7B、13B、33B、65B 四种版本，其模型参数如下表所示： LLaMA模型参数表 与原始的 transformer Decoder 相比，LLaMA主要有以下改进：  层归一化(Pre-normalization)[GPT3]  为了提高训练的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LLAMA Fine-tune">
+<meta property="og:url" content="http://example.com/2023/05/24/2023-05-24-LLAMA%20Fine-tune/index.html">
+<meta property="og:site_name" content="神的个人博客">
+<meta property="og:description" content="LLaMA 概要与实践LLaMA(Large Language Model Meta AI) 是由 Meta AI 发布了一款全新的大型语言模型，共有7B、13B、33B、65B 四种版本，其模型参数如下表所示： LLaMA模型参数表 与原始的 transformer Decoder 相比，LLaMA主要有以下改进：  层归一化(Pre-normalization)[GPT3]  为了提高训练的">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/png/8420697/1684220220446-a7e6cabc-c5e8-4480-9bfb-7927404b00fc.png#averageHue=%23e2e4e2&amp;clientId=u14cfc243-2587-4&amp;from=paste&amp;height=444&amp;id=u6fa4cec8&amp;originHeight=888&amp;originWidth=1618&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=1386239&amp;status=done&amp;style=none&amp;taskId=u0a62181e-761f-4213-9993-684d3e56e35&amp;title=&amp;width=809">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/webp/8420697/1684207070641-3ce1d18c-1216-4502-956f-ebf9fe04187d.webp#averageHue=%23f8f8f7&amp;clientId=u078d6dd6-358a-4&amp;from=paste&amp;id=uc92d0954&amp;originHeight=333&amp;originWidth=1146&amp;originalType=url&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;taskId=u5cb7b04a-5288-49f4-b4fe-9c180726018&amp;title=">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/png/8420697/1684211664875-dc290b6f-a46e-4cbf-87dd-0ae7990e8f44.png#averageHue=%23f2f0f0&amp;clientId=u96913c65-11e4-4&amp;from=paste&amp;height=166&amp;id=u0627d089&amp;originHeight=331&amp;originWidth=642&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=33520&amp;status=done&amp;style=shadow&amp;taskId=u56dfa02d-4b85-4587-b4e1-04b2c4baff7&amp;title=&amp;width=321">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/png/8420697/1684207329875-488932b0-e38e-4dab-ab22-bc791b5f7f0b.png#averageHue=%23efefef&amp;clientId=u078d6dd6-358a-4&amp;from=paste&amp;height=65&amp;id=u9bca5a8d&amp;originHeight=166&amp;originWidth=1054&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=76977&amp;status=done&amp;style=none&amp;taskId=u295e9ce4-229e-4741-99fe-0ddf352f0f9&amp;title=&amp;width=413">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/png/8420697/1684222735151-128e0494-5b26-4b88-b067-2b8f9df6b52f.png#averageHue=%23f6f6f6&amp;clientId=u0c3a6c1b-6fad-4&amp;from=paste&amp;height=355&amp;id=u9e1078e2&amp;originHeight=710&amp;originWidth=2872&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=485672&amp;status=done&amp;style=none&amp;taskId=u31e19500-a354-45ba-8fa7-a28c48a069a&amp;title=&amp;width=1436">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/png/8420697/1683613072458-56ef8d72-663d-4ece-8782-eca26b2a42f8.png#averageHue=%23c0daa9&amp;clientId=u9f88756d-728d-4&amp;from=paste&amp;height=191&amp;id=FG5HD&amp;originHeight=382&amp;originWidth=1080&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=224585&amp;status=done&amp;style=none&amp;taskId=u77004fd6-7e41-4213-abe9-ffe3765fe22&amp;title=&amp;width=540">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2023/png/8420697/1684213508213-958e82f7-2b59-4fad-8e9d-3cd2d0dec29f.png#averageHue=%23eaeaea&amp;clientId=u7aaa47d5-f260-4&amp;from=paste&amp;height=315&amp;id=ufbca2b04&amp;originHeight=629&amp;originWidth=1440&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=499134&amp;status=done&amp;style=none&amp;taskId=u3555f722-1476-4a4c-b4b8-1fb7da68453&amp;title=&amp;width=720">
+<meta property="article:published_time" content="2023-05-24T07:24:20.000Z">
+<meta property="article:modified_time" content="2023-05-29T06:06:28.711Z">
+<meta property="article:author" content="Ning Shixian">
+<meta property="article:tag" content="原创">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://cdn.nlark.com/yuque/0/2023/png/8420697/1684220220446-a7e6cabc-c5e8-4480-9bfb-7927404b00fc.png#averageHue=%23e2e4e2&amp;clientId=u14cfc243-2587-4&amp;from=paste&amp;height=444&amp;id=u6fa4cec8&amp;originHeight=888&amp;originWidth=1618&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=1386239&amp;status=done&amp;style=none&amp;taskId=u0a62181e-761f-4213-9993-684d3e56e35&amp;title=&amp;width=809">
+  
+  
+  
+  <title>LLAMA Fine-tune - 神的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>神的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="LLAMA Fine-tune"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-05-24 15:24" pubdate>
+          2023年5月24日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          13k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          110 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">LLAMA Fine-tune</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p><img src="https://cdn.nlark.com/yuque/0/2023/png/8420697/1684220220446-a7e6cabc-c5e8-4480-9bfb-7927404b00fc.png#averageHue=%23e2e4e2&amp;clientId=u14cfc243-2587-4&amp;from=paste&amp;height=444&amp;id=u6fa4cec8&amp;originHeight=888&amp;originWidth=1618&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=1386239&amp;status=done&amp;style=none&amp;taskId=u0a62181e-761f-4213-9993-684d3e56e35&amp;title=&amp;width=809" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<h2 id="LLaMA-概要与实践"><a href="#LLaMA-概要与实践" class="headerlink" title="LLaMA 概要与实践"></a>LLaMA 概要与实践</h2><p>LLaMA(Large Language Model Meta AI) 是由 Meta AI 发布了一款全新的大型语言模型，共有7B、13B、33B、65B 四种版本，其模型参数如下表所示：</p>
+<p><img src="https://cdn.nlark.com/yuque/0/2023/webp/8420697/1684207070641-3ce1d18c-1216-4502-956f-ebf9fe04187d.webp#averageHue=%23f8f8f7&amp;clientId=u078d6dd6-358a-4&amp;from=paste&amp;id=uc92d0954&amp;originHeight=333&amp;originWidth=1146&amp;originalType=url&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;status=done&amp;style=none&amp;taskId=u5cb7b04a-5288-49f4-b4fe-9c180726018&amp;title=" srcset="/img/loading.gif" lazyload alt=""><br>LLaMA模型参数表</p>
+<p>与原始的 transformer Decoder 相比，LLaMA主要有以下改进：</p>
+<ul>
+<li><strong>层归一化(Pre-normalization)[GPT3]</strong></li>
+</ul>
+<p>为了提高训练的稳定性，LLaMA 使用了Pre-norm，即对每个transformer子层的输入进行归一化，而不是对输出进行归一化。同时使用<a href="https://link.zhihu.com/?target=https%3A//github.com/huggingface/transformers/blob/main/src/transformers/models/llama/modeling_llama.py%23L74">RMSNorm</a>归一化函数。<br><img src="https://cdn.nlark.com/yuque/0/2023/png/8420697/1684211664875-dc290b6f-a46e-4cbf-87dd-0ae7990e8f44.png#averageHue=%23f2f0f0&amp;clientId=u96913c65-11e4-4&amp;from=paste&amp;height=166&amp;id=u0627d089&amp;originHeight=331&amp;originWidth=642&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=33520&amp;status=done&amp;style=shadow&amp;taskId=u56dfa02d-4b85-4587-b4e1-04b2c4baff7&amp;title=&amp;width=321" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<ul>
+<li><strong>SwiGLU激活函数[PaLM]</strong></li>
+</ul>
+<p>LLaMA用SwiGLU激活函数取代ReLU非线性，以提高性能。SwiGLU激活函数的实现如下：<br><img src="https://cdn.nlark.com/yuque/0/2023/png/8420697/1684207329875-488932b0-e38e-4dab-ab22-bc791b5f7f0b.png#averageHue=%23efefef&amp;clientId=u078d6dd6-358a-4&amp;from=paste&amp;height=65&amp;id=u9bca5a8d&amp;originHeight=166&amp;originWidth=1054&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=76977&amp;status=done&amp;style=none&amp;taskId=u295e9ce4-229e-4741-99fe-0ddf352f0f9&amp;title=&amp;width=413" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<ul>
+<li><strong>Rotary Positional Embedding (RoPE) [RoFormer]</strong></li>
+</ul>
+<p>LLaMA删除了绝对位置嵌入，取而代之的是在网络的每一层添加旋转位置嵌入（<a target="_blank" rel="noopener" href="https://spaces.ac.cn/archives/8265">RoPE</a>），RoPE的实现参见 <a target="_blank" rel="noopener" href="https://nn.labml.ai/transformers/rope/index.html">https://nn.labml.ai/transformers/rope/index.html</a></p>
+<h2 id="Alpaca-使用小成本训练大模型"><a href="#Alpaca-使用小成本训练大模型" class="headerlink" title="Alpaca 使用小成本训练大模型"></a>Alpaca 使用小成本训练大模型</h2><blockquote>
+<p>Standford Alpaca 地址：<a href="https://link.zhihu.com/?target=https%3A//github.com/tatsu-lab/stanford_alpaca">https://github.com/tatsu-lab/stanford_alpaca</a></p>
+</blockquote>
+<p>如下图所示，Stanford的研究者将 175 个人工设计的指令任务作为种子，使用 text-davinci-003，以 <a href="https://link.zhihu.com/?target=https%3A//github.com/yizhongw/self-instruct">self-instruct</a> 方式随机生成 52K 指令，以此来微调 LLaMA 7B，这个数据集本身还不是很干净导致Alpaca-lora的老哥们后来还给它清洗了一遍。<br><img src="https://cdn.nlark.com/yuque/0/2023/png/8420697/1684222735151-128e0494-5b26-4b88-b067-2b8f9df6b52f.png#averageHue=%23f6f6f6&amp;clientId=u0c3a6c1b-6fad-4&amp;from=paste&amp;height=355&amp;id=u9e1078e2&amp;originHeight=710&amp;originWidth=2872&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=485672&amp;status=done&amp;style=none&amp;taskId=u31e19500-a354-45ba-8fa7-a28c48a069a&amp;title=&amp;width=1436" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<p>Alpaca精悍于：</p>
+<ol>
+<li>直接嫖了Meta开源模型Llama-7B，在 8 块 80GB A100 显卡，训练 3 小时；</li>
+<li>直接嫖了ChatGPT生成可靠训练数据，无需人工标注；借鉴self-instruct的方式，利用175 个 prompts 种子和 chatgpt 来批量的生成 52K 指令数据集（问答对），大幅降低了训练成本；</li>
+<li>600$ 不到的成本，实验效果与GPT-3.5相当；</li>
+<li>Web Demo： <a target="_blank" rel="noopener" href="https://crfm.stanford.edu/alpaca/">https://crfm.stanford.edu/alpaca/</a></li>
+</ol>
+<h2 id="Alpaca-的优化"><a href="#Alpaca-的优化" class="headerlink" title="Alpaca 的优化"></a>Alpaca 的优化</h2><p>Alpaca 通过全参数的指令微调，获得了与GPT-3.5相当的效果。虽然指令微调相比于预训练更加高效（只需要处理微调数据集），但是全参数的指令微调依然需要消耗较多的算力。目前有多种高效参数微调PEFT方案，可以在实现和全参数微调相同性能的情况下，大幅降低微调成本。<br><a href="https://link.zhihu.com/?target=https%3A//github.com/tloen/alpaca-lora">alpace-lora</a> 是在alpaca的基础上把训练方式改成用lora训练，仅需要一块消费级的GPU，经过数小时 7B 模型的 fine-turning，就可以达到和alpaca差不多的效果。</p>
+<ul>
+<li>Alpaca-Lora 地址：<a href="https://link.zhihu.com/?target=https%3A//github.com/tloen/alpaca-lora">https://github.com/tloen/alpaca-lora</a></li>
+<li>参数高效微调 PEFT 技术简介：<a target="_blank" rel="noopener" href="https://www.yuque.com/ningshixian/pz10h0/hupu29k9t412t8u2?singleDoc#">https://www.yuque.com/ningshixian/pz10h0/hupu29k9t412t8u2?singleDoc#</a> </li>
+</ul>
+<h2 id="如何让模型自举生成数据"><a href="#如何让模型自举生成数据" class="headerlink" title="如何让模型自举生成数据"></a>如何让模型自举生成数据</h2><blockquote>
+<p>参考<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/615180155">链接</a></p>
+</blockquote>
+<p>1.设计chatgpt的提问prompt元模版<br>2.收集提问的问题，对问题做些总结归类，抽出问题元模版<br>3.根据元模版衍生出种子问题<br>4.prompt元模版和种子问题拼接生成prompt，让chatgpt批量生产问题<br>5.把相似度问题合并<br>6.把chatgpt自己生产的问题作为prompt，让chatgpt回答<br>7.把6步生成的数据集后处理作为自己模型alignment的语料</p>
+<h2 id="微调一个自己的-Alpaca"><a href="#微调一个自己的-Alpaca" class="headerlink" title="微调一个自己的 Alpaca"></a>微调一个自己的 Alpaca</h2><blockquote>
+<p>基于龙湖对话知识的Llama微调模型<br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/628688680">BiLLa：更擅长推理的LLaMA大模型，支持中文！</a></p>
+</blockquote>
+<p>我们希望基于LLaMA+instruction数据构建一个中文的羊驼模型，基本思路就是用<a target="_blank" rel="noopener" href="https://github.com/huggingface/peft">PEFT</a>的lora接口+transformer的trainer+instruction的数据配置。<br>需要进行如下3个阶段的训练：</p>
+<ol>
+<li>二次Pre-training阶段：扩充中文词表，使用中文预训练语料<a target="_blank" rel="noopener" href="https://www.sciencedirect.com/science/article/pii/S2666651021000152">Wudao</a>、英文预训练语料<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2101.00027">PILE</a>、翻译语料<a target="_blank" rel="noopener" href="https://www.statmt.org/wmt22/translation-task.html">WMT</a>的中英数据进行二次预训练（可跳过，或直接使用 <a target="_blank" rel="noopener" href="https://huggingface.co/Neutralzz/BiLLa-7B-LLM">BiLLa-7B-LLM</a> 或 <a target="_blank" rel="noopener" href="https://huggingface.co/ziqingyang/chinese-llama-lora-7b">Chinese-LLaMA-7B</a>）</li>
+<li>中文指令精调阶段：利用中文指令数据（如 <a target="_blank" rel="noopener" href="https://github.com/Instruction-Tuning-with-GPT-4/GPT-4-LLM">Alpaca GPT4</a>、<a target="_blank" rel="noopener" href="https://huggingface.co/datasets/BAAI/COIG">COIG</a>、<a target="_blank" rel="noopener" href="https://huggingface.co/datasets/BelleGroup/train_2M_CN">BELLE</a>、<a target="_blank" rel="noopener" href="https://huggingface.co/datasets/JosephusCheung/GuanacoDataset">GuanacoDataset</a>、<a target="_blank" rel="noopener" href="https://github.com/CLUEbenchmark/pCLUE">pCLUE</a> 等，尽可能保证任务的多样性），然后通过语言建模任务，来微调 LLAMA 7B，提升模型对任务求解逻辑的理解</li>
+<li>对话微调 (Conversation Tuning)：像 Alpaca 一样，收集 input/output 生成 prompt 用于训练，或者将上述数据转化为对话格式后训练，让模型完成特定任务。</li>
+</ol>
+<p><img src="https://cdn.nlark.com/yuque/0/2023/png/8420697/1683613072458-56ef8d72-663d-4ece-8782-eca26b2a42f8.png#averageHue=%23c0daa9&amp;clientId=u9f88756d-728d-4&amp;from=paste&amp;height=191&amp;id=FG5HD&amp;originHeight=382&amp;originWidth=1080&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=224585&amp;status=done&amp;style=none&amp;taskId=u77004fd6-7e41-4213-abe9-ffe3765fe22&amp;title=&amp;width=540" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<h3 id="第一步：准备数据集"><a href="#第一步：准备数据集" class="headerlink" title="第一步：准备数据集"></a>第一步：准备数据集</h3><blockquote>
+<p>找数据集哪里找？<br>推荐<a target="_blank" rel="noopener" href="https://github.com/PhoebusSi/Alpaca-CoT">Alpaca-COT</a>，整理了一个<a target="_blank" rel="noopener" href="https://huggingface.co/datasets/QingyiSi/Alpaca-CoT">intruction-finetuning的数据集集合</a>，包含了中文、英文和CoT的instruction数据</p>
+</blockquote>
+<p>1、通用中文指令微调：语言填充，收集文本用于训练，让模型补全 prompt。可以采用下面几份高质量的公开语料</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th><strong>数据集</strong></th>
+<th><strong>内容</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/ymcui/Chinese-LLaMA-Alpaca/blob/main/data/alpaca_data_zh_51k.json">Stanford Alpaca (Chinese)</a></td>
+<td>Alpaca 数据集中文翻译（ChatGPT 辅助翻译）</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://huggingface.co/datasets/BelleGroup/train_2M_CN">BELLE</a> √</td>
+<td>BELLE 项目的中文数据集（ChatGPT 生成）</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://huggingface.co/datasets/JosephusCheung/GuanacoDataset">GuanacoDataset</a> √</td>
+<td>Guannaco 模型的对话数据集</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://huggingface.co/datasets/suolyer/webqa">WebQA(zh)</a></td>
+<td>中文网络问答</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/CLUEbenchmark/pCLUE">pCLUE</a></td>
+<td>基于提示的大规模预训练数据集，用于多任务学习和零样本学习</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Chinese-Vicuna 提供了<a target="_blank" rel="noopener" href="https://huggingface.co/datasets/BelleGroup/train_2M_CN">BELLE</a> 和 <a target="_blank" rel="noopener" href="https://huggingface.co/datasets/JosephusCheung/GuanacoDataset">GuanacoDataset</a> 的整合数据，可以通过HuggingFace下载 <a target="_blank" rel="noopener" href="https://huggingface.co/datasets/Chinese-Vicuna/guanaco_belle_merge_v1.0">https://huggingface.co/datasets/Chinese-Vicuna/guanaco_belle_merge_v1.0</a></p>
+<p>通用指令微调效果<br>指令微调可以让大模型有质的提升，主要体现在两个方面：</p>
+<ul>
+<li><strong>性能改进</strong>：最近的研究发现经过指令微调的较小模型甚至可以比未经微调的较大模型表现更好。除了模型规模外，指令微调在不同的模型架构、预训练目标和模型适应方法上都展现出持续的改进效果。在实践中，指令微调为提升现有语言模型（包括小型预训练语言模型）的能力提供了一种通用的方法 。此外，与预训练相比，指令微调成本较低，因为大语言模型所需的指令数据数量明显较少于预训练数据。</li>
+<li><strong>任务泛化性</strong>：指令微调鼓励模型理解用于任务完成的自然语言指令。它赋予大语言模型遵循人类指令执行特定任务的能力（通常被视为一种涌现能力），即使在未见过的任务上也能够执行 。大量研究已经证实了指令微调在已见和未见任务上实现卓越的性能表现。此外，指令微调还被证明对缓解大语言模型的一些弱点（如生成重复内容或在不完成特定任务的情况下补充输入）具有帮助，从而使大语言模型具有更强的解决现实世界任务的能力。此外，通过使用指令微调训练的大语言模型可以在不同语言之间泛化到相关任务。</li>
+</ul>
+<p>2、对话微调 (Conversation Tuning)：像 Alpaca 一样，收集 input/output 生成 prompt 用于训练，让模型完成特定任务。对话微调是一种特殊的指令微调。其目的是让大语言模型在「补全」能力的基础上，解锁「对话」能力。</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th><strong>数据集</strong></th>
+<th><strong>内容</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://huggingface.co/datasets/fnlp/moss-002-sft-data">fnlp/moss-002-sft-data</a></td>
+<td>MOSS-002所使用的多轮对话数据，包含由text-davinci-003生成的约57万条英文对话和59万条中文对话。</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/LC1332/Chinese-alpaca-lora/blob/main/data/trans_chinese_alpaca_data.json">trans_chinese_alpaca_data.json</a></td>
+<td><a href="https://link.zhihu.com/?target=https%3A//github.com/LC1332/Chinese-alpaca-lora">Luotuo</a> 作者翻译的 Alpaca 数据集</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>具体的对话格式应该和模型在预训练以及微调时保持一致. 示例如下：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs python">[&#123;<br>    <span class="hljs-string">&quot;instruction&quot;</span>:<br>    <span class="hljs-string">&quot;input&quot;</span>:<br>    <span class="hljs-string">&quot;output&quot;</span>:<br>&#125;]<br><br>[<br>    <span class="hljs-string">&quot;&#123;instruction&#125; input</span><br><span class="hljs-string">    =&gt; output&quot;</span><br>]<br></code></pre></td></tr></table></figure></p>
+<h3 id="第二步：指令微调"><a href="#第二步：指令微调" class="headerlink" title="第二步：指令微调"></a>第二步：指令微调</h3><h4 id="1、alpaca-lora-训练"><a href="#1、alpaca-lora-训练" class="headerlink" title="1、alpaca-lora 训练"></a>1、alpaca-lora 训练</h4><blockquote>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/616504594">GPT fine-tune实战： 训练我自己的 ChatGPT - 知乎</a><br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/619426866">使用Alpaca-Lora基于LLaMA(7B)二十分钟完成微调</a></p>
+</blockquote>
+<p>柿子挑软的捏，我们从简单的目标开始：让模型讲中文。<br>为了达成这个目标，我使用的数据集是 <a href="https://link.zhihu.com/?target=https%3A//github.com/LC1332/Chinese-alpaca-lora">Luotuo</a> 作者翻译的 Alpaca 数据集，训练代码主要来自 <a href="https://link.zhihu.com/?target=https%3A//github.com/tloen/alpaca-lora/blob/main/generate.py">Alpaca-LoRA</a>。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 下载 alpaca-lora 项目 </span><br>git clone https://github.com/tloen/alpaca-lora.git<br><br><span class="hljs-comment"># 下载训练数据</span><br><span class="hljs-comment"># Luotuo 作者翻译的 Alpaca 数据集</span><br>wget https://raw.githubusercontent.com/LC1332/Chinese-alpaca-lora/main/data/trans_chinese_alpaca_data.json<br><span class="hljs-comment"># 手动下载 BELLE 和 GuanacoDataset 的整合数据</span><br><br>yum install git-lfs<br>git lfs install<br><br><span class="hljs-comment"># 从Hugging Face下载转换好的 LLaMA-7B 模型权重</span><br>git lfs clone https://huggingface.co/decapoda-research/llama-7b-hf<br>git lfs clone https://huggingface.co/yahma/llama-7b-hf<br><br><span class="hljs-comment"># lora权重下载</span><br><span class="hljs-comment"># 官方提供</span><br>git lfs clone https://huggingface.co/tloen/alpaca-lora-7b<br><span class="hljs-comment"># Chinese-Vicuna 在上面混合数据上训练的lora模型</span><br>git lfs clone https://huggingface.co/Facico/Chinese-Vicuna-lora-7b-3epoch-belle-<span class="hljs-keyword">and</span>-guanaco<br><span class="hljs-comment"># luotuo提供</span><br>git lfs clone https://huggingface.co/qychen/luotuo-lora-7b-<span class="hljs-number">0.1</span><br><br><span class="hljs-comment"># 激活 56 虚拟环境</span><br>source activate gptenv<br>cd alpaca-lora<br><br><span class="hljs-comment"># train</span><br><span class="hljs-comment"># V100 建议不开启 int8 训练 + 提高 low_rank</span><br>python finetune.py \<br>    --base_model <span class="hljs-string">&#x27;../llama-7b-hf&#x27;</span> \<br>    --data_path <span class="hljs-string">&#x27;../trans_chinese_alpaca_data.json&#x27;</span> \<br>    --output_dir <span class="hljs-string">&#x27;./lora-alpaca-zh&#x27;</span> \<br>    --batch_size <span class="hljs-number">128</span> \<br>    --micro_batch_size <span class="hljs-number">4</span> \<br>    --num_epochs <span class="hljs-number">3</span> \<br>    --learning_rate <span class="hljs-number">3e-4</span> \<br>    --cutoff_len <span class="hljs-number">512</span> \<br>    --val_set_size <span class="hljs-number">2000</span> \<br>    --lora_r <span class="hljs-number">8</span> \<br>    --lora_alpha <span class="hljs-number">16</span> \<br>    --lora_dropout <span class="hljs-number">0.05</span> \<br>    --lora_target_modules <span class="hljs-string">&#x27;[q_proj,v_proj]&#x27;</span><br><br><span class="hljs-comment"># 断点重训/增量训练</span><br><span class="hljs-comment"># 需要设置resume_from_checkpoint</span><br><span class="hljs-comment"># V100 建议不开启 int8 训练 + 提高 low_rank</span><br>CUDA_VISIBLE_DEVICES=<span class="hljs-number">2</span> torchrun --nproc_per_node=<span class="hljs-number">1</span> finetune.py --base_model <span class="hljs-string">&#x27;../llama-7b-hf&#x27;</span> --data_path <span class="hljs-string">&#x27;../lf_instruct_15k.json&#x27;</span> --output_dir <span class="hljs-string">&#x27;./lora-alpaca-zh&#x27;</span> --num_epochs <span class="hljs-number">10</span> --lora_r <span class="hljs-number">8</span> --resume_from_checkpoint <span class="hljs-string">&#x27;../lora-weights/Chinese-Vicuna-lora-7b-3epoch-belle-and-guanaco&#x27;</span><br><br><span class="hljs-comment"># multi-GPU train</span><br>WORLD_SIZE=<span class="hljs-number">2</span> CUDA_VISIBLE_DEVICES=<span class="hljs-number">0</span>,<span class="hljs-number">2</span> torchrun \<br>    --nproc_per_node=<span class="hljs-number">2</span> \<br>    --master_port=<span class="hljs-number">29005</span> \    <br>    finetune.py \<br>    --base_model <span class="hljs-string">&#x27;../llama-7b-hf&#x27;</span> \<br>    --data_path <span class="hljs-string">&#x27;../trans_chinese_alpaca_data.json&#x27;</span> \<br>    --output_dir <span class="hljs-string">&#x27;./lora-alpaca-zh&#x27;</span> \<br>    --batch_size <span class="hljs-number">128</span> \<br>    --micro_batch_size <span class="hljs-number">4</span> \<br>    --num_epochs <span class="hljs-number">3</span><br><br><span class="hljs-comment"># inference</span><br>CUDA_VISIBLE_DEVICES=<span class="hljs-number">2</span> python generate.py --base_model <span class="hljs-string">&#x27;../llama-7b-hf&#x27;</span> --lora_weights <span class="hljs-string">&#x27;./lora-alpaca-zh&#x27;</span> --share_gradio true<br><span class="hljs-comment"># --load_8bit False\    </span><br><br><span class="hljs-comment"># 将 LoRA 权重合并回基础模型, 通过 llamap.cpp 等项目达到更好的推理性能</span><br><span class="hljs-comment"># 重新导出为 HuggingFace 格式和 PyTorch state_dicts</span><br>export BASE_MODEL=<span class="hljs-string">&#x27;../llama-7b-hf&#x27;</span><br>export LORA_WEIGHTS=<span class="hljs-string">&#x27;../luotuo-lora-7b-0.1&#x27;</span><br><span class="hljs-comment"># export to Hugging Face format </span><br>python export_hf_checkpoint.py <br><span class="hljs-comment"># export to PyTorch state_dicts</span><br>python export_state_dict_checkpoint.py<br></code></pre></td></tr></table></figure><br>验证效果 &amp; 输出向量<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> transformers <span class="hljs-keyword">import</span> LlamaForCausalLM, LlamaTokenizer<br><br>model = LlamaForCausalLM.from_pretrained(<span class="hljs-string">&#x27;./hf_ckpt&#x27;</span>, torch_dtype=<span class="hljs-string">&quot;auto&quot;</span>, device_map=<span class="hljs-string">&quot;auto&quot;</span>)<br>tokenizer = LlamaTokenizer.from_pretrained(<span class="hljs-string">&#x27;./hf_ckpt&#x27;</span>)<br><br>input_text = <span class="hljs-string">&quot;What is the meaning of life?&quot;</span><br>input_ids = tokenizer.encode(input_text, return_tensors=<span class="hljs-string">&#x27;pt&#x27;</span>)<br><br>output_ids = model.generate(input_ids)<br>output_text = tokenizer.decode(output_ids[<span class="hljs-number">0</span>], skip_special_tokens=<span class="hljs-literal">True</span>)<br><br><span class="hljs-built_in">print</span>(output_text)<br><br><span class="hljs-comment"># 获取 llama 编码的 sentence embedding</span><br>output = model.model.forward(input_ids)<br>emb = torch.mean(output.last_hidden_state, dim=<span class="hljs-number">1</span>)<br><span class="hljs-built_in">print</span>(emb.shape)    <span class="hljs-comment"># (1, 4096)</span><br></code></pre></td></tr></table></figure></p>
+<p><strong>注意</strong><br>1、如果遇到“fine-tune过程中loss会忽大忽小”或“生成结果乱码”这两个问题时，大概率是 「 使用V100+启用 8bit 模式训练」导致的，解决方法请参考下面的 Issue<br>—&gt; <a target="_blank" rel="noopener" href="https://github.com/Facico/Chinese-Vicuna/issues/39">为什么fine-tune过程中loss会忽大忽小呢？ #39</a><br>—&gt; <a target="_blank" rel="noopener" href="https://github.com/LianjiaTech/BELLE/issues/122">采用V100的显卡做lora微调时loss异常 #122</a><br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 112 行</span><br>model = LlamaForCausalLM.from_pretrained(<br>    base_model,<br>	load_in_8bit=<span class="hljs-literal">False</span>,     <span class="hljs-comment"># V100建议不要开启</span><br>    torch_dtype=torch.float16,<br>    device_map=device_map,<br>).half()<br><br><span class="hljs-comment"># 174行 注释掉</span><br><span class="hljs-comment"># model = prepare_model_for_int8_training(model)</span><br></code></pre></td></tr></table></figure><br>2、如果效果不好（复读机、胡说八道），可能有以下问题：</p>
+<ul>
+<li>生成的时候没有使用beam search，Repetition Penalty，temperature等参数</li>
+<li>数据量偏少，且训练的 epoch 不够充分导致的；</li>
+<li>lora的low rank偏小，可以调大些 <a target="_blank" rel="noopener" href="https://github.com/Facico/Chinese-Vicuna/issues/140">https://github.com/Facico/Chinese-Vicuna/issues/140</a></li>
+<li>LLAMA 可能未学习到结束标记 eos_token_id，需要检查是否都正常。参考<a target="_blank" rel="noopener" href="https://github.com/tloen/alpaca-lora/issues/279">#279</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/tloen/alpaca-lora/issues/325#issuecomment-1506639204">#325</a> finetune alpaca-lora with custom dataset got poor results 中的解决方案是用最后一个checkpint目录中的 pytorch_model.bin 文件替换保存的模型文件 adapter_model.bin，最终的推理过程似乎就 OK 了，可行！</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/huggingface/peft/issues/286#issuecomment-1501617281">#286</a> model.save_pretrained() produced a corrupted adapter_model.bin (only 443 B) with alpaca-lora 发现由于alpaca-lora下面的这部分代码，导致调用 save_pretrained() 方法时返回 None，尝试了删除/注释掉这部分代码，最后可以解决模型保存仅有 443B 大小的问题！<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># old_state_dict = model.state_dict</span><br><span class="hljs-comment"># model.state_dict = (</span><br><span class="hljs-comment">#     lambda self, *_, **__: get_peft_model_state_dict(</span><br><span class="hljs-comment">#         self, old_state_dict()</span><br><span class="hljs-comment">#     )</span><br><span class="hljs-comment"># ).__get__(model, type(model))</span><br><br>trainer.train(resume_from_checkpoint=resume_from_checkpoint)<br>model.save_pretrained(output_dir)<br></code></pre></td></tr></table></figure>
+</li>
+</ul>
+<p><strong>结语</strong><br>从上面可以看到，在一台8卡的V100服务器上面，基于Alpaca-Lora针对指令数据进行 10 个 epochs 的 LLAMA 7B 训练，大概 xx 个小时左右即可完成参数高效微调，相对于斯坦福羊驼训练速度显著提升。</p>
+<h4 id="2、Lit-LLaMA-实战×"><a href="#2、Lit-LLaMA-实战×" class="headerlink" title="2、Lit-LLaMA 实战×"></a>2、Lit-LLaMA 实战×</h4><blockquote>
+<p><a target="_blank" rel="noopener" href="https://lightning.ai/pages/community/tutorial/accelerating-llama-with-fabric-a-comprehensive-guide-to-training-and-fine-tuning-llama/">用 Fabric 加速 LLaMA：训练和微调 LLaMA 的综合指南</a><br><a target="_blank" rel="noopener" href="https://sebastianraschka.com/blog/2023/llm-finetuning-lora.html?continueFlag=bd4fddecd5a8db3ad9503af53320e97c">Parameter-Efficient LLM Finetuning With Low-Rank Adaptation (LoRA)</a></p>
+</blockquote>
+<p>Lit-LLaMA 是 LLAMA 模型的复现 ，代码可读性高，支持量化、LoRA微调、预训练。Lit-LLaMA 的主要亮点是它是在 Apache 2.0 许可下发布的，可以实现商业用途。它具有用于使用LoRA进行优化训练和微调的脚本，可以在具有 8 GB 内存的 GPU 上运行 Lit-LLaMA 🤯。</p>
+<p>微调数据集是<a target="_blank" rel="noopener" href="https://github.com/tatsu-lab/stanford_alpaca#data-release">此处</a>描述的 Alpaca 52k 指令数据集，具有以下结构：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python">&#123;<br>    <span class="hljs-string">&quot;instruction&quot;</span>:<br>    <span class="hljs-string">&quot;input&quot;</span>:<br>    <span class="hljs-string">&quot;output&quot;</span>:<br>&#125;<br></code></pre></td></tr></table></figure></p>
+<p>具体操作方法如下：</p>
+<ol>
+<li>下载预训练权重 [ <a target="_blank" rel="noopener" href="https://github.com/Lightning-AI/lit-llama/blob/main/howto/download_weights.md">download_weights.md</a> ]</li>
+<li>使用 LoRA 进行微调 [ <a target="_blank" rel="noopener" href="https://github.com/Lightning-AI/lit-llama/blob/main/howto/finetune_lora.md">finetune_lora.md</a> ]</li>
+<li>使用 Adapter 进行微调 [ <a target="_blank" rel="noopener" href="https://github.com/Lightning-AI/lit-llama/blob/main/howto/finetune_adapter.md">finetune_adapter.md</a> ]（可选，用于比较研究）</li>
+<li>运行预测脚本 [ <a target="_blank" rel="noopener" href="https://github.com/Lightning-AI/lit-llama/blob/main/howto/inference.md">inference.md</a> ]</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 下载 LLAMA 权重</span><br>git lfs clone https://huggingface.co/yahma/llama-7b-hf<br><br><span class="hljs-comment"># 将权重转换为 Lit-LLaMA 格式</span><br>python scripts/convert_hf_checkpoint.py --ckpt_dir <span class="hljs-string">&#x27;../llama-7b-hf&#x27;</span> --model_size 7B<br><span class="hljs-comment"># Saving to disk at checkpoints/lit-llama/7B</span><br><br><span class="hljs-comment"># 下载 Alpaca 52k 指令数据集：</span><br>python scripts/prepare_alpaca.py<br><br><span class="hljs-comment"># 使用 LoRA 进行微调</span><br><span class="hljs-comment"># Current CUDA Device does not support bfloat16 ---&gt; 放弃！</span><br>python finetune_lora.py<br><br><span class="hljs-comment"># 在自己的数据进行微调</span><br>cp scripts/prepare_alpaca.py scripts/prepare_mydata.py<br>python scripts/prepare_mydata.py --destination_path data/mydata/<br>python finetune_lora.py --data_dir data/mydata/ --out_dir out/myexperiment<br><br><span class="hljs-comment"># 测试基础模型</span><br>python generate.py --checkpoint_path checkpoints/lit-llama/7B/lit-llama.pth --quantize llm.int8<br><span class="hljs-comment"># 测试LoRA模型</span><br>python generate_lora.py --lora_path out/lora/alpaca/lit-llama-lora-finetuned.pth --pretrained_path checkpoints/lit-llama/7B/lit-llama.pth<br><br></code></pre></td></tr></table></figure>
+<h4 id="3、ChatGLM-6B-实战"><a href="#3、ChatGLM-6B-实战" class="headerlink" title="3、ChatGLM-6B 实战"></a>3、ChatGLM-6B 实战</h4><blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/mymusise/ChatGLM-Tuning">https://github.com/mymusise/ChatGLM-Tuning</a><br>基于 <a target="_blank" rel="noopener" href="https://github.com/THUDM/P-tuning-v2">P-tuning v2</a> 的高效参数微调。具体使用方法详见 <a target="_blank" rel="noopener" href="https://github.com/THUDM/ChatGLM-6B/blob/main/ptuning/README.md">ptuning/README.md</a></p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 一种平价的chatgpt实现方案，基于清华的 ChatGLM-6B + LoRA 进行finetune.</span><br>git clone https://github.com/mymusise/ChatGLM-Tuning<br><br>yum install git-lfs<br>git lfs install<br><br><span class="hljs-comment"># 从Hugging Face下载 &quot;THUDM/chatglm-6b&quot;</span><br>git lfs clone https://huggingface.co/THUDM/chatglm-6b<br><br><span class="hljs-comment"># 转化alpaca数据集为jsonl</span><br>python cover_alpaca2jsonl.py \<br>    --data_path data/alpaca_data.json \<br>    --save_path data/alpaca_data.jsonl \<br><br><span class="hljs-comment"># tokenization</span><br>python tokenize_dataset_rows.py \<br>    --jsonl_path data/alpaca_data.jsonl \<br>    --save_path data/alpaca \<br>    --max_seq_length <span class="hljs-number">200</span> \ <br>    --skip_overlength<br><br><span class="hljs-comment"># 训练</span><br>python finetune.py \<br>    --dataset_path data/alpaca \<br>    --lora_rank <span class="hljs-number">8</span> \<br>    --per_device_train_batch_size <span class="hljs-number">6</span> \<br>    --gradient_accumulation_steps <span class="hljs-number">1</span> \<br>    --max_steps <span class="hljs-number">52000</span> \<br>    --save_steps <span class="hljs-number">1000</span> \<br>    --save_total_limit <span class="hljs-number">2</span> \<br>    --learning_rate <span class="hljs-number">1e-4</span> \<br>    --fp16 \<br>    --remove_unused_columns false \<br>    --logging_steps <span class="hljs-number">50</span> \<br>    --output_dir output<br><br><span class="hljs-comment"># 推理</span><br><span class="hljs-comment"># 参考 infer.ipynb</span><br></code></pre></td></tr></table></figure>
+<h4 id="4、BELLE-实战"><a href="#4、BELLE-实战" class="headerlink" title="4、BELLE 实战"></a>4、BELLE 实战</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br></pre></td><td class="code"><pre><code class="hljs python">git clone https://github.com/LianjiaTech/BELLE<br><br>yum install git-lfs<br>git lfs install<br><br><span class="hljs-comment"># 从Hugging Face下载 &quot;THUDM/chatglm-6b&quot;</span><br>git lfs clone https://huggingface.co/BelleGroup/BELLE-7B-2M<br><br><span class="hljs-comment"># 下面的命令是单机多卡进行全量参数微调，同时采用deepspeed，基础模型是LLaMA</span><br>torchrun --nproc_per_node <span class="hljs-number">8</span> train.py \<br>    --model_name_or_path $&#123;model_name_or_path&#125; \<br>    --llama \<br>    --deepspeed configs/deepspeed_config.json \<br>    --train_file $&#123;train_file&#125; \<br>    --validation_file $&#123;validation_file&#125; \<br>    --per_device_train_batch_size <span class="hljs-number">2</span> \<br>    --per_device_eval_batch_size <span class="hljs-number">2</span> \<br>    --gradient_accumulation_steps <span class="hljs-number">4</span> \<br>    --num_train_epochs <span class="hljs-number">2</span> \<br>    --model_max_length $&#123;cutoff_len&#125; \<br>    --save_strategy <span class="hljs-string">&quot;steps&quot;</span> \<br>    --save_total_limit <span class="hljs-number">3</span> \<br>    --learning_rate <span class="hljs-number">8e-6</span> \<br>    --weight_decay <span class="hljs-number">0.00001</span> \<br>    --warmup_ratio <span class="hljs-number">0.05</span> \<br>    --lr_scheduler_type <span class="hljs-string">&quot;cosine&quot;</span> \<br>    --logging_steps <span class="hljs-number">10</span> \<br>    --evaluation_strategy <span class="hljs-string">&quot;steps&quot;</span> \<br>    --fp16 <span class="hljs-literal">True</span> \<br>    --seed <span class="hljs-number">1234</span> \<br>    --gradient_checkpointing <span class="hljs-literal">True</span> \<br>    --cache_dir $&#123;cache_dir&#125; \<br>    --output_dir $&#123;output_dir&#125;<br><br><span class="hljs-comment"># 参数说明</span><br><span class="hljs-comment"># 1、如果想要单卡训练，仅需将nproc_per_node设置为1即可</span><br><span class="hljs-comment"># 2、如果预训练模型不是LLaMA，则去掉--llama。如果是LLaMA模型，需要指定--llama。因为LLaMA模型需要采用LLamaTokenizer加载，如果用AutoTokenizer加载llama可能会出现无限递归的问题，这和transformers版本有关</span><br><span class="hljs-comment"># 3、如果运行环境不支持deepspeed，去掉--deepspeed</span><br><br><span class="hljs-comment"># LoRA</span><br>torchrun --nproc_per_node <span class="hljs-number">8</span> train.py \<br>    --model_name_or_path $&#123;model_name_or_path&#125; \<br>    --llama \<br>    --use_lora <span class="hljs-literal">True</span> \<br>    --use_int8_training \<br>    --lora_config configs/lora_config_llama.json \<br>    --train_file $&#123;train_file&#125; \<br>    --validation_file $&#123;validation_file&#125; \<br>    --per_device_train_batch_size <span class="hljs-number">2</span> \<br>    --per_device_eval_batch_size <span class="hljs-number">2</span> \<br>    --gradient_accumulation_steps <span class="hljs-number">4</span> \<br>    --num_train_epochs <span class="hljs-number">2</span> \<br>    --model_max_length $&#123;cutoff_len&#125; \<br>    --save_strategy <span class="hljs-string">&quot;steps&quot;</span> \<br>    --save_total_limit <span class="hljs-number">3</span> \<br>    --learning_rate <span class="hljs-number">8e-6</span> \<br>    --weight_decay <span class="hljs-number">0.00001</span> \<br>    --warmup_ratio <span class="hljs-number">0.05</span> \<br>    --lr_scheduler_type <span class="hljs-string">&quot;cosine&quot;</span> \<br>    --logging_steps <span class="hljs-number">10</span> \<br>    --evaluation_strategy <span class="hljs-string">&quot;steps&quot;</span> \<br>    --fp16 <span class="hljs-literal">True</span> \<br>    --seed <span class="hljs-number">1234</span> \<br>    --gradient_checkpointing <span class="hljs-literal">True</span> \<br>    --cache_dir $&#123;cache_dir&#125; \<br>    --output_dir $&#123;output_dir&#125;<br><br><span class="hljs-comment"># 注：LoRA训练后保存的模型adapter_model.bin有可能是空文件，此时需要将其它checkpoint-step下保存的pytorch_model.bin复制到output_dir目录下。</span><br><br><span class="hljs-comment"># 合并LoRA权重</span><br>bash scripts/merge_lora.sh<br><br><span class="hljs-comment"># Inference</span><br>CUDA_VISIBLE_DEVICES=<span class="hljs-number">0</span> python src/inference.py \<br>    --model_name_or_path model_name_or_path \<br>    --ckpt_path ckpt_path \<br>    --llama \<br>    --use_lora<br><br><span class="hljs-comment"># webUI</span><br>CUDA_VISIBLE_DEVICES=<span class="hljs-number">0</span> python src/interface.py \<br>    --model_name_or_path model_name_or_path \<br>    --ckpt_path ckpt_path \<br>    --llama \<br>    --use_lora<br><br><span class="hljs-comment"># 合并词表</span><br>如果您想在原版LLaMA的基础上扩充中文词表，可参考scripts/merge_tokenizers.py<br></code></pre></td></tr></table></figure>
+<h3 id="实验过程记录"><a href="#实验过程记录" class="headerlink" title="实验过程记录"></a>实验过程记录</h3><p>超参设置和实验过程可以参考wandb的链接:<br><a target="_blank" rel="noopener" href="https://wandb.ai/thinksoso/llama_med/runs/a5wgcnzt/overview?workspace=user-thinksoso">https://wandb.ai/thinksoso/llama_med/runs/a5wgcnzt/overview?workspace=user-thinksoso</a></p>
+<h3 id="模型效果"><a href="#模型效果" class="headerlink" title="模型效果"></a>模型效果</h3><p><a target="_blank" rel="noopener" href="https://github.com/Facico/Chinese-Vicuna/blob/master/docs/readme-zh.md#%E6%A8%A1%E5%9E%8B%E6%95%88%E6%9E%9C">https://github.com/Facico/Chinese-Vicuna/blob/master/docs/readme-zh.md#%E6%A8%A1%E5%9E%8B%E6%95%88%E6%9E%9C</a></p>
+<h2 id="LLAMA-对齐"><a href="#LLAMA-对齐" class="headerlink" title="LLAMA 对齐"></a>LLAMA 对齐</h2><p><a href="https://link.zhihu.com/?target=https%3A//github.com/hpcaitech/ColossalAI/tree/main/applications/Chat">ColossalChat</a> 是第一个基于LLaMA预训练模型开源完整RLHF pipline实现，包括有监督数据收集、有监督微调、奖励模型训练和强化学习微调。只需要不到100亿个参数，就可以在大型语言模型的基础上通过RLHF微调达到中英文双语水平，达到与ChatGPT和GPT-3.5相当的效果，并可以进行<a href="https://link.zhihu.com/?target=https%3A//chat.colossalai.org/">Demo</a>测试。</p>
+<p><img src="https://cdn.nlark.com/yuque/0/2023/png/8420697/1684213508213-958e82f7-2b59-4fad-8e9d-3cd2d0dec29f.png#averageHue=%23eaeaea&amp;clientId=u7aaa47d5-f260-4&amp;from=paste&amp;height=315&amp;id=ufbca2b04&amp;originHeight=629&amp;originWidth=1440&amp;originalType=binary&amp;ratio=2&amp;rotation=0&amp;showTitle=false&amp;size=499134&amp;status=done&amp;style=none&amp;taskId=u3555f722-1476-4a4c-b4b8-1fb7da68453&amp;title=&amp;width=720" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<p>具体实操可参考 <a target="_blank" rel="noopener" href="https://www.yuque.com/ningshixian/pz10h0/vikg2a9mx2sxso7v?singleDoc#">https://www.yuque.com/ningshixian/pz10h0/vikg2a9mx2sxso7v?singleDoc#</a> 《基于ColossalAI的ChatGPT最小复现》、以及<a target="_blank" rel="noopener" href="https://www.yuque.com/ningshixian/pz10h0/dw0fehfpzpv3eweu?singleDoc#">https://www.yuque.com/ningshixian/pz10h0/dw0fehfpzpv3eweu?singleDoc#</a> 《StackLLaMA：用 RLHF 训练 LLaMA 的手把手教程》</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/618695885">NLP（九）：LLaMA, Alpaca, ColossalChat 系列模型研究</a><br><a target="_blank" rel="noopener" href="https://github.com/ninehills/ninehills.github.io/issues/92">大语言模型（LLM）微调技术笔记</a><br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/628688680">BiLLa：更擅长推理的LLaMA大模型，支持中文！</a></p>
+<ul>
+<li>Colossalai训练框架，8卡V100，batch size 160，4000+ gpu hours</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://github.com/Facico/Chinese-Vicuna/blob/master/docs/readme-zh.md#%E6%A8%A1%E5%9E%8B%E6%95%88%E6%9E%9C">Chinese-Vicuna: A Chinese Instruction-following LLaMA-based Model —— 一个中文低资源的llama+lora方案</a><br>《<a target="_blank" rel="noopener" href="https://train.unitmesh.cc/">AI 研发提效研究：自己动手训练 LoRA</a>》</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/ChatGPT/" class="category-chain-item">ChatGPT</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/ChatGPT/LLAMA/" class="category-chain-item">LLAMA</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%8E%9F%E5%88%9B/">#原创</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>LLAMA Fine-tune</div>
+      <div>http://example.com/2023/05/24/2023-05-24-LLAMA Fine-tune/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Ning Shixian</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年5月24日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/05/19/2023-05-19-%E5%B8%B8%E8%A7%81%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E5%B9%B6%E8%A1%8C%E7%AD%96%E7%95%A5/" title="常见的分布式并行策略">
+                        <span class="hidden-mobile">常见的分布式并行策略</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
